@@ -1,0 +1,15 @@
+{
+    "development" : {
+            "PORT": 7000,
+            "dbName": "bmr_vidyagxp",
+            "username": "root",
+            "password": "root",
+            "dialect": "mysql",
+            "host": "localhost",
+            "JWT_SECRET": "NAHKNAHRAF",
+            "JWT_ADMIN_SECRET": "ADMINNAHKNAHRAF"
+    },
+    "production": {
+
+    }
+}

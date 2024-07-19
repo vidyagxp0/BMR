@@ -1,0 +1,21 @@
+{
+  "name": "BMR",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "http": "^0.0.1-security",
+    "mysql2": "^3.10.3",
+    "path": "^0.12.7",
+    "sequelize": "^6.37.3"
+  }
+}
