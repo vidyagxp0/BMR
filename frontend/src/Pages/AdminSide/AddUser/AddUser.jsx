@@ -25,7 +25,7 @@ const AddUser = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    axios.get("http://192.168.1.35:7000/user/get-all-roles", {
+    axios.get("http://192.168.1.6:7000/user/get-all-roles", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
         "Content-Type": "application/json",
@@ -34,7 +34,7 @@ const AddUser = () => {
       const roleOptions = response.data.response.map(role => ({
         value: role.role_id,
         label: role.role
-      }));
+      })); 
       setRoles(roleOptions);
     }).catch((error) => {
       console.error(error);
@@ -71,9 +71,8 @@ const AddUser = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!validateForm()) return; // Prevent submission if validation fails
+    if (!validateForm()) return;
 
-    // Create a FormData instance for proper file handling
     const formDataToSend = new FormData();
     formDataToSend.append('name', formData.name);
     formDataToSend.append('email', formData.email);
@@ -83,23 +82,22 @@ const AddUser = () => {
       formDataToSend.append('rolesArray', role);
     });
 
-    // Axios call with FormData
-    axios.post("http://192.168.1.35:7000/user/add-user", formDataToSend, {
+    axios.post("http://192.168.1.6:7000/user/add-user", formDataToSend, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
         "Content-Type": "multipart/form-data",
       }
     }).then((response) => {
       toast.success("User added successfully!");
-      dispatch(addUser(response.data.user)); // Adjust based on server response
+      dispatch(addUser(response.data.user));
       setFormData({ name: '', email: '', password: '', profile_pic: null, rolesArray: [] });
-      setErrors({}); // Clear errors
+      setErrors({});
       setTimeout(() => {
         navigate('/admin-dashboard');
       }, 1000);
     }).catch((error) => {
       console.error(error);
-      toast.error("Failed to add user. Please try again.");
+      toast.error("User Already Registered");
     });
   };
 
@@ -113,7 +111,6 @@ const AddUser = () => {
         <div id="config-form-document-page" className="shadow-sm md:shadow-md lg:shadow-lg xl:shadow-xl 2xl:shadow-2xl inset-shadow-1 p-6">
           <form onSubmit={handleSubmit}>
             <h2 className="text-center text-2xl font-bold text-blue-600">Add User</h2>
-
             <div className="group-input" style={{ margin: "15px" }}>
               <AtmInput 
                 label="Name" 
@@ -124,7 +121,6 @@ const AddUser = () => {
                 error={errors.name}
               />
             </div>
-
             <div className="group-input" style={{ margin: "15px" }}>
               <AtmInput 
                 label="Email" 
@@ -135,7 +131,6 @@ const AddUser = () => {
                 error={errors.email}
               />
             </div>
-
             <div className="group-input" style={{ margin: "15px" }}>
               <AtmInput 
                 label="Password" 
@@ -147,7 +142,6 @@ const AddUser = () => {
                 error={errors.password}
               />
             </div>
-
             <div className="group-input" style={{ margin: "15px" }}>
               <AtmInput 
                 label="Profile Pic" 
@@ -159,7 +153,6 @@ const AddUser = () => {
                 error={errors.profile_pic}
               />
             </div>
-
             <div className="group-input" style={{ margin: "15px" }}>
               <label htmlFor="roles" className='text-blue-500'>Roles</label>
               <Select
@@ -171,7 +164,6 @@ const AddUser = () => {
               />
               {errors.rolesArray && <p className="text-red-500 text-sm">{errors.rolesArray}</p>}
             </div>
-
             <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
               <AtmButton label="Add User" type="submit"/>
             </div>

@@ -8,17 +8,19 @@ import EditUserModal from "../Modals/EditUserModal";
 import ViewPermissionsModal from "../Modals/ViewPermissionsModal";
 import axios from "axios";
 import { ToastContainer } from "react-toastify";
+import UpdateUser from "../Modals/UpdateUserModal";
 
 const AdminDashBoard = () => {
   const navigate = useNavigate();
-  const users = useSelector((state) => state.users);
-  console.log(users, "users");
+  const users = useSelector((state) => state.users.users);
+  // console.log(users, "users");
 
   const [showViewPermissions, setShowViewPermissions] = useState(false);
   const [showEditUser, setShowEditUser] = useState(false);
   const [showDeleteUser, setShowDeleteUser] = useState(false);
+  const [showDuplicateUser, setShowDuplicateUser] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [allUsers , setAllUsers] = useState([])
+  const [allUsers, setAllUsers] = useState([])
 
   const columns = [
     { header: "Name", accessor: "name" },
@@ -30,79 +32,79 @@ const AdminDashBoard = () => {
         const user = row.original;
         return (
           <div className="flex space-x-2">
-          <button
-            onClick={() => {
-              setSelectedUser(user);
-              setShowViewPermissions(true);
-            }}
-            className="bg-teal-600 text-white px-2 py-1 rounded hover:bg-teal-700"
-          >
-            View Permissions
-          </button>
-          <button
-            onClick={() => {
-              setSelectedUser(user);
-              setShowEditUser(true);
-            }}
-            className="bg-indigo-600 text-white px-2 py-1 rounded hover:bg-indigo-700"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => {
-              setSelectedUser(user);
-              setShowDeleteUser(true);
-            }}
-            className="bg-yellow-600 text-white px-2 py-1 rounded hover:bg-yellow-700"
-          >
-            Duplicate
-          </button>
-          <button
-            onClick={() => {
-              setSelectedUser(user);
-              setShowDeleteUser(true);
-            }}
-            className="bg-orange-600 text-white px-2 py-1 rounded hover:bg-orange-700"
-          >
-            Reset Password
-          </button>
-          <button
-            onClick={() => {
-              setSelectedUser(user);
-              setShowDeleteUser(true);
-            }}
-            className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
-          >
-            Delete
-          </button>
-        </div>
-        
+            <button
+              onClick={() => {
+                setSelectedUser(user);
+                setShowViewPermissions(true);
+              }}
+              className="bg-teal-600 text-white px-2 py-1 rounded hover:bg-teal-700"
+            >
+              View Permissions
+            </button>
+            <button
+              onClick={() => {
+                setSelectedUser(user);
+                setShowEditUser(true);
+              }}
+              className="bg-indigo-600 text-white px-2 py-1 rounded hover:bg-indigo-700"
+            >
+              Edit
+            </button>
+            {/* <button
+              onClick={() => {
+                navigate("/admin-update-user")
+              }}
+              className="bg-yellow-600 text-white px-2 py-1 rounded hover:bg-yellow-700"
+            >
+              Duplicate
+            </button> */}
+            <button
+              // onClick={() => {
+              //   setSelectedUser(user);
+              //   setShowDuplicateUser(true);
+               
+              // }}
+              className="bg-orange-600 text-white px-2 py-1 rounded hover:bg-orange-700"
+            >
+              Reset Password
+            </button>
+            <button
+              onClick={() => {
+                setSelectedUser(user);
+                setShowDeleteUser(true);
+              }}
+              className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
+            >
+              Delete
+            </button>
+          </div>
+
         );
       },
     },
   ];
 
   useEffect(() => {
-    axios 
-    .get("http://192.168.1.35:7000/user/get-all-users", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
-      },
-    })
-    .then((response) => {
-      
-      setAllUsers(response.data.response)
-    }).catch((error) => {
-      console.error(error);
-    })
+    axios
+      .get("http://192.168.1.6:7000/user/get-all-users", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
+        },
+      })
+      .then((response) => {
 
-  },[])
-  console.log(selectedUser , "selectedUser")
+        setAllUsers(response.data.response)
+      }).catch((error) => {
+        console.error(error);
+      })
+
+  }, [])
+  // console.log(selectedUser , "selectedUser")
 
 
   return (
     <div>
-        <ToastContainer />
+      <ToastContainer />
       <div className="Header_Bottom shadow-xl my-3 py-5">
         <div className="headerBottomInner flex items-center">
           <div className="headerBottomLft mr-auto">
@@ -126,14 +128,14 @@ const AdminDashBoard = () => {
         <ViewPermissionsModal
           user={selectedUser}
           onClose={() => setShowViewPermissions(false)}
-          id={selectedUser?.user_id} 
+          id={selectedUser?.user_id}
         />
       )}
       {showEditUser && (
         <EditUserModal
           user={selectedUser}
           onClose={() => setShowEditUser(false)}
-         
+          setAllUsers={setAllUsers}
         />
       )}
       {showDeleteUser && (
@@ -144,7 +146,14 @@ const AdminDashBoard = () => {
           setAllUsers={setAllUsers}
         />
       )}
+
+      {showDuplicateUser && (
+        <UpdateUser
+        />
+      )}
+
     </div>
+
   );
 };
 

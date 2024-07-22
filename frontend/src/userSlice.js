@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
 export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
-  const response = await axios.get('http://192.168.1.35:7000/user/get-users', {
+  const response = await axios.get('http://192.168.1.6:7000/user/get-users', {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("admin-token")}`
     }
@@ -12,23 +12,28 @@ export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
 
 const userSlice = createSlice({
   name: 'users',
-  initialState: [],
+  initialState: {
+    users: [],
+  },
   reducers: {
-    addUser: (state, action) => {
-      const newUser = { ...action.payload, id: uuidv4() };
-      state.push(newUser);
+    setUsers(state, action) {
+      state.users = action.payload;
     },
-    updateUser: (state, action) => {
-      const index = state.findIndex(user => user.id === action.payload.id);
+    addUser(state, action) {
+      state.users.push(action.payload);
+    },
+    updateUser(state, action) {
+      const index = state.users.findIndex(user => user.user_id === action.payload.id);
       if (index !== -1) {
-        state[index] = action.payload;
+        state.users[index] = { ...state.users[index], ...action.payload };
+        console.log('Updated user:', state.users[index]); // Debug log
       }
     },
-    deleteUser: (state, action) => {
-      return state.filter(user => user.id !== action.payload);
+    deleteUser(state, action) {
+      state.users = state.users.filter(user => user.user_id !== action.payload);
     },
-  }
+  },
 });
 
-export const { addUser, updateUser, deleteUser } = userSlice.actions;
-export default userSlice.reducer;
+export const { setUsers, addUser, updateUser, deleteUser } = userSlice.actions;
+export default userSlice.reducer; 
