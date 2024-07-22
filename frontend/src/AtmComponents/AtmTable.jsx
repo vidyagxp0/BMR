@@ -1,4 +1,3 @@
-// AtmTable.js
 import React from 'react';
 
 const AtmTable = ({ columns = [], data = [] }) => {
@@ -7,6 +6,9 @@ const AtmTable = ({ columns = [], data = [] }) => {
       <table className="min-w-full border-collapse border border-gray-300">
         <thead className="bg-blue-500">
           <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300">
+              Sr No
+            </th>
             {columns.map((column, index) => (
               <th
                 key={index}
@@ -19,10 +21,20 @@ const AtmTable = ({ columns = [], data = [] }) => {
         </thead>
         <tbody className="bg-white">
           {data.map((row, rowIndex) => (
-            <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-white' : 'bg-blue-100'}>
+            <tr
+              key={rowIndex}
+              className={rowIndex % 2 === 0 ? 'bg-white' : 'bg-blue-100'}
+            >
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border border-gray-300">
+                {rowIndex + 1}
+              </td>
               {columns.map((column, colIndex) => (
-                <td key={colIndex} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border border-gray-300">
-                  {row[column.accessor]}
+                <td
+                  key={colIndex}
+                  className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border border-gray-300"
+                >
+                  {/* Check if Cell renderer is provided */}
+                  {column.Cell ? column.Cell({ row: { original: row } }) : row[column.accessor]}
                 </td>
               ))}
             </tr>

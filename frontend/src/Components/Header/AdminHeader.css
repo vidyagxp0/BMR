@@ -1,0 +1,197 @@
+/*! ============================================================================= */
+/*! HEADER CSS */
+/*! ============================================================================= */
+header {
+    padding: 2px 20px;
+    height: 55px;
+  }
+  
+  header .inner-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  
+  }
+  
+  header .head {
+    font-weight: bold;
+    font-size: 1.4rem;
+  }
+  
+  header .drop-block {
+    position: relative;
+  }
+  
+  header .drop-block .link-item {
+    background: var(--themeColor);
+    color: white;
+    padding: 5px 13px;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s linear;
+  }
+  
+  header .drop-block .link-item:hover {
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+  }
+  
+  header .drop-block .link-item::after {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: transparent;
+    z-index: 1;
+    content: "";
+    height: 10px;
+  }
+  
+  header .drop-block .drop-list {
+    position: absolute;
+    top: 100%;
+    transform: translate(0, -10px);
+    right: 0;
+    background: white;
+    box-shadow: rgba(17, 17, 26, 0.05) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px;
+    z-index: -10;
+    visibility: hidden;
+    min-width: 200px;
+    opacity: 0;
+    display: grid;
+    transition: all 0.3s linear;
+    width: max-content;
+    border-top: 5px solid var(--themeColor);
+  }
+  
+  header .drop-block:hover .drop-list {
+    opacity: 1;
+    z-index: 10;
+    transform: translate(0, 10px);
+    visibility: visible;
+  }
+  
+  header .drop-block .drop-list>* {
+    padding: 4px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+  
+  header .drop-block .drop-list>*:hover {
+    background: #006fc03d;
+  }
+  
+  
+  .logo{
+    width: 160px;
+  }
+  
+  .drop-container {
+    position: relative;
+    z-index: 9999;
+    right: 10px;
+  }
+  
+  .drop-container .drop-btn {
+    color: #efa035;
+    text-align: center;
+    border-radius: 50%;
+    height: 40px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+      rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .drop-container:hover .drop-btn::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    background: transparent;
+    right: 0;
+    width: calc(100% + 30px);
+    height: 10px;
+    transform: translate(15px, 0);
+  }
+  
+  .drop-container .drop-btn.name-btn {
+    display: flex;
+    width: 45px;
+    height: 45px;
+    border-radius: 55px;
+    align-items: center;
+    justify-content: center;
+    background: #efa035;
+    color: white;
+    background-image: url("amit_guru.jpg");
+  }
+  
+  .drop-container .drop-list {
+    display: none;
+    position: absolute;
+    top: 100%;
+    transform: translate(15px, 10px);
+    right: 0;
+    background: white;
+    z-index: 2;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    border-top: 3px solid var(--theme1);
+    width: max-content;
+    border-radius: 8px;
+  }
+  
+  .drop-container .drop-list .image {
+    padding: 10px;
+    width: 180px;
+  }
+  
+  .drop-container .drop-list .manager-name {
+    font-weight: 600;
+    display: flex;
+    border-bottom: 1px solid;
+    justify-content: center;
+  }
+  
+  .drop-container .drop-list .image img {
+    object-fit: cover;
+    object-position: center;
+    border-radius: 80px;
+    border: 1px solid;
+    max-width: 214px;
+  }
+  
+  .drop-container .drop-list .drop-item {
+    font-size: 0.85rem;
+    padding: 5px 10px;
+    display: block;
+    cursor: pointer;
+  }
+  
+  .drop-container .drop-list .drop-item i {
+    margin-right: 10px;
+  }
+  
+  .drop-container .drop-list .drop-item:hover {
+    background: #fcd6a1;
+    color: #000;
+  }
+  
+  .drop-container:hover .drop-list {
+    display: grid;
+  }
+  
+  .drop-container .profile-img img {
+    width: 45px;
+    height: 45px;
+    border-radius: 55px;
+  }
+  

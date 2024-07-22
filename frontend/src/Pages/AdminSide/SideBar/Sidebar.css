@@ -1,0 +1,127 @@
+/*! ============================================================================= */
+/*! SIDEBAR CSS */
+/*! ============================================================================= */
+aside {
+    width: 300px;
+    position: fixed;
+    top: 64px; /* Adjust this value to match the height of the header */
+    left: 0;
+    width: 16rem; /* 64 in Tailwind CSS rem units */
+    height: calc(100vh - 64px); /* Full height minus the header height */
+    background-color: white;
+    overflow-y: auto;
+    border-right: 1px solid #e5e7eb;
+  }
+  .admin-console{
+    /* border-right: 1px dashed #808080; */
+  }
+  aside .inner-block {
+    display: grid;
+    gap: 20px;
+    align-items: start;
+  }
+  
+  aside .inner-block .sidebar-link .link-head {
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s linear;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: rgba(247, 207, 106, 0.3) 0px 1px 2px 0px, rgba(247, 206, 103, 0.15) 0px 2px 6px 2px;
+  }
+  
+  aside .inner-block .sidebar-link .link-head:hover,
+  aside .inner-block .sidebar-link .link-head.active {
+    background: #5aa3f2;
+    box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px;
+  }
+  
+  aside .inner-block .sidebar-link .link-head>div:nth-child(1) {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+  }
+  
+  aside .inner-block .sidebar-link .sidebar-subList {
+    padding: 10px 0 10px 45px;
+    display: grid;
+    gap: 10px;
+    position: relative;
+  }
+  /* 
+  aside .inner-block .sidebar-link .sidebar-subList::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: calc(100% - 20px);
+    width: 1px;
+    background: var(--themeColor);
+    transform: translate(0px, 0);
+  } */
+  
+  aside .inner-block .sidebar-link .sidebar-subList>* {
+    transition: all 0.3s linear;
+    cursor: pointer;
+    position: relative;
+    font-size: 0.8rem;
+  }
+  
+  /* aside .inner-block .sidebar-link .sidebar-subList>*::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translate(-10px, -50%);
+    width: 35px;
+    height: 1px;
+    background: var(--themeColor);
+  } */
+  
+  aside .inner-block .sidebar-link .sidebar-subList>*:hover,
+  aside .inner-block .sidebar-link .sidebar-subList .active {
+    color: #5195df;
+  }
+  
+  .inner-block {
+    padding: 1rem; /* Adjust as necessary */
+  }
+  
+  .sidebar-link {
+    margin-bottom: 0.5rem; /* Space between links */
+  }
+  
+  .link-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.5rem 1rem; /* Adjust padding as necessary */
+    border: 1px solid transparent;
+    border-radius: 0.25rem; /* Rounded corners */
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+  
+  .link-head:hover {
+    background-color: #f9fafb; /* Tailwind gray-100 */
+    border-color: #d1d5db; /* Tailwind gray-300 */
+  }
+  
+  .sidebar-subList {
+    padding-left: 1.5rem;
+  }
+  
+  .sidebar-subLink {
+    display: block;
+    padding: 0.25rem 1rem; /* Adjust padding as necessary */
+    border-radius: 0.25rem; /* Rounded corners */
+    transition: background-color 0.2s;
+  }
+  
+  .sidebar-subLink:hover {
+    background-color: #aad2fa; /* Tailwind gray-100 */
+  }
