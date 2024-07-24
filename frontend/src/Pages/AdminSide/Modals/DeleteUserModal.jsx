@@ -7,10 +7,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const DeleteUserModal = ({ onClose, id, setAllUsers }) => {
   const dispatch = useDispatch();
-  console.log(id, "id");
-
   const handleDelete = () => {
-    axios.delete(`http://192.168.1.6:7000/user/delete-user/${id}`, {
+    axios.delete(`http://192.168.1.22:7000/user/delete-user/${id}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem("admin-token")}`
@@ -18,10 +16,12 @@ const DeleteUserModal = ({ onClose, id, setAllUsers }) => {
     }).then((response) => {
       toast.success("User deleted successfully!");
       setAllUsers((previousUsers) => previousUsers.filter(user => user.user_id !== id));
+    
       setTimeout(() => {
+        onClose();
         dispatch(deleteUser(id));
         dispatch(fetchUsers());
-        onClose();
+       
       }, 1000);
     }).catch((error) => {
       toast.error("Failed to delete user");

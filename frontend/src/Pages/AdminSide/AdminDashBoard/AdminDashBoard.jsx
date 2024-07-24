@@ -7,8 +7,10 @@ import DeleteUserModal from "../Modals/DeleteUserModal";
 import EditUserModal from "../Modals/EditUserModal";
 import ViewPermissionsModal from "../Modals/ViewPermissionsModal";
 import axios from "axios";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import UpdateUser from "../Modals/UpdateUserModal";
+import 'react-toastify/dist/ReactToastify.css';
+import ResetPasswordModal from "../Modals/ResetPasswordModal";
 
 const AdminDashBoard = () => {
   const navigate = useNavigate();
@@ -19,6 +21,7 @@ const AdminDashBoard = () => {
   const [showEditUser, setShowEditUser] = useState(false);
   const [showDeleteUser, setShowDeleteUser] = useState(false);
   const [showDuplicateUser, setShowDuplicateUser] = useState(false);
+  const [resestPassword, setResetPassword] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [allUsers, setAllUsers] = useState([])
 
@@ -59,11 +62,11 @@ const AdminDashBoard = () => {
               Duplicate
             </button> */}
             <button
-              // onClick={() => {
-              //   setSelectedUser(user);
-              //   setShowDuplicateUser(true);
+              onClick={() => {
+                setSelectedUser(user);
+                setResetPassword(true);
                
-              // }}
+              }}
               className="bg-orange-600 text-white px-2 py-1 rounded hover:bg-orange-700"
             >
               Reset Password
@@ -86,7 +89,7 @@ const AdminDashBoard = () => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.6:7000/user/get-all-users", {
+      .get("http://192.168.1.22:7000/user/get-all-users", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
         },
@@ -95,6 +98,7 @@ const AdminDashBoard = () => {
 
         setAllUsers(response.data.response)
       }).catch((error) => {
+        toast.error("Error fetching users!");
         console.error(error);
       })
 
@@ -104,7 +108,7 @@ const AdminDashBoard = () => {
 
   return (
     <div>
-      <ToastContainer />
+    
       <div className="Header_Bottom shadow-xl my-3 py-5">
         <div className="headerBottomInner flex items-center">
           <div className="headerBottomLft mr-auto">
@@ -151,7 +155,15 @@ const AdminDashBoard = () => {
         <UpdateUser
         />
       )}
-
+      {resestPassword && (
+        <ResetPasswordModal
+        onClose={() => setResetPassword(false)}
+        setAllUsers={setAllUsers}
+        user={selectedUser}
+        id={selectedUser?.user_id}
+        />
+      )}
+  {/* <ToastContainer /> */}
     </div>
 
   );

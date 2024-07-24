@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
 export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
-  const response = await axios.get('http://192.168.1.6:7000/user/get-users', {
+  const response = await axios.get('http://192.168.1.22:7000/user/get-users', {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("admin-token")}`
     }

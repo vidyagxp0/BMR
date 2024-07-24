@@ -25,7 +25,7 @@ const UpdateUser = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    axios.get("http://192.168.1.6:7000/user/get-all-roles", {
+    axios.get("http://192.168.1.22:7000/user/get-all-roles", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
         "Content-Type": "application/json",
@@ -82,7 +82,7 @@ const UpdateUser = () => {
       formDataToSend.append('rolesArray', role);
     });
 
-    axios.post("http://192.168.1.6:7000/user/add-user", formDataToSend, {
+    axios.post("http://192.168.1.22:7000/user/add-user", formDataToSend, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
         "Content-Type": "multipart/form-data",
@@ -94,7 +94,7 @@ const UpdateUser = () => {
       setErrors({});
       setTimeout(() => {
         navigate('/admin-dashboard');
-      }, 1000);
+      }, 500);
     }).catch((error) => {
       console.error(error);
       toast.error("User Already Registered");

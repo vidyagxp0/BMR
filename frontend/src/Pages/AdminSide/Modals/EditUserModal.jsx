@@ -5,6 +5,8 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { fetchUsers } from '../../../userSlice';
 
 const modalStyle = {
   position: 'absolute',
@@ -27,10 +29,9 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
     rolesArray: [],
     profile_pic: null
   });
-  const navigate = useNavigate("")
-
+  const dispatch = useDispatch();
   useEffect(() => {
-    axios.get("http://192.168.1.6:7000/user/get-all-roles", {
+    axios.get("http://192.168.1.22:7000/user/get-all-roles", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
         "Content-Type": "application/json",
@@ -66,13 +67,11 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
     e.preventDefault();
     const updatedFormData = {
       ...formData,
-      rolesArray: formData.rolesArray.map(option => option.value), // Ensure roles are sent as IDs
+      rolesArray: formData.rolesArray.map(option => option.value),
       id: user.user_id
     };
 
-    console.log("Submitting Form Data: ", updatedFormData);
-
-    axios.put(`http://192.168.1.6:7000/user/edit-user/${user.user_id}`, updatedFormData, {
+    axios.put(`http://192.168.1.22:7000/user/edit-user/${user.user_id}`, updatedFormData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem("admin-token")}`
@@ -80,14 +79,14 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
     }).then((response) => {
       console.log("API Response: ", response.data);
       toast.success("User Details Updated Successfully");
-        navigate("/admin-dashboard");
-
       setAllUsers(prevUsers => prevUsers.map(u => u.user_id === user.user_id ? { ...u, ...updatedFormData } : u));
-      onClose();
+      setTimeout(() => {
+        dispatch(fetchUsers());
+        onClose();
+      }, 500);
     }).catch((error) => {
       console.error("API Error: ", error.response.data);
 
-      // Show the error toast message
       toast.error(error.response.data.message);
     });
   };

@@ -6,11 +6,12 @@ import AtmInput from '../../../AtmComponents/AtmInput';
 import AtmButton from '../../../AtmComponents/AtmButton';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate()
 
   const handleLogin = (e) => {
@@ -20,18 +21,18 @@ const AdminLogin = () => {
       password: password,
     };
     axios
-      .post("http://192.168.1.6:7000/user/admin-login", data, {
+      .post("http://192.168.1.22:7000/user/admin-login", data, {
         headers: {
           "Content-Type": "application/json",
         },
       })
       .then((response) => {
-        navigate("/admin-dashboard");
-        toast.success("Login Successful");
         localStorage.setItem("admin-token", response.data.token);
+        toast.success("Login Successful");
+        navigate("/admin-dashboard");
       })
       .catch((error) => {
-        toast.error(error.response.data.message);
+        toast.error(error.response.data.message || "Login failed");
         console.error(error);
       });
   };
@@ -45,7 +46,7 @@ const AdminLogin = () => {
       backgroundPosition: 'center',
     }}
   >
-    
+     <ToastContainer />
     <div className="p-8 rounded-lg shadow-lg max-w-md w-full" style={{
       backgroundColor: 'rgba(120, 120, 120, 0.2)',
       backdropFilter: 'blur(8px)'
@@ -65,15 +66,24 @@ const AdminLogin = () => {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <AtmInput
-          type="password"
-          placeholder="Enter your password"
-          className="mb-4"
-          labelClassName="text-white"
-          label="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="relative mb-4">
+            <AtmInput
+              type={showPassword ? "text" : "password"} // Toggle input type based on state
+              placeholder="Enter your password"
+              className="mb-4 pr-10" // Add padding-right to make space for the icon
+              labelClassName="text-white"
+              label="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+              className="absolute inset-y-0 right-0 flex items-center px-3 pt-3 cursor-pointer"
+            >
+              {showPassword ? <FaEyeSlash className="" /> : <FaEye className="" />}
+            </button>
+          </div>
         <AtmButton
           label="Login"
           type="submit"
@@ -81,7 +91,7 @@ const AdminLogin = () => {
         />
       </form>
     </div>
-    <ToastContainer />
+   
   </div>
   );
 };

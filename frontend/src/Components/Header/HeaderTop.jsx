@@ -9,28 +9,28 @@ function HeaderTop() {
   const navigate = useNavigate();
   const [User, setUser] = useState(null);
 
-  const loggedInUser = useSelector((state) => state.loggedInUser.loggedInUser);
-  useEffect(() => {
-    const requestOptions = {
-      method: "GET",
-      url: `http://localhost:1000/user/get-a-user/${loggedInUser?.userId}`, // Ensure you use the correct URL format including 'http://'
-      headers: {}, // You can add any necessary headers here
-    };
+  // const loggedInUser = useSelector((state) => state.loggedInUser.loggedInUser);
+  // useEffect(() => {
+  //   const requestOptions = {
+  //     method: "GET",
+  //     url: `http://localhost:1000/user/get-a-user/${loggedInUser?.userId}`, 
+  //     headers: {}, 
+  //   };
 
-    axios(requestOptions)
-      .then((response) => {
-        setUser(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+  //   axios(requestOptions)
+  //     .then((response) => {
+  //       setUser(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("user-token");
-    localStorage.removeItem("admin-token");
-    navigate("/");
-  };
+  // const handleLogout = () => {
+  //   localStorage.removeItem("user-token");
+  //   localStorage.removeItem("admin-token");
+  //   navigate("/");
+  // };
 
   return (
     <>
@@ -53,7 +53,7 @@ function HeaderTop() {
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
-                  fill="#efa035"
+                  fill="#207ec6"
                   width={"25"}
                   height={"25"}
                 >
@@ -79,13 +79,13 @@ function HeaderTop() {
             <div className="drop-container">
               <div className="drop-btn name-btn">
                 <div className="profile-img">
-                  <img src={User?.profile_pic} alt="Profile Picture" />
+                  {/* <img src={User?.profile_pic} alt="Profile Picture" /> */}
                 </div>
               </div>
               <div className="drop-list">
                 <div className="image">
-                  <img src={User?.profile_pic} alt="..." />
-                  <div className="manager-name">{User?.name}</div>
+                  {/* <img src={User?.profile_pic} alt="..." />
+                  <div className="manager-name">{User?.name}</div> */}
                 </div>
                 <Link to="#" className="drop-item">
                   <i className="ri-settings-2-line"></i> Settings
@@ -100,7 +100,7 @@ function HeaderTop() {
                   <i className="ri-customer-service-2-line"></i>
                   Helpdesk Personnel
                 </Link>
-                <Link to="/" className="drop-item" onClick={handleLogout}>
+                <Link to="/" className="drop-item" onClick={"handleLogout"}>
                   <i className="ri-logout-circle-line"></i>Logout
                 </Link>
               </div>

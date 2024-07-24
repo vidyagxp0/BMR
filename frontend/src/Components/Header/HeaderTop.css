@@ -63,7 +63,7 @@
     height: 100%;
     width: 10%;
     border-radius: 5px 0px 0px 5px;
-    border-right: 1px #efa035 dashed;
+    border-right: 1px #207ec6 dashed;
   }
   
   .Header_Top .header_inner .center .inputContainer .inputInnerLeft:hover {
@@ -94,7 +94,7 @@
     height: 100%;
     border: none;
     border-radius: 0px 50px 50px 0px;
-    background: #efa035;
+    background: #207ec6;
     color: white;
     font-weight: 900;
     cursor: pointer;
@@ -169,7 +169,7 @@
   }
   
   .drop-container .drop-btn {
-    color: #efa035;
+    color: #207ec6;
     text-align: center;
     border-radius: 50%;
     height: 40px;
@@ -199,7 +199,7 @@
     border-radius: 55px;
     align-items: center;
     justify-content: center;
-    background: #efa035;
+    background: #207ec6;
     color: white;
     background-image: url("amit_guru.jpg");
   }
@@ -250,7 +250,7 @@
   
   .drop-container .drop-list .drop-item:hover {
     background: #118dec36;
-    color: #efa035;
+    color: #207ec6;
   }
   
   .drop-container:hover .drop-list {
