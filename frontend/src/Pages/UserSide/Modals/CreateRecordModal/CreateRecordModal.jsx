@@ -3,40 +3,35 @@ import "../General.css";
 import "./CreateRecordModal.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Modal, Box, Typography, TextField, Button } from '@mui/material';
+import Select from 'react-select';
 
 
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
-function CreateRecordModal(_props) {
-    const sitess = [
-        {
-          id: "1",
-          name: "Site 1"
-        },
-        {
-          id: "2",
-          name: "Site 2"
-        },
-        {
-          id: "3",
-          name: "Site 3"
-        },
-        {
-          id: "4",
-          name: "Site 4"
-        },
-        {
-          id: "5",
-          name: "Site 5"
-        },
-      ];
+function CreateRecordModal({ closeModal, addBMR }) {
+   
   const [division, setDivision] = useState(null);
-  const [processes, setProcesses] = useState([]);
-  const [sites, setSites] = useState(sitess);
   const [project, setProject] = useState("");
   const [processVisible, setProcessVisible] = useState(false);
   const navigate = useNavigate();
   const userDetails = JSON.parse(localStorage.getItem("user-details"));
+  const [bmrName, setBmrName] = useState("");
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    addBMR(bmrName);
+  };
 //   useEffect(() => {
 //     const fetchSites = async () => {
 //       try {
@@ -121,55 +116,43 @@ function CreateRecordModal(_props) {
 
   return (
     <>
-      <div className="custom-modal" id="create-record-modal">
-        <div className="modal-container">
-          <div className="modal-top">
-            <div className="head">Initiate BMR</div>
-          </div>
-
-          <div className="modal-middle">
-            <div className="selection-block">
-              <div className="division">
-                <div className="head">Site/Location</div>
-                <div className="select-list division-list">
-                  {sites.map((item) => (
-                    <div
-                      className={division === item.site ? "active" : ""}
-                      key={item.id}
-                      onClick={() => {
-                        setDivision(item);
-                        setProcessVisible(true);
-                      }}
-                    >
-                      {item.name}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="project">
-                <div className="head">Process</div>
-                <div className="select-list division-list">
-                  {processes.map((item, index) => (
-                    <div
-                      className={project === item.process ? "active" : ""}
-                      key={index}
-                      onClick={() => handleSelectProcess(item)}
-                    >
-                      {item.process}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="modal-bottom">
-            <div className="modal-btn btn-2" onClick={_props.closeModal}>
-              Cancel
-            </div>
-          </div>
+  <Modal open={true} onClose={closeModal}>
+      <Box sx={modalStyle}>
+        <div className="flex justify-center items-center pb-5 font-bold">
+          <Typography variant="h6" component="h2" style={{ fontWeight: 'bold' }}>
+            Add BMR
+          </Typography>
         </div>
-      </div>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="BMR Name"
+            name="bmr_name"
+            fullWidth
+            margin="normal"
+            value={bmrName}
+            onChange={(e) => setBmrName(e.target.value)}
+            InputProps={{
+              style: {
+                height: '48px', 
+              },
+            }}
+            InputLabelProps={{
+              style: {
+                top: '0', 
+              },
+            }}
+          />
+          <div className="flex gap-5">
+            <Button type="button" variant="contained" color="error" fullWidth sx={{ mt: 2 }} onClick={closeModal}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }} >
+              Add BMR
+            </Button>
+          </div>
+        </form>
+      </Box>
+    </Modal>
     </>
   );
 }

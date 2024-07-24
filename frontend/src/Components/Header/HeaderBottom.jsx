@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import CreateRecordModal from "../../Pages/UserSide/Modals/CreateRecordModal/CreateRecordModal";
 
-function HeaderBottom() {
+function HeaderBottom({ openModal }) {
   const [recordModal, setRecordModal] = useState(false);
   const closeRecordModal = () => setRecordModal(false);
   // const loggedInUser = useSelector((state) => state.loggedInUser.loggedInUser);
@@ -17,14 +17,14 @@ function HeaderBottom() {
             (itm) => itm.role_id === 5 || itm.role_id === 1
           ) ? ( */}
           <div className="headerBottomRgt">
-            <div className="themeBtn " onClick={() => setRecordModal(true)}>
+            <div className="themeBtn " onClick={openModal}>
               Create BMR
             </div>
           </div>
           {/* ) : null} */}
         </div>
       </div>
-      {recordModal && <CreateRecordModal closeModal={closeRecordModal} />}
+      
     </>
   );
 }

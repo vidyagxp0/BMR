@@ -19,7 +19,7 @@ const Login = () => {
       password: password,
     };
     axios
-      .post("http://192.168.1.22:7000/user/user-login", data, {
+      .post("http://192.168.1.13:7000/user/user-login", data, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -97,6 +97,16 @@ const Login = () => {
           label="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          InputProps={{
+            style: {
+              height: '48px', // Adjust height
+            },
+          }}
+          InputLabelProps={{
+            style: {
+              top: '0', // Adjust label position
+            },
+          }}
         />
      
          <div className="relative mb-4">
@@ -108,16 +118,26 @@ const Login = () => {
               label="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              InputProps={{
+                style: {
+                  height: '48px', // Adjust height
+                },
+              }}
+              InputLabelProps={{
+                style: {
+                  top: '0', // Adjust label position
+                },
+              }}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)} 
               className="absolute inset-y-0 right-0 flex items-center px-3 pt-3 cursor-pointer"
-            >
+            > 
               {showPassword ? <FaEyeSlash className="" /> : <FaEye className="" />}
             </button>
           </div>
-        <AtmButton
+         <AtmButton
           label="Login"
           type="submit"
           className="w-full mt-4"

@@ -95,8 +95,7 @@ const Dashboard = () => {
   // };
   return (
     <div>
-      <HeaderTop/>
-      <HeaderBottom/>
+    
       <div className="desktop-input-table-wrapper">
         <div className="input-wrapper">
           <div className="group-input-2">

@@ -1,11 +1,10 @@
 import { useState, useEffect, Children } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
-import { FaChevronDown } from "react-icons/fa";
-import { asideLinks } from './SidebarData';
-import './Sidebar.css';
-import { FaChevronUp } from "react-icons/fa";
+import { NavLink, useLocation } from 'react-router-dom';
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { asideLinks } from './UserSidebarData';
+import './UserSidebar.css';
 
-function Sidebar() {
+const UserSidebar = () => {
     const [openItems, setOpenItems] = useState({});
     const location = useLocation();
 
@@ -68,7 +67,7 @@ function Sidebar() {
             } />
         </div>
       </aside>
-    );
+  )
 }
 
-export default Sidebar;
+export default UserSidebar;
