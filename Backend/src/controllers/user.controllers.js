@@ -18,7 +18,7 @@ exports.Adminlogin = async (req, res) => {
   }
 
   // Find user by email using prepared statement approach (assuming a library like Sequelize)
-  User.findOne({ where: { email: email.toLowerCase() } })
+  User.findOne({ where: { email: email.toLowerCase(), isActive: true } })
     .then(async (data) => {
       if (!data) {
         return res
@@ -96,49 +96,52 @@ exports.signup = async (req, res) => {
 
   try {
     // Check if user already exists
-    const existingUser = await User.findOne({ where: { email: email } });
-    if (existingUser) {
-      return res.status(400).json({
-        error: true,
-        message: "User already registered!",
-      });
-    }
+    User.findOne({
+      where: { email: email, isActive: true },
+    }).then(async (existingUser) => {
+      if (existingUser) {
+        return res.status(400).json({
+          error: true,
+          message: "User already registered!",
+        });
+      } else {
+        // Hash the password
+        const salt = await bcrypt.genSalt(10);
+        const hashpass = await bcrypt.hash(password, salt);
 
-    // Hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashpass = await bcrypt.hash(password, salt);
+        // Create the user
+        const newUser = await User.create(
+          {
+            name: name,
+            email: email,
+            password: hashpass,
+            profile_pic: getFileUrl(req?.file),
+          },
+          { transaction }
+        );
 
-    // Create the user
-    const newUser = await User.create(
-      {
-        name: name,
-        email: email,
-        password: hashpass,
-        profile_pic: getFileUrl(req?.file),
-      },
-      { transaction }
-    );
+        // Process roles array
+        for (const role of rolesArray) {
+          const roleId = await Role.findOne({ where: { role_id: role } });
 
-    // Process roles array
-    for (const role of rolesArray) {
-      const roleId = await Role.findOne({ where: { role_id: role } });
+          await UserRole.create(
+            {
+              user_id: newUser.user_id,
+              role_id: roleId.role_id,
+              role: roleId.role,
+            },
+            { transaction }
+          );
+        }
 
-      await UserRole.create(
-        {
-          user_id: newUser.user_id,
-          role_id: roleId.role_id,
-          role: roleId.role,
-        },
-        { transaction }
-      );
-    }
+        // Commit the transaction
+        await transaction.commit();
 
-    // Commit the transaction
-    await transaction.commit();
-
-    return res.status(200).json({
-      error: false,
-      message: "User Registered",
+        return res.status(200).json({
+          error: false,
+          message: "User Registered",
+        });
+      }
     });
   } catch (error) {
     // Rollback the transaction in case of error
@@ -156,6 +159,7 @@ exports.Userlogin = async (req, res) => {
   User.findOne({
     where: {
       email: email.toLowerCase(),
+      isActive: true
     },
     raw: true,
   })
@@ -239,7 +243,7 @@ exports.editUser = async (req, res) => {
 
         await UserRole.create(
           {
-            user_id: newUser.user_id,
+            user_id: req.params.id,
             role_id: roleId.role_id,
             role: roleId.role,
           },
@@ -271,7 +275,7 @@ exports.deleteUser = async (req, res) => {
 
   try {
     const user = await User.findOne(
-      { where: { user_id: req.params.id } },
+      { where: { user_id: req.params.id, isActive: true } },
       { transaction }
     );
     if (!user) {

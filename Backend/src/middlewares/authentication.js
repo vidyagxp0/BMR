@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const config = require('../config/config.json');
+const jwt = require("jsonwebtoken");
+const config = require("../config/config.json");
 
 function checkJwtToken(req, res, next) {
   const token = req.headers.authorization?.split(" ")[1];
@@ -28,6 +28,27 @@ const getFileUrl = (file) => {
   }
 };
 
+function authorizeUserRole(roleId) {
+  return (req, res, next) => {
+    const userRoles = req.user.roles;
 
-module.exports.checkJwtToken = checkJwtToken
-module.exports.getFileUrl = getFileUrl
+    if (hasAccess(userRoles, roleId)) {
+      next(); // User has access, proceed to the next middleware or route handler
+    } else {
+      res
+        .status(403)
+        .json({ message: "Forbidden: You do not have required permissions." });
+    }
+  };
+}
+
+function hasAccess(userRoles, roleId) {
+  return userRoles.some(
+    (role) =>
+      role.role_id === 1 || role.role_id === 6 || role.role_id === roleId
+  );
+}
+
+module.exports.checkJwtToken = checkJwtToken;
+module.exports.getFileUrl = getFileUrl;
+module.exports.authorizeUserRole = authorizeUserRole;
