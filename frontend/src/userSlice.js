@@ -2,9 +2,18 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
 export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
-  const response = await axios.get('http://192.168.1.13:7000/user/get-users', {
+  const response = await axios.get('http://192.168.1.20:7000/user/get-users', {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("admin-token")}`
+    }
+  });
+  return response.data;
+});
+
+export const fetchBmr = createAsyncThunk('bmr/fetchBmr', async () => {
+  const response = await axios.get('http://192.168.1.20:7000/bmr/get-bmr', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("user-token")}`
     }
   });
   return response.data;
@@ -22,6 +31,9 @@ const userSlice = createSlice({
     addUser(state, action) {
       state.users.push(action.payload);
     },
+    addBmr(state, action) {
+      state.users.push(action.payload);
+    },
     updateUser(state, action) {
       const index = state.users.findIndex(user => user.user_id === action.payload.id);
       if (index !== -1) {
@@ -35,5 +47,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { setUsers, addUser, updateUser, deleteUser } = userSlice.actions;
+export const { setUsers, addUser, updateUser, deleteUser,addBmr } = userSlice.actions;
 export default userSlice.reducer; 

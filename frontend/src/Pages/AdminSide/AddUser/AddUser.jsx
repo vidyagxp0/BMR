@@ -23,9 +23,8 @@ const AddUser = () => {
 
   const [roles, setRoles] = useState([]);
   const [errors, setErrors] = useState({});
-
   useEffect(() => {
-    axios.get("http://192.168.1.13:7000/user/get-all-roles", {
+    axios.get("http://192.168.1.20:7000/user/get-all-roles", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
         "Content-Type": "application/json",
@@ -47,7 +46,6 @@ const AddUser = () => {
     if (!formData.email) newErrors.email = "Email is required";
     if (!formData.password) newErrors.password = "Password is required";
     else if (formData.password.length < 8) newErrors.password = "Password must be at least 8 characters long";
-    if (!formData.profile_pic) newErrors.profile_pic = "Profile picture is required";
     if (formData.rolesArray.length === 0) newErrors.rolesArray = "At least one role must be selected";
 
     setErrors(newErrors);
@@ -62,11 +60,13 @@ const AddUser = () => {
   };
 
   const handleSelectChange = (selectedOptions) => {
+    console.log(selectedOptions , "selectedOptions")
     setFormData({
       ...formData,
       rolesArray: selectedOptions ? selectedOptions.map(option => option.value) : []
     });
   };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -77,12 +77,11 @@ const AddUser = () => {
     formDataToSend.append('name', formData.name);
     formDataToSend.append('email', formData.email);
     formDataToSend.append('password', formData.password);
-    formDataToSend.append('profile_pic', formData.profile_pic);
     formData.rolesArray.forEach(role => {
       formDataToSend.append('rolesArray', role);
     });
 
-    axios.post("http://192.168.1.13:7000/user/add-user", formDataToSend, {
+    axios.post("http://192.168.1.20:7000/user/add-user", formDataToSend, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
         "Content-Type": "multipart/form-data",
@@ -150,7 +149,6 @@ const AddUser = () => {
                 id="profile_pic" 
                 onChange={handleFileChange} 
                 labelClassName='text-blue-500'
-                error={errors.profile_pic}
               />
             </div>
             <div className="group-input" style={{ margin: "15px" }}>

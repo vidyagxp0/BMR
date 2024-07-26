@@ -3,156 +3,236 @@ import "../General.css";
 import "./CreateRecordModal.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Modal, Box, Typography, TextField, Button } from '@mui/material';
-import Select from 'react-select';
-
+import { Modal, Box, Typography, TextField, Button } from "@mui/material";
+import Select from "react-select";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { addBmr, addUser, fetchBmr } from "../../../../userSlice";
 
 const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
+  bgcolor: "background.paper",
+  border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };
 
-function CreateRecordModal({ closeModal, addBMR }) {
-   
-  const [division, setDivision] = useState(null);
-  const [project, setProject] = useState("");
-  const [processVisible, setProcessVisible] = useState(false);
+function CreateRecordModal({ onClose, addBMR }) {
   const navigate = useNavigate();
-  const userDetails = JSON.parse(localStorage.getItem("user-details"));
-  const [bmrName, setBmrName] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    reviewers:[{
+      reviewerId:1,
+      status:"pending",
+      comment:null
+    }],
+    approvers: [{
+      approverId:1,
+      status:"pending",
+      comment:null
+    }],
+  });
+  const [reviewers, setReviewers] = useState([]);
+  const [approvers, setApprovers] = useState([]);
+  const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
+  const [isSelectedApprover, setIsSelectedApprover] = useState([]);
+const dispatch = useDispatch();
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    addBMR(bmrName);
+const addBMRs = (e)=> {
+  e.preventDefault();
+    axios.post("http://192.168.1.20:7000/bmr/add-bmr", {
+      name: formData.name,
+      reviewers: formData.reviewers.map((reviewer) => ({
+        reviewerId: reviewer.reviewerId,
+        status: reviewer.status,
+        comment: reviewer.comment
+      })),
+      approvers: formData.approvers.map((approver) => ({
+        approverId: approver.approverId,
+        status: approver.status,
+        comment: approver.comment
+      }))
+    }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+        "Content-Type": "application/json",
+      },
+    }).then((response)=>{
+      console.log(response,"hgjhhjhg")
+      toast.success("BMR added successfully!");
+      dispatch(addBmr(response.data.bmr));
+      setFormData({ name: "", reviewers: [{ reviewerId: 1, status: "pending", comment: null }], approvers: [{ approverId: 1, status: "pending", comment: null }] });
+      setTimeout(() => {
+       
+        onClose()
+      }, 500);
+
+    }).catch((err) =>{
+      console.error(err);
+      toast.error("BMR Already Registered");
+    })
+  }
+
+
+  useEffect(() => {
+    const config = {
+      method: "post",
+      url: "http://192.168.1.20:7000/bmr/get-user-roles",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+        "Content-Type": "application/json",
+      },
+      data: {
+        role_id: 3,
+      },
+    };
+
+    axios(config)
+      .then((response) => {
+        console.log(response, "reeeessssppooonnnnn");
+        const reviewerOptions = [
+          ...new Map(response.data.message.map((role) => [role.user_id, {
+            value: role.user_id,
+            label: `${role.User.name}`,
+          }])).values()
+        ];
+        setReviewers(reviewerOptions);
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
+
+    const newConfig = {
+      method: "post",
+      url: "http://192.168.1.20:7000/bmr/get-user-roles",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+        "Content-Type": "application/json",
+      },
+      data: {
+        role_id: 4,
+      },
+    };
+
+    axios(newConfig)
+      .then((response) => {
+        console.log(response, "response");
+        const approverOptions = [
+          ...new Map(response.data.message.map((role) => [role.user_id, {
+            value: role.user_id,
+            label: `${role.User.name}`,
+          }])).values()
+        ];
+        setApprovers(approverOptions);
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
+  }, []);
+
+
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
-//   useEffect(() => {
-//     const fetchSites = async () => {
-//       try {
-//         const response = await axios.get(
-//           "http://localhost:1000/site/get-sites"
-//         );
-//         const userSiteIds = await userDetails.roles
-//           .filter((role) => role.role_id === 1 || role.role_id === 5)
-//           .map((role) => role.site_id);
 
-//         // Filter sites based on user's roles
-//         const filteredSites = await response.data.message.filter((site) =>
-//           userSiteIds.includes(site.site_id)
-//         );
-
-        
-//         setSites(filteredSites);
-//       } catch (error) {
-//         console.error("Error fetching sites:", error);
-//       }
-//     };
-
-//     fetchSites();
-//   }, []);
-
-//   useEffect(() => {
-//     const fetchProcesses = async () => {
-//       try {
-//         const response = await axios.get(
-//           "http://localhost:1000/differential-pressure/get-processes"
-//         );
-
-//         const filteredProcessIds = userDetails.roles
-//           .filter(
-//             (role) =>
-//               (role.role_id === 1 || role.role_id === 5) && role.site_id === division.site_id
-//           )
-//           .map((role) => role.process_id);
-
-//         // Filter processes based on user's roles
-//         const filteredProcesses = response.data.message.filter((process) =>
-//           filteredProcessIds.includes(process.process_id)
-//         );
-//         setProcesses(filteredProcesses);
-//       } catch (error) {
-//         console.error("Error fetching processes:", error);
-//       }
-//     };
-
-//     if (processVisible) {
-//       fetchProcesses();
-//     }
-//   }, [processVisible]);
-
-//   const handleSelectProcess = (element) => {
-//     setProject(element.process);
-//     switch (element.process_id) {
-//       case 1:
-//         navigate("/differential-pressure-record", {
-//           state: division,
-//         });
-//         break;
-//       case 2:
-//         navigate("/area-and-equipment-panel", {
-//           state: division,
-//         });
-//         break;
-//       case 3:
-//         navigate("/equipment-cleaning-checklist", {
-//           state: division,
-//         });
-//         break;
-//       case 4:
-//         navigate("/temperature-records", {
-//           state: division,
-//         });
-//         break;
-//       default:
-//         break;
-//     }
-//   };
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      reviewer: isSelectedReviewer,
+      approver: isSelectedApprover,
+    });
+  }, [isSelectedReviewer, isSelectedApprover]);
 
   return (
     <>
-  <Modal open={true} onClose={closeModal}>
-      <Box sx={modalStyle}>
-        <div className="flex justify-center items-center pb-5 font-bold">
-          <Typography variant="h6" component="h2" style={{ fontWeight: 'bold' }}>
-            Add BMR
-          </Typography>
-        </div>
-        <form onSubmit={handleSubmit}>
-          <TextField
-            label="BMR Name"
-            name="bmr_name"
-            fullWidth
-            margin="normal"
-            value={bmrName}
-            onChange={(e) => setBmrName(e.target.value)}
-            InputProps={{
-              style: {
-                height: '48px', 
-              },
-            }}
-            InputLabelProps={{
-              style: {
-                top: '0', 
-              },
-            }}
-          />
-          <div className="flex gap-5">
-            <Button type="button" variant="contained" color="error" fullWidth sx={{ mt: 2 }} onClick={closeModal}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }} >
+      <Modal open={true} onClose={onClose}>
+        <Box sx={modalStyle}>
+          <div className="flex justify-center items-center pb-5 font-bold">
+            <Typography
+              variant="h6"
+              component="h2"
+              style={{ fontWeight: "bold" }}
+            >
               Add BMR
-            </Button>
+            </Typography>
           </div>
-        </form>
-      </Box>
-    </Modal>
+          <form onSubmit={addBMRs}>
+            <TextField
+              label="BMR Name"
+              name="name"
+              fullWidth
+              margin="normal"
+              value={formData.name}
+              onChange={handleChange}
+              InputProps={{
+                style: {
+                  height: "48px",
+                },
+              }}
+              InputLabelProps={{
+                style: {
+                  top: "0",
+                },
+              }}
+            />
+            <div>
+              <label htmlFor="" className="text-sm text-blue-500">
+                Reviewer
+              </label>
+              <Select
+                name="reviewers"
+                isMulti
+                options={reviewers}
+                value={isSelectedReviewer}
+                onChange={(selected) => setIsSelectedReviewer(selected)}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="" className="text-sm text-blue-500">
+                Approver
+              </label>
+              <Select
+                name="approvers"
+                options={approvers}
+                isMulti
+                value={isSelectedApprover}
+                onChange={(selected) => setIsSelectedApprover(selected)}
+              />
+            </div>
+
+            <div className="flex gap-5">
+              <Button
+                type="button"
+                variant="contained"
+                color="error"
+                fullWidth
+                sx={{ mt: 2 }}
+                onClick={onClose}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{ mt: 2 }}
+              >
+                Add BMR
+              </Button>
+            </div>
+          </form>
+        </Box>
+      </Modal>
     </>
   );
 }

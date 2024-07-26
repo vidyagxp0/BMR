@@ -19,7 +19,7 @@ const Login = () => {
       password: password,
     };
     axios
-      .post("http://192.168.1.13:7000/user/user-login", data, {
+      .post("http://192.168.1.20:7000/user/user-login", data, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -73,7 +73,7 @@ const Login = () => {
       backdropFilter: 'blur(8px)'
     }}>
       <div className="flex justify-center items-center">
-      <img src="/vidyalogo2.png" alt="" srcset="" className='w-80 '/>
+      <img src="/vidyalogo2.png" alt="" className='w-80 '/>
       </div>
       <h2
       className="text-2xl font-[900] mb-6 text-center login"
