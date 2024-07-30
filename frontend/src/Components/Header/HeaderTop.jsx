@@ -34,7 +34,7 @@ function HeaderTop() {
 
   return (
     <>
-      <div id="Header_Top" className="Header_Top">
+      <div id="Header_Top" className="Header_Top bg-white">
         <div className="header_inner">
           <div className="left">
             <div className="logo">

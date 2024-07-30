@@ -7,7 +7,7 @@ import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import Select from "react-select";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import { addBmr, addUser, fetchBmr } from "../../../../userSlice";
+import { addBmr} from "../../../../userSlice";
 
 const modalStyle = {
   position: "absolute",
@@ -44,44 +44,41 @@ const dispatch = useDispatch();
 
 const addBMRs = (e)=> {
   e.preventDefault();
-    axios.post("http://192.168.1.20:7000/bmr/add-bmr", {
-      name: formData.name,
-      reviewers: formData.reviewers.map((reviewer) => ({
-        reviewerId: reviewer.reviewerId,
-        status: reviewer.status,
-        comment: reviewer.comment
-      })),
-      approvers: formData.approvers.map((approver) => ({
-        approverId: approver.approverId,
-        status: approver.status,
-        comment: approver.comment
-      }))
-    }, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-        "Content-Type": "application/json",
-      },
-    }).then((response)=>{
-      console.log(response,"hgjhhjhg")
-      toast.success("BMR added successfully!");
-      dispatch(addBmr(response.data.bmr));
-      setFormData({ name: "", reviewers: [{ reviewerId: 1, status: "pending", comment: null }], approvers: [{ approverId: 1, status: "pending", comment: null }] });
-      setTimeout(() => {
-       
-        onClose()
-      }, 500);
-
-    }).catch((err) =>{
-      console.error(err);
-      toast.error("BMR Already Registered");
-    })
+  axios.post("http://192.168.1.15:7000/bmr/add-bmr", {
+    name: formData.name,
+    reviewers: formData.reviewers.map((reviewer) => ({
+      reviewerId: reviewer.reviewerId,
+      status: reviewer.status,
+      comment: reviewer.comment
+    })),
+    approvers: formData.approvers.map((approver) => ({
+      approverId: approver.approverId,
+      status: approver.status,
+      comment: approver.comment
+    }))
+  }, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    toast.success("BMR added successfully!");
+    dispatch(addBmr(response.data.bmr));
+    setFormData({ name: "", reviewers: [{ reviewerId: 1, status: "pending", comment: null }], approvers: [{ approverId: 1, status: "pending", comment: null }] });
+    setTimeout(() => {
+      onClose();
+    }, 1000);
+  }).catch((err) => {
+    console.error(err);
+    toast.error("BMR Already Registered");
+  });
   }
 
 
   useEffect(() => {
     const config = {
       method: "post",
-      url: "http://192.168.1.20:7000/bmr/get-user-roles",
+      url: "http://192.168.1.15:7000/bmr/get-user-roles",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",
@@ -93,7 +90,6 @@ const addBMRs = (e)=> {
 
     axios(config)
       .then((response) => {
-        console.log(response, "reeeessssppooonnnnn");
         const reviewerOptions = [
           ...new Map(response.data.message.map((role) => [role.user_id, {
             value: role.user_id,
@@ -108,7 +104,7 @@ const addBMRs = (e)=> {
 
     const newConfig = {
       method: "post",
-      url: "http://192.168.1.20:7000/bmr/get-user-roles",
+      url: "http://192.168.1.15:7000/bmr/get-user-roles",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",

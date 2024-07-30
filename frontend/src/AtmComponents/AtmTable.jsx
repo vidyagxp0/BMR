@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(data.length / rowsPerPage);
+  const navigate = useNavigate();
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -14,6 +16,10 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
+  };
+
+  const handleBMRClick = (row) => {
+    navigate(`/details/${row.id}`); // Navigate to details page with row.id
   };
 
   const paginatedData = data.slice(
@@ -53,6 +59,14 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
                   <td
                     key={colIndex}
                     className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border border-gray-300"
+                    onClick={
+                      column.header === "BMR NAME"
+                        ? () => handleBMRClick(row)
+                        : null
+                    }
+                    style={{
+                      cursor: column.header === "BMR Name" ? "pointer" : "default"
+                    }}
                   >
                     {column.Cell
                       ? column.Cell({ row: { original: row } })

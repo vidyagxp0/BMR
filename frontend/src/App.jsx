@@ -13,6 +13,7 @@ import ProtectedAdminRoute from "./Pages/ProtectedRoute/ProtectedAdminRoute";
 import WrapperUser from "./Pages/WrapperUser";
 import BMRProcess from "./Pages/UserSide/pages/Process/BMRProcess";
 import BMRDetails from "./Pages/UserSide/pages/BMRDetails/BMRDetails";
+import BMRProcessDetails from "./Pages/UserSide/pages/Process/BMRProcessDetails";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/process/bmr_process" element={<BMRProcess />} />
           <Route path="/process/bmr_details" element={<BMRDetails />} />
+          <Route path="/process/test" element={<BMRProcessDetails />} />
           </Route>
          
           <Route path="/admin-login" element={<AdminLogin />} />

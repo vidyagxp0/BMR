@@ -1,22 +1,21 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { deleteUser, fetchUsers } from '../../../userSlice';
+import { deleteUser, fetchBmr, fetchUsers } from '../../../../userSlice';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const DeleteUserModal = ({ onClose, id, setAllUsers }) => {
+const DeleteUserModal = ({ onClose, id, setData }) => {
   const dispatch = useDispatch();
   const handleDelete = () => {
-    axios.delete(`http://192.168.1.15:7000/user/delete-user/${id}`, {
+    axios.delete(`http://192.168.1.15:7000/bmr/delete-bmr/${id}`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem("admin-token")}`
+        Authorization: `Bearer ${localStorage.getItem("user-token")}`
       },
     }).then((response) => {
-      toast.success("User deleted successfully!");
-      setAllUsers((previousUsers) => previousUsers.filter(user => user.user_id !== id));
-    
+      toast.success("BMR deleted successfully!");
+      setData((previousData) => previousData.filter(user => user.bmr_id !== id));
       setTimeout(() => {
         onClose();
         dispatch(deleteUser(id));
@@ -28,6 +27,7 @@ const DeleteUserModal = ({ onClose, id, setAllUsers }) => {
       console.error(error);
     });
   };
+  
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">

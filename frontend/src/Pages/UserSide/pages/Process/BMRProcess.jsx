@@ -4,17 +4,84 @@ import AtmTable from "../../../../AtmComponents/AtmTable";
 import CreateRecordModal from "../../Modals/CreateRecordModal/CreateRecordModal";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import EditRecordModal from "../../Modals/CreateRecordModal/EditRecordModal";
+import DeleteUserModal from "../../Modals/CreateRecordModal/DeleteUserModal";
 const BMRProcess = () => {
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  console.log(data, "data");
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [showDeleteUser, setShowDeleteUser] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const navigate = useNavigate()
 
   const columns = [
-    { header: "BMR Name", accessor: "name" },
+    { header: "BMR Name", accessor: "name" ,Cell: ({ row }) => {
+      return (
+        <span
+          onClick={() => navigate("/process/test")}
+          
+          className="cursor-pointer hover:text-blue-500"
+        >
+          {row.original.name}
+        </span>
+      );
+    },
+  },
     { header: "Status", accessor: "status" },
     { header: "Date Of Initiation", accessor: "date_of_initiation" },
-    { header: "Actions", accessor: "actions" },
+    { header: "Actions", accessor: "actions",
+      Cell: ({ row }) => {
+        const user = row.original;
+        return (
+          <div className="flex space-x-2">
+         
+            <button
+              onClick={() => {
+                setSelectedUser(user);
+                setIsEditModalOpen(true);
+              }}
+              className="bg-indigo-600 text-white px-2 py-1 rounded hover:bg-indigo-700"
+            >
+              Edit
+            </button>
+            
+            <button
+              onClick={() => {
+                setSelectedUser(user);
+                setShowDeleteUser(true)
+              }}
+              className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
+            >
+              Delete
+            </button>
+          </div>
+
+        );
+      },
+
+     },
   ];
+
+  const fetchBMRData = () => {
+    axios
+      .get("http://192.168.1.15:7000/bmr/get-all-bmr", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+        },
+      })
+      .then((response) => {
+        setData(response.data.message);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Error Fetching BMR");
+      });
+  };
+
+  useEffect(() => {
+    fetchBMRData();
+  }, []);
 
   const handleAddBMR = (
     name,
@@ -34,25 +101,13 @@ const BMRProcess = () => {
         date_of_initiation,
         reviewers: reviewerNames,
         approvers: approverNames,
-        actions: "Edit/Delete",
       },
     ]);
     setIsModalOpen(false);
+    fetchBMRData();
   };
 
-  useEffect(()=>{
-    axios.get("http://192.168.1.20:7000/bmr/get-all-bmr", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-      },
-    }).then((response) => {
-      setData(response.data.message)
-      console.log(response.data.message, "response")
-    }).catch((error)=>{
-      console.log(error)
-      toast.error("Error Fetching BMR")
-    })
-  },[])
+
 
 
   return (
@@ -61,10 +116,23 @@ const BMRProcess = () => {
       <AtmTable columns={columns} data={data} />
       {isModalOpen && (
         <CreateRecordModal
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {setIsModalOpen(false);fetchBMRData()} }
           addBMR={handleAddBMR}
         />
       )}
+
+      {isEditModalOpen && (
+        <EditRecordModal onClose={() => setIsEditModalOpen(false)} bmrData={selectedUser}/>
+      )
+        }
+        {showDeleteUser&&(
+          <DeleteUserModal 
+          user={selectedUser}
+          onClose={() => setShowDeleteUser(false)}
+          id={selectedUser?.bmr_id}
+          setData={setData}
+          />
+        )}
     </div>
   );
 };
