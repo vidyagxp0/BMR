@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import EditRecordModal from "../../Modals/CreateRecordModal/EditRecordModal";
 import DeleteUserModal from "../../Modals/CreateRecordModal/DeleteUserModal";
+
 const BMRProcess = () => {
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -63,9 +64,10 @@ const BMRProcess = () => {
      },
   ];
 
+  console.log(data,"<<<<<<<<<<<>>>>>>>>>>>")
   const fetchBMRData = () => {
     axios
-      .get("http://192.168.1.15:7000/bmr/get-all-bmr", {
+      .get("http://192.168.1.14:7000/bmr/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -82,7 +84,6 @@ const BMRProcess = () => {
   useEffect(() => {
     fetchBMRData();
   }, []);
-
   const handleAddBMR = (
     name,
     reviewers,
@@ -122,17 +123,20 @@ const BMRProcess = () => {
       )}
 
       {isEditModalOpen && (
-        <EditRecordModal onClose={() => setIsEditModalOpen(false)} bmrData={selectedUser}/>
-      )
-        }
-        {showDeleteUser&&(
-          <DeleteUserModal 
+        <EditRecordModal 
+          onClose={() => { setIsEditModalOpen(false); fetchBMRData(); }} 
+          bmrData={selectedUser}
+          fetchBMRData={fetchBMRData} // Passing the fetch function to the modal
+        />
+      )}
+      {showDeleteUser && (
+        <DeleteUserModal 
           user={selectedUser}
           onClose={() => setShowDeleteUser(false)}
           id={selectedUser?.bmr_id}
           setData={setData}
-          />
-        )}
+        />
+      )}
     </div>
   );
 };

@@ -19,7 +19,7 @@ const Login = () => {
       password: password,
     };
     axios
-      .post("http://192.168.1.15:7000/user/user-login", data, {
+      .post("http://192.168.1.14:7000/user/user-login", data, {
         headers: {
           "Content-Type": "application/json",
         },

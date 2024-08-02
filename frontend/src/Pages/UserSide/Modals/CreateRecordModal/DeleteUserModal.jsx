@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { deleteUser, fetchBmr, fetchUsers } from '../../../../userSlice';
+import { deleteBmr, fetchBmr } from '../../../../userSlice';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const DeleteUserModal = ({ onClose, id, setData }) => {
   const dispatch = useDispatch();
   const handleDelete = () => {
-    axios.delete(`http://192.168.1.15:7000/bmr/delete-bmr/${id}`, {
+    axios.delete(`http://192.168.1.14:7000/bmr/delete-bmr/${id}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem("user-token")}`
@@ -18,8 +18,8 @@ const DeleteUserModal = ({ onClose, id, setData }) => {
       setData((previousData) => previousData.filter(user => user.bmr_id !== id));
       setTimeout(() => {
         onClose();
-        dispatch(deleteUser(id));
-        dispatch(fetchUsers());
+        dispatch(deleteBmr(id));
+        dispatch(fetchBmr());
        
       }, 1000);
     }).catch((error) => {

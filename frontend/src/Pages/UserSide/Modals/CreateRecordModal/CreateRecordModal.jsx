@@ -21,20 +21,12 @@ const modalStyle = {
   p: 4,
 };
 
-function CreateRecordModal({ onClose, addBMR }) {
+function CreateRecordModal({ onClose }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
-    reviewers:[{
-      reviewerId:1,
-      status:"pending",
-      comment:null
-    }],
-    approvers: [{
-      approverId:1,
-      status:"pending",
-      comment:null
-    }],
+    reviewers: [],
+    approvers: [],
   });
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
@@ -44,17 +36,17 @@ const dispatch = useDispatch();
 
 const addBMRs = (e)=> {
   e.preventDefault();
-  axios.post("http://192.168.1.15:7000/bmr/add-bmr", {
+  axios.post("http://192.168.1.14:7000/bmr/add-bmr", {
     name: formData.name,
-    reviewers: formData.reviewers.map((reviewer) => ({
-      reviewerId: reviewer.reviewerId,
-      status: reviewer.status,
-      comment: reviewer.comment
+    reviewers: isSelectedReviewer.map((reviewer) => ({
+      reviewerId: reviewer.value,
+      status: "pending",
+      comment: null
     })),
-    approvers: formData.approvers.map((approver) => ({
-      approverId: approver.approverId,
-      status: approver.status,
-      comment: approver.comment
+    approvers: isSelectedApprover.map((approver) => ({
+      approverId: approver.value,
+      status: "pending",
+      comment: null
     }))
   }, {
     headers: {
@@ -64,7 +56,7 @@ const addBMRs = (e)=> {
   }).then((response) => {
     toast.success("BMR added successfully!");
     dispatch(addBmr(response.data.bmr));
-    setFormData({ name: "", reviewers: [{ reviewerId: 1, status: "pending", comment: null }], approvers: [{ approverId: 1, status: "pending", comment: null }] });
+    setFormData({ name: "", reviewers: [], approvers: [] });
     setTimeout(() => {
       onClose();
     }, 1000);
@@ -78,7 +70,7 @@ const addBMRs = (e)=> {
   useEffect(() => {
     const config = {
       method: "post",
-      url: "http://192.168.1.15:7000/bmr/get-user-roles",
+      url: "http://192.168.1.14:7000/bmr/get-user-roles",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",
@@ -104,7 +96,7 @@ const addBMRs = (e)=> {
 
     const newConfig = {
       method: "post",
-      url: "http://192.168.1.15:7000/bmr/get-user-roles",
+      url: "http://192.168.1.14:7000/bmr/get-user-roles",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",
