@@ -1,14 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AtmButton from '../../../../AtmComponents/AtmButton';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 
-const AddTabModal = ({ closeModal, addTab }) => {
+ const AddTabModal = ({ closeModal, addTab }) => {
   const [tabName, setTabName] = useState("");
-
-  const handleSave = () => {
-    addTab(tabName);
-    closeModal();
+  const { bmr_id } = useParams();
+  const handleSave = async () => {
+    try {
+      const response = await axios.post("http://192.168.1.24:7000/bmr/add-bmr-tab", 
+        {
+          bmr_id: bmr_id,
+          tab_name: tabName
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      addTab(tabName);
+      closeModal();
+      console.log(response.data); 
+    } catch (error) {
+      console.error("Error adding tab:", error);
+    }
   };
+
+  useEffect(()=>{
+    handleSave()
+  },[])
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-filter backdrop-blur-sm">
@@ -121,22 +143,21 @@ const BMRProcessDetails = () => {
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [tabs, setTabs] = useState([
-    "General Information", 
-    "Details", 
-    "Initiator Remarks", 
-    "Reviewer Remarks", 
+    "General Information",
+    "Details",
+    "Initiator Remarks",
+    "Reviewer Remarks",
     "Approver Remarks"
   ]);
   const [flowoTabs, setFlowoTabs] = useState([
-    "General Information", 
-    "Details", 
-    "Initiator Remarks", 
-    "Reviewer Remarks", 
-    "Approver Remarks"
+    "Initiator",
+    "Reviewer",
+    "Approver",
+
   ]);
 
-  const [newTab , setNewtab] = useState([])
-  const [newFields , setNewFields] = useState([])
+  const [newTab, setNewtab] = useState([])
+  const [newFields, setNewFields] = useState([])
   const [fields, setFields] = useState({
     "General Information": [
       { fieldName: "Initiator", fieldType: "text", options: [], isMandatory: false },
@@ -157,7 +178,7 @@ const BMRProcessDetails = () => {
   const [showForm, setShowForm] = useState("default");
   
   const navigate = useNavigate();
-  
+
   const addTab = (tabName) => {
     if (!newTab.includes(tabName)) {
       // Add the new tab and initialize its fields
@@ -165,36 +186,38 @@ const BMRProcessDetails = () => {
       setNewFields({ ...newFields, [tabName]: [] });
     }
   };
-  
-  const addField = (field) => { 
+
+  const addField = (field) => {
     // Add the new field to the active tab
     setNewFields({
       ...newFields,
       [activeTab]: [...newFields[activeTab], field],
     });
   };
-  
+
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
-  
+
   const handleNext = () => {
     const currentIndex = tabs.indexOf(activeTab);
     if (currentIndex < tabs.length - 1) {
       setActiveTab(tabs[currentIndex + 1]);
     }
   };
-  
+
   const handleBack = () => {
     const currentIndex = tabs.indexOf(activeTab);
     if (currentIndex > 0) {
       setActiveTab(tabs[currentIndex - 1]);
     }
   };
-  
+
   const isLastTab = activeTab === tabs[tabs.length - 1];
   const isFirstTab = activeTab === tabs[0];
+
   
+
   return (
     <div className="p-4 relative h-full">
       <header className='bg-gray-200 w-full shadow-lg flex justify-between items-center p-4 mb-4'>
@@ -217,19 +240,19 @@ const BMRProcessDetails = () => {
       </header>
       {showForm === "default" && (
         <div className="flex gap-4 mb-4">
-          {tabs.map((tab, index) => (
+          {flowoTabs.map((tab, index) => (
             <button
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${activeTab === tab ? 'bg-gray-400 text-white' : 'bg-white text-gray-700'}`}
+              className={`py-2 px-4 rounded-full border-2 border-black ${activeTab === tab ? 'bg-gray-400 text-white' : 'bg-gray-200 text-gray-700'}`}
             >
               {tab}
             </button>
           ))}
         </div>
       )}
-  
+
       {showForm === "default" && (
         <div className="flex gap-4 mb-4">
           {tabs.map((tab, index) => (
@@ -237,7 +260,7 @@ const BMRProcessDetails = () => {
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${activeTab === tab ? 'bg-gray-400 text-white' : 'bg-white text-gray-700'}`}
+              className={`py-2 px-4 rounded-full border-2 border-black ${activeTab === tab ? 'bg-gray-400 text-white' : 'bg-gray-200 text-gray-700'}`}
             >
               {tab}
             </button>
@@ -258,7 +281,7 @@ const BMRProcessDetails = () => {
           ))}
         </div>
       )}
-  
+
       {showForm === "default" && fields[activeTab]?.length > 0 && (
         <div className="grid grid-cols-2 gap-4">
           {fields[activeTab].map((field, index) => (
@@ -290,7 +313,7 @@ const BMRProcessDetails = () => {
         </div>
       )}
 
-{showForm === "sendForm" && newFields[activeTab] && (
+      {showForm === "sendForm" && newFields[activeTab] && (
         <div className="grid grid-cols-2 gap-4">
           {newFields[activeTab].map((field, index) => (
             <div key={index} className="p-4 rounded bg-white shadow border border-gray-300">
@@ -320,10 +343,10 @@ const BMRProcessDetails = () => {
           ))}
         </div>
       )}
-  
+
       {isAddTabModalOpen && <AddTabModal closeModal={() => setIsAddTabModalOpen(false)} addTab={addTab} />}
       {isAddFieldModalOpen && <AddFieldModal closeModal={() => setIsAddFieldModalOpen(false)} addField={addField} />}
-  
+
       {showForm && (
         <div className="absolute bottom-4 right-4 flex space-x-2">
           <AtmButton label="Save" onClick={() => { }} className='bg-blue-500 hover:bg-blue-700 px-4 py-2' />

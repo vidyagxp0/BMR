@@ -20,7 +20,7 @@ const BMRProcess = () => {
     { header: "BMR Name", accessor: "name" ,Cell: ({ row }) => {
       return (
         <span
-          onClick={() => navigate("/process/test")}
+          onClick={() => {navigate(`/process/processdetails/${row.original.bmr_id}`); }}
           
           className="cursor-pointer hover:text-blue-500"
         >
@@ -67,7 +67,7 @@ const BMRProcess = () => {
   console.log(data,"<<<<<<<<<<<>>>>>>>>>>>")
   const fetchBMRData = () => {
     axios
-      .get("http://192.168.1.14:7000/bmr/get-all-bmr", {
+      .get("http://192.168.1.24:7000/bmr/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -126,7 +126,7 @@ const BMRProcess = () => {
         <EditRecordModal 
           onClose={() => { setIsEditModalOpen(false); fetchBMRData(); }} 
           bmrData={selectedUser}
-          fetchBMRData={fetchBMRData} // Passing the fetch function to the modal
+          fetchBMRData={fetchBMRData}
         />
       )}
       {showDeleteUser && (
@@ -137,6 +137,7 @@ const BMRProcess = () => {
           setData={setData}
         />
       )}
+      
     </div>
   );
 };

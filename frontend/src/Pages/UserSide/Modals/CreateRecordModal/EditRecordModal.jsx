@@ -47,30 +47,29 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         comment: null
       }))
     };
-    
+
     console.log('Updated BMR Data:', updatedBMRData); // Debug log
 
-    axios.put(`http://192.168.1.14:7000/bmr/edit-bmr/${bmrData.bmr_id}`, updatedBMRData, {
+    axios.put(`http://192.168.1.24:7000/bmr/edit-bmr/${bmrData.bmr_id}`, updatedBMRData, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",
       },
     }).then((response) => {
-        toast.success("BMR updated successfully!");
-        console.log('Response Data:', response.data); // Debug log
-        dispatch(updateBmr(response.data.bmr));
-        fetchBMRData(); // Refresh data
+      dispatch(updateBmr(response.data.bmr));
+      fetchBMRData(); // Refresh data 
+      toast.success("BMR updated successfully!");
         onClose();
-      }).catch((err) => {
-        console.error('Error updating BMR:', err.response ? err.response.data : err); // Improved error log
-        toast.error("Failed to update BMR");
-      });
+    }).catch((err) => {
+      console.error('Error updating BMR:', err.response ? err.response.data : err); // Improved error log
+      toast.error("Failed to update BMR");
+    });
   }
 
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const reviewerResponse = await axios.post("http://192.168.1.14:7000/bmr/get-user-roles", {
+        const reviewerResponse = await axios.post("http://192.168.1.24:7000/bmr/get-user-roles", {
           role_id: 3,
         }, {
           headers: {
@@ -84,7 +83,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         }));
         setReviewers(reviewerOptions);
 
-        const approverResponse = await axios.post("http://192.168.1.14:7000/bmr/get-user-roles", {
+        const approverResponse = await axios.post("http://192.168.1.24:7000/bmr/get-user-roles", {
           role_id: 4,
         }, {
           headers: {

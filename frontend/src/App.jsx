@@ -25,7 +25,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/process/bmr_process" element={<BMRProcess />} />
           <Route path="/process/bmr_details" element={<BMRDetails />} />
-          <Route path="/process/test" element={<BMRProcessDetails />} />
+          <Route path="/process/processdetails/:bmr_id" element={<BMRProcessDetails />} />
           </Route>
          
           <Route path="/admin-login" element={<AdminLogin />} />
