@@ -64,10 +64,10 @@ const BMRProcess = () => {
      },
   ];
 
-  console.log(data,"<<<<<<<<<<<>>>>>>>>>>>")
+  console.log(data,"tab")
   const fetchBMRData = () => {
     axios
-      .get("http://192.168.1.24:7000/bmr/get-all-bmr", {
+      .get("http://192.168.1.17:7000/bmr/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -90,6 +90,7 @@ const BMRProcess = () => {
     approvers,
     status,
     date_of_initiation,
+    bmr_tab_id
   ) => {
     const reviewerNames = reviewers.map((rev) => rev.label).join(", ");
     const approverNames = approvers.map((app) => app.label).join(", ");
@@ -102,6 +103,7 @@ const BMRProcess = () => {
         date_of_initiation,
         reviewers: reviewerNames,
         approvers: approverNames,
+        bmr_tab_id,
       },
     ]);
     setIsModalOpen(false);
@@ -127,6 +129,7 @@ const BMRProcess = () => {
           onClose={() => { setIsEditModalOpen(false); fetchBMRData(); }} 
           bmrData={selectedUser}
           fetchBMRData={fetchBMRData}
+          bmr_tab_id={selectedUser?.bmr_tab_id} 
         />
       )}
       {showDeleteUser && (
