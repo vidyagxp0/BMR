@@ -18,6 +18,13 @@ router.post(
 );
 
 router.post(
+  "/add-bmr-section",
+  Auth.checkJwtToken,
+  Auth.authorizeUserRole(2),
+  BmrController.postBMRSection
+);
+
+router.post(
   "/add-bmr-field",
   Auth.checkJwtToken,
   Auth.authorizeUserRole(2),
@@ -36,6 +43,13 @@ router.put(
   Auth.checkJwtToken,
   Auth.authorizeUserRole(2),
   BmrController.editBMRTab
+);
+
+router.put(
+  "/edit-bmr-section/:id",
+  Auth.checkJwtToken,
+  Auth.authorizeUserRole(2),
+  BmrController.editBMRSection
 );
 
 router.put(
@@ -60,6 +74,13 @@ router.delete(
 );
 
 router.delete(
+  "/delete-bmr-section/:id",
+  Auth.checkJwtToken,
+  Auth.authorizeUserRole(2),
+  BmrController.deleteBMRSection
+);
+
+router.delete(
   "/delete-bmr-field/:id",
   Auth.checkJwtToken,
   Auth.authorizeUserRole(2),
@@ -76,7 +97,7 @@ router.put(
 );
 
 router.put(
-  "/send-BMRfrom-review-to-open",
+  "/send-BMR-from-review-to-open",
   Auth.checkJwtToken,
   Auth.authorizeUserRole(3),
   BmrController.SendBMRfromReviewToOpen

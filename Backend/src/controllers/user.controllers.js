@@ -59,7 +59,7 @@ exports.Adminlogin = async (req, res) => {
 
         // Generate JWT token
         const token = jwt.sign(
-          { userId: data.user_id, roles: userRoles },
+          { userId: data.user_id },
           config.development.JWT_SECRET,
           { expiresIn: "24h" }
         );
@@ -171,14 +171,8 @@ exports.Userlogin = async (req, res) => {
             message: "Invalid Password!",
           });
         } else {
-          let userRoles = await UserRole.findAll({
-            where: {
-              user_id: data?.user_id,
-            },
-            attributes: { exclude: ["createdAt", "updatedAt"] },
-          });
           const token = jwt.sign(
-            { userId: data.user_id, roles: userRoles },
+            { userId: data.user_id },
             config.development.JWT_SECRET,
             { expiresIn: "24h" }
           );

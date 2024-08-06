@@ -1,6 +1,7 @@
 const BMR = require("../models/bmr.model");
 const BMR_field = require("../models/bmr_fields.model");
 const BMR_Tab = require("../models/bmr_tabs.model");
+const BMR_section = require("../models/bmr_sections.model");
 const UserRole = require("../models/userRole.model");
 const { sequelize } = require("../config/db");
 const User = require("../models/user.model");
@@ -42,8 +43,6 @@ exports.postBMR = (req, res) => {
 exports.postBMRTab = (req, res) => {
   let { bmr_id, tab_name } = req.body;
 
-  console.log(bmr_id, tab_name);
-
   if (!bmr_id || !tab_name) {
     return res.status(400).json({
       error: true,
@@ -69,10 +68,41 @@ exports.postBMRTab = (req, res) => {
     });
 };
 
+exports.postBMRSection = (req, res) => {
+  let { bmr_id, bmr_tab_id, section_name, limit } = req.body;
+
+  if (!bmr_id || !section_name || !bmr_tab_id || !limit) {
+    return res.status(400).json({
+      error: true,
+      message: "Please Provide proper details",
+    });
+  }
+
+  BMR_section.create({
+    bmr_id: bmr_id,
+    section_name: section_name,
+    bmr_tab_id: bmr_tab_id,
+    limit: limit,
+  })
+    .then(() => {
+      res.status(200).json({
+        error: false,
+        message: "BMR Section created successfully!!",
+      });
+    })
+    .catch((e) => {
+      res.status(400).json({
+        error: true,
+        message: `Error creating BMR Section: ${e}`,
+      });
+    });
+};
+
 exports.postBMRField = (req, res) => {
   let {
     bmr_id,
     bmr_tab_id,
+    bmr_section_id,
     field_type,
     label,
     placeholder,
@@ -87,7 +117,7 @@ exports.postBMRField = (req, res) => {
     acceptsMultiple,
   } = req.body;
 
-  if (!bmr_id || !bmr_tab_id || !label || !isRequired) {
+  if (!bmr_id || !bmr_tab_id || !bmr_section_id || !label || !isRequired) {
     return res.status(400).json({
       error: true,
       message: "Please Provide a proper details",
@@ -97,6 +127,7 @@ exports.postBMRField = (req, res) => {
   BMR_field.create({
     bmr_id: bmr_id,
     bmr_tab_id: bmr_tab_id,
+    bmr_section_id: bmr_section_id,
     field_type: field_type,
     label: label,
     placeholder: placeholder,
@@ -125,22 +156,21 @@ exports.postBMRField = (req, res) => {
 };
 
 exports.editBMR = (req, res) => {
-  const { bmr_id } = req.params;
-  const { name, reviewer, approver, initiatorComment } = req.body;
+  const bmr_id = req.params.id;
+  const { name, reviewers, approvers } = req.body;
 
-  if (!name) {
+  if (!bmr_id) {
     return res.status(400).json({
       error: true,
-      message: "Please provide a proper BMR name",
+      message: "Please provide a proper BMR details",
     });
   }
 
   BMR.update(
     {
       name: name,
-      reviewer: reviewer,
-      approver: approver,
-      initiatorComment: initiatorComment,
+      reviewers: reviewers,
+      approvers: approvers,
     },
     { where: { bmr_id: bmr_id } }
   )
@@ -159,7 +189,7 @@ exports.editBMR = (req, res) => {
 };
 
 exports.editBMRTab = (req, res) => {
-  const { tab_id } = req.params;
+  const tab_id = req.params.id;
   const { bmr_id, tab_name } = req.body;
 
   if (!bmr_id || !tab_name) {
@@ -187,11 +217,46 @@ exports.editBMRTab = (req, res) => {
     });
 };
 
+exports.editBMRSection = (req, res) => {
+  const section_id = req.params.id;
+  const { bmr_id, section_name, bmr_tab_id, limit } = req.body;
+
+  if (!bmr_id || !section_id || bmr_tab_id) {
+    return res.status(400).json({
+      error: true,
+      message: "Please provide proper details",
+    });
+  }
+
+  BMR_Tab.update(
+    {
+      bmr_id: bmr_id,
+      bmr_tab_id: bmr_tab_id,
+      section_name: section_name,
+      limit: limit,
+    },
+    { where: { section_id: section_id } }
+  )
+    .then(() => {
+      res.status(200).json({
+        error: false,
+        message: "BMR Section updated successfully!!",
+      });
+    })
+    .catch((e) => {
+      res.status(400).json({
+        error: true,
+        message: `Error updating BMR Section: ${e}`,
+      });
+    });
+};
+
 exports.editBMRField = (req, res) => {
-  const { field_id } = req.params;
+  const field_id = req.params.id;
   const {
     bmr_id,
     bmr_tab_id,
+    bmr_section_id,
     field_type,
     label,
     placeholder,
@@ -206,7 +271,7 @@ exports.editBMRField = (req, res) => {
     acceptsMultiple,
   } = req.body;
 
-  if (!bmr_id || !bmr_tab_id || !label || !isRequired) {
+  if (!bmr_id || !bmr_tab_id || bmr_section_id || !label || !isRequired) {
     return res.status(400).json({
       error: true,
       message: "Please provide proper details",
@@ -217,6 +282,7 @@ exports.editBMRField = (req, res) => {
     {
       bmr_id: bmr_id,
       bmr_tab_id: bmr_tab_id,
+      bmr_section_id: bmr_section_id,
       field_type: field_type,
       label: label,
       placeholder: placeholder,
@@ -279,7 +345,7 @@ exports.deleteBMR = async (req, res) => {
 
 exports.deleteBMRTab = async (req, res) => {
   try {
-    const Tab = await BMR_Tab.findOne({ where: { tab_id: req.params.id } });
+    const Tab = await BMR_Tab.findOne({ where: { bmr_tab_id: req.params.id } });
     if (!Tab) {
       return res.status(404).json({
         error: true,
@@ -291,7 +357,7 @@ exports.deleteBMRTab = async (req, res) => {
       { isActive: false },
       {
         where: {
-          tab_id: req.params.id,
+          bmr_tab_id: req.params.id,
         },
       }
     );
@@ -308,10 +374,43 @@ exports.deleteBMRTab = async (req, res) => {
   }
 };
 
+exports.deleteBMRSection = async (req, res) => {
+  try {
+    const Section = await BMR_section.findOne({
+      where: { bmr_section_id: req.params.id },
+    });
+    if (!Section) {
+      return res.status(404).json({
+        error: true,
+        message: "BMR Section not found",
+      });
+    }
+
+    await BMR_Tab.update(
+      { isActive: false },
+      {
+        where: {
+          bmr_section_id: req.params.id,
+        },
+      }
+    );
+
+    res.json({
+      error: false,
+      message: "BMR Section deleted successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: true,
+      message: err.message,
+    });
+  }
+};
+
 exports.deleteBMRField = async (req, res) => {
   try {
     const Field = await BMR_field.findOne({
-      where: { field_id: req.params.id },
+      where: { bmr_field_id: req.params.id },
     });
     if (!Field) {
       return res.status(404).json({
@@ -324,7 +423,7 @@ exports.deleteBMRField = async (req, res) => {
       { isActive: false },
       {
         where: {
-          field_id: req.params.id,
+          bmr_field_id: req.params.id,
         },
       }
     );
@@ -351,11 +450,21 @@ exports.getAllBMR = (req, res) => {
         model: BMR_Tab,
         where: { isActive: true },
         required: false,
-      },
-      {
-        model: BMR_field,
-        where: { isActive: true },
-        required: false,
+        include: [
+          // Include fields within each tab
+          {
+            model: BMR_section,
+            where: { isActive: true },
+            required: false,
+            include: [
+              {
+                model: BMR_field,
+                where: { isActive: true },
+                required: false,
+              },
+            ],
+          },
+        ],
       },
     ],
   })
@@ -518,11 +627,18 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
       });
     }
 
+    const updatedReviewers = form.reviewers.map((reviewer) => ({
+      ...reviewer,
+      status: "pending", // Change the status to pending
+      comment: null, // Optionally reset the comment
+    }));
+
     // Update the form details
     await form.update(
       {
         status: "Under Initiation",
         stage: 1,
+        reviewers: updatedReviewers,
       },
       { transaction }
     );
@@ -546,7 +662,7 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
 };
 
 exports.SendBMRReviewToApproval = async (req, res) => {
-  const { bmr_id, reviewComment, email, password } = req.body;
+  const { bmr_id, reviewComment, password } = req.body;
 
   // Start a transaction
   const transaction = await sequelize.transaction();
@@ -554,7 +670,7 @@ exports.SendBMRReviewToApproval = async (req, res) => {
   try {
     // Authenticate the user
     const user = await User.findOne({
-      where: { email, isActive: true },
+      where: { user_id: req.user.userId, isActive: true },
       transaction,
     });
 
@@ -714,11 +830,26 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
       });
     }
 
-    // Update the form details
+    // Update the reviewers and approvers arrays in JavaScript
+    const updatedReviewers = form.reviewers.map((reviewer) => ({
+      ...reviewer,
+      status: "pending",
+      comment: null, // Optionally reset the comment
+    }));
+
+    const updatedApprovers = form.approvers.map((approver) => ({
+      ...approver,
+      status: "pending",
+      comment: null, // Optionally reset the comment
+    }));
+
+    // Update the form with the new reviewers and approvers array
     await form.update(
       {
-        status: " Under Initiation",
+        status: "Under Initiation",
         stage: 1,
+        reviewers: updatedReviewers,
+        approvers: updatedApprovers,
       },
       { transaction }
     );
@@ -742,7 +873,7 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
 };
 
 exports.ApproveBMR = async (req, res) => {
-  const { bmr_id, approvalComment, email, password } = req.body;
+  const { bmr_id, approvalComment, password } = req.body;
 
   // Start a transaction
   const transaction = await sequelize.transaction();
@@ -750,7 +881,7 @@ exports.ApproveBMR = async (req, res) => {
   try {
     // Authenticate the user
     const user = await User.findOne({
-      where: { email, isActive: true },
+      where: { user_id: req.user.userId, isActive: true },
       transaction,
     });
 
