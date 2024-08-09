@@ -88,6 +88,7 @@ router.delete(
 );
 
 router.get("/get-all-bmr", Auth.checkJwtToken, BmrController.getAllBMR);
+router.get("/get-a-bmr/:id", Auth.checkJwtToken, BmrController.getBMR);
 
 router.put(
   "/send-BMR-for-review",
