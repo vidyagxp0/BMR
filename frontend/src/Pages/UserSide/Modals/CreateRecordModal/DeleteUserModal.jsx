@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const DeleteUserModal = ({ onClose, id, setData }) => {
   const dispatch = useDispatch();
   const handleDelete = () => {
-    axios.delete(`http://192.168.1.17:7000/bmr/delete-bmr/${id}`, {
+    axios.delete(`http://192.168.1.16:7000/bmr-form/delete-bmr/${id}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem("user-token")}`
@@ -20,7 +20,6 @@ const DeleteUserModal = ({ onClose, id, setData }) => {
         onClose();
         dispatch(deleteBmr(id));
         dispatch(fetchBmr());
-       
       }, 1000);
     }).catch((error) => {
       toast.error("Failed to delete user");

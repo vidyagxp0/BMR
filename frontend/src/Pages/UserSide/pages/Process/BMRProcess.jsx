@@ -63,11 +63,9 @@ const BMRProcess = () => {
 
      },
   ];
-
-  console.log(data,"tab")
   const fetchBMRData = () => {
     axios
-      .get("http://192.168.1.17:7000/bmr/get-all-bmr", {
+      .get("http://192.168.1.16:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },

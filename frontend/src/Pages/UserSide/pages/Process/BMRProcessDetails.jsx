@@ -1,302 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import AtmButton from '../../../../AtmComponents/AtmButton';
 import { useNavigate, useParams } from 'react-router-dom';
+import AddTabModal from './Modals/AddTabModal';
+import AddFieldModal from './Modals/AddFieldModal';
+import AddSectionModal from './Modals/AddSectionModal';
 import axios from 'axios';
-
-const AddTabModal = ({ closeModal, addTab }) => {
-  const [tabName, setTabName] = useState("");
-  const { bmr_id } = useParams();
-
-  const handleSave = async () => {
-    try {
-      const response = await axios.post("http://192.168.1.17:7000/bmr/add-bmr-tab",
-        {
-          bmr_id: bmr_id,
-          tab_name: tabName
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      addTab(tabName);
-      closeModal();
-      console.log(response.data.bmr_tab_id,"<><><><><></>");
-    } catch (error) {
-      console.error("Error adding tab:", error);
-    }
-  };
-
-  useEffect(() => {
-    handleSave()
-  }, [])
-
-
-
-  return (
-    <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-filter backdrop-blur-sm">
-      <div className="bg-white p-4 rounded shadow-lg" style={{ width: '400px' }}>
-        <h2 className="text-lg font-bold mb-4">Add Tab</h2>
-        <input
-          type="text"
-          placeholder="Tab Name"
-          value={tabName}
-          onChange={(e) => setTabName(e.target.value)}
-          className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500"
-          style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
-        />
-        <div className="flex justify-end space-x-2">
-          <AtmButton label="Save" onClick={handleSave} className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded" />
-          <AtmButton label="Cancel" onClick={closeModal} className="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded" />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const AddFieldModal = ({ closeModal, addField }) => {
-  const { bmr_id } = useParams();
-
-  const [fieldData, setFieldData] = useState({
-    field_type: 'text',
-    options: [''],
-    isMandatory: false,
-    label: '',
-    placeholder: '',
-    defaultValue: '',
-    helpText: '',
-    minValue: '',
-    maxValue: '',
-    order: '',
-    isVisible: true,
-    isRequired: false,
-    isReadOnly: false,
-    acceptsMultiple: false,
-    bmr_tab_id: 30,
-  });
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFieldData((prevData) => ({
-      ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-  };
-
-  const handleSave = async () => {
-    try {
-      const response = await axios.post(
-        'http://192.168.1.17:7000/bmr/add-bmr-field',
-        { bmr_id, ...fieldData },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('user-token')}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      console.log(response.data);
-
-      // Assuming addField is used to update the parent state
-      addField({ bmr_id, ...fieldData });
-      closeModal();
-    } catch (error) {
-      console.error('Error adding field:', error);
-    }
-  };
-
-  const handleOptionChange = (index, value) => {
-    const newOptions = [...fieldData.options];
-    newOptions[index] = value;
-    setFieldData((prevData) => ({
-      ...prevData,
-      options: newOptions,
-    }));
-  };
-
-  const handleAddOption = () => {
-    setFieldData((prevData) => ({
-      ...prevData,
-      options: [...prevData.options, ''],
-    }));
-  };
-
-  return (
-    <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-filter backdrop-blur-sm">
-      <div className="bg-white p-4 rounded shadow-lg" style={{ width: '800px', height: '500px' }}>
-        <h2 className="text-lg font-bold mb-2">Add Field</h2>
-        <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-          <input
-            type="text"
-            name="label"
-            placeholder="Label"
-            value={fieldData.label}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
-          />
-          <input
-            type="text"
-            name="placeholder"
-            placeholder="Placeholder"
-            value={fieldData.placeholder}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
-          />
-          <input
-            type="text"
-            name="defaultValue"
-            placeholder="Default Value"
-            value={fieldData.defaultValue}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
-          />
-          <input
-            type="text"
-            name="helpText"
-            placeholder="Help Text"
-            value={fieldData.helpText}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
-          />
-          <input
-            type="number"
-            name="minValue"
-            placeholder="Min Value"
-            value={fieldData.minValue}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
-          />
-          <input
-            type="number"
-            name="maxValue"
-            placeholder="Max Value"
-            value={fieldData.maxValue}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
-          />
-          <input
-            type="number"
-            name="order"
-            placeholder="Order"
-            value={fieldData.order}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
-          />
-          <div className="flex items-center mb-4">
-            <input
-              type="checkbox"
-              name="isVisible"
-              checked={fieldData.isVisible}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            <label>Is Visible</label>
-          </div>
-          <div className="flex items-center mb-4">
-            <input
-              type="checkbox"
-              name="isRequired"
-              checked={fieldData.isRequired}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            <label>Is Required</label>
-          </div>
-          <div className="flex items-center mb-4">
-            <input
-              type="checkbox"
-              name="isReadOnly"
-              checked={fieldData.isReadOnly}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            <label>Is Read Only</label>
-          </div>
-          <div className="flex items-center mb-4">
-            <input
-              type="checkbox"
-              name="acceptsMultiple"
-              checked={fieldData.acceptsMultiple}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            <label>Accepts Multiple</label>
-          </div>
-          <select
-            name="field_type"
-            value={fieldData.field_type}
-            onChange={handleChange}
-            className="border p-2 w-full mb-4"
-          >
-            <option value="text">Text</option>
-            <option value="password">Password</option>
-            <option value="email">Email</option>
-            <option value="date">Date</option>
-            <option value="number">Number</option>
-            <option value="checkbox">Checkbox</option>
-            <option value="dropdown">Dropdown</option>
-            <option value="multi-select">Multi Select</option>
-          </select>
-          {(fieldData.field_type === 'dropdown' || fieldData.field_type === 'multi-select') && (
-            <div className="mb-4">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Options</h3>
-              {fieldData.options.map((option, index) => (
-                <input
-                  key={index}
-                  type="text"
-                  placeholder={`Option ${index + 1}`}
-                  value={option}
-                  onChange={(e) => handleOptionChange(index, e.target.value)}
-                  className="border border-gray-300 p-2 w-full mb-2"
-                />
-              ))}
-              <button
-                onClick={handleAddOption}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
-              >
-                Add Option
-              </button>
-            </div>
-          )}
-          <div className="flex items-center mb-4">
-            <input
-              type="checkbox"
-              name="isMandatory"
-              checked={fieldData.isMandatory}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            <label>Mandatory</label>
-          </div>
-        </div>
-        <div className="flex justify-end space-x-2">
-          <button onClick={handleSave} className="bg-blue-500 hover:bg-blue-700 px-4 py-2">
-            Save
-          </button>
-          <button onClick={closeModal} className="bg-gray-500 hover:bg-gray-700 px-4 py-2">
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-
-
+import { toast, ToastContainer } from 'react-toastify';
+import DeleteModal from './Modals/DeleteModal';
+import 'react-toastify/dist/ReactToastify.css'; 
 const BMRProcessDetails = () => {
+  const [data, setData] = useState([]);
+  console.log(data)
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
+  const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
   const [tabs, setTabs] = useState([
     "General Information",
     "Details",
@@ -308,11 +25,12 @@ const BMRProcessDetails = () => {
     "Initiator",
     "Reviewer",
     "Approver",
-
   ]);
 
-  const [newTab, setNewtab] = useState([])
-  const [newFields, setNewFields] = useState([])
+  const [newTab, setNewTab] = useState([]);
+  const [newFields, setNewFields] = useState({});
+  const [newSection, setNewSection] = useState([]);
+  const [section, setSection] = useState([]);
   const [fields, setFields] = useState({
     "General Information": [
       { fieldName: "Initiator", field_type: "text", options: [], isMandatory: false },
@@ -329,48 +47,136 @@ const BMRProcessDetails = () => {
     "Reviewer Remarks": [],
     "Approver Remarks": [],
   });
-  const [activeTab, setActiveTab] = useState(tabs[0]);
+  const [activeFlowTab, setActiveFlowTab] = useState(flowoTabs[0]);
+  const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
+  const [activeSendFormTab, setActiveSendFormTab] = useState(null);
   const [showForm, setShowForm] = useState("default");
+  const [currentTabId, setCurrentTabId] = useState(null);
+  const [activeSection, setActiveSection] = useState(null);
+  const [activeField, setActiveField] = useState(null);
+  const [updateTabModalOpen, setUpdateTabModalOpen] = useState(null);
+  const [updateSectionModalOpen, setUpdateSectionModalOpen] = useState(null);
+  const [updateFieldModalOpen, setUpdateFieldModalOpen] = useState(null);
+  const [existingTabName, setExistingTabName] = useState('');
+  const [existingSectionName, setExistingSectionName] = useState(null);
+  const [existingFieldName, setExistingFieldName] = useState({
 
-  const navigate = useNavigate();
+  });
+  const [deleteModalOpen , setDeleteModalOpen] = useState(false)
+  const [deleteItemType, setDeleteItemType] = useState(null);
+  const { bmr_id } = useParams()
 
-  const addTab = (tabName) => {
-    if (!newTab.includes(tabName)) {
-      // Add the new tab and initialize its fields
-      setNewtab([...newTab, tabName]);
-      setNewFields({ ...newFields, [tabName]: [] });
+  const fetchBMRData = () => {
+    axios
+      .get(`http://192.168.1.16:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+        },
+      })
+      .then((response) => {
+        const bmrData = response.data.message;
+        setData(bmrData);
+        setNewTab(bmrData[0]?.BMR_Tabs || []);
+        const sections = bmrData[0]?.BMR_Sections || [];
+        const sectionsByTab = sections.reduce((acc, section) => {
+          if (!acc[section.tab_name]) {
+            acc[section.tab_name] = [];
+          }
+          acc[section.tab_name].push(section);
+          return acc;
+        }, {});
+        setNewSection(sectionsByTab);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Error Fetching BMR");
+      });
+  };
+
+  useEffect(() => {
+    fetchBMRData();
+  }, []);
+
+  useEffect(() => {
+    if (showForm === "sendForm" && newTab.length > 0) {
+      // Automatically set the first tab as active
+      const firstTab = newTab[0];
+      setActiveSendFormTab(firstTab.tab_name);
+      setCurrentTabId(firstTab.bmr_tab_id);
     }
+  }, [showForm, newTab]);
+
+  const addTab = (tabObject) => {
+    if (!newTab.some(tab => tab.tab_name === tabObject.tab_name)) {
+      setNewTab([...newTab, tabObject]);
+      setNewFields({ ...newFields, [tabObject.tab_name]: [] });
+      setNewSection({ ...newSection, [tabObject.tab_name]: [] });
+      fetchBMRData();
+    }
+  };
+
+  const updateTab = (tabObject) => {
+
+  }
+
+  const addSection = (sectionName) => {
+    setNewSection((prevSections) => {
+      const updatedSections = { ...prevSections };
+
+      // Ensure the activeTab exists in the updatedSections object
+      if (!updatedSections[activeSendFormTab]) {
+        updatedSections[activeSendFormTab] = [];
+      }
+
+      // Check if the section already exists, if not, add it
+      if (!updatedSections[activeSendFormTab].some(section => section.section_name === sectionName)) {
+        updatedSections[activeSendFormTab].push({ section_name: sectionName });
+        fetchBMRData();
+      }
+
+      // Return the updated sections
+      return updatedSections;
+    });
+    // Update the sections state for the active tab
+    setSection(activeSendFormTab, newSection[activeSendFormTab]);
   };
 
   const addField = (field) => {
-    // Add the new field to the active tab
     setNewFields({
       ...newFields,
-      [activeTab]: [...newFields[activeTab], field],
+      [activeSendFormTab]: [...(newFields[activeSendFormTab] || []), field],
     });
+    fetchBMRData();
+  };
+  const handleFlowTabClick = (tab) => {
+    setActiveFlowTab(tab);
   };
 
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
+  const handleDefaultTabClick = (tab) => {
+    setActiveDefaultTab(tab);
   };
 
-  const handleNext = () => {
-    const currentIndex = tabs.indexOf(activeTab);
-    if (currentIndex < tabs.length - 1) {
-      setActiveTab(tabs[currentIndex + 1]);
-    }
+  const handleSendFormTabClick = (tab) => {
+    setActiveSendFormTab(tab);
+    setCurrentTabId(tab.bmr_tab_id);
+    setActiveSection(null);
+    setActiveField(null);
+    setExistingTabName(tab.tab_name);
+    setExistingSectionName(tab.section_name);
+    setExistingFieldName(tab);
   };
 
-  const handleBack = () => {
-    const currentIndex = tabs.indexOf(activeTab);
-    if (currentIndex > 0) {
-      setActiveTab(tabs[currentIndex - 1]);
-    }
+  const handleSectionClick = (section) => {
+    setActiveSection(section);
+    setExistingSectionName(section.section_name);
+    setActiveField(null)
+    setExistingFieldName(section);
   };
 
-  const isLastTab = activeTab === tabs[tabs.length - 1];
-  const isFirstTab = activeTab === tabs[0];
-
+  const handleFieldClick = (field) => {
+    setActiveField(field);
+setExistingFieldName(field)
+  };
 
 
   return (
@@ -384,8 +190,9 @@ const BMRProcessDetails = () => {
             </>
           ) : showForm === "sendForm" ? (
             <>
-              <AtmButton label="Add Tab" onClick={() => setIsAddTabModalOpen(true)} className='bg-pink-950 hover:bg-pink-700 px-4 py-2' />
-              <AtmButton label="Add Field" onClick={() => setIsAddFieldModalOpen(true)} className='bg-green-950 hover:bg-green-700 px-4 py-2' />
+              <AtmButton label="Add Tab" onClick={() => (setIsAddTabModalOpen(true), setUpdateTabModalOpen("add"))} className='bg-pink-950 hover:bg-pink-700 px-4 py-2' />
+              <AtmButton label="Add Section" onClick={() => (setIsSectionModalOpen(true), setUpdateSectionModalOpen("add-section"))} className='bg-purple-950 hover:bg-purple-700 px-4 py-2' />
+              <AtmButton label="Add Field" onClick={() => (setIsAddFieldModalOpen(true),setUpdateFieldModalOpen("add-field"))} className='bg-green-950 hover:bg-green-700 px-4 py-2' />
               <AtmButton label="Back to Default" onClick={() => setShowForm("default")} className='bg-gray-500 hover:bg-gray-700 px-4 py-2' />
             </>
           ) : (
@@ -393,14 +200,39 @@ const BMRProcessDetails = () => {
           )}
         </div>
       </header>
+
+
+
+      {showForm === "sendForm" && (
+        <div className='flex justify-end gap-4 mb-4'>
+          {activeField ? (
+            <>
+              <AtmButton label="Edit Field" className='bg-cyan-500 hover:bg-cyan-700' onClick={()=>(setUpdateFieldModalOpen("edit-field"), setIsAddFieldModalOpen(true))}/>
+              <AtmButton label="Delete Field" className='bg-red-600 hover:bg-red-700' onClick={() => (setDeleteModalOpen(true), setDeleteItemType('field'))} />
+            </>
+          ) : activeSection ? (
+            <>
+              <AtmButton label="Edit Section" className='bg-cyan-500 hover:bg-cyan-700' onClick={() => (setUpdateSectionModalOpen("edit-section"), setIsSectionModalOpen(true))} />
+              <AtmButton label="Delete Section" className='bg-red-600 hover:bg-red-700' onClick={() => (setDeleteModalOpen(true), setDeleteItemType('section'))}/>
+            </>
+          ) : activeSendFormTab ? (
+            <>
+              <AtmButton label="Edit Tab" className='bg-cyan-500 hover:bg-cyan-700' onClick={() => (setUpdateTabModalOpen("edit"), setIsAddTabModalOpen(true))} />
+              <AtmButton label="Delete Tab" className='bg-red-600 hover:bg-red-700' onClick={() => (setDeleteModalOpen(true), setDeleteItemType('tab'))}/>
+            </>
+          ) : null}
+        </div>
+      )}
+
+
       {showForm === "default" && (
         <div className="flex gap-4 mb-4">
-          {flowoTabs.map((tab, index) => (
+          {flowoTabs?.map((tab, index) => (
             <button
               style={{ border: "1px solid gray" }}
               key={index}
-              onClick={() => handleTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${activeTab === tab ? 'bg-gray-400 text-white' : 'bg-gray-200 text-gray-700'}`}
+              onClick={() => handleFlowTabClick(tab)}
+              className={`py-2 px-4 rounded-full border-2 border-black ${activeFlowTab === tab ? 'bg-gray-400 text-white' : 'bg-gray-200 text-gray-700'}`}
             >
               {tab}
             </button>
@@ -409,13 +241,13 @@ const BMRProcessDetails = () => {
       )}
 
       {showForm === "default" && (
-        <div className="flex gap-4 mb-4">
-          {tabs.map((tab, index) => (
+        <div className="flex flex-wrap gap-4 mb-4">
+          {tabs?.map((tab, index) => (
             <button
               style={{ border: "1px solid gray" }}
               key={index}
-              onClick={() => handleTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${activeTab === tab ? 'bg-gray-400 text-white' : 'bg-gray-200 text-gray-700'}`}
+              onClick={() => handleDefaultTabClick(tab)}
+              className={`py-2 px-4 rounded-full border-2 border-black ${activeDefaultTab === tab ? 'bg-gray-400 text-white' : 'bg-gray-200 text-gray-700'}`}
             >
               {tab}
             </button>
@@ -423,23 +255,23 @@ const BMRProcessDetails = () => {
         </div>
       )}
       {showForm === "sendForm" && (
-        <div className="flex gap-4 mb-4">
-          {newTab.map((tab, index) => (
+        <div className="flex flex-wrap gap-4 mb-4">
+          {newTab?.map((tab, index) => (
             <button
               style={{ border: "1px solid gray" }}
               key={index}
-              onClick={() => handleTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${activeTab === tab ? 'bg-gray-400 text-white' : 'bg-white text-gray-700'}`}
+              onClick={() => handleSendFormTabClick(tab)}
+              className={`py-2 px-4 rounded-full border-2 border-black ${activeSendFormTab === tab ? 'bg-gray-400 text-white' : 'bg-gray-200 text-gray-700'}`}
             >
-              {tab}
+              {tab.tab_name}
             </button>
           ))}
         </div>
       )}
 
-      {showForm === "default" && fields[activeTab]?.length > 0 && (
+      {showForm === "default" && fields[activeDefaultTab]?.length > 0 && (
         <div className="grid grid-cols-2 gap-4">
-          {fields[activeTab].map((field, index) => (
+          {fields[activeDefaultTab].map((field, index) => (
             <div key={index} className="p-4 rounded bg-white shadow border border-gray-300">
               <label className="block text-lg font-extrabold text-gray-700 mb-2">{field.fieldName}{field.isMandatory && ' *'}</label>
               {/* Render input fields based on type */}
@@ -468,51 +300,109 @@ const BMRProcessDetails = () => {
         </div>
       )}
 
-      {showForm === "sendForm" && newFields[activeTab] && (
-        <div className="grid grid-cols-2 gap-4">
-          {newFields[activeTab].map((field, index) => (
-            <div key={index} className="p-4 rounded bg-white shadow border border-gray-300">
-              <label className="block text-lg font-extrabold text-gray-700 mb-2">{field.label}{field.isMandatory && ' *'}</label>
-              {/* Render input fields based on type */}
-              {field.field_type === "text" && <input style={{ border: "1px solid gray", height: "48px" }} type="text" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} />}
-              {field.field_type === "password" && <input style={{ border: "1px solid gray", height: "48px" }} type="password" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} />}
-              {field.field_type === "date" && <input style={{ border: "1px solid gray", height: "48px" }} type="date" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} />}
-              {field.field_type === "email" && <input style={{ border: "1px solid gray", height: "48px" }} type="email" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} />}
-              {field.field_type === "number" && <input style={{ border: "1px solid gray", height: "48px" }} type="number" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} />}
-              {field.field_type === "checkbox" && <input style={{ border: "1px solid gray", height: "48px" }} type="checkbox" className="border border-gray-600 p-2 rounded" required={field.isMandatory} />}
-              {field.field_type === "dropdown" && (
-                <select className="border border-gray-600 p-2 w-full rounded" style={{ border: "1px solid gray", height: "48px" }} required={field.isMandatory}>
-                  {field.options.map((option, idx) => (
-                    <option key={idx} value={option}>{option}</option>
+      <div className=''>
+        {showForm === "sendForm" && activeSendFormTab && (
+          <div className='text-lg text-right flex flex-col gap-9 font-bold text-gray-500'>
+            {activeSendFormTab?.BMR_sections?.map((section, index) => (
+              <div key={index} className={`mb-2 cursor-pointer ${activeSection === section ? 'border border-black' : ''}`}>
+                <div onClick={() => handleSectionClick(section)}>
+                  <div className={`py-2 px-4 mb-2 cursor-pointer ${activeSection === section ? 'bg-gray-400 text-white' : 'bg-gray-200'}`}>
+                    {section.section_name}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 shadow-xl gap-4 px-5 py-[64px]">
+                  {section.BMR_fields?.map((field, index) => (
+                    <div key={index} onClick={() => handleFieldClick(field)} className="p-4 rounded bg-white shadow border border-gray-300">
+                      <label className="text-lg font-extrabold text-gray-700 flex gap-1 mb-2">
+                        {field.label}
+                        <div className="text-red-500">{field.isMandatory && ' *'}</div>
+                      </label>
+                      {/* Render input fields based on type */}
+                      {field.field_type === "text" && <input placeholder={field.placeholder}  style={{ border: "1px solid gray", height: "48px" }} type="text"  className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} readOnly={field.isReadonly} />}
+                      {field.field_type === "password" && <input placeholder={field.placeholder}  style={{ border: "1px solid gray", height: "48px" }} type="password" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} readOnly={field.isReadonly} />}
+                      {field.field_type === "date" && <input placeholder={field.placeholder}  style={{ border: "1px solid gray", height: "48px" }} type="date" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} readOnly={field.isReadonly} />}
+                      {field.field_type === "email" && <input placeholder={field.placeholder}  style={{ border: "1px solid gray", height: "48px" }} type="email" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} readOnly={field.isReadonly} />}
+                      {field.field_type === "number" && <input placeholder={field.placeholder}  style={{ border: "1px solid gray", height: "48px" }} type="number" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} readOnly={field.isReadonly} />}
+                      {field.field_type === "checkbox" && <input placeholder={field.placeholder}  style={{ border: "1px solid gray", height: "48px" }} type="checkbox" className="border border-gray-600 p-2 rounded" required={field.isMandatory} readOnly={field.isReadonly} />}
+                      {field.field_type === "dropdown" && (
+                        <select className="border border-gray-600 p-2 w-full rounded" style={{ border: "1px solid gray", height: "48px" }} required={field.isMandatory}>
+                          {field.options.map((option, idx) => (
+                            <option key={idx} value={option}>{option}</option>
+                          ))}
+                        </select>
+                      )}
+                      {field.field_type === "multi-select" && (
+                        <select multiple className="border border-gray-600 p-2 w-full rounded" style={{ border: "1px solid gray", height: "48px" }} required={field.isMandatory}>
+                          {field.options?.map((option, idx) => (
+                            <option key={idx} value={option}>{option}</option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
                   ))}
-                </select>
-              )}
-              {field.field_type === "multi-select" && (
-                <select multiple className="border border-gray-600 p-2 w-full rounded" style={{ border: "1px solid gray", height: "48px" }} required={field.isMandatory}>
-                  {field.options?.map((option, idx) => (
-                    <option key={idx} value={option}>{option}</option>
-                  ))}
-                </select>
-              )}
-            </div>
-          ))}
-        </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+      </div>
+
+      {isAddTabModalOpen && (
+        <AddTabModal
+          isOpen={isAddTabModalOpen}
+          closeModal={() => setIsAddTabModalOpen(false)}
+          addTab={addTab}
+          updateTab={updateTabModalOpen}
+          bmr_tab_id={currentTabId}
+          existingTabName={existingTabName}
+        />
       )}
 
-      {isAddTabModalOpen && <AddTabModal closeModal={() => setIsAddTabModalOpen(false)} addTab={addTab} />}
-      {isAddFieldModalOpen && <AddFieldModal closeModal={() => setIsAddFieldModalOpen(false)} addField={addField} />}
-
-      {showForm && (
-        <div className="absolute bottom-4 right-4 flex space-x-2">
-          <AtmButton label="Save" onClick={() => { }} className='bg-blue-500 hover:bg-blue-700 px-4 py-2' />
-          {!isLastTab && <AtmButton label="Next" onClick={handleNext} className='bg-blue-500 hover:bg-blue-700 px-4 py-2' />}
-          {!isFirstTab && <AtmButton label="Back" onClick={handleBack} className='bg-blue-500 hover:bg-blue-700 px-4 py-2' />}
-          <AtmButton label="Exit" onClick={() => { navigate("/dashboard") }} className='bg-gray-500 hover:bg-gray-700 px-4 py-2' />
-        </div>
+      {activeSection && isAddFieldModalOpen && (
+        <AddFieldModal
+          isOpen={isAddFieldModalOpen}
+          closeModal={() => setIsAddFieldModalOpen(false)}
+          addField={addField}
+          bmr_tab_id={currentTabId}
+          bmr_section_id={activeSection.bmr_section_id}
+          updateField={updateFieldModalOpen}
+          bmr_field_id={activeField?.bmr_field_id}
+          existingFieldData={existingFieldName}
+        />
       )}
+
+      {activeSendFormTab && isSectionModalOpen && (
+        <AddSectionModal
+          isOpen={isSectionModalOpen}
+          closeModal={() => setIsSectionModalOpen(false)}
+          addSection={addSection}
+          bmr_tab_id={currentTabId}
+          updateSection={updateSectionModalOpen}
+          bmr_section_id={activeSection?.bmr_section_id}
+          existingSectionName={existingSectionName}
+        />
+      )}
+      {
+        deleteModalOpen && 
+        <DeleteModal 
+        onClose={() => setDeleteModalOpen(false)}
+         id={currentTabId} 
+         newTab={newTab} 
+        setNewTab={setNewTab}
+        newSection={activeSendFormTab?.BMR_sections}
+        setNewSection={setNewSection} 
+        section_id = {activeSection?.bmr_section_id}
+        bmr_field_id={activeField?.bmr_field_id}
+        newFields={newFields}
+        setNewFields={setNewFields}
+        itemType = {deleteItemType}
+        fetchBMRData={fetchBMRData}
+         />
+      }
+      <ToastContainer />
     </div>
   );
 };
-
 
 export default BMRProcessDetails;
