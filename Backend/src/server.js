@@ -2,7 +2,7 @@ const express = require("express");
 const { connectToDB } = require("./config/db");
 const config = require("./config/config.json");
 const userRoutes = require("./routes/user.routes");
-const bmrRoutes = require("./routes/brm.routes");
+const bmrFormRoutes = require("./routes/bmr_form.routes");
 const http = require("http");
 const cors = require("cors");
 const path = require("path");
@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, "documents")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use('/user', userRoutes);
-app.use('/bmr', bmrRoutes);
+app.use('/bmr-form', bmrFormRoutes);
 
 server.listen(config.development.PORT, "0.0.0.0", async () => {
   connectToDB()

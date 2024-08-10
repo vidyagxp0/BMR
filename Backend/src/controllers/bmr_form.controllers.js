@@ -17,6 +17,7 @@ const getUserById = async (user_id) => {
 exports.postBMR = async (req, res) => {
   const { name, reviewers, approvers } = req.body;
 
+  // Validate input
   if (
     !name ||
     !Array.isArray(reviewers) ||
@@ -34,6 +35,20 @@ exports.postBMR = async (req, res) => {
   const transaction = await sequelize.transaction(); // Start a transaction
 
   try {
+    // Check if BMR name already exists
+    const existingBMR = await BMR.findOne({
+      where: { name: name, isActive: true },
+      transaction: transaction,
+    });
+
+    if (existingBMR) {
+      await transaction.rollback(); // Roll back the transaction
+      return res.status(409).json({
+        error: true,
+        message: "A BMR with the same name already exists.",
+      });
+    }
+
     const bmr = await BMR.create(
       {
         name: name,
@@ -44,7 +59,7 @@ exports.postBMR = async (req, res) => {
         status: "Under Initiation",
       },
       { transaction }
-    ); // Include the transaction in the creation query
+    );
 
     const date = new Date();
     const day = String(date.getDate()).padStart(2, "0");
@@ -66,41 +81,43 @@ exports.postBMR = async (req, res) => {
       .map(async (person) => {
         const userId =
           person.role === "reviewer" ? person.reviewerId : person.approverId;
-        const userData = await getUserById(userId);
-        const initiatorData = await getUserById(bmr.initiator);
-
-        const mailData = {
-          bmrName: bmr.name,
-          initiator: initiatorData.get("name"), // Use .get() to safely extract properties
-          dateOfInitiation: dateOfInitiation,
-          status: "Initiation",
-          userName: userData.get("name"), // Use .get() to safely extract properties
-          userEmail: userData.get("email"), // Use .get() to safely extract properties
-          recipients: userData.get("email"),
-          ...(person.role === "reviewer"
-            ? { reviewerName: userData.get("name") }
-            : { approverName: userData.get("name") }),
-        };
-
         try {
-          Mailer.sendEmail(
+          const userData = await getUserById(userId);
+          const initiatorData = await getUserById(bmr.initiator);
+
+          const mailData = {
+            bmrName: bmr.name,
+            initiator: initiatorData.get("name"),
+            dateOfInitiation: dateOfInitiation,
+            status: "Initiation",
+            userName: userData.get("name"),
+            userEmail: userData.get("email"),
+            recipients: userData.get("email"),
+            ...(person.role === "reviewer"
+              ? { reviewerName: userData.get("name") }
+              : { approverName: userData.get("name") }),
+          };
+
+          await Mailer.sendEmail(
             person.role === "reviewer" ? "assignReviewer" : "assignApprover",
             mailData
           );
         } catch (emailError) {
-          throw new Error("Failed to send emails: " + emailError.message); // Throw to catch in outer try-catch
+          // Log the error and proceed with other emails
+          console.error("Failed to send email:", emailError.message);
+          throw new Error("Failed to send emails");
         }
       });
 
     await Promise.all(emailPromises);
-    await transaction.commit(); // Commit the transaction
+    await transaction.commit();
 
     res.status(200).json({
       error: false,
       message: "BMR Created successfully",
     });
   } catch (e) {
-    await transaction.rollback(); // Roll back the transaction on error
+    await transaction.rollback();
     res.status(500).json({
       error: true,
       message: `Error creating BMR: ${e.message}`,
@@ -108,66 +125,389 @@ exports.postBMR = async (req, res) => {
   }
 };
 
-exports.postBMRTab = (req, res) => {
+exports.postBMRTab = async (req, res) => {
   let { bmr_id, tab_name } = req.body;
+
+  // Check for missing fields
+  if (!bmr_id || !tab_name) {
+    return res.status(400).json({
+      error: true,
+      message: "Please provide proper details",
+    });
+  }
+
+  try {
+    // Check if a tab with the same name already exists for this BMR
+    const existingTab = await BMR_Tab.findOne({
+      where: {
+        bmr_id: bmr_id,
+        tab_name: tab_name,
+        isActive: true,
+      },
+    });
+
+    if (existingTab) {
+      // If an existing tab is found, return an error response
+      return res.status(409).json({
+        error: true,
+        message: "A tab with the same name already exists for this BMR.",
+      });
+    }
+
+    // Create the new BMR tab if no conflicts are found
+    await BMR_Tab.create({
+      bmr_id: bmr_id,
+      tab_name: tab_name,
+    });
+
+    return res.status(200).json({
+      error: false,
+      message: "BMR Tab created successfully!!",
+    });
+  } catch (e) {
+    return res.status(500).json({
+      error: true,
+      message: `Error creating BMR Tab: ${e.message}`,
+    });
+  }
+};
+
+exports.postBMRSection = async (req, res) => {
+  const { bmr_id, bmr_tab_id, section_name, limit } = req.body;
+
+  // Validate provided details
+  if (!bmr_id || !bmr_tab_id || !section_name || !limit) {
+    return res.status(400).json({
+      error: true,
+      message: "Please provide proper details",
+    });
+  }
+
+  try {
+    // Check for existing section with the same name under the same BMR and tab
+    const existingSection = await BMR_section.findOne({
+      where: {
+        bmr_id: bmr_id,
+        bmr_tab_id: bmr_tab_id,
+        section_name: section_name,
+        isActive: true,
+      },
+    });
+
+    if (existingSection) {
+      // If a section already exists, return an error response
+      return res.status(409).json({
+        error: true,
+        message:
+          "A section with the same name already exists under the specified BMR and tab.",
+      });
+    }
+
+    // Create the BMR section if no conflict is found
+    await BMR_section.create({
+      bmr_id: bmr_id,
+      bmr_tab_id: bmr_tab_id,
+      section_name: section_name,
+      limit: limit,
+    });
+
+    // Send success response
+    res.status(200).json({
+      error: false,
+      message: "BMR Section created successfully!!",
+    });
+  } catch (e) {
+    // Handle errors
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: true,
+        message: `Error creating BMR Section: ${e.message}`,
+      });
+    } else {
+      console.error("Error in response handling:", e.message);
+    }
+  }
+};
+
+exports.postBMRField = async (req, res) => {
+  const {
+    bmr_id,
+    bmr_tab_id,
+    bmr_section_id,
+    field_type,
+    label,
+    placeholder,
+    defaultValue,
+    helpText,
+    minValue,
+    maxValue,
+    order,
+    isVisible,
+    isRequired,
+    isReadOnly,
+    acceptsMultiple,
+  } = req.body;
+
+  // Check for required fields
+  if (
+    !bmr_id ||
+    !bmr_tab_id ||
+    !bmr_section_id ||
+    !label ||
+    isRequired === undefined
+  ) {
+    return res.status(400).json({
+      error: true,
+      message: "Please provide proper details",
+    });
+  }
+
+  try {
+    // Check if a field with the same label already exists within the same section, tab, and BMR
+    const existingField = await BMR_field.findOne({
+      where: {
+        bmr_id: bmr_id,
+        bmr_tab_id: bmr_tab_id,
+        bmr_section_id: bmr_section_id,
+        label: label,
+        isActive: true,
+      },
+    });
+
+    if (existingField) {
+      // If a field already exists, return an error response
+      return res.status(409).json({
+        error: true,
+        message: "A field with the same label already exists in this section.",
+      });
+    }
+
+    // Create the BMR field if no conflict is found
+    await BMR_field.create({
+      bmr_id: bmr_id,
+      bmr_tab_id: bmr_tab_id,
+      bmr_section_id: bmr_section_id,
+      field_type: field_type,
+      label: label,
+      placeholder: placeholder,
+      defaultValue: defaultValue,
+      helpText: helpText,
+      minValue: minValue,
+      maxValue: maxValue,
+      order: order,
+      isVisible: isVisible,
+      isRequired: isRequired,
+      isReadOnly: isReadOnly,
+      acceptsMultiple: acceptsMultiple,
+    });
+
+    // Send success response
+    res.status(200).json({
+      error: false,
+      message: "BMR Field created successfully!!",
+    });
+  } catch (e) {
+    // Handle errors
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: true,
+        message: `Error creating BMR Field: ${e.message}`,
+      });
+    } else {
+      console.error("Error in response handling:", e.message);
+    }
+  }
+};
+
+exports.editBMR = async (req, res) => {
+  const bmr_id = req.params.id;
+  const { name, reviewers, approvers } = req.body;
+
+  if (!bmr_id) {
+    return res.status(400).json({
+      error: true,
+      message: "Please provide proper BMR details",
+    });
+  }
+
+  try {
+    // Check if a different BMR with the same name already exists
+    const existingBMR = await BMR.findOne({
+      where: {
+        name: name,
+        bmr_id: { [Op.ne]: bmr_id }, // Exclude the current BMR from the check
+        isActive: true,
+      },
+    });
+
+    if (existingBMR) {
+      return res.status(409).json({
+        error: true,
+        message: "A BMR with the same name already exists.",
+      });
+    }
+
+    // Proceed with the update if no duplicate name is found
+    await BMR.update(
+      {
+        name: name,
+        reviewers: reviewers,
+        approvers: approvers,
+      },
+      { where: { bmr_id: bmr_id } }
+    );
+
+    // Check if the update was successful
+    const updatedBMR = await BMR.findOne({
+      where: { bmr_id: bmr_id },
+    });
+
+    if (!updatedBMR) {
+      return res.status(404).json({
+        error: true,
+        message: "BMR not found.",
+      });
+    }
+
+    res.status(200).json({
+      error: false,
+      message: "BMR updated successfully!!",
+    });
+  } catch (e) {
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: true,
+        message: `Error updating BMR: ${e.message}`,
+      });
+    } else {
+      console.error("Error in response handling:", e.message);
+    }
+  }
+};
+
+exports.editBMRTab = async (req, res) => {
+  const bmr_tab_id = req.params.id;
+  const { bmr_id, tab_name } = req.body;
 
   if (!bmr_id || !tab_name) {
     return res.status(400).json({
       error: true,
-      message: "Please Provide proper details",
+      message: "Please provide proper details",
     });
   }
 
-  BMR_Tab.create({
-    bmr_id: bmr_id,
-    tab_name: tab_name,
-  })
-    .then(() => {
-      res.status(200).json({
-        error: false,
-        message: "BMR Tab created successfully!!",
-      });
-    })
-    .catch((e) => {
-      res.status(400).json({
-        error: true,
-        message: `Error creating BMR Tab: ${e}`,
-      });
+  try {
+    // Check if a different tab with the same name already exists under the same BMR
+    const existingTab = await BMR_Tab.findOne({
+      where: {
+        bmr_id: bmr_id,
+        tab_name: tab_name,
+        bmr_tab_id: { [Op.ne]: bmr_tab_id }, // Exclude the current tab from the check
+        isActive: true,
+      },
     });
+
+    if (existingTab) {
+      return res.status(409).json({
+        error: true,
+        message: "A tab with the same name already exists for this BMR.",
+      });
+    }
+
+    // Proceed with the update if no duplicate tab name is found
+    const [updated] = await BMR_Tab.update(
+      { tab_name: tab_name },
+      { where: { bmr_tab_id: bmr_tab_id } }
+    );
+
+    if (updated === 0) {
+      return res.status(404).json({
+        error: true,
+        message: "BMR Tab not found.",
+      });
+    }
+
+    res.status(200).json({
+      error: false,
+      message: "BMR Tab updated successfully!!",
+    });
+  } catch (e) {
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: true,
+        message: `Error updating BMR Tab: ${e.message}`,
+      });
+    } else {
+      console.error("Error in response handling:", e.message);
+    }
+  }
 };
 
-exports.postBMRSection = (req, res) => {
-  let { bmr_id, bmr_tab_id, section_name, limit } = req.body;
+exports.editBMRSection = async (req, res) => {
+  const bmr_section_id = req.params.id;
+  const { bmr_id, section_name, bmr_tab_id, limit } = req.body;
 
-  if (!bmr_id || !section_name || !bmr_tab_id || !limit) {
+  if (!bmr_id || !section_name || !bmr_tab_id) {
     return res.status(400).json({
       error: true,
-      message: "Please Provide proper details",
+      message: "Please provide proper details",
     });
   }
 
-  BMR_section.create({
-    bmr_id: bmr_id,
-    section_name: section_name,
-    bmr_tab_id: bmr_tab_id,
-    limit: limit,
-  })
-    .then(() => {
-      res.status(200).json({
-        error: false,
-        message: "BMR Section created successfully!!",
-      });
-    })
-    .catch((e) => {
-      res.status(400).json({
-        error: true,
-        message: `Error creating BMR Section: ${e}`,
-      });
+  try {
+    // Check if a different section with the same name already exists under the same BMR and tab
+    const existingSection = await BMR_section.findOne({
+      where: {
+        bmr_id: bmr_id,
+        bmr_tab_id: bmr_tab_id,
+        section_name: section_name,
+        bmr_section_id: { [Op.ne]: bmr_section_id }, // Exclude the current section from the check
+        isActive: true,
+      },
     });
+
+    if (existingSection) {
+      return res.status(409).json({
+        error: true,
+        message:
+          "A section with the same name already exists under the specified BMR and tab.",
+      });
+    }
+
+    // Proceed with the update if no duplicate section name is found
+    const updated = await BMR_section.update(
+      {
+        bmr_id: bmr_id,
+        bmr_tab_id: bmr_tab_id,
+        section_name: section_name,
+        limit: limit,
+      },
+      { where: { bmr_section_id: bmr_section_id } }
+    );
+
+    // Ensure that update was successful
+    if (updated[0] === 0) {
+      return res.status(404).json({
+        error: true,
+        message: "BMR Section not found.",
+      });
+    }
+
+    res.status(200).json({
+      error: false,
+      message: "BMR Section updated successfully!!",
+    });
+  } catch (e) {
+    res.status(500).json({
+      error: true,
+      message: `Error updating BMR Section: ${e.message}`,
+    });
+  }
 };
 
-exports.postBMRField = (req, res) => {
-  let {
+exports.editBMRField = async (req, res) => {
+  const bmr_field_id = req.params.id;
+  const {
     bmr_id,
     bmr_tab_id,
     bmr_section_id,
@@ -188,201 +528,81 @@ exports.postBMRField = (req, res) => {
   if (!bmr_id || !bmr_tab_id || !bmr_section_id || !label || !isRequired) {
     return res.status(400).json({
       error: true,
-      message: "Please Provide a proper details",
-    });
-  }
-
-  BMR_field.create({
-    bmr_id: bmr_id,
-    bmr_tab_id: bmr_tab_id,
-    bmr_section_id: bmr_section_id,
-    field_type: field_type,
-    label: label,
-    placeholder: placeholder,
-    defaultValue: defaultValue,
-    helpText: helpText,
-    minValue: minValue,
-    maxValue: maxValue,
-    order: order,
-    isVisible: isVisible,
-    isRequired: isRequired,
-    isReadOnly: isReadOnly,
-    acceptsMultiple: acceptsMultiple,
-  })
-    .then(() => {
-      res.status(200).json({
-        error: false,
-        message: "BMR Field created successfully!!",
-      });
-    })
-    .catch((e) => {
-      res.status(400).json({
-        error: true,
-        message: `Error creating BMR Field: ${e}`,
-      });
-    });
-};
-
-exports.editBMR = (req, res) => {
-  const bmr_id = req.params.id;
-  const { name, reviewers, approvers } = req.body;
-
-  if (!bmr_id) {
-    return res.status(400).json({
-      error: true,
-      message: "Please provide a proper BMR details",
-    });
-  }
-
-  BMR.update(
-    {
-      name: name,
-      reviewers: reviewers,
-      approvers: approvers,
-    },
-    { where: { bmr_id: bmr_id } }
-  )
-    .then(() => {
-      res.status(200).json({
-        error: false,
-        message: "BMR updated successfully!!",
-      });
-    })
-    .catch((e) => {
-      res.status(400).json({
-        error: true,
-        message: `Error updating BMR: ${e}`,
-      });
-    });
-};
-
-exports.editBMRTab = (req, res) => {
-  const tab_id = req.params.id;
-  const { bmr_id, tab_name } = req.body;
-
-  if (!bmr_id || !tab_name) {
-    return res.status(400).json({
-      error: true,
       message: "Please provide proper details",
     });
   }
 
-  BMR_Tab.update(
-    { bmr_id: bmr_id, tab_name: tab_name },
-    { where: { tab_id: tab_id } }
-  )
-    .then(() => {
-      res.status(200).json({
-        error: false,
-        message: "BMR Tab updated successfully!!",
-      });
-    })
-    .catch((e) => {
-      res.status(400).json({
-        error: true,
-        message: `Error updating BMR Tab: ${e}`,
-      });
+  try {
+    // Check if a different field with the same label already exists under the same BMR, tab, and section
+    const existingField = await BMR_field.findOne({
+      where: {
+        bmr_id: bmr_id,
+        bmr_tab_id: bmr_tab_id,
+        bmr_section_id: bmr_section_id,
+        label: label,
+        bmr_field_id: { [Op.ne]: bmr_field_id }, // Exclude the current field from the check
+        isActive: true,
+      },
     });
-};
 
-exports.editBMRSection = (req, res) => {
-  const section_id = req.params.id;
-  const { bmr_id, section_name, bmr_tab_id, limit } = req.body;
+    if (existingField) {
+      return res.status(409).json({
+        error: true,
+        message: "A field with the same label already exists in this section.",
+      });
+    }
 
-  if (!bmr_id || !section_id || bmr_tab_id) {
-    return res.status(400).json({
+    // Proceed with the update if no duplicate field label is found
+    const [updated] = await BMR_field.update(
+      {
+        bmr_id: bmr_id,
+        bmr_tab_id: bmr_tab_id,
+        bmr_section_id: bmr_section_id,
+        field_type: field_type,
+        label: label,
+        placeholder: placeholder,
+        defaultValue: defaultValue,
+        helpText: helpText,
+        minValue: minValue,
+        maxValue: maxValue,
+        order: order,
+        isVisible: isVisible,
+        isRequired: isRequired,
+        isReadOnly: isReadOnly,
+        acceptsMultiple: acceptsMultiple,
+      },
+      { where: { bmr_field_id: bmr_field_id } }
+    );
+
+    // Ensure that update was successful
+    if (updated === 0) {
+      return res.status(404).json({
+        error: true,
+        message: "BMR Field not found.",
+      });
+    }
+
+    res.status(200).json({
+      error: false,
+      message: "BMR Field updated successfully!!",
+    });
+  } catch (e) {
+    res.status(500).json({
       error: true,
-      message: "Please provide proper details",
+      message: `Error updating BMR Field: ${e.message}`,
     });
   }
-
-  BMR_Tab.update(
-    {
-      bmr_id: bmr_id,
-      bmr_tab_id: bmr_tab_id,
-      section_name: section_name,
-      limit: limit,
-    },
-    { where: { section_id: section_id } }
-  )
-    .then(() => {
-      res.status(200).json({
-        error: false,
-        message: "BMR Section updated successfully!!",
-      });
-    })
-    .catch((e) => {
-      res.status(400).json({
-        error: true,
-        message: `Error updating BMR Section: ${e}`,
-      });
-    });
-};
-
-exports.editBMRField = (req, res) => {
-  const field_id = req.params.id;
-  const {
-    bmr_id,
-    bmr_tab_id,
-    bmr_section_id,
-    field_type,
-    label,
-    placeholder,
-    defaultValue,
-    helpText,
-    minValue,
-    maxValue,
-    order,
-    isVisible,
-    isRequired,
-    isReadOnly,
-    acceptsMultiple,
-  } = req.body;
-
-  if (!bmr_id || !bmr_tab_id || bmr_section_id || !label || !isRequired) {
-    return res.status(400).json({
-      error: true,
-      message: "Please provide proper details",
-    });
-  }
-
-  BMR_field.update(
-    {
-      bmr_id: bmr_id,
-      bmr_tab_id: bmr_tab_id,
-      bmr_section_id: bmr_section_id,
-      field_type: field_type,
-      label: label,
-      placeholder: placeholder,
-      defaultValue: defaultValue,
-      helpText: helpText,
-      minValue: minValue,
-      maxValue: maxValue,
-      order: order,
-      isVisible: isVisible,
-      isRequired: isRequired,
-      isReadOnly: isReadOnly,
-      acceptsMultiple: acceptsMultiple,
-    },
-    { where: { field_id: field_id } }
-  )
-    .then(() => {
-      res.status(200).json({
-        error: false,
-        message: "BMR Field updated successfully!!",
-      });
-    })
-    .catch((e) => {
-      res.status(400).json({
-        error: true,
-        message: `Error updating BMR Field: ${e}`,
-      });
-    });
 };
 
 exports.deleteBMR = async (req, res) => {
   try {
-    const Bmr = await BMR.findOne({ where: { bmr_id: req.params.id } });
+    const bmrId = req.params.id;
+
+    // Check if the BMR exists and is active
+    const Bmr = await BMR.findOne({
+      where: { bmr_id: bmrId, isActive: true },
+    });
+
     if (!Bmr) {
       return res.status(404).json({
         error: true,
@@ -390,14 +610,23 @@ exports.deleteBMR = async (req, res) => {
       });
     }
 
-    await BMR.update(
+    // Mark the BMR as inactive
+    const [updated] = await BMR.update(
       { isActive: false },
       {
         where: {
-          bmr_id: req.params.id,
+          bmr_id: bmrId,
         },
       }
     );
+
+    // Ensure that update was successful
+    if (updated === 0) {
+      return res.status(404).json({
+        error: true,
+        message: "Failed to delete BMR, please try again.",
+      });
+    }
 
     res.json({
       error: false,
@@ -406,29 +635,44 @@ exports.deleteBMR = async (req, res) => {
   } catch (err) {
     res.status(500).json({
       error: true,
-      message: err.message,
+      message: `Error deleting BMR: ${err.message}`,
     });
   }
 };
 
 exports.deleteBMRTab = async (req, res) => {
   try {
-    const Tab = await BMR_Tab.findOne({ where: { bmr_tab_id: req.params.id } });
-    if (!Tab) {
+    const bmrTabId = req.params.id;
+
+    // Check if the BMR Tab exists and is active
+    const tab = await BMR_Tab.findOne({
+      where: { bmr_tab_id: bmrTabId, isActive: true },
+    });
+
+    if (!tab) {
       return res.status(404).json({
         error: true,
         message: "BMR Tab not found",
       });
     }
 
-    await BMR_Tab.update(
+    // Mark the BMR Tab as inactive
+    const [updated] = await BMR_Tab.update(
       { isActive: false },
       {
         where: {
-          bmr_tab_id: req.params.id,
+          bmr_tab_id: bmrTabId,
         },
       }
     );
+
+    // Ensure that update was successful
+    if (updated === 0) {
+      return res.status(404).json({
+        error: true,
+        message: "Failed to delete BMR Tab, please try again.",
+      });
+    }
 
     res.json({
       error: false,
@@ -437,73 +681,99 @@ exports.deleteBMRTab = async (req, res) => {
   } catch (err) {
     res.status(500).json({
       error: true,
-      message: err.message,
+      message: `Error deleting BMR Tab: ${err.message}`,
     });
   }
 };
 
 exports.deleteBMRSection = async (req, res) => {
+  const bmrSectionId = req.params.id;
+
   try {
-    const Section = await BMR_section.findOne({
-      where: { bmr_section_id: req.params.id },
+    // Check if the BMR Section exists and is active
+    const section = await BMR_section.findOne({
+      where: { bmr_section_id: bmrSectionId, isActive: true },
     });
-    if (!Section) {
+
+    if (!section) {
       return res.status(404).json({
         error: true,
         message: "BMR Section not found",
       });
     }
 
-    await BMR_Tab.update(
+    // Mark the BMR Section as inactive
+    const [updated] = await BMR_section.update(
       { isActive: false },
       {
         where: {
-          bmr_section_id: req.params.id,
+          bmr_section_id: bmrSectionId,
         },
       }
     );
 
-    res.json({
+    // Ensure that the update was successful
+    if (updated === 0) {
+      return res.status(400).json({
+        error: true,
+        message: "Failed to delete BMR Section, please try again.",
+      });
+    }
+
+    res.status(200).json({
       error: false,
       message: "BMR Section deleted successfully",
     });
   } catch (err) {
     res.status(500).json({
       error: true,
-      message: err.message,
+      message: `Error deleting BMR Section: ${err.message}`,
     });
   }
 };
 
 exports.deleteBMRField = async (req, res) => {
+  const bmrFieldId = req.params.id;
+
   try {
-    const Field = await BMR_field.findOne({
-      where: { bmr_field_id: req.params.id },
+    // Check if the BMR Field exists and is active
+    const field = await BMR_field.findOne({
+      where: { bmr_field_id: bmrFieldId, isActive: true },
     });
-    if (!Field) {
+
+    if (!field) {
       return res.status(404).json({
         error: true,
         message: "BMR Field not found",
       });
     }
 
-    await BMR_field.update(
+    // Mark the BMR Field as inactive
+    const [updated] = await BMR_field.update(
       { isActive: false },
       {
         where: {
-          bmr_field_id: req.params.id,
+          bmr_field_id: bmrFieldId,
         },
       }
     );
 
-    res.json({
+    // Ensure that the update was successful
+    if (updated === 0) {
+      return res.status(400).json({
+        error: true,
+        message: "Failed to delete BMR Field, please try again.",
+      });
+    }
+
+    res.status(200).json({
       error: false,
       message: "BMR Field deleted successfully",
     });
   } catch (err) {
     res.status(500).json({
       error: true,
-      message: err.message,
+      message: `Error deleting BMR Field: ${err.message}`,
     });
   }
 };
@@ -636,7 +906,7 @@ exports.SendBMRForReview = async (req, res) => {
 
     // Find the form
     const form = await BMR.findOne({
-      where: { bmr_id },
+      where: { bmr_id, isActive: true },
       transaction,
     });
 
@@ -750,7 +1020,7 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
 
     // Find the form
     const form = await BMR.findOne({
-      where: { bmr_id },
+      where: { bmr_id, isActive: true },
       transaction,
     });
 
@@ -863,7 +1133,7 @@ exports.SendBMRReviewToApproval = async (req, res) => {
 
     // Retrieve the form
     const form = await BMR.findOne({
-      where: { bmr_id },
+      where: { bmr_id, isActive: true },
       transaction,
     });
 
@@ -1015,7 +1285,7 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
 
     // Find the form
     const form = await BMR.findOne({
-      where: { bmr_id },
+      where: { bmr_id, isActive: true },
       transaction,
     });
 
@@ -1136,7 +1406,7 @@ exports.ApproveBMR = async (req, res) => {
 
     // Retrieve the BMR form
     const form = await BMR.findOne({
-      where: { bmr_id },
+      where: { bmr_id, isActive: true },
       transaction,
     });
 

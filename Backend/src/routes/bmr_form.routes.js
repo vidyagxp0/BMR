@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Auth = require("../middlewares/authentication");
-const BmrController = require("../controllers/bmr.controllers");
+const BmrController = require("../controllers/bmr_form.controllers");
 
 router.post(
   "/add-bmr",

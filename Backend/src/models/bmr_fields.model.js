@@ -73,8 +73,7 @@ const BMR_field = sequelize.define("BMR_field", {
     defaultValue: false,
   },
   acceptsMultiple: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
+    type: DataTypes.JSON,
   },
   isActive: {
     type: DataTypes.BOOLEAN,
