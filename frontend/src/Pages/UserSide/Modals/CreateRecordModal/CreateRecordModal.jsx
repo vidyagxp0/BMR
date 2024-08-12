@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import "../General.css";
 import "./CreateRecordModal.css";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import Select from "react-select";
@@ -22,7 +21,6 @@ const modalStyle = {
 };
 
 function CreateRecordModal({ onClose }) {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     reviewers: [],
@@ -31,21 +29,26 @@ function CreateRecordModal({ onClose }) {
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
+  console.log(isSelectedReviewer,"isSelectedReview")
   const [isSelectedApprover, setIsSelectedApprover] = useState([]);
 const dispatch = useDispatch();
 
 const addBMRs = (e)=> {
   e.preventDefault();
-  axios.post("http://192.168.1.16:7000/bmr-form/add-bmr", {
+  axios.post("http://192.168.1.34:7000/bmr-form/add-bmr", {
     name: formData.name,
     reviewers: isSelectedReviewer.map((reviewer) => ({
       reviewerId: reviewer.value,
       status: "pending",
+      reviewer:reviewer.label,
+      date_of_review:"NA",
       comment: null
     })),
     approvers: isSelectedApprover.map((approver) => ({
       approverId: approver.value,
       status: "pending",
+      approver:approver.label,
+      date_of_approval:"NA",
       comment: null
     }))
   }, {
@@ -70,7 +73,7 @@ const addBMRs = (e)=> {
   useEffect(() => {
     const config = {
       method: "post",
-      url: "http://192.168.1.16:7000/bmr-form/get-user-roles",
+      url: "http://192.168.1.34:7000/bmr-form/get-user-roles",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",
@@ -96,7 +99,7 @@ const addBMRs = (e)=> {
 
     const newConfig = {
       method: "post",
-      url: "http://192.168.1.16:7000/bmr-form/get-user-roles",
+      url: "http://192.168.1.34:7000/bmr-form/get-user-roles",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",

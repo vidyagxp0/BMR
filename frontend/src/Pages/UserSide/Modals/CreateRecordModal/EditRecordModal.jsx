@@ -50,7 +50,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
     console.log('Updated BMR Data:', updatedBMRData); // Debug log
 
-    axios.put(`http://192.168.1.16:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`, updatedBMRData, {
+    axios.put(`http://192.168.1.34:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`, updatedBMRData, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",
@@ -69,7 +69,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const reviewerResponse = await axios.post("http://192.168.1.16:7000/bmr-form/get-user-roles", {
+        const reviewerResponse = await axios.post("http://192.168.1.34:7000/bmr-form/get-user-roles", {
           role_id: 3,
         }, {
           headers: {
@@ -83,7 +83,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         }));
         setReviewers(reviewerOptions);
 
-        const approverResponse = await axios.post("http://192.168.1.16:7000/bmr-form/get-user-roles", {
+        const approverResponse = await axios.post("http://192.168.1.34:7000/bmr-form/get-user-roles", {
           role_id: 4,
         }, {
           headers: {

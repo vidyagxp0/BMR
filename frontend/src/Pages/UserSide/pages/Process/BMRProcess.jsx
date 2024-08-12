@@ -10,6 +10,7 @@ import DeleteUserModal from "../../Modals/CreateRecordModal/DeleteUserModal";
 
 const BMRProcess = () => {
   const [data, setData] = useState([]);
+// console.log(data , "data")
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [showDeleteUser, setShowDeleteUser] = useState(false);
@@ -65,7 +66,7 @@ const BMRProcess = () => {
   ];
   const fetchBMRData = () => {
     axios
-      .get("http://192.168.1.16:7000/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.34:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },

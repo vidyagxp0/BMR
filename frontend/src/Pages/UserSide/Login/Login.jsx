@@ -6,6 +6,7 @@ import axios from 'axios';
 import AtmButton from '../../../AtmComponents/AtmButton';
 import AtmInput from '../../../AtmComponents/AtmInput';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { jwtDecode } from "jwt-decode";
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -19,7 +20,7 @@ const Login = () => {
       password: password,
     };
     axios
-      .post("http://192.168.1.16:7000/user/user-login", data, {
+      .post("http://192.168.1.34:7000/user/user-login", data, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -28,6 +29,10 @@ const Login = () => {
         navigate("/dashboard");
         toast.success("Login Successful");
         localStorage.setItem("user-token", response.data.token);
+
+  ;
+        const decoded = jwtDecode(response.data.token);
+        console.log(decoded)
       })
       .catch((error) => {
         toast.error(error.response.data.message);

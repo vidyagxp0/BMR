@@ -10,21 +10,22 @@ import DeleteModal from './Modals/DeleteModal';
 import 'react-toastify/dist/ReactToastify.css'; 
 const BMRProcessDetails = () => {
   const [data, setData] = useState([]);
-  console.log(data)
+  console.log(data,"data")
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
+
   const [tabs, setTabs] = useState([
-    "General Information",
-    "Details",
-    "Initiator Remarks",
+    "Initiator Remarks",  
     "Reviewer Remarks",
     "Approver Remarks"
   ]);
+
   const [flowoTabs, setFlowoTabs] = useState([
-    "Initiator",
-    "Reviewer",
-    "Approver",
+    "INITIATION",
+    "UNDER REVIEW",
+    "UNDER APPROVAL",
+    "APPROVED"
   ]);
 
   const [newTab, setNewTab] = useState([]);
@@ -32,20 +33,18 @@ const BMRProcessDetails = () => {
   const [newSection, setNewSection] = useState([]);
   const [section, setSection] = useState([]);
   const [fields, setFields] = useState({
-    "General Information": [
-      { fieldName: "Initiator", field_type: "text", options: [], isMandatory: false },
-      { fieldName: "Date of Initiation", field_type: "date", options: [], isMandatory: false },
-      { fieldName: "Description", field_type: "text", options: [], isMandatory: true },
-      { fieldName: "Status", field_type: "dropdown", options: ["Pending", "Completed"], isMandatory: false },
-    ],
-    "Details": [
-      { fieldName: "Department", field_type: "text", options: [], isMandatory: false },
-      { fieldName: "Compression Area with respect to Corridor", field_type: "text", options: [], isMandatory: false },
-      { fieldName: "Limit", field_type: "number", options: [], isMandatory: false },
-    ],
-    "Initiator Remarks": [],
-    "Reviewer Remarks": [],
-    "Approver Remarks": [],
+    "Initiator Remarks": [ { fieldName: "Initiator Name", field_type: "text", options: [], isMandatory: false },
+    { fieldName: "Date of Initiation", field_type: "date", options: [], isMandatory: false },
+    { fieldName: "Initiator Comments", field_type: "text", options: [], isMandatory: true },
+  ],
+    "Reviewer Remarks": [{ fieldName: "Reviewer Name", field_type: "text", options: [], isMandatory: false },
+    { fieldName: "Date of Review", field_type: "date", options: [], isMandatory: false },
+    { fieldName: "Reviewer Comments", field_type: "text", options: [], isMandatory: true }
+  ],
+    "Approver Remarks": [{ fieldName: "Approver Name", field_type: "text", options: [], isMandatory: false },
+    { fieldName: "Date of Approve", field_type: "date", options: [], isMandatory: false },
+    { fieldName: "Approver Comments", field_type: "text", options: [], isMandatory: true }
+  ],
   });
   const [activeFlowTab, setActiveFlowTab] = useState(flowoTabs[0]);
   const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
@@ -68,7 +67,7 @@ const BMRProcessDetails = () => {
 
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.16:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.34:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -92,6 +91,7 @@ const BMRProcessDetails = () => {
         toast.error("Error Fetching BMR");
       });
   };
+
 
   useEffect(() => {
     fetchBMRData();
@@ -177,7 +177,46 @@ const BMRProcessDetails = () => {
     setActiveField(field);
 setExistingFieldName(field)
   };
+  const populateApproverFields = () => {
+    if (data.length > 0) {
+      const approvers = data[0].approvers || [];
 
+      const approverFields = approvers.flatMap((approver, idx) => [
+        { fieldName: `Approver Name ${idx + 1}`, field_type: "text", value: approver.approver, isMandatory: false },
+        { fieldName: `Date of Approve ${idx + 1}`, field_type: "date", value: "", isMandatory: false },
+        { fieldName: `Approver Comments ${idx + 1}`, field_type: "text", value: "", isMandatory: true },
+      ]);
+
+      setFields((prevFields) => ({
+        ...prevFields,
+        "Approver Remarks": approverFields,
+      }));
+    }
+  };
+
+  // Populate the reviewers' data into the fields
+  const populateReviewerFields = () => {
+    if (data.length > 0) {
+      const reviewers = data[0].reviewers || [];
+
+      const reviewerFields = reviewers.flatMap((reviewer, idx) => [
+        { fieldName: `Reviewer Name ${idx + 1}`, field_type: "text", value: reviewer.name, isMandatory: false },
+        { fieldName: `Date of Review ${idx + 1}`, field_type: "date", value: "", isMandatory: false },
+        { fieldName: `Reviewer Comments ${idx + 1}`, field_type: "text", value: "", isMandatory: true },
+      ]);
+
+      setFields((prevFields) => ({
+        ...prevFields,
+        "Reviewer Remarks": reviewerFields,
+      }));
+    }
+  };
+
+  // Call the functions when the component mounts or data changes
+  useEffect(() => {
+    populateApproverFields();
+    populateReviewerFields();
+  }, [data]);
 
   return (
     <div className="p-4 relative h-full">
@@ -232,7 +271,7 @@ setExistingFieldName(field)
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleFlowTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${activeFlowTab === tab ? 'bg-gray-400 text-white' : 'bg-gray-200 text-gray-700'}`}
+              className={`py-2 px-4 rounded-full border-2 border-black ${activeFlowTab === tab ? 'bg-blue-500 text-white' : 'bg-blue-100 text-gray-700'}`}
             >
               {tab}
             </button>
@@ -247,7 +286,7 @@ setExistingFieldName(field)
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleDefaultTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${activeDefaultTab === tab ? 'bg-gray-400 text-white' : 'bg-gray-200 text-gray-700'}`}
+              className={`py-2 px-4 rounded-full border-2 border-black ${activeDefaultTab === tab ? 'bg-blue-500 text-white' : 'bg-blue-100 text-gray-700'}`}
             >
               {tab}
             </button>
@@ -268,30 +307,99 @@ setExistingFieldName(field)
           ))}
         </div>
       )}
-
-      {showForm === "default" && fields[activeDefaultTab]?.length > 0 && (
+      
+      {
+        showForm === "default" && fields[activeDefaultTab]?.length > 0 && (
+          <div>
+            {data.map((reviewer)=>reviewer.approvers?.map((approver)=>{
+              return <input value={approver.approver} />
+            }))}
+          </div>
+        )
+      }
+  {showForm === "default" && fields[activeDefaultTab]?.length > 0 && (
         <div className="grid grid-cols-2 gap-4">
           {fields[activeDefaultTab].map((field, index) => (
             <div key={index} className="p-4 rounded bg-white shadow border border-gray-300">
-              <label className="block text-lg font-extrabold text-gray-700 mb-2">{field.fieldName}{field.isMandatory && ' *'}</label>
+              <label className="text-lg font-extrabold text-gray-700 flex gap-1 mb-2">
+                {field.fieldName}
+                <div className="text-red-500">{field.isMandatory && " *"}</div>
+              </label>
               {/* Render input fields based on type */}
-              {field.field_type === "text" && <input style={{ border: "1px solid gray", height: "48px" }} type="text" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} />}
-              {field.field_type === "password" && <input style={{ border: "1px solid gray", height: "48px" }} type="password" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} />}
-              {field.field_type === "date" && <input style={{ border: "1px solid gray", height: "48px" }} type="date" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} />}
-              {field.field_type === "email" && <input style={{ border: "1px solid gray", height: "48px" }} type="email" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} />}
-              {field.field_type === "number" && <input style={{ border: "1px solid gray", height: "48px" }} type="number" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} />}
-              {field.field_type === "checkbox" && <input style={{ border: "1px solid gray", height: "48px" }} type="checkbox" className="border border-gray-600 p-2 rounded" required={field.isMandatory} />}
+             
+              {field.field_type === "text" && field.fieldName !== "Approver Name" && (
+                <input
+                  style={{ border: "1px solid gray", height: "48px" }}
+                  type="text"
+                  className="border border-gray-600 p-2 w-full rounded"
+                  value={field.value}
+                  required={field.isMandatory}
+                />
+              )}
+              {field.field_type === "password" && (
+                <input
+                  style={{ border: "1px solid gray", height: "48px" }}
+                  type="password"
+                  className="border border-gray-600 p-2 w-full rounded"
+                  required={field.isMandatory}
+                />
+              )}
+              {field.field_type === "date" && (
+                <input
+                  style={{ border: "1px solid gray", height: "48px" }}
+                  type="date"
+                  className="border border-gray-600 p-2 w-full rounded"
+                  required={field.isMandatory}
+                />
+              )}
+              {field.field_type === "email" && (
+                <input
+                  style={{ border: "1px solid gray", height: "48px" }}
+                  type="email"
+                  className="border border-gray-600 p-2 w-full rounded"
+                  required={field.isMandatory}
+                />
+              )}
+              {field.field_type === "number" && (
+                <input
+                  style={{ border: "1px solid gray", height: "48px" }}
+                  type="number"
+                  className="border border-gray-600 p-2 w-full rounded"
+                  required={field.isMandatory}
+                />
+              )}
+              {field.field_type === "checkbox" && (
+                <input
+                  style={{ border: "1px solid gray", height: "48px" }}
+                  type="checkbox"
+                  className="border border-gray-600 p-2 rounded"
+                  required={field.isMandatory}
+                />
+              )}
               {field.field_type === "dropdown" && (
-                <select className="border border-gray-600 p-2 w-full rounded" style={{ border: "1px solid gray", height: "48px" }} required={field.isMandatory}>
+                <select
+                  className="border border-gray-600 p-2 w-full rounded"
+                  style={{ border: "1px solid gray", height: "48px" }}
+                  required={field.isMandatory}
+                >
                   {field.options.map((option, idx) => (
-                    <option key={idx} value={option}>{option}</option>
+                    <option key={idx} value={option}>
+                      {option}
+                    </option>
                   ))}
                 </select>
               )}
               {field.field_type === "multi-select" && (
-                <select multiple className="border border-gray-600 p-2 w-full rounded" style={{ border: "1px solid gray", height: "48px" }} required={field.isMandatory}>
+                <select
+                  multiple
+                  className="border border-gray-600 p-2 w-full rounded"
+                  style={{ border: "1px solid gray", height: "48px" }}
+                  required={field.isMandatory}
+                >
                   {field.options?.map((option, idx) => (
-                    <option key={idx} value={option}>{option}</option>
+                    <option key={idx} value={option}>
+                      {option}
+                    </option>
                   ))}
                 </select>
               )}

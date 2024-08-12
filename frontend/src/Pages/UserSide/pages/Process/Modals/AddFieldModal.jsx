@@ -4,8 +4,6 @@ import { useParams } from 'react-router-dom';
 
 const AddFieldModal = ({ closeModal, addField ,  bmr_tab_id, bmr_section_id, updateField, existingFieldData, bmr_field_id }) => {
   const { bmr_id } = useParams();
-  console.log(bmr_field_id,"update")
-  console.log(existingFieldData,"dfsgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdf")
 
   const [fieldData, setFieldData] = useState({
     field_type: 'text',
@@ -26,30 +24,12 @@ const AddFieldModal = ({ closeModal, addField ,  bmr_tab_id, bmr_section_id, upd
     bmr_section_id: bmr_section_id,
   });
 
-  const [previousFieldData , setPreviousFieldData] = useState({
-    field_type: 'text',
-    isMandatory: false,
-    label: '',
-    placeholder: '',
-    defaultValue: '',
-    helpText: '',
-    minValue: '',
-    maxValue: '',
-    order: '',
-    isVisible: true,
-    isRequired: false,
-    isReadOnly: false,
-    acceptsMultiple: false,
-    options: [], // Options ke liye bhi state manage karna padega
-  })
   useEffect(() => {
     if (updateField === "edit-field" && existingFieldData) {
-      console.log("Setting existing field data:", existingFieldData);
       setFieldData((prevData) => ({
         ...prevData,
         ...existingFieldData
       }));
-      console.log("Field data after setting:", fieldData);
     }
   }, [existingFieldData, updateField]);
 
@@ -65,7 +45,7 @@ const AddFieldModal = ({ closeModal, addField ,  bmr_tab_id, bmr_section_id, upd
     if (updateField === "add-field") {
       try {
         const response = await axios.post(
-          'http://192.168.1.16:7000/bmr-form/add-bmr-field',
+          'http://192.168.1.34:7000/bmr-form/add-bmr-field',
           { bmr_id, ...fieldData },
           {
             headers: {
@@ -82,7 +62,7 @@ const AddFieldModal = ({ closeModal, addField ,  bmr_tab_id, bmr_section_id, upd
     } else if (updateField === "edit-field") {
       try {
         const response = await axios.put(
-          `http://192.168.1.16:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
+          `http://192.168.1.34:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
           { bmr_id, ...fieldData },
           {
             headers: {
