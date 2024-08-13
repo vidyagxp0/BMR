@@ -159,7 +159,7 @@ exports.Userlogin = async (req, res) => {
   User.findOne({
     where: {
       email: email.toLowerCase(),
-      isActive: true
+      isActive: true,
     },
     raw: true,
   })
@@ -171,8 +171,16 @@ exports.Userlogin = async (req, res) => {
             message: "Invalid Password!",
           });
         } else {
+          const userRoles = await UserRole.findAll({
+            where: {
+              user_id: data.user_id,
+            },
+            attributes: {
+              exclude: ["createdAt", "updatedAt", "userRole_id"],
+            },
+          });
           const token = jwt.sign(
-            { userId: data.user_id },
+            { userId: data.user_id, roles: userRoles },
             config.development.JWT_SECRET,
             { expiresIn: "24h" }
           );

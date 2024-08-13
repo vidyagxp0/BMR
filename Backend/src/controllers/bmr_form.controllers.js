@@ -245,7 +245,7 @@ exports.postBMRField = async (req, res) => {
     isVisible,
     isRequired,
     isReadOnly,
-    acceptsMultiple,
+    acceptsMultiple, // This will now potentially hold either options or grid definitions
   } = req.body;
 
   // Check for required fields
@@ -275,11 +275,40 @@ exports.postBMRField = async (req, res) => {
     });
 
     if (existingField) {
-      // If a field already exists, return an error response
       return res.status(409).json({
         error: true,
         message: "A field with the same label already exists in this section.",
       });
+    }
+
+    let formattedAcceptsMultiple = acceptsMultiple;
+
+    // Conditionally format acceptsMultiple based on the field_type
+    if (field_type === "single_select" || field_type === "multi_select") {
+      // Ensure that acceptsMultiple is an array of options
+      if (!Array.isArray(acceptsMultiple)) {
+        return res.status(400).json({
+          error: true,
+          message:
+            "For 'single_select' or 'multi_select' types, acceptsMultiple must be an array of options.",
+        });
+      }
+      // Optionally, validate the structure of each option here
+      formattedAcceptsMultiple = JSON.stringify(acceptsMultiple);
+    } else if (field_type === "grid") {
+      // Ensure that acceptsMultiple contains grid column definitions
+      if (
+        typeof acceptsMultiple !== "object" ||
+        !Array.isArray(acceptsMultiple.columns)
+      ) {
+        return res.status(400).json({
+          error: true,
+          message:
+            "For 'grid' type, acceptsMultiple must contain an object with a 'columns' array.",
+        });
+      }
+      // Optionally, validate each column's structure here
+      formattedAcceptsMultiple = JSON.stringify(acceptsMultiple);
     }
 
     // Create the BMR field if no conflict is found
@@ -298,7 +327,7 @@ exports.postBMRField = async (req, res) => {
       isVisible: isVisible,
       isRequired: isRequired,
       isReadOnly: isReadOnly,
-      acceptsMultiple: acceptsMultiple,
+      acceptsMultiple: formattedAcceptsMultiple,
     });
 
     // Send success response
@@ -525,7 +554,13 @@ exports.editBMRField = async (req, res) => {
     acceptsMultiple,
   } = req.body;
 
-  if (!bmr_id || !bmr_tab_id || !bmr_section_id || !label || !isRequired) {
+  if (
+    !bmr_id ||
+    !bmr_tab_id ||
+    !bmr_section_id ||
+    !label ||
+    isRequired === undefined
+  ) {
     return res.status(400).json({
       error: true,
       message: "Please provide proper details",
@@ -533,7 +568,6 @@ exports.editBMRField = async (req, res) => {
   }
 
   try {
-    // Check if a different field with the same label already exists under the same BMR, tab, and section
     const existingField = await BMR_field.findOne({
       where: {
         bmr_id: bmr_id,
@@ -552,7 +586,33 @@ exports.editBMRField = async (req, res) => {
       });
     }
 
-    // Proceed with the update if no duplicate field label is found
+    let formattedAcceptsMultiple = acceptsMultiple;
+
+    // Formatting acceptsMultiple based on field_type
+    if (field_type === "single_select" || field_type === "multi_select") {
+      if (!Array.isArray(acceptsMultiple)) {
+        return res.status(400).json({
+          error: true,
+          message:
+            "For 'single_select' or 'multi_select' types, acceptsMultiple must be an array of options.",
+        });
+      }
+      formattedAcceptsMultiple = JSON.stringify(acceptsMultiple);
+    } else if (field_type === "grid") {
+      if (
+        typeof acceptsMultiple !== "object" ||
+        !Array.isArray(acceptsMultiple.columns)
+      ) {
+        return res.status(400).json({
+          error: true,
+          message:
+            "For 'grid' type, acceptsMultiple must contain an object with a 'columns' array.",
+        });
+      }
+      formattedAcceptsMultiple = JSON.stringify(acceptsMultiple);
+    }
+
+    // Proceed with the update
     const [updated] = await BMR_field.update(
       {
         bmr_id: bmr_id,
@@ -569,12 +629,11 @@ exports.editBMRField = async (req, res) => {
         isVisible: isVisible,
         isRequired: isRequired,
         isReadOnly: isReadOnly,
-        acceptsMultiple: acceptsMultiple,
+        acceptsMultiple: formattedAcceptsMultiple,
       },
       { where: { bmr_field_id: bmr_field_id } }
     );
 
-    // Ensure that update was successful
     if (updated === 0) {
       return res.status(404).json({
         error: true,
