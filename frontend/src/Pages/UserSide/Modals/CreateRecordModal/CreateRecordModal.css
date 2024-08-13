@@ -1,0 +1,45 @@
+/*! ===================================================================== */
+/*! CREATE RECORD MODAL CSS */
+/*! ===================================================================== */
+#create-record-modal .selection-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+#create-record-modal .selection-block .head {
+    background: var(--themeColor);
+    padding: 7px 20px;
+    color: white;
+}
+
+#create-record-modal .division {
+    padding-right: 10px;
+    border-right: 1px solid #8080808c;
+}
+
+#create-record-modal .project {
+    padding-left: 10px;
+}
+
+#create-record-modal .select-list {
+    max-height: 300px;
+    overflow-y: auto;
+    display: grid;
+}
+
+#create-record-modal .select-list>* {
+    font-size: 0.9rem;
+    padding: 7px 20px;
+    transition: all 0.3s linear;
+    cursor: pointer;
+}
+
+#create-record-modal .division-list>*:hover,
+#create-record-modal .division-list>*.active {
+    background: #006fc057;
+}
+
+#create-record-modal .project-list>*:hover,
+#create-record-modal .project-list>*.active {
+    background: #80808030;
+}
