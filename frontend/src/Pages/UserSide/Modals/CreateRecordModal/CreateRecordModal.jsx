@@ -6,7 +6,7 @@ import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import Select from "react-select";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import { addBmr} from "../../../../userSlice";
+import { addBmr } from "../../../../userSlice";
 
 const modalStyle = {
   position: "absolute",
@@ -29,51 +29,57 @@ function CreateRecordModal({ onClose }) {
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
-  console.log(isSelectedReviewer,"isSelectedReview")
+  console.log(isSelectedReviewer, "isSelectedReview");
   const [isSelectedApprover, setIsSelectedApprover] = useState([]);
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-const addBMRs = (e)=> {
-  e.preventDefault();
-  axios.post("http://192.168.1.34:7000/bmr-form/add-bmr", {
-    name: formData.name,
-    reviewers: isSelectedReviewer.map((reviewer) => ({
-      reviewerId: reviewer.value,
-      status: "pending",
-      reviewer:reviewer.label,
-      date_of_review:"NA",
-      comment: null
-    })),
-    approvers: isSelectedApprover.map((approver) => ({
-      approverId: approver.value,
-      status: "pending",
-      approver:approver.label,
-      date_of_approval:"NA",
-      comment: null
-    }))
-  }, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-      "Content-Type": "application/json",
-    },
-  }).then((response) => {
-    toast.success("BMR added successfully!");
-    dispatch(addBmr(response.data.bmr));
-    setFormData({ name: "", reviewers: [], approvers: [] });
-    setTimeout(() => {
-      onClose();
-    }, 1000);
-  }).catch((err) => {
-    console.error(err);
-    toast.error("BMR Already Registered");
-  });
-  }
-
+  const addBMRs = (e) => {
+    e.preventDefault();
+    axios
+      .post(
+        "http://192.168.1.17:7000/bmr-form/add-bmr",
+        {
+          name: formData.name,
+          reviewers: isSelectedReviewer.map((reviewer) => ({
+            reviewerId: reviewer.value,
+            status: "pending",
+            reviewer: reviewer.label,
+            date_of_review: "NA",
+            comment: null,
+          })),
+          approvers: isSelectedApprover.map((approver) => ({
+            approverId: approver.value,
+            status: "pending",
+            approver: approver.label,
+            date_of_approval: "NA",
+            comment: null,
+          })),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        toast.success("BMR added successfully!");
+        dispatch(addBmr(response.data.bmr));
+        setFormData({ name: "", reviewers: [], approvers: [] });
+        setTimeout(() => {
+          onClose();
+        }, 1000);
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error("BMR Already Registered");
+      });
+  };
 
   useEffect(() => {
     const config = {
       method: "post",
-      url: "http://192.168.1.34:7000/bmr-form/get-user-roles",
+      url: "http://192.168.1.17:7000/bmr-form/get-user-roles",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",
@@ -86,10 +92,15 @@ const addBMRs = (e)=> {
     axios(config)
       .then((response) => {
         const reviewerOptions = [
-          ...new Map(response.data.message.map((role) => [role.user_id, {
-            value: role.user_id,
-            label: `${role.User.name}`,
-          }])).values()
+          ...new Map(
+            response.data.message.map((role) => [
+              role.user_id,
+              {
+                value: role.user_id,
+                label: `${role.User.name}`,
+              },
+            ])
+          ).values(),
         ];
         setReviewers(reviewerOptions);
       })
@@ -99,7 +110,7 @@ const addBMRs = (e)=> {
 
     const newConfig = {
       method: "post",
-      url: "http://192.168.1.34:7000/bmr-form/get-user-roles",
+      url: "http://192.168.1.17:7000/bmr-form/get-user-roles",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",
@@ -113,10 +124,15 @@ const addBMRs = (e)=> {
       .then((response) => {
         console.log(response, "response");
         const approverOptions = [
-          ...new Map(response.data.message.map((role) => [role.user_id, {
-            value: role.user_id,
-            label: `${role.User.name}`,
-          }])).values()
+          ...new Map(
+            response.data.message.map((role) => [
+              role.user_id,
+              {
+                value: role.user_id,
+                label: `${role.User.name}`,
+              },
+            ])
+          ).values(),
         ];
         setApprovers(approverOptions);
       })
@@ -124,8 +140,6 @@ const addBMRs = (e)=> {
         console.error("Error: ", error);
       });
   }, []);
-
-
 
   const handleChange = (e) => {
     setFormData({

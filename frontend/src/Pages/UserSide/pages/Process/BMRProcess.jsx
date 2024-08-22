@@ -10,34 +10,39 @@ import DeleteUserModal from "../../Modals/CreateRecordModal/DeleteUserModal";
 
 const BMRProcess = () => {
   const [data, setData] = useState([]);
-// console.log(data , "data")
+  // console.log(data , "data")
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [showDeleteUser, setShowDeleteUser] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const columns = [
-    { header: "BMR Name", accessor: "name" ,Cell: ({ row }) => {
-      return (
-        <span
-          onClick={() => {navigate(`/process/processdetails/${row.original.bmr_id}`); }}
-          
-          className="cursor-pointer hover:text-blue-500"
-        >
-          {row.original.name}
-        </span>
-      );
+    {
+      header: "BMR Name",
+      accessor: "name",
+      Cell: ({ row }) => {
+        return (
+          <span
+            onClick={() => {
+              navigate(`/process/processdetails/${row.original.bmr_id}`);
+            }}
+            className="cursor-pointer hover:text-blue-500"
+          >
+            {row.original.name}
+          </span>
+        );
+      },
     },
-  },
     { header: "Status", accessor: "status" },
     { header: "Date Of Initiation", accessor: "date_of_initiation" },
-    { header: "Actions", accessor: "actions",
+    {
+      header: "Actions",
+      accessor: "actions",
       Cell: ({ row }) => {
         const user = row.original;
         return (
           <div className="flex space-x-2">
-         
             <button
               onClick={() => {
                 setSelectedUser(user);
@@ -47,26 +52,24 @@ const BMRProcess = () => {
             >
               Edit
             </button>
-            
+
             <button
               onClick={() => {
                 setSelectedUser(user);
-                setShowDeleteUser(true)
+                setShowDeleteUser(true);
               }}
               className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
             >
               Delete
             </button>
           </div>
-
         );
       },
-
-     },
+    },
   ];
   const fetchBMRData = () => {
     axios
-      .get("http://192.168.1.34:7000/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.17:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -109,37 +112,39 @@ const BMRProcess = () => {
     fetchBMRData();
   };
 
-
-
-
   return (
     <div>
       <HeaderBottom openModal={() => setIsModalOpen(true)} />
       <AtmTable columns={columns} data={data} />
       {isModalOpen && (
         <CreateRecordModal
-          onClose={() => {setIsModalOpen(false);fetchBMRData()} }
+          onClose={() => {
+            setIsModalOpen(false);
+            fetchBMRData();
+          }}
           addBMR={handleAddBMR}
         />
       )}
 
       {isEditModalOpen && (
-        <EditRecordModal 
-          onClose={() => { setIsEditModalOpen(false); fetchBMRData(); }} 
+        <EditRecordModal
+          onClose={() => {
+            setIsEditModalOpen(false);
+            fetchBMRData();
+          }}
           bmrData={selectedUser}
           fetchBMRData={fetchBMRData}
-          bmr_tab_id={selectedUser?.bmr_tab_id} 
+          bmr_tab_id={selectedUser?.bmr_tab_id}
         />
       )}
       {showDeleteUser && (
-        <DeleteUserModal 
+        <DeleteUserModal
           user={selectedUser}
           onClose={() => setShowDeleteUser(false)}
           id={selectedUser?.bmr_id}
           setData={setData}
         />
       )}
-      
     </div>
   );
 };
