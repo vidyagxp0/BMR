@@ -30,12 +30,6 @@ const BMR = sequelize.define("BMR", {
     type: DataTypes.DATE,
     defaultValue: Sequelize.NOW,
   },
-  date_of_review: {
-    type: DataTypes.DATE,
-  },
-  date_of_approval: {
-    type: DataTypes.DATE,
-  },
   initiatorComment: {
     type: DataTypes.STRING,
   },
