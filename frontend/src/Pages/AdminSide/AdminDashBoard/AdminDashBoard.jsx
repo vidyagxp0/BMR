@@ -89,7 +89,7 @@ const AdminDashBoard = () => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.34:7000/user/get-all-users", {
+      .get("http://localhost:7000/user/get-all-users", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
         },
