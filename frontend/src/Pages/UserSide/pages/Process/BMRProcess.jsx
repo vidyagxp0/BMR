@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import EditRecordModal from "../../Modals/CreateRecordModal/EditRecordModal";
 import DeleteUserModal from "../../Modals/CreateRecordModal/DeleteUserModal";
+import { formattedDate } from "../../../../AtmComponents/Helper";
 
 const BMRProcess = () => {
   const [data, setData] = useState([]);
@@ -16,6 +17,7 @@ const BMRProcess = () => {
   const [showDeleteUser, setShowDeleteUser] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const navigate = useNavigate()
+
 
   const columns = [
     { header: "BMR Name", accessor: "name" ,Cell: ({ row }) => {
@@ -31,7 +33,7 @@ const BMRProcess = () => {
     },
   },
     { header: "Status", accessor: "status" },
-    { header: "Date Of Initiation", accessor: "date_of_initiation" },
+    { header: "Date Of Initiation", accessor: "date_of_initiation",  Cell: ({ row }) => formattedDate(row.original.date_of_initiation) },
     { header: "Actions", accessor: "actions",
       Cell: ({ row }) => {
         const user = row.original;
@@ -66,7 +68,7 @@ const BMRProcess = () => {
   ];
   const fetchBMRData = () => {
     axios
-      .get("http://192.168.1.34:7000/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.21:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -83,6 +85,8 @@ const BMRProcess = () => {
   useEffect(() => {
     fetchBMRData();
   }, []);
+
+
   const handleAddBMR = (
     name,
     reviewers,
@@ -99,7 +103,7 @@ const BMRProcess = () => {
       {
         name,
         status,
-        date_of_initiation,
+        date_of_initiation:formattedDate(date_of_initiation),
         reviewers: reviewerNames,
         approvers: approverNames,
         bmr_tab_id,
