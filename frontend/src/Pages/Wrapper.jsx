@@ -16,6 +16,7 @@ const Wrapper = () => {
         <Outlet />
       </div>
     </div>
+    
   </div>
   );
 };

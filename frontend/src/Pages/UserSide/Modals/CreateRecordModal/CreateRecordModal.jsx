@@ -35,7 +35,7 @@ const dispatch = useDispatch();
 
 const addBMRs = (e)=> {
   e.preventDefault();
-  axios.post("http://195.35.6.197:7000/bmr-form/add-bmr", {
+  axios.post("http://192.168.1.20:7000/bmr-form/add-bmr", {
     name: formData.name,
     reviewers: isSelectedReviewer.map((reviewer) => ({
       reviewerId: reviewer.value,
@@ -73,7 +73,7 @@ const addBMRs = (e)=> {
   useEffect(() => {
     const config = {
       method: "post",
-      url: "http://195.35.6.197:7000/bmr-form/get-user-roles",
+      url: "http://192.168.1.20:7000/bmr-form/get-user-roles",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",
@@ -99,7 +99,7 @@ const addBMRs = (e)=> {
 
     const newConfig = {
       method: "post",
-      url: "http://195.35.6.197:7000/bmr-form/get-user-roles",
+      url: "http://192.168.1.20:7000/bmr-form/get-user-roles",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",

@@ -3,12 +3,12 @@ import HeaderBottom from "../../../../Components/Header/HeaderBottom";
 import AtmTable from "../../../../AtmComponents/AtmTable";
 import CreateRecordModal from "../../Modals/CreateRecordModal/CreateRecordModal";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import EditRecordModal from "../../Modals/CreateRecordModal/EditRecordModal";
 import DeleteUserModal from "../../Modals/CreateRecordModal/DeleteUserModal";
 import { formattedDate } from "../../../../AtmComponents/Helper";
-
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const BMRProcess = () => {
   const [data, setData] = useState([]);
 // console.log(data , "data")
@@ -68,7 +68,7 @@ const BMRProcess = () => {
   ];
   const fetchBMRData = () => {
     axios
-      .get("http://195.35.6.197:7000/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.20:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -118,6 +118,7 @@ const BMRProcess = () => {
 
   return (
     <div>
+      <ToastContainer />
       <HeaderBottom openModal={() => setIsModalOpen(true)} />
       <AtmTable columns={columns} data={data} />
       {isModalOpen && (

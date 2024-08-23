@@ -31,7 +31,7 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
   });
   const dispatch = useDispatch();
   useEffect(() => {
-    axios.get("http://195.35.6.197:7000/user/get-all-roles", {
+    axios.get("http://192.168.1.20:7000/user/get-all-roles", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
         "Content-Type": "application/json",
@@ -71,7 +71,7 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
       id: user.user_id
     };
 
-    axios.put(`http://195.35.6.197:7000/user/edit-user/${user.user_id}`, updatedFormData, {
+    axios.put(`http://192.168.1.20:7000/user/edit-user/${user.user_id}`, updatedFormData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem("admin-token")}`

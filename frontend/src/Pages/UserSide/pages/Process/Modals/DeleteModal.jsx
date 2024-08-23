@@ -8,7 +8,7 @@ const DeleteModal = ({ onClose, id, newTab, setNewTab, newSection, section_id, i
     const handleDelete = async () => {
         if (itemType === "tab") {
             try {
-                const response = await axios.delete(`http://195.35.6.197:7000/bmr-form/delete-bmr-tab/${id}`,
+                const response = await axios.delete(`http://192.168.1.20:7000/bmr-form/delete-bmr-tab/${id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -28,7 +28,7 @@ const DeleteModal = ({ onClose, id, newTab, setNewTab, newSection, section_id, i
         }
         else if (itemType === "section") {
             try {
-                const response = await axios.delete(`http://195.35.6.197:7000/bmr-form/delete-bmr-section/${section_id}`,
+                const response = await axios.delete(`http://192.168.1.20:7000/bmr-form/delete-bmr-section/${section_id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -58,7 +58,7 @@ const DeleteModal = ({ onClose, id, newTab, setNewTab, newSection, section_id, i
         }
         else if (itemType === "field") {
             try {
-                const response = await axios.delete(`http://195.35.6.197:7000/bmr-form/delete-bmr-field/${bmr_field_id}`,
+                const response = await axios.delete(`http://192.168.1.20:7000/bmr-form/delete-bmr-field/${bmr_field_id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("user-token")}`,
