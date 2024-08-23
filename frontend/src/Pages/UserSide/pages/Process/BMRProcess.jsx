@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import EditRecordModal from "../../Modals/CreateRecordModal/EditRecordModal";
 import DeleteUserModal from "../../Modals/CreateRecordModal/DeleteUserModal";
+import { formattedDate } from "../../../../AtmComponents/Helper";
 
 const BMRProcess = () => {
   const [data, setData] = useState([]);
@@ -35,7 +36,11 @@ const BMRProcess = () => {
       },
     },
     { header: "Status", accessor: "status" },
-    { header: "Date Of Initiation", accessor: "date_of_initiation" },
+    {
+      header: "Date Of Initiation",
+      accessor: "date_of_initiation",
+      Cell: ({ row }) => formattedDate(row.original.date_of_initiation),
+    },
     {
       header: "Actions",
       accessor: "actions",
@@ -86,6 +91,7 @@ const BMRProcess = () => {
   useEffect(() => {
     fetchBMRData();
   }, []);
+
   const handleAddBMR = (
     name,
     reviewers,
@@ -102,7 +108,7 @@ const BMRProcess = () => {
       {
         name,
         status,
-        date_of_initiation,
+        date_of_initiation: formattedDate(date_of_initiation),
         reviewers: reviewerNames,
         approvers: approverNames,
         bmr_tab_id,

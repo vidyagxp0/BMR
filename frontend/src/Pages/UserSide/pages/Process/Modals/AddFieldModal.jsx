@@ -14,7 +14,7 @@ const AddFieldModal = ({
   const { bmr_id } = useParams();
 
   const [fieldData, setFieldData] = useState({
-    field_type: "text",
+    field_type: "select",
     isMandatory: false,
     label: "",
     placeholder: "",
@@ -26,8 +26,8 @@ const AddFieldModal = ({
     isVisible: true,
     isRequired: false,
     isReadOnly: false,
-    acceptsMultiple: false,
-    options: [], // Options ke liye bhi state manage karna padega
+    acceptsMultiple: [],
+    selectedValues: [], // Manage selected values here
     bmr_tab_id: bmr_tab_id,
     bmr_section_id: bmr_section_id,
   });
@@ -37,6 +37,7 @@ const AddFieldModal = ({
       setFieldData((prevData) => ({
         ...prevData,
         ...existingFieldData,
+        selectedValues: existingFieldData.selectedValues || [], // Ensure selectedValues are set
       }));
     }
   }, [existingFieldData, updateField]);
@@ -46,6 +47,17 @@ const AddFieldModal = ({
     setFieldData((prevData) => ({
       ...prevData,
       [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSelectChange = (e) => {
+    const selectedOptions = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
+    setFieldData((prevData) => ({
+      ...prevData,
+      selectedValues: selectedOptions,
     }));
   };
 
@@ -88,18 +100,18 @@ const AddFieldModal = ({
   };
 
   const handleOptionChange = (index, value) => {
-    const newOptions = [...fieldData.options];
+    const newOptions = [...fieldData.acceptsMultiple];
     newOptions[index] = value;
     setFieldData((prevData) => ({
       ...prevData,
-      options: newOptions,
+      acceptsMultiple: newOptions,
     }));
   };
 
   const handleAddOption = () => {
     setFieldData((prevData) => ({
       ...prevData,
-      options: [...prevData.options, ""],
+      acceptsMultiple: [...prevData.acceptsMultiple, ""],
     }));
   };
 
@@ -122,6 +134,25 @@ const AddFieldModal = ({
             className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
             style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
           />
+          <select
+            name="field_type"
+            value={fieldData.field_type}
+            onChange={handleChange}
+            className="border p-2 w-full mb-4"
+            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
+            placeholder="Field Type"
+          >
+            <option value="select">Select Field Type</option>
+            <option value="text">Text</option>
+            <option value="password">Password</option>
+            <option value="email">Email</option>
+            <option value="date">Date</option>
+            <option value="date-time">Date&Time</option>
+            <option value="number">Number</option>
+            <option value="checkbox">Checkbox</option>
+            <option value="dropdown">Dropdown</option>
+            <option value="multi-select">Multi Select</option>
+          </select>
           <input
             type="text"
             name="placeholder"
@@ -210,34 +241,20 @@ const AddFieldModal = ({
             <input
               type="checkbox"
               name="acceptsMultiple"
-              checked={fieldData.acceptsMultiple}
+              checked={fieldData.acceptsMultiple.length > 0}
               onChange={handleChange}
               className="mr-2"
             />
             <label>Accepts Multiple</label>
           </div>
-          <select
-            name="field_type"
-            value={fieldData.field_type}
-            onChange={handleChange}
-            className="border p-2 w-full mb-4"
-          >
-            <option value="text">Text</option>
-            <option value="password">Password</option>
-            <option value="email">Email</option>
-            <option value="date">Date</option>
-            <option value="number">Number</option>
-            <option value="checkbox">Checkbox</option>
-            <option value="dropdown">Dropdown</option>
-            <option value="multi-select">Multi Select</option>
-          </select>
+
           {(fieldData.field_type === "dropdown" ||
             fieldData.field_type === "multi-select") && (
             <div className="mb-4">
               <h3 className="text-sm font-medium text-gray-700 mb-2">
                 Options
               </h3>
-              {fieldData.options.map((option, index) => (
+              {fieldData.acceptsMultiple?.map((option, index) => (
                 <input
                   key={index}
                   type="text"
@@ -255,27 +272,39 @@ const AddFieldModal = ({
               </button>
             </div>
           )}
-          <div className="flex items-center mb-4">
-            <input
-              type="checkbox"
-              name="isMandatory"
-              checked={fieldData.isMandatory}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            <label>Mandatory</label>
-          </div>
+          {fieldData.field_type === "multi-select" && (
+            <div>
+              <select
+                multiple
+                className="border border-gray-600 p-2 w-full rounded"
+                style={{ border: "1px solid gray", height: "100%" }}
+                required={fieldData.isMandatory}
+                onChange={handleSelectChange}
+                value={fieldData.selectedValues}
+              >
+                {fieldData.acceptsMultiple?.map((option, idx) => (
+                  <option key={idx} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+              <div className="mt-2">
+                <strong>Selected: </strong>
+                {fieldData.selectedValues.join(", ")}
+              </div>
+            </div>
+          )}
         </div>
-        <div className="flex justify-end space-x-2">
+        <div className="mt-4 flex justify-end">
           <button
             onClick={handleSave}
-            className="bg-blue-500 hover:bg-blue-700 px-4 py-2"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
             Save
           </button>
           <button
             onClick={closeModal}
-            className="bg-gray-500 hover:bg-gray-700 px-4 py-2"
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2"
           >
             Cancel
           </button>
