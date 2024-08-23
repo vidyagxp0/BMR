@@ -39,58 +39,76 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
       reviewers: isSelectedReviewer.map((reviewer) => ({
         reviewerId: reviewer.value,
         status: "pending",
-        comment: null
+        comment: null,
       })),
       approvers: isSelectedApprover.map((approver) => ({
         approverId: approver.value,
         status: "pending",
-        comment: null
-      }))
+        comment: null,
+      })),
     };
 
-    console.log('Updated BMR Data:', updatedBMRData); // Debug log
+    console.log("Updated BMR Data:", updatedBMRData); // Debug log
 
-    axios.put(`http://192.168.1.20:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`, updatedBMRData, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-        "Content-Type": "application/json",
-      },
-    }).then((response) => {
-      dispatch(updateBmr(response.data.bmr));
-      fetchBMRData(); // Refresh data 
-      toast.success("BMR updated successfully!");
-        onClose();
-    }).catch((err) => {
-      console.error('Error updating BMR:', err.response ? err.response.data : err); // Improved error log
-      toast.error("Failed to update BMR");
-    });
-  }
-
-  useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const reviewerResponse = await axios.post("http://192.168.1.20:7000/bmr-form/get-user-roles", {
-          role_id: 3,
-        }, {
+    axios
+      .put(
+        `http://192.168.1.20:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
+        updatedBMRData,
+        {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("user-token")}`,
             "Content-Type": "application/json",
           },
-        });
+        }
+      )
+      .then((response) => {
+        dispatch(updateBmr(response.data.bmr));
+        fetchBMRData(); // Refresh data
+        toast.success("BMR updated successfully!");
+        onClose();
+      })
+      .catch((err) => {
+        console.error(
+          "Error updating BMR:",
+          err.response ? err.response.data : err
+        ); // Improved error log
+        toast.error("Failed to update BMR");
+      });
+  };
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const reviewerResponse = await axios.post(
+          "http://192.168.1.20:7000/bmr-form/get-user-roles",
+          {
+            role_id: 3,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
         const reviewerOptions = reviewerResponse.data.message.map((role) => ({
           value: role.user_id,
           label: role.User.name,
         }));
         setReviewers(reviewerOptions);
 
-        const approverResponse = await axios.post("http://192.168.1.20:7000/bmr-form/get-user-roles", {
-          role_id: 4,
-        }, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-            "Content-Type": "application/json",
+        const approverResponse = await axios.post(
+          "http://192.168.1.20:7000/bmr-form/get-user-roles",
+          {
+            role_id: 4,
           },
-        });
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
         const approverOptions = approverResponse.data.message.map((role) => ({
           value: role.user_id,
           label: role.User.name,
@@ -106,13 +124,17 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
   useEffect(() => {
     if (bmrData && reviewers.length > 0 && approvers.length > 0) {
-      const selectedReviewers = bmrData.reviewers.map(reviewer => ({
+      const selectedReviewers = bmrData.reviewers.map((reviewer) => ({
         value: reviewer.reviewerId,
-        label: reviewers.find(r => r.value === reviewer.reviewerId)?.label || "Unknown",
+        label:
+          reviewers.find((r) => r.value === reviewer.reviewerId)?.label ||
+          "Unknown",
       }));
-      const selectedApprovers = bmrData.approvers.map(approver => ({
+      const selectedApprovers = bmrData.approvers.map((approver) => ({
         value: approver.approverId,
-        label: approvers.find(a => a.value === approver.approverId)?.label || "Unknown",
+        label:
+          approvers.find((a) => a.value === approver.approverId)?.label ||
+          "Unknown",
       }));
 
       setFormData({
@@ -130,7 +152,11 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     <Modal open={true} onClose={onClose}>
       <Box sx={modalStyle}>
         <div className="flex justify-center items-center pb-5 font-bold">
-          <Typography variant="h6" component="h2" style={{ fontWeight: "bold" }}>
+          <Typography
+            variant="h6"
+            component="h2"
+            style={{ fontWeight: "bold" }}
+          >
             Edit BMR
           </Typography>
         </div>
@@ -154,7 +180,9 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
             }}
           />
           <div>
-            <label htmlFor="" className="text-sm text-blue-500">Reviewer</label>
+            <label htmlFor="" className="text-sm text-blue-500">
+              Reviewer
+            </label>
             <Select
               name="reviewers"
               isMulti
@@ -164,7 +192,9 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
             />
           </div>
           <div>
-            <label htmlFor="" className="text-sm text-blue-500">Approver</label>
+            <label htmlFor="" className="text-sm text-blue-500">
+              Approver
+            </label>
             <Select
               name="approvers"
               options={approvers}
@@ -198,6 +228,6 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
       </Box>
     </Modal>
   );
-}
+};
 
 export default EditRecordModal;

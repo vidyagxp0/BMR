@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Box, Typography, TextField, Button } from '@mui/material';
-import Select from 'react-select';
-import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { fetchUsers } from '../../../userSlice';
+import React, { useState, useEffect } from "react";
+import { Modal, Box, Typography, TextField, Button } from "@mui/material";
+import Select from "react-select";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { fetchUsers } from "../../../userSlice";
 
 const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
+  bgcolor: "background.paper",
+  border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };
@@ -24,10 +24,10 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
   const [roles, setRoles] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    name: "",
+    email: "",
     rolesArray: [],
-    profile_pic: null
+    profile_pic: null,
   });
   const dispatch = useDispatch();
   useEffect(() => {
@@ -49,14 +49,14 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
 
   useEffect(() => {
     if (user && roles.length > 0) {
-      const userRoles = user.UserRoles.map(role => ({
+      const userRoles = user.UserRoles.map((role) => ({
         value: role.role_id,
-        label: role.role
+        label: role.role,
       }));
       setSelectedOptions(userRoles);
       setFormData({
-        name: user.name || '',
-        email: user.email || '',
+        name: user.name || "",
+        email: user.email || "",
         rolesArray: userRoles,
         profile_pic: user.profile_pic,
       });
@@ -67,8 +67,8 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
     e.preventDefault();
     const updatedFormData = {
       ...formData,
-      rolesArray: formData.rolesArray.map(option => option.value),
-      id: user.user_id
+      rolesArray: formData.rolesArray.map((option) => option.value),
+      id: user.user_id,
     };
 
     axios.put(`http://192.168.1.20:7000/user/edit-user/${user.user_id}`, updatedFormData, {
@@ -87,15 +87,15 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
     }).catch((error) => {
       console.error("API Error: ", error.response.data);
 
-      toast.error(error.response.data.message);
-    });
+        toast.error(error.response.data.message);
+      });
   };
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     setFormData({
       ...formData,
-      [name]: type === 'file' ? files[0] : value
+      [name]: type === "file" ? files[0] : value,
     });
   };
 
@@ -103,7 +103,7 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
     setSelectedOptions(selectedOptions);
     setFormData({
       ...formData,
-      rolesArray: selectedOptions || []
+      rolesArray: selectedOptions || [],
     });
   };
 
@@ -142,7 +142,11 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
               margin="normal"
             />
             {formData.profile_pic && (
-              <a href={formData.profile_pic} target="_blank" rel="noopener noreferrer">
+              <a
+                href={formData.profile_pic}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 View Current Profile Picture
               </a>
             )}
@@ -156,7 +160,13 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
               fullWidth
               className="mt-2"
             />
-            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ mt: 2 }}
+            >
               Update
             </Button>
           </form>

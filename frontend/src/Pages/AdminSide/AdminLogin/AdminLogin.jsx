@@ -1,18 +1,18 @@
 // AdminLogin.js
-import React, { useEffect, useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import AtmInput from '../../../AtmComponents/AtmInput';
-import AtmButton from '../../../AtmComponents/AtmButton';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import AtmInput from "../../../AtmComponents/AtmInput";
+import AtmButton from "../../../AtmComponents/AtmButton";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const AdminLogin = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -39,38 +39,44 @@ const AdminLogin = () => {
 
   return (
     <div
-    className="min-h-screen flex items-center justify-center"
-    style={{
-      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://c0.wallpaperflare.com/preview/661/131/640/pharmacist-pharmacy-medicine-man.jpg')`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-    }}
-  >
-     <ToastContainer />
-    <div className="p-8 rounded-lg shadow-lg max-w-md w-full" style={{
-      backgroundColor: 'rgba(120, 120, 120, 0.2)',
-      backdropFilter: 'blur(8px)'
-    }}>
-      <div className="flex justify-center items-center">
-      <img src="/vidyalogo2.png" alt="" className='w-80 '/>
-      </div>
-      <h2 className="text-2xl font-bold mb-6 text-center text-white">BMR Admin Login</h2>
-      
-      <form onSubmit={handleLogin}>
-        <AtmInput
-          type="text"
-          placeholder="Enter your username"
-          className="mb-4"
-          labelClassName="text-white"
-          label="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <div className="relative mb-4">
+      className="min-h-screen flex items-center justify-center"
+      style={{
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://c0.wallpaperflare.com/preview/661/131/640/pharmacist-pharmacy-medicine-man.jpg')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <ToastContainer />
+      <div
+        className="p-8 rounded-lg shadow-lg max-w-md w-full"
+        style={{
+          backgroundColor: "rgba(120, 120, 120, 0.2)",
+          backdropFilter: "blur(8px)",
+        }}
+      >
+        <div className="flex justify-center items-center">
+          <img src="/vidyalogo2.png" alt="" className="w-80 " />
+        </div>
+        <h2 className="text-2xl font-bold mb-6 text-center text-white">
+          BMR Admin Login
+        </h2>
+
+        <form onSubmit={handleLogin}>
+          <AtmInput
+            type="text"
+            placeholder="Enter your username"
+            className="mb-5 h-[48px] p-3 text-white text-base font-bold bg-transparent border border-gray-600 rounded-md focus:outline-none focus:pl-2 focus:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+            labelClassName="text-white"
+            label="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <div className="relative mb-4">
             <AtmInput
               type={showPassword ? "text" : "password"} // Toggle input type based on state
               placeholder="Enter your password"
-              className="mb-4 pr-10" // Add padding-right to make space for the icon
+              className="mb-5 h-[48px] p-3 text-white text-base font-bold bg-transparent border border-gray-600 rounded-md focus:outline-none focus:pl-2 focus:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+              // Add padding-right to make space for the icon
               labelClassName="text-white"
               label="Password"
               value={password}
@@ -79,20 +85,19 @@ const AdminLogin = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
-              className="absolute inset-y-0 right-0 flex items-center px-3 pt-3 cursor-pointer"
+              className="absolute inset-y-0 right-0 flex items-center px-7 pt-3 text-white cursor-pointer"
             >
-              {showPassword ? <FaEyeSlash className="" /> : <FaEye className="" />}
+              {showPassword ? (
+                <FaEyeSlash className="" />
+              ) : (
+                <FaEye className="" />
+              )}
             </button>
           </div>
-        <AtmButton
-          label="Login"
-          type="submit"
-          className="w-full mt-4"
-        />
-      </form>
+          <AtmButton label="Login" type="submit" className="w-full mt-4" />
+        </form>
+      </div>
     </div>
-   
-  </div>
   );
 };
 

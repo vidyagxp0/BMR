@@ -9,25 +9,26 @@ import Select from "react-select";
 import { toast, ToastContainer } from "react-toastify";
 import DeleteModal from "./Modals/DeleteModal";
 import "react-toastify/dist/ReactToastify.css";
-import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
-
 const BMRProcessDetails = () => {
   const [data, setData] = useState([]);
-  // console.log(data, "data");
+  console.log(data, "data");
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
+
   const [tabs, setTabs] = useState([
     "Initiator Remarks",
     "Reviewer Remarks",
     "Approver Remarks",
   ]);
+
   const [flowoTabs, setFlowoTabs] = useState([
     "INITIATION",
     "UNDER REVIEW",
     "UNDER APPROVAL",
     "APPROVED",
   ]);
+
   const [newTab, setNewTab] = useState([]);
   const [newFields, setNewFields] = useState({});
   const [newSection, setNewSection] = useState([]);
@@ -97,7 +98,6 @@ const BMRProcessDetails = () => {
   const [activeFlowTab, setActiveFlowTab] = useState(flowoTabs[0]);
   const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
   const [activeSendFormTab, setActiveSendFormTab] = useState(null);
-  const [isActiveTab, setIsActiveTab] = useState(0);
   const [showForm, setShowForm] = useState("default");
   const [currentTabId, setCurrentTabId] = useState(null);
   const [activeSection, setActiveSection] = useState(null);
@@ -112,14 +112,6 @@ const BMRProcessDetails = () => {
   const [deleteItemType, setDeleteItemType] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState({});
   const { bmr_id } = useParams();
-  const navigate = useNavigate();
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [popupAction, setPopupAction] = useState(null);
-  const userDetails = JSON.parse(localStorage.getItem("user-details"));
-  const handlePopupClose = () => {
-    setIsPopupOpen(false);
-    setPopupAction(null);
-  };
 
   const handleMultiSelectChange = (fieldId, options) => {
     setSelectedOptions((prev) => ({
@@ -127,7 +119,9 @@ const BMRProcessDetails = () => {
       [fieldId]: options,
     }));
   };
+
   const formatOptionLabel = (option) => <div>{option.label}</div>;
+
   const fetchBMRData = () => {
     axios
       .get(`http://192.168.1.20:7000/bmr-form/get-a-bmr/${bmr_id}`, {
@@ -149,7 +143,8 @@ const BMRProcessDetails = () => {
         }, {});
         setNewSection(sectionsByTab);
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error);
         toast.error("Error Fetching BMR");
       });
   };
@@ -160,16 +155,13 @@ const BMRProcessDetails = () => {
 
   useEffect(() => {
     if (showForm === "sendForm" && newTab.length > 0) {
-      // Automatically set the first tab (index 0) as active
+      // Automatically set the first tab as active
       const firstTab = newTab[0];
-      setActiveSendFormTab(firstTab);
+      setActiveSendFormTab(firstTab.tab_name);
       setCurrentTabId(firstTab.bmr_tab_id);
-    } else if (showForm === "sendForm" && newTab.length === 0) {
-      // Handle the case where there are no tabs (optional)
-      setActiveSendFormTab(null);
-      setCurrentTabId(null);
     }
   }, [showForm, newTab]);
+
   const addTab = (tabObject) => {
     if (!newTab.some((tab) => tab.tab_name === tabObject.tab_name)) {
       const updatedTabs = [...newTab, tabObject];
@@ -188,118 +180,16 @@ const BMRProcessDetails = () => {
       fetchBMRData();
     }
   };
-  const handlePopupSubmit = (credentials) => {
-    const dataObject = {
-      bmr_id: data[0].bmr_id,
-      email: credentials?.email,
-      password: credentials?.password,
-      reviewComment: "editData.reviewComment",
-      approverComment: "editData.approverComment",
-    };
-    const config = {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-        "Content-Type": "application/json",
-      },
-    };
-    if (popupAction === "sendFromOpenToReview") {
-      dataObject.initiatorDeclaration = credentials?.declaration;
-      // data.initiatorAttachment = editData?.initiatorAttachment;
-      axios
-        .put(
-          "http://192.168.1.20:7000/bmr-form/send-BMR-for-review",
-          dataObject,
-          config
-        )
-        .then(() => {
-          toast.success("BMR successfully sent for review");
-          navigate(-1);
-        })
-        .catch((error) => {
-          toast.error(
-            error?.response?.data?.message || "Couldn't send BMR for review!!"
-          );
-        });
-    } else if (popupAction === "sendFromReviewToApproval") {
-      dataObject.reviewerDeclaration = credentials?.declaration;
-      // data.reviewerAttachment = editData.reviewerAttachment;
-      axios
-        .put(
-          "http://192.168.1.20:7000/bmr-form/send-BMR-from-review-to-approval",
-          dataObject,
-          config
-        )
-        .then(() => {
-          toast.success("BMR successfully sent for approval");
-          setTimeout(() => navigate(-1), 500);
-        })
-        .catch((error) => {
-          toast.error(
-            error?.response?.data?.message || "Couldn't send BMR for approval!!"
-          );
-        });
-    } else if (popupAction === "sendFromReviewToOpen") {
-      dataObject.reviewerDeclaration = credentials?.declaration;
-      // data.reviewerAttachment = editData.reviewerAttachment;
-      axios
-        .put(
-          "http://192.168.1.20:7000/bmr-form/send-BMR-from-review-to-open",
-          dataObject,
-          config
-        )
-        .then(() => {
-          toast.success("BMR successfully opened");
-          navigate(-1);
-        })
-        .catch((error) => {
-          toast.error(error?.response?.data?.message || "Couldn't open bmr!!");
-        });
-    } else if (popupAction === "sendFromApprovalToApproved") {
-      dataObject.approverDeclaration = credentials?.declaration;
-      // data.approverAttachment = editData.approverAttachment;
-      axios
-        .put(
-          "http://192.168.1.20:7000/bmr-form/approve-BMR",
-          dataObject,
-          config
-        )
-        .then(() => {
-          toast.success("BMR successfully approved");
-          navigate(-1);
-        })
-        .catch((error) => {
-          toast.error(
-            error?.response?.data?.message || "Couldn't approve BMR!!"
-          );
-        });
-    } else if (popupAction === "sendFromApprovalToOpen") {
-      // data.approverAttachment = editData.approverAttachment;
-      dataObject.approverDeclaration = credentials?.declaration;
-      axios
-        .put(
-          "http://192.168.1.20:7000/bmr-form/send-BMR-from-approval-to-open",
-          dataObject,
-          config
-        )
-        .then(() => {
-          toast.success(" BMR successfully opened");
-          navigate(-1);
-        })
-        .catch((error) => {
-          toast.error(error?.response?.data?.message || "Couldn't open BMR!!");
-        });
-    }
-    setIsPopupOpen(false);
-    setPopupAction(null);
-  };
-  const updateTab = (tabObject) => { };
+
   const addSection = (sectionName) => {
     setNewSection((prevSections) => {
       const updatedSections = { ...prevSections };
+
       // Ensure the activeTab exists in the updatedSections object
       if (!updatedSections[activeSendFormTab]) {
         updatedSections[activeSendFormTab] = [];
       }
+
       // Check if the section already exists, if not, add it
       if (
         !updatedSections[activeSendFormTab].some(
@@ -309,12 +199,14 @@ const BMRProcessDetails = () => {
         updatedSections[activeSendFormTab].push({ section_name: sectionName });
         fetchBMRData();
       }
+
       // Return the updated sections
       return updatedSections;
     });
     // Update the sections state for the active tab
     setSection(activeSendFormTab, newSection[activeSendFormTab]);
   };
+
   const addField = (field) => {
     setNewFields({
       ...newFields,
@@ -325,39 +217,35 @@ const BMRProcessDetails = () => {
   const handleFlowTabClick = (tab) => {
     setActiveFlowTab(tab);
   };
+
   const handleDefaultTabClick = (tab) => {
     setActiveDefaultTab(tab);
   };
+
   const handleSendFormTabClick = (tab) => {
-    const tabIndex = newTab.findIndex((t) => t.bmr_tab_id === tab.bmr_tab_id);
-    // Set the active tab based on the index found
     setActiveSendFormTab(tab);
-    setIsActiveTab(tabIndex);
     setCurrentTabId(tab.bmr_tab_id);
-    // console.log(tab.section_name,"handleSendFormTabClick")
     setActiveSection(null);
     setActiveField(null);
     setExistingTabName(tab.tab_name);
     setExistingSectionName(tab.section_name);
     setExistingFieldName(tab);
   };
+
   const handleSectionClick = (section) => {
     setActiveSection(section);
     setExistingSectionName(section.section_name);
     setActiveField(null);
     setExistingFieldName(section);
-    // console.log(section,'section')
   };
 
   const handleFieldClick = (field) => {
     setActiveField(field);
     setExistingFieldName(field);
   };
-
   const populateApproverFields = () => {
     if (data.length > 0) {
       const approvers = data[0].approvers || [];
-      // console.log(approvers, "approvers");
 
       const approverFields = approvers.flatMap((approver, idx) => [
         {
@@ -384,6 +272,7 @@ const BMRProcessDetails = () => {
           ],
         },
       ]);
+
       setFields((prevFields) => ({
         ...prevFields,
         "Approver Remarks": approverFields,
@@ -391,12 +280,9 @@ const BMRProcessDetails = () => {
     }
   };
 
-  // Populate the reviewers' data into the fields
-
   const populateReviewerFields = () => {
     if (data.length > 0) {
       const reviewers = data[0].reviewers || [];
-
       const reviewerFields = reviewers.flatMap((reviewer, idx) => [
         {
           section: `Reviewer ${idx + 1}`,
@@ -422,15 +308,13 @@ const BMRProcessDetails = () => {
           ],
         },
       ]);
+
       setFields((prevFields) => ({
         ...prevFields,
-
         "Reviewer Remarks": reviewerFields,
       }));
     }
   };
-
-  // Call the functions when the component mounts or data changes
 
   useEffect(() => {
     populateApproverFields();
@@ -439,7 +323,7 @@ const BMRProcessDetails = () => {
 
   return (
     <div className="p-4 relative h-full">
-            <header className="bg-gray-200 w-full shadow-lg flex justify-between items-center p-4 mb-4">
+      <header className="bg-gray-200 w-full shadow-lg flex justify-between items-center p-4 mb-4">
         <p className="text-lg font-bold">BMR Process Details</p>
         <div className="flex space-x-2">
           {showForm === "default" ? (
@@ -456,7 +340,7 @@ const BMRProcessDetails = () => {
               <AtmButton
                 label="Add Tab"
                 onClick={() => (
-                  setIsAddTabModalOpen(true), setUpdateTabModalOpen("add"),setIsPopupOpen(true),setPopupAction("add-tab")
+                  setIsAddTabModalOpen(true), setUpdateTabModalOpen("add")
                 )}
                 className="bg-pink-950 hover:bg-pink-700 px-4 py-2"
               />
@@ -468,9 +352,7 @@ const BMRProcessDetails = () => {
                     label="Add Section"
                     onClick={() => (
                       setIsSectionModalOpen(true),
-                      setUpdateSectionModalOpen("add-section"),
-                      setIsPopupOpen(true),
-                      setPopupAction("add-section")
+                      setUpdateSectionModalOpen("add-section")
                     )}
                     className="bg-purple-950 hover:bg-purple-700 px-4 py-2"
                   />
@@ -484,9 +366,7 @@ const BMRProcessDetails = () => {
                     label="Add Field"
                     onClick={() => (
                       setIsAddFieldModalOpen(true),
-                      setUpdateFieldModalOpen("add-field"),
-                      setIsPopupOpen(true),
-                      setPopupAction("add-field")
+                      setUpdateFieldModalOpen("add-field")
                     )}
                     className="bg-green-950 hover:bg-green-700 px-4 py-2"
                   />
@@ -509,6 +389,7 @@ const BMRProcessDetails = () => {
         </div>
       </header>
 
+      {/* Conditionally render buttons based on active items */}
       {showForm === "sendForm" && (
         <div className="flex justify-end gap-4 mb-4">
           {activeField ? (
@@ -575,10 +456,11 @@ const BMRProcessDetails = () => {
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleFlowTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${activeFlowTab === tab
+              className={`py-2 px-4 rounded-full border-2 border-black ${
+                activeFlowTab === tab
                   ? "bg-blue-500 text-white"
                   : "bg-blue-100 text-gray-700"
-                }`}
+              }`}
             >
               {tab}
             </button>
@@ -593,17 +475,17 @@ const BMRProcessDetails = () => {
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleDefaultTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${activeDefaultTab === tab
+              className={`py-2 px-4 rounded-full border-2 border-black ${
+                activeDefaultTab === tab
                   ? "bg-blue-500 text-white"
                   : "bg-blue-100 text-gray-700"
-                }`}
+              }`}
             >
               {tab}
             </button>
           ))}
         </div>
       )}
-
       {showForm === "sendForm" && (
         <div className="flex flex-wrap gap-4 mb-4">
           {newTab?.map((tab, index) => (
@@ -611,10 +493,11 @@ const BMRProcessDetails = () => {
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleSendFormTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${activeSendFormTab === tab
+              className={`py-2 px-4 rounded-full border-2 border-black ${
+                activeSendFormTab === tab
                   ? "bg-gray-400 text-white"
                   : "bg-gray-200 text-gray-700"
-                }`}
+              }`}
             >
               {tab.tab_name}
             </button>
@@ -622,13 +505,13 @@ const BMRProcessDetails = () => {
         </div>
       )}
 
-      {showForm === "default" &&(
-       <div className="relative h-screen">
-       <div className="overflow-auto mb-16">
-       {activeDefaultTab === "Initiator Remarks" &&
+      {showForm === "default" && (
+        <div className="relative h-screen">
+          <div className="overflow-auto mb-16">
+            {activeDefaultTab === "Initiator Remarks" &&
               fields["Initiator Remarks"]?.length > 0 && (
-                <div className="mb-20">
-                  <div className="grid grid-cols-2 gap-4 ">
+                <div>
+                  <div className="grid grid-cols-2 gap-4">
                     {fields["Initiator Remarks"].map((field, index) => (
                       <div
                         key={index}
@@ -671,7 +554,7 @@ const BMRProcessDetails = () => {
               )}
             {activeDefaultTab !== "Initiator Remarks" &&
               fields[activeDefaultTab]?.map((section, secIndex) => (
-                <div key={secIndex} className="mb-20">
+                <div key={secIndex} className="mb-6">
                   <div className="col-span-3 p-4 mt-4 text-right rounded bg-gray-100 mb-5 font-semibold text-gray-700 border border-gray-300">
                     {section.section}
                   </div>
@@ -716,232 +599,27 @@ const BMRProcessDetails = () => {
                   </div>
                 </div>
               ))}
-    
-       </div>
-       <div className="fixed bottom-0 left-0 w-full bg-white  border-gray-300 p-4 flex justify-end gap-5">
-      {data[0]?.stage === 1 && data[0]?.initiator === userDetails.userId && (
-            <AtmButton
-              label={"Send For Review"}
-              className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                setIsPopupOpen(true);
-                setPopupAction("sendFromOpenToReview"); // Set the action when opening the popup
-              }}
-            />)}
-             {data[0]?.stage === 2 &&
-          data[0]?.reviewers.some(
-            (reviewer) => reviewer.reviewerId === userDetails.userId
-          ) &&
-          (data[0]?.reviewers.find(
-            (reviewer) => reviewer.reviewerId === userDetails.userId
-          )?.status === "reviewed" ? (
-            <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded shadow-md">
-            <p className="font-semibold text-lg flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 mr-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
-                />
-              </svg>
-              You have already reviewed this.
-            </p>
-          </div>
-          ) : (
-            <><AtmButton
-              label={"Send For Approval"}
-              className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                setIsPopupOpen(true);
-                setPopupAction("sendFromReviewToApproval"); // Set the action when opening the popup
-              }}
-            />
-            <AtmButton
-              label={"Open BMR"}
-              className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                setIsPopupOpen(true);
-                setPopupAction("sendFromReviewToOpen"); // Set the action when opening the popup
-              }}
-            />
-            </>
-          ))}
-
-{data[0]?.stage === 3 ? (
-          data[0]?.approvers.some(
-            (approver) => approver.approverId === userDetails.userId
-          ) ? (
-            data[0]?.approvers.find(
-              (approver) => approver.approverId === userDetails.userId
-            )?.status === "approved" ? (
-              <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md">
-              <p className="font-semibold text-lg flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
-                  />
-                </svg>
-                You have already approved this.
-              </p>
-            </div>
-            ) : (
-              <>
-            <AtmButton
-            label={"Approve BMR"}
-                  className="bg-blue-500 hover:bg-blue-700 p-2"
-                  onClick={() => {
-                    setIsPopupOpen(true);
-                    setPopupAction("sendFromApprovalToApproved"); // Set the action when opening the popup
-                  }}
-                />
-                  
-               
-                  <AtmButton
-              label={"Open BMR"}
-              className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                    setIsPopupOpen(true);
-                    setPopupAction("sendFromApprovalToOpen"); // Set the action when opening the popup
-                  }}
-                />
-                 
-              </>
-            )
-          ) : null
-        ) : null}
-        <AtmButton label={"Exit"}  onClick={() => {
-            navigate(-1);
-          }}  />
           </div>
           <div className="fixed bottom-0 left-0 w-full bg-white  border-gray-300 p-4 flex justify-end gap-5">
-      {data[0]?.stage === 1 && data[0]?.initiator === userDetails.userId && (
             <AtmButton
               label={"Send For Review"}
               className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                setIsPopupOpen(true);
-                setPopupAction("sendFromOpenToReview"); // Set the action when opening the popup
-              }}
-            />)}
-             {data[0]?.stage === 2 &&
-          data[0]?.reviewers.some(
-            (reviewer) => reviewer.reviewerId === userDetails.userId
-          ) &&
-          (data[0]?.reviewers.find(
-            (reviewer) => reviewer.reviewerId === userDetails.userId
-          )?.status === "reviewed" ? (
-            <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md">
-            <p className="font-semibold text-lg flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 mr-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
-                />
-              </svg>
-              You have already reviewed this.
-            </p>
-          </div>
-          ) : (
-            <><AtmButton
+            />
+            <AtmButton
               label={"Send For Approval"}
               className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                setIsPopupOpen(true);
-                setPopupAction("sendFromReviewToApproval"); // Set the action when opening the popup
-              }}
             />
             <AtmButton
               label={"Open BMR"}
               className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                setIsPopupOpen(true);
-                setPopupAction("sendFromReviewToOpen"); // Set the action when opening the popup
-              }}
             />
-            </>
-          ))}
-
-{data[0]?.stage === 3 ? (
-          data[0]?.approvers.some(
-            (approver) => approver.approverId === userDetails.userId
-          ) ? (
-            data[0]?.approvers.find(
-              (approver) => approver.approverId === userDetails.userId
-            )?.status === "approved" ? (
-              <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md">
-              <p className="font-semibold text-lg flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
-                  />
-                </svg>
-                You have already approved this.
-              </p>
-            </div>
-            ) : (
-              <>
             <AtmButton
-            label={"Approve BMR"}
-                  className="bg-blue-500 hover:bg-blue-700 p-2"
-                  onClick={() => {
-                    setIsPopupOpen(true);
-                    setPopupAction("sendFromApprovalToApproved"); // Set the action when opening the popup
-                  }}
-                />
-                  
-               
-                  <AtmButton
-              label={"Open BMR"}
+              label={"Exit"}
               className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                    setIsPopupOpen(true);
-                    setPopupAction("sendFromApprovalToOpen"); // Set the action when opening the popup
-                  }}
-                />
-                 
-              </>
-            )
-          ) : null
-        ) : null}
-        <AtmButton label={"Exit"}  onClick={() => {
-            navigate(-1);
-          }}  />
+            />
           </div>
-       </div>
-      ) }
+        </div>
+      )}
 
       <div className="">
         {showForm === "sendForm" && activeSendFormTab && (
@@ -949,15 +627,17 @@ const BMRProcessDetails = () => {
             {activeSendFormTab?.BMR_sections?.map((section, index) => (
               <div
                 key={index}
-                className={`mb-2 cursor-pointer ${activeSection === section ? "border border-black" : ""
-                  }`}
+                className={`mb-2 cursor-pointer ${
+                  activeSection === section ? "border border-black" : ""
+                }`}
               >
                 <div onClick={() => handleSectionClick(section)}>
                   <div
-                    className={`py-2 px-4 mb-2 cursor-pointer ${activeSection === section
+                    className={`py-2 px-4 mb-2 cursor-pointer ${
+                      activeSection === section
                         ? "bg-gray-400 text-white"
                         : "bg-gray-200"
-                      }`}
+                    }`}
                   >
                     {section.section_name}
                   </div>
@@ -975,9 +655,7 @@ const BMRProcessDetails = () => {
                           {field.isMandatory && " *"}
                         </div>
                       </label>
-
                       {/* Render input fields based on type */}
-
                       {field.field_type === "text" && (
                         <input
                           placeholder={field.placeholder}
@@ -985,10 +663,9 @@ const BMRProcessDetails = () => {
                           type="text"
                           className="border border-gray-600 p-2 w-full rounded"
                           required={field.isMandatory}
-                          readOnly={field.isReadonly}
+                          readOnly={field.isReadOnly}
                         />
                       )}
-
                       {field.field_type === "password" && (
                         <input
                           placeholder={field.placeholder}
@@ -996,10 +673,9 @@ const BMRProcessDetails = () => {
                           type="password"
                           className="border border-gray-600 p-2 w-full rounded"
                           required={field.isMandatory}
-                          readOnly={field.isReadonly}
+                          readOnly={field.isReadOnly}
                         />
                       )}
-
                       {field.field_type === "date" && (
                         <input
                           placeholder={field.placeholder}
@@ -1007,10 +683,9 @@ const BMRProcessDetails = () => {
                           type="date"
                           className="border border-gray-600 p-2 w-full rounded"
                           required={field.isMandatory}
-                          readOnly={field.isReadonly}
+                          readOnly={field.isReadOnly}
                         />
                       )}
-
                       {field.field_type === "email" && (
                         <input
                           placeholder={field.placeholder}
@@ -1018,10 +693,9 @@ const BMRProcessDetails = () => {
                           type="email"
                           className="border border-gray-600 p-2 w-full rounded"
                           required={field.isMandatory}
-                          readOnly={field.isReadonly}
+                          readOnly={field.isReadOnly}
                         />
                       )}
-
                       {field.field_type === "number" && (
                         <input
                           placeholder={field.placeholder}
@@ -1029,10 +703,9 @@ const BMRProcessDetails = () => {
                           type="number"
                           className="border border-gray-600 p-2 w-full rounded"
                           required={field.isMandatory}
-                          readOnly={field.isReadonly}
+                          readOnly={field.isReadOnly}
                         />
                       )}
-
                       {field.field_type === "checkbox" && (
                         <input
                           placeholder={field.placeholder}
@@ -1040,10 +713,9 @@ const BMRProcessDetails = () => {
                           type="checkbox"
                           className="border border-gray-600 p-2 rounded"
                           required={field.isMandatory}
-                          readOnly={field.isReadonly}
+                          readOnly={field.isReadOnly}
                         />
                       )}
-
                       {field.field_type === "dropdown" && (
                         <select
                           className="border border-gray-600 p-2 w-full rounded"
@@ -1057,9 +729,8 @@ const BMRProcessDetails = () => {
                           ))}
                         </select>
                       )}
-
                       {field.field_type === "multi-select" && (
-                       <>
+                        <>
                           <Select
                             isMulti
                             options={field?.acceptsMultiple?.map((option) => ({
@@ -1135,15 +806,11 @@ const BMRProcessDetails = () => {
           fetchBMRData={fetchBMRData}
         />
       )}
-      {isPopupOpen && (
-        <UserVerificationPopUp
-          onClose={handlePopupClose}
-          onSubmit={handlePopupSubmit}
-        />
-      )}
-        <ToastContainer />
+      
+      <ToastContainer />
     </div>
   );
 };
 
 export default BMRProcessDetails;
+
