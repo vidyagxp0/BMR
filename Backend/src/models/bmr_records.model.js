@@ -30,6 +30,10 @@ const BMRRecord = sequelize.define("BMR_Record", {
     allowNull: false,
     defaultValue: 1,
   },
+  initiator: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
   reviewers: {
     type: DataTypes.JSON, // Store as an array of reviewers
     allowNull: true,
