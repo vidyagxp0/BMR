@@ -77,7 +77,8 @@ const Login = () => {
         className="p-8 rounded-lg shadow-lg max-w-md w-full"
         style={{
           backgroundColor: "rgba(120, 120, 120, 0.2)",
-          backdropFilter: "blur(8px)",
+          backdropFilter: "blur(10px)",
+          
         }}
       >
         <div className="flex justify-center items-center">
@@ -100,19 +101,22 @@ const Login = () => {
           <AtmInput
             type="text"
             placeholder="Enter your username"
-            className="mb-4 h-[48px] bg-white"
+            className="mb-5 h-[48px] p-3 text-white text-base font-bold bg-transparent border border-gray-600 rounded-md focus:outline-none focus:pl-2 focus:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
             labelClassName="text-white"
             label="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             InputProps={{
               style: {
-                height: "48px", // Adjust height
+                height: "48px",
+                padding: "0 12px", // Adjust padding
+                boxSizing: "border-box", // Ensure padding and border are included in element's total width and height
               },
             }}
             InputLabelProps={{
               style: {
-                top: "0", // Adjust label position
+                top: "-8px", // Adjust label position to float above the input
+                left: "12px", // Adjust label horizontal position if needed
               },
             }}
           />
@@ -121,26 +125,30 @@ const Login = () => {
             <AtmInput
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
-              className="mb-4 pr-10 h-[48px] bg-white"
+              className="mb-5 p-3 h-[48px] text-white text-basey font-bold bg-transparent border border-gray-600 rounded-md focus:outline-none focus:pl-2 focus:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
               labelClassName="text-white"
               label="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               InputProps={{
                 style: {
-                  height: "48px", // Adjust height
+                  height: "48px",
+                  padding: "0 12px", // Adjust padding to prevent overlap
+                  boxSizing: "border-box", // Ensure padding and border are included in element's total width and height
                 },
               }}
               InputLabelProps={{
                 style: {
-                  top: "0", // Adjust label position
+                  top: "-8px", // Adjust label position to float above the input
+                  left: "12px", // Adjust label horizontal position if needed
                 },
               }}
             />
+
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 flex items-center px-3 pt-3 cursor-pointer"
+              className="absolute inset-y-0 right-0 flex items-center px-7 pt-3 text-white cursor-pointer"
             >
               {showPassword ? (
                 <FaEyeSlash className="" />

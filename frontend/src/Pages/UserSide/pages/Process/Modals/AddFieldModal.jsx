@@ -1,50 +1,61 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
-const AddFieldModal = ({ closeModal, addField, bmr_tab_id, bmr_section_id, updateField, existingFieldData, bmr_field_id }) => {
+const AddFieldModal = ({
+  closeModal,
+  addField,
+  bmr_tab_id,
+  bmr_section_id,
+  updateField,
+  existingFieldData,
+  bmr_field_id,
+}) => {
   const { bmr_id } = useParams();
 
   const [fieldData, setFieldData] = useState({
-    field_type: 'select',
+    field_type: "select",
     isMandatory: false,
-    label: '',
-    placeholder: '',
-    defaultValue: '',
-    helpText: '',
-    minValue: '',
-    maxValue: '',
-    order: '',
+    label: "",
+    placeholder: "",
+    defaultValue: "",
+    helpText: "",
+    minValue: "",
+    maxValue: "",
+    order: "",
     isVisible: true,
     isRequired: false,
     isReadOnly: false,
     acceptsMultiple: [],
-    selectedValues: [],  // Manage selected values here
+    selectedValues: [], // Manage selected values here
     bmr_tab_id: bmr_tab_id,
     bmr_section_id: bmr_section_id,
   });
 
   useEffect(() => {
     if (updateField === "edit-field" && existingFieldData) {
-      setFieldData(prevData => ({
+      setFieldData((prevData) => ({
         ...prevData,
         ...existingFieldData,
-        selectedValues: existingFieldData.selectedValues || [],  // Ensure selectedValues are set
+        selectedValues: existingFieldData.selectedValues || [], // Ensure selectedValues are set
       }));
     }
   }, [existingFieldData, updateField]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFieldData(prevData => ({
+    setFieldData((prevData) => ({
       ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   const handleSelectChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-    setFieldData(prevData => ({
+    const selectedOptions = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
+    setFieldData((prevData) => ({
       ...prevData,
       selectedValues: selectedOptions,
     }));
@@ -73,24 +84,29 @@ const AddFieldModal = ({ closeModal, addField, bmr_tab_id, bmr_section_id, updat
   const handleOptionChange = (index, value) => {
     const newOptions = [...fieldData.acceptsMultiple];
     newOptions[index] = value;
-    setFieldData(prevData => ({
+    setFieldData((prevData) => ({
       ...prevData,
       acceptsMultiple: newOptions,
     }));
   };
 
   const handleAddOption = () => {
-    setFieldData(prevData => ({
+    setFieldData((prevData) => ({
       ...prevData,
-      acceptsMultiple: [...prevData.acceptsMultiple, ''],
+      acceptsMultiple: [...prevData.acceptsMultiple, ""],
     }));
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-filter backdrop-blur-sm">
-      <div className="bg-white p-4 rounded shadow-lg" style={{ width: '800px', height: '500px' }}>
-        <h2 className="text-lg font-bold mb-2">{updateField === "add-field" ? "Add Field" : "Edit Field"}</h2>
-        <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+      <div
+        className="bg-white p-4 rounded shadow-lg"
+        style={{ width: "800px", height: "500px" }}
+      >
+        <h2 className="text-lg font-bold mb-2">
+          {updateField === "add-field" ? "Add Field" : "Edit Field"}
+        </h2>
+        <div style={{ maxHeight: "400px", overflowY: "auto" }}>
           <input
             type="text"
             name="label"
@@ -98,14 +114,14 @@ const AddFieldModal = ({ closeModal, addField, bmr_tab_id, bmr_section_id, updat
             value={fieldData.label}
             onChange={handleChange}
             className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
+            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
           />
           <select
             name="field_type"
             value={fieldData.field_type}
             onChange={handleChange}
             className="border p-2 w-full mb-4"
-            style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
+            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
             placeholder="Field Type"
           >
             <option value="select">Select Field Type</option>
@@ -126,7 +142,7 @@ const AddFieldModal = ({ closeModal, addField, bmr_tab_id, bmr_section_id, updat
             value={fieldData.placeholder}
             onChange={handleChange}
             className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
+            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
           />
           <input
             type="text"
@@ -135,7 +151,7 @@ const AddFieldModal = ({ closeModal, addField, bmr_tab_id, bmr_section_id, updat
             value={fieldData.defaultValue}
             onChange={handleChange}
             className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
+            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
           />
           <input
             type="text"
@@ -144,7 +160,7 @@ const AddFieldModal = ({ closeModal, addField, bmr_tab_id, bmr_section_id, updat
             value={fieldData.helpText}
             onChange={handleChange}
             className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
+            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
           />
           <input
             type="number"
@@ -153,7 +169,7 @@ const AddFieldModal = ({ closeModal, addField, bmr_tab_id, bmr_section_id, updat
             value={fieldData.minValue}
             onChange={handleChange}
             className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
+            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
           />
           <input
             type="number"
@@ -162,7 +178,7 @@ const AddFieldModal = ({ closeModal, addField, bmr_tab_id, bmr_section_id, updat
             value={fieldData.maxValue}
             onChange={handleChange}
             className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
+            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
           />
           <input
             type="number"
@@ -171,7 +187,7 @@ const AddFieldModal = ({ closeModal, addField, bmr_tab_id, bmr_section_id, updat
             value={fieldData.order}
             onChange={handleChange}
             className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: '1px solid #ccc', padding: '8px', width: '100%' }}
+            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
           />
           <div className="flex items-center mb-4">
             <input
@@ -213,10 +229,13 @@ const AddFieldModal = ({ closeModal, addField, bmr_tab_id, bmr_section_id, updat
             />
             <label>Accepts Multiple</label>
           </div>
-          
-          {(fieldData.field_type === 'dropdown' || fieldData.field_type === 'multi-select') && (
+
+          {(fieldData.field_type === "dropdown" ||
+            fieldData.field_type === "multi-select") && (
             <div className="mb-4">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Options</h3>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">
+                Options
+              </h3>
               {fieldData.acceptsMultiple?.map((option, index) => (
                 <input
                   key={index}
@@ -246,12 +265,14 @@ const AddFieldModal = ({ closeModal, addField, bmr_tab_id, bmr_section_id, updat
                 value={fieldData.selectedValues}
               >
                 {fieldData.acceptsMultiple?.map((option, idx) => (
-                  <option key={idx} value={option}>{option}</option>
+                  <option key={idx} value={option}>
+                    {option}
+                  </option>
                 ))}
               </select>
               <div className="mt-2">
                 <strong>Selected: </strong>
-                {fieldData.selectedValues.join(', ')}
+                {fieldData.selectedValues.join(", ")}
               </div>
             </div>
           )}

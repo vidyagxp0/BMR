@@ -10,12 +10,7 @@ router.post(
   BmrController.postBMR
 );
 
-router.post(
-  "/add-bmr-tab",
-  Auth.checkJwtToken,
-  Auth.authorizeUserRole(2),
-  BmrController.postBMRTab
-);
+router.post("/add-bmr-tab",Auth.checkJwtToken,Auth.authorizeUserRole(2),BmrController.postBMRTab);
 
 router.post(
   "/add-bmr-section",

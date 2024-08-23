@@ -9,7 +9,7 @@ import ViewPermissionsModal from "../Modals/ViewPermissionsModal";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import UpdateUser from "../Modals/UpdateUserModal";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import ResetPasswordModal from "../Modals/ResetPasswordModal";
 
 const AdminDashBoard = () => {
@@ -23,7 +23,7 @@ const AdminDashBoard = () => {
   const [showDuplicateUser, setShowDuplicateUser] = useState(false);
   const [resestPassword, setResetPassword] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [allUsers, setAllUsers] = useState([])
+  const [allUsers, setAllUsers] = useState([]);
 
   const columns = [
     { header: "Name", accessor: "name" },
@@ -65,7 +65,6 @@ const AdminDashBoard = () => {
               onClick={() => {
                 setSelectedUser(user);
                 setResetPassword(true);
-               
               }}
               className="bg-orange-600 text-white px-2 py-1 rounded hover:bg-orange-700"
             >
@@ -81,7 +80,6 @@ const AdminDashBoard = () => {
               Delete
             </button>
           </div>
-
         );
       },
     },
@@ -95,19 +93,16 @@ const AdminDashBoard = () => {
         },
       })
       .then((response) => {
-
-        setAllUsers(response.data.response)
-      }).catch((error) => {
+        setAllUsers(response.data.response);
+      })
+      .catch((error) => {
         toast.error("Error fetching users!");
         console.error(error);
-      })
-
-  }, [])
-
+      });
+  }, []);
 
   return (
     <div>
-    
       <div className="Header_Bottom shadow-xl my-3 py-5">
         <div className="headerBottomInner flex items-center">
           <div className="headerBottomLft mr-auto">
@@ -150,21 +145,17 @@ const AdminDashBoard = () => {
         />
       )}
 
-      {showDuplicateUser && (
-        <UpdateUser
-        />
-      )}
+      {showDuplicateUser && <UpdateUser />}
       {resestPassword && (
         <ResetPasswordModal
-        onClose={() => setResetPassword(false)}
-        setAllUsers={setAllUsers}
-        user={selectedUser}
-        id={selectedUser?.user_id}
+          onClose={() => setResetPassword(false)}
+          setAllUsers={setAllUsers}
+          user={selectedUser}
+          id={selectedUser?.user_id}
         />
       )}
-  {/* <ToastContainer /> */}
+      {/* <ToastContainer /> */}
     </div>
-
   );
 };
 

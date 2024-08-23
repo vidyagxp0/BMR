@@ -5,6 +5,7 @@ import AddTabModal from "./Modals/AddTabModal";
 import AddFieldModal from "./Modals/AddFieldModal";
 import AddSectionModal from "./Modals/AddSectionModal";
 import axios from "axios";
+import Select from "react-select";
 import { toast, ToastContainer } from "react-toastify";
 import DeleteModal from "./Modals/DeleteModal";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,6 +13,7 @@ import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/
 
 const BMRProcessDetails = () => {
   const [data, setData] = useState([]);
+  // console.log(data, "data");
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
@@ -95,6 +97,7 @@ const BMRProcessDetails = () => {
   const [activeFlowTab, setActiveFlowTab] = useState(flowoTabs[0]);
   const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
   const [activeSendFormTab, setActiveSendFormTab] = useState(null);
+  const [isActiveTab, setIsActiveTab] = useState(0);
   const [showForm, setShowForm] = useState("default");
   const [currentTabId, setCurrentTabId] = useState(null);
   const [activeSection, setActiveSection] = useState(null);
@@ -157,10 +160,14 @@ const BMRProcessDetails = () => {
 
   useEffect(() => {
     if (showForm === "sendForm" && newTab.length > 0) {
-      // Automatically set the first tab as active
+      // Automatically set the first tab (index 0) as active
       const firstTab = newTab[0];
-      setActiveSendFormTab(firstTab.tab_name);
+      setActiveSendFormTab(firstTab);
       setCurrentTabId(firstTab.bmr_tab_id);
+    } else if (showForm === "sendForm" && newTab.length === 0) {
+      // Handle the case where there are no tabs (optional)
+      setActiveSendFormTab(null);
+      setCurrentTabId(null);
     }
   }, [showForm, newTab]);
   const addTab = (tabObject) => {
@@ -322,8 +329,12 @@ const BMRProcessDetails = () => {
     setActiveDefaultTab(tab);
   };
   const handleSendFormTabClick = (tab) => {
+    const tabIndex = newTab.findIndex((t) => t.bmr_tab_id === tab.bmr_tab_id);
+    // Set the active tab based on the index found
     setActiveSendFormTab(tab);
+    setIsActiveTab(tabIndex);
     setCurrentTabId(tab.bmr_tab_id);
+    // console.log(tab.section_name,"handleSendFormTabClick")
     setActiveSection(null);
     setActiveField(null);
     setExistingTabName(tab.tab_name);
@@ -335,6 +346,7 @@ const BMRProcessDetails = () => {
     setExistingSectionName(section.section_name);
     setActiveField(null);
     setExistingFieldName(section);
+    // console.log(section,'section')
   };
 
   const handleFieldClick = (field) => {
@@ -345,6 +357,8 @@ const BMRProcessDetails = () => {
   const populateApproverFields = () => {
     if (data.length > 0) {
       const approvers = data[0].approvers || [];
+      // console.log(approvers, "approvers");
+
       const approverFields = approvers.flatMap((approver, idx) => [
         {
           section: `Approver ${idx + 1}`,
@@ -507,7 +521,6 @@ const BMRProcessDetails = () => {
                   setIsAddFieldModalOpen(true)
                 )}
               />
-
               <AtmButton
                 label="Delete Field"
                 className="bg-red-600 hover:bg-red-700"
@@ -526,7 +539,6 @@ const BMRProcessDetails = () => {
                   setIsSectionModalOpen(true)
                 )}
               />
-
               <AtmButton
                 label="Delete Section"
                 className="bg-red-600 hover:bg-red-700"
@@ -950,7 +962,6 @@ const BMRProcessDetails = () => {
                     {section.section_name}
                   </div>
                 </div>
-
                 <div className="grid grid-cols-2 shadow-xl gap-4 px-5 py-[64px]">
                   {section.BMR_fields?.map((field, index) => (
                     <div
@@ -960,7 +971,6 @@ const BMRProcessDetails = () => {
                     >
                       <label className="text-lg font-extrabold text-gray-700 flex gap-1 mb-2">
                         {field.label}
-
                         <div className="text-red-500">
                           {field.isMandatory && " *"}
                         </div>
@@ -1040,7 +1050,7 @@ const BMRProcessDetails = () => {
                           style={{ border: "1px solid gray", height: "48px" }}
                           required={field.isMandatory}
                         >
-                          {field.options.map((option, idx) => (
+                          {field?.acceptsMultiple?.map((option, idx) => (
                             <option key={idx} value={option}>
                               {option}
                             </option>
@@ -1109,7 +1119,6 @@ const BMRProcessDetails = () => {
           existingSectionName={existingSectionName}
         />
       )}
-
       {deleteModalOpen && (
         <DeleteModal
           onClose={() => setDeleteModalOpen(false)}

@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { Modal, Box, Typography, TextField } from '@mui/material';
-import AtmButton from '../../../AtmComponents/AtmButton';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import React, { useState } from "react";
+import { Modal, Box, Typography, TextField } from "@mui/material";
+import AtmButton from "../../../AtmComponents/AtmButton";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
+  bgcolor: "background.paper",
+  border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };

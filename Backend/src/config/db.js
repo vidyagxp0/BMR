@@ -26,12 +26,9 @@ const connectToDB = async () => {
   }
 };
 
-sequelize
-  .sync({ alter: true })
-  .then(() => {
+sequelize.sync({ alter: true }).then(() => {
     console.log("Tables synchronized");
-  })
-  .catch((error) => {
+  }).catch((error) => {
     console.error("Error synchronizing tables:", error);
   });
 
