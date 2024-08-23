@@ -79,7 +79,7 @@ const BMRProcessDetails = () => {
 
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.21:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://195.35.6.197:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -436,58 +436,66 @@ setExistingFieldName(field)
       </div>
     )}
 
-      <div className=''>
-      {showForm === "sendForm" && activeSendFormTab && (
-      <div className='text-lg text-right flex flex-col gap-9 font-bold text-gray-500'>
-        {activeSendFormTab?.BMR_sections?.map((section, index) => (
-          <div key={index} className={`mb-2 cursor-pointer ${activeSection === section ? 'border border-black' : ''}`}>
-            <div onClick={() => handleSectionClick(section)}>
-              <div className={`py-2 px-4 mb-2 cursor-pointer ${activeSection === section ? 'bg-gray-400 text-white' : 'bg-gray-200'}`}>
-                {section.section_name}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 shadow-xl gap-4 px-5 py-[64px]">
-              {section.BMR_fields?.map((field, index) => (
-                <div key={index} onClick={() => handleFieldClick(field)} className="p-4 rounded bg-white shadow border border-gray-300">
-                  <label className="text-lg font-extrabold text-gray-700 flex gap-1 mb-2">
-                    {field.label}
-                    <div className="text-red-500">{field.isMandatory && ' *'}</div>
-                  </label>
-                  {/* Render input fields based on type */}
-                  {field.field_type === "text" && <input placeholder={field.placeholder} style={{ border: "1px solid gray", height: "48px" }} type="text" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} readOnly={field.isReadOnly} />}
-                  {field.field_type === "password" && <input placeholder={field.placeholder} style={{ border: "1px solid gray", height: "48px" }} type="password" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} readOnly={field.isReadOnly} />}
-                  {field.field_type === "date" && <input placeholder={field.placeholder} style={{ border: "1px solid gray", height: "48px" }} type="date" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} readOnly={field.isReadOnly} />}
-                  {field.field_type === "email" && <input placeholder={field.placeholder} style={{ border: "1px solid gray", height: "48px" }} type="email" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} readOnly={field.isReadOnly} />}
-                  {field.field_type === "number" && <input placeholder={field.placeholder} style={{ border: "1px solid gray", height: "48px" }} type="number" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} readOnly={field.isReadOnly} />}
-                  {field.field_type === "checkbox" && <input placeholder={field.placeholder} style={{ border: "1px solid gray", height: "48px" }} type="checkbox" className="border border-gray-600 p-2 rounded" required={field.isMandatory} readOnly={field.isReadOnly} />}
-                  {field.field_type === "dropdown" && (
-                    <select className="border border-gray-600 p-2 w-full rounded" style={{ border: "1px solid gray", height: "48px" }} required={field.isMandatory}>
-                      {field?.acceptsMultiple?.map((option, idx) => (
-                        <option key={idx} value={option}>{option}</option>
-                      ))}
-                    </select>
-                  )}
-                   {field.field_type === "multi-select" && (
-                    <>
-                      <Select
-                        isMulti
-                        options={field?.acceptsMultiple?.map(option => ({ value: option, label: option }))}
-                        value={selectedOptions[field.id] || []}
-                        onChange={(options) => handleMultiSelectChange(field.id, options)}
-                        formatOptionLabel={formatOptionLabel}
-                        className='text-start'
-                      />
-                    </>
-                  )}
-                </div>
-              ))}
+<div className=''>
+  {showForm === "sendForm" && activeSendFormTab && (
+    <div className='text-lg text-right flex flex-col gap-9 font-bold text-gray-500'>
+      {activeSendFormTab?.BMR_sections?.map((section, index) => (
+        <div key={index} className={`mb-2 cursor-pointer ${activeSection === section ? 'border border-black' : ''}`}>
+          <div onClick={() => handleSectionClick(section)}>
+            <div className={`py-2 px-4 mb-2 cursor-pointer ${activeSection === section ? 'bg-gray-400 text-white' : 'bg-gray-200'}`}>
+              {section.section_name}
             </div>
           </div>
-        ))}
-      </div>
-    )}
-
-      </div>
+          <div className="grid grid-cols-2 shadow-xl gap-4 px-5 py-[64px]">
+            {section.BMR_fields?.map((field, index) => (
+              <div key={index} onClick={() => handleFieldClick(field)} className="p-4 rounded bg-white shadow border border-gray-300">
+                <label className="text-lg font-extrabold text-gray-700 flex gap-1 mb-2">
+                  {field.label}
+                  <div className="text-red-500">{field.isMandatory && ' *'}</div>
+                </label>
+                {/* Render input fields based on type */}
+                {field.field_type === "text" && <input placeholder={field.placeholder} style={{ border: "1px solid gray", height: "48px" }} type="text" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} readOnly={field.isReadOnly} />}
+                {field.field_type === "password" && <input placeholder={field.placeholder} style={{ border: "1px solid gray", height: "48px" }} type="password" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} readOnly={field.isReadOnly} />}
+                {field.field_type === "date" && <input placeholder={field.placeholder} style={{ border: "1px solid gray", height: "48px" }} type="date" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} readOnly={field.isReadOnly} />}
+                {field.field_type === "email" && <input placeholder={field.placeholder} style={{ border: "1px solid gray", height: "48px" }} type="email" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} readOnly={field.isReadOnly} />}
+                {field.field_type === "number" && <input placeholder={field.placeholder} style={{ border: "1px solid gray", height: "48px" }} type="number" className="border border-gray-600 p-2 w-full rounded" required={field.isMandatory} readOnly={field.isReadOnly} />}
+                {field.field_type === "checkbox" && <input placeholder={field.placeholder} style={{ border: "1px solid gray", height: "48px" }} type="checkbox" className="border border-gray-600 p-2 rounded" required={field.isMandatory} readOnly={field.isReadOnly} />}
+                
+                {field.field_type === "dropdown" && (
+                  <select className="border border-gray-600 p-2 w-full rounded" style={{ border: "1px solid gray", height: "48px" }} required={field.isMandatory}>
+                    {Array.isArray(field?.acceptsMultiple) ? (
+                      field.acceptsMultiple.map((option, idx) => (
+                        <option key={idx} value={option}>{option}</option>
+                      ))
+                    ) : (
+                      <option value="">No options available</option>
+                    )}
+                  </select>
+                )}
+                
+                {field.field_type === "multi-select" && (
+                  <>
+                    <Select
+                      isMulti
+                      options={Array.isArray(field?.acceptsMultiple) ? field.acceptsMultiple.map(option => ({ value: option, label: option })) : []}
+                      value={selectedOptions[field.id] || []}
+                      onChange={(options) => handleMultiSelectChange(field.id, options)}
+                      formatOptionLabel={formatOptionLabel}
+                      className='text-start'
+                    />
+                    {!Array.isArray(field?.acceptsMultiple) && (
+                      <div className="text-red-500 mt-2">No options available</div>
+                    )}
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
       {isAddTabModalOpen && (
         <AddTabModal
