@@ -21,7 +21,7 @@ const AdminLogin = () => {
       password: password,
     };
     axios
-      .post("http://192.168.1.17:7000/user/admin-login", data, {
+      .post("http://195.35.6.197:7000/user/admin-login", data, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -65,7 +65,7 @@ const AdminLogin = () => {
           <AtmInput
             type="text"
             placeholder="Enter your username"
-            className="mb-4"
+            className="mb-5 h-[48px] p-3 text-white text-base font-bold bg-transparent border border-gray-600 rounded-md focus:outline-none focus:pl-2 focus:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
             labelClassName="text-white"
             label="Username"
             value={username}
@@ -75,7 +75,8 @@ const AdminLogin = () => {
             <AtmInput
               type={showPassword ? "text" : "password"} // Toggle input type based on state
               placeholder="Enter your password"
-              className="mb-4 pr-10" // Add padding-right to make space for the icon
+              className="mb-5 h-[48px] p-3 text-white text-base font-bold bg-transparent border border-gray-600 rounded-md focus:outline-none focus:pl-2 focus:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+              // Add padding-right to make space for the icon
               labelClassName="text-white"
               label="Password"
               value={password}
@@ -84,7 +85,7 @@ const AdminLogin = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
-              className="absolute inset-y-0 right-0 flex items-center px-3 pt-3 cursor-pointer"
+              className="absolute inset-y-0 right-0 flex items-center px-7 pt-3 text-white cursor-pointer"
             >
               {showPassword ? (
                 <FaEyeSlash className="" />

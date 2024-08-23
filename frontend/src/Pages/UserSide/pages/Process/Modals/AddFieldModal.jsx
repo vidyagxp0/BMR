@@ -53,7 +53,7 @@ const AddFieldModal = ({
     if (updateField === "add-field") {
       try {
         const response = await axios.post(
-          "http://192.168.1.17:7000/bmr-form/add-bmr-field",
+          "http://195.35.6.197:7000/bmr-form/add-bmr-field",
           { bmr_id, ...fieldData },
           {
             headers: {
@@ -70,7 +70,7 @@ const AddFieldModal = ({
     } else if (updateField === "edit-field") {
       try {
         const response = await axios.put(
-          `http://192.168.1.17:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
+          `http://195.35.6.197:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
           { bmr_id, ...fieldData },
           {
             headers: {

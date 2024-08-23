@@ -9,15 +9,17 @@ const ProtectedUserRoute = ({ element: Component }) => {
   if (token) {
     try {
       const decodedToken = jwtDecode(token); //? decode the token
+      console.log(decodedToken);
+
       const currentTime = Date.now() / 1000; //? Current time ko seconds mein lete hain
       if (decodedToken.exp > currentTime) {
         isAuthenticated = true;
+        // console.log(decodedToken)
       } else {
         localStorage.removeItem("user-token"); //?  Token expire hone par remove kar dete hain
       }
     } catch (error) {
       localStorage.removeItem("user-token"); //? Agar token invalid ho to remove kar dete hain
-    
     }
   }
 
