@@ -50,28 +50,11 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
     console.log("Updated BMR Data:", updatedBMRData); // Debug log
 
-    axios.put(`http://192.168.1.21:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`, updatedBMRData, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-        "Content-Type": "application/json",
-      },
-    }).then((response) => {
-      dispatch(updateBmr(response.data.bmr));
-      fetchBMRData(); // Refresh data 
-      toast.success("BMR updated successfully!");
-        onClose();
-    }).catch((err) => {
-      console.error('Error updating BMR:', err.response ? err.response.data : err); // Improved error log
-      toast.error("Failed to update BMR");
-    });
-  }
-
-  useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const reviewerResponse = await axios.post("http://192.168.1.21:7000/bmr-form/get-user-roles", {
-          role_id: 3,
-        }, {
+    axios
+      .put(
+        `http://195.35.6.197:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
+        updatedBMRData,
+        {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("user-token")}`,
             "Content-Type": "application/json",
