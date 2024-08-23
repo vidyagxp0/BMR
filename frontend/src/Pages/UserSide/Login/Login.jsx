@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AtmButton from "../../../AtmComponents/AtmButton";
 import AtmInput from "../../../AtmComponents/AtmInput";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import {  FaEye, FaEyeSlash } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -20,7 +20,7 @@ const Login = () => {
       password: password,
     };
     axios
-      .post("http://195.35.6.197:7000/user/user-login", data, {
+      .post("http://192.168.1.20:7000/user/user-login", data, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -53,7 +53,7 @@ const Login = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center"
+      className="min-h-screen  flex items-center justify-center"
       style={{
         backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('${backgroundImage}')`,
         backgroundSize: "cover",
@@ -75,7 +75,8 @@ const Login = () => {
         className="p-8 rounded-lg shadow-lg max-w-md w-full"
         style={{
           backgroundColor: "rgba(120, 120, 120, 0.2)",
-          backdropFilter: "blur(9px)",
+          backdropFilter: "blur(10px)",
+          
         }}
       >
         <div className="flex justify-center items-center">
@@ -87,7 +88,7 @@ const Login = () => {
             backgroundImage: `url('https://t4.ftcdn.net/jpg/06/00/38/29/360_F_600382918_rodL5pr9CGksWi6qlAMJ79OnyPnZQ02t.jpg')`,
             backgroundSize: "cover",
             backgroundClip: "text",
-            color: "transparent",
+            color: "white",
             WebkitBackgroundClip: "text",
           }}
         >

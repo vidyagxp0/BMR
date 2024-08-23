@@ -11,7 +11,7 @@ import DeleteModal from "./Modals/DeleteModal";
 import "react-toastify/dist/ReactToastify.css";
 const BMRProcessDetails = () => {
   const [data, setData] = useState([]);
-  console.log(data, "data");
+  // console.log(data, "data");
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
@@ -98,6 +98,7 @@ const BMRProcessDetails = () => {
   const [activeFlowTab, setActiveFlowTab] = useState(flowoTabs[0]);
   const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
   const [activeSendFormTab, setActiveSendFormTab] = useState(null);
+  const [isActiveTab, setIsActiveTab] = useState(0);
   const [showForm, setShowForm] = useState("default");
   const [currentTabId, setCurrentTabId] = useState(null);
   const [activeSection, setActiveSection] = useState(null);
@@ -112,7 +113,8 @@ const BMRProcessDetails = () => {
   const [deleteItemType, setDeleteItemType] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState({});
   const { bmr_id } = useParams();
-
+  // console.log(newTab, "newTab");
+  // console.log(activeSendFormTab, "activeSendFormTab");
   const handleMultiSelectChange = (fieldId, options) => {
     setSelectedOptions((prev) => ({
       ...prev,
@@ -124,7 +126,7 @@ const BMRProcessDetails = () => {
 
   const fetchBMRData = () => {
     axios
-      .get(`http://195.35.6.197:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.20:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -155,10 +157,14 @@ const BMRProcessDetails = () => {
 
   useEffect(() => {
     if (showForm === "sendForm" && newTab.length > 0) {
-      // Automatically set the first tab as active
+      // Automatically set the first tab (index 0) as active
       const firstTab = newTab[0];
-      setActiveSendFormTab(firstTab.tab_name);
+      setActiveSendFormTab(firstTab);
       setCurrentTabId(firstTab.bmr_tab_id);
+    } else if (showForm === "sendForm" && newTab.length === 0) {
+      // Handle the case where there are no tabs (optional)
+      setActiveSendFormTab(null);
+      setCurrentTabId(null);
     }
   }, [showForm, newTab]);
 
@@ -223,8 +229,12 @@ const BMRProcessDetails = () => {
   };
 
   const handleSendFormTabClick = (tab) => {
+    const tabIndex = newTab.findIndex((t) => t.bmr_tab_id === tab.bmr_tab_id);
+    // Set the active tab based on the index found
     setActiveSendFormTab(tab);
+    setIsActiveTab(tabIndex);
     setCurrentTabId(tab.bmr_tab_id);
+    // console.log(tab.section_name,"handleSendFormTabClick")
     setActiveSection(null);
     setActiveField(null);
     setExistingTabName(tab.tab_name);
@@ -237,6 +247,7 @@ const BMRProcessDetails = () => {
     setExistingSectionName(section.section_name);
     setActiveField(null);
     setExistingFieldName(section);
+    // console.log(section,'section')
   };
 
   const handleFieldClick = (field) => {
@@ -246,6 +257,7 @@ const BMRProcessDetails = () => {
   const populateApproverFields = () => {
     if (data.length > 0) {
       const approvers = data[0].approvers || [];
+      // console.log(approvers, "approvers");
 
       const approverFields = approvers.flatMap((approver, idx) => [
         {
@@ -271,6 +283,7 @@ const BMRProcessDetails = () => {
             },
           ],
         },
+        
       ]);
 
       setFields((prevFields) => ({
@@ -494,7 +507,7 @@ const BMRProcessDetails = () => {
               key={index}
               onClick={() => handleSendFormTabClick(tab)}
               className={`py-2 px-4 rounded-full border-2 border-black ${
-                activeSendFormTab === tab
+                isActiveTab === index
                   ? "bg-gray-400 text-white"
                   : "bg-gray-200 text-gray-700"
               }`}

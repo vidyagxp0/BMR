@@ -29,7 +29,7 @@ function CreateRecordModal({ onClose }) {
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
-  console.log(isSelectedReviewer, "isSelectedReview");
+  // console.log(isSelectedReviewer, "isSelectedReview");
   const [isSelectedApprover, setIsSelectedApprover] = useState([]);
   const dispatch = useDispatch();
 
@@ -37,7 +37,7 @@ function CreateRecordModal({ onClose }) {
     e.preventDefault();
     axios
       .post(
-        "http://195.35.6.197:7000/bmr-form/add-bmr",
+        "http://192.168.1.20:7000/bmr-form/add-bmr",
         {
           name: formData.name,
           reviewers: isSelectedReviewer.map((reviewer) => ({
@@ -63,7 +63,8 @@ function CreateRecordModal({ onClose }) {
         }
       )
       .then((response) => {
-        toast.success("BMR added successfully!");
+        // console.log(response); 
+        toast.success(response.data.message || "BMR added successfully!");
         dispatch(addBmr(response.data.bmr));
         setFormData({ name: "", reviewers: [], approvers: [] });
         setTimeout(() => {
@@ -75,11 +76,12 @@ function CreateRecordModal({ onClose }) {
         toast.error("BMR Already Registered");
       });
   };
+  
 
   useEffect(() => {
     const config = {
       method: "post",
-      url: "http://195.35.6.197:7000/bmr-form/get-user-roles",
+      url: "http://192.168.1.20:7000/bmr-form/get-user-roles",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",
@@ -110,7 +112,7 @@ function CreateRecordModal({ onClose }) {
 
     const newConfig = {
       method: "post",
-      url: "http://195.35.6.197:7000/bmr-form/get-user-roles",
+      url: "http://192.168.1.20:7000/bmr-form/get-user-roles",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",
@@ -122,7 +124,7 @@ function CreateRecordModal({ onClose }) {
 
     axios(newConfig)
       .then((response) => {
-        console.log(response, "response");
+        console.log(response[0], "response");
         const approverOptions = [
           ...new Map(
             response.data.message.map((role) => [
