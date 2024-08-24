@@ -20,7 +20,7 @@ const Login = () => {
       password: password,
     };
     axios
-      .post("http://192.168.1.20:7000/user/user-login", data, {
+      .post("http://192.168.1.3:7000/user/user-login", data, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -78,7 +78,6 @@ const Login = () => {
         style={{
           backgroundColor: "rgba(120, 120, 120, 0.2)",
           backdropFilter: "blur(10px)",
-          
         }}
       >
         <div className="flex justify-center items-center">

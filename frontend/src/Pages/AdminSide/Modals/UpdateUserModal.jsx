@@ -25,20 +25,23 @@ const UpdateUser = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    axios.get("http://192.168.1.20:7000/user/get-all-roles", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
-        "Content-Type": "application/json",
-      }
-    }).then((response) => {
-      const roleOptions = response.data.response.map(role => ({
-        value: role.role_id,
-        label: role.role
-      })); 
-      setRoles(roleOptions);
-    }).catch((error) => {
-      console.error(error);
-    });
+    axios
+      .get("http://192.168.1.3:7000/user/get-all-roles", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        const roleOptions = response.data.response.map((role) => ({
+          value: role.role_id,
+          label: role.role,
+        }));
+        setRoles(roleOptions);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
   const validateForm = () => {
@@ -87,23 +90,32 @@ const UpdateUser = () => {
       formDataToSend.append("rolesArray", role);
     });
 
-    axios.post("http://192.168.1.20:7000/user/add-user", formDataToSend, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
-        "Content-Type": "multipart/form-data",
-      }
-    }).then((response) => {
-      toast.success("User added successfully!");
-      dispatch(addUser(response.data.user));
-      setFormData({ name: '', email: '', password: '', profile_pic: null, rolesArray: [] });
-      setErrors({});
-      setTimeout(() => {
-        navigate('/admin-dashboard');
-      }, 500);
-    }).catch((error) => {
-      console.error(error);
-      toast.error("User Already Registered");
-    });
+    axios
+      .post("http://192.168.1.3:7000/user/add-user", formDataToSend, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        toast.success("User added successfully!");
+        dispatch(addUser(response.data.user));
+        setFormData({
+          name: "",
+          email: "",
+          password: "",
+          profile_pic: null,
+          rolesArray: [],
+        });
+        setErrors({});
+        setTimeout(() => {
+          navigate("/admin-dashboard");
+        }, 500);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("User Already Registered");
+      });
   };
 
   const handleFileChange = (e) => {

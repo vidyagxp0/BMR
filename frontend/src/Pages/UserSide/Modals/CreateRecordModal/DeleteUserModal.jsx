@@ -8,23 +8,28 @@ import "react-toastify/dist/ReactToastify.css";
 const DeleteUserModal = ({ onClose, id, setData }) => {
   const dispatch = useDispatch();
   const handleDelete = () => {
-    axios.delete(`http://192.168.1.20:7000/bmr-form/delete-bmr/${id}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem("user-token")}`
-      },
-    }).then((response) => {
-      toast.success("BMR deleted successfully!");
-      setData((previousData) => previousData.filter(user => user.bmr_id !== id));
-      setTimeout(() => {
-        onClose();
-        dispatch(deleteBmr(id));
-        dispatch(fetchBmr());
-      }, 1000);
-    }).catch((error) => {
-      toast.error("Failed to delete user");
-      console.error(error);
-    });
+    axios
+      .delete(`http://192.168.1.3:7000/bmr-form/delete-bmr/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+        },
+      })
+      .then((response) => {
+        toast.success("BMR deleted successfully!");
+        setData((previousData) =>
+          previousData.filter((user) => user.bmr_id !== id)
+        );
+        setTimeout(() => {
+          onClose();
+          dispatch(deleteBmr(id));
+          dispatch(fetchBmr());
+        }, 1000);
+      })
+      .catch((error) => {
+        toast.error("Failed to delete user");
+        console.error(error);
+      });
   };
 
   return (

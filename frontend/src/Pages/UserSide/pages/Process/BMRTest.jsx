@@ -124,7 +124,7 @@ const BMRProcessDetails = () => {
 
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.20:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.3:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -806,11 +806,10 @@ const BMRProcessDetails = () => {
           fetchBMRData={fetchBMRData}
         />
       )}
-      
+
       <ToastContainer />
     </div>
   );
 };
 
 export default BMRProcessDetails;
-

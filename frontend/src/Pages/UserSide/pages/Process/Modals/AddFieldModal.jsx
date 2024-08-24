@@ -64,20 +64,21 @@ const AddFieldModal = ({
   const handleSave = async () => {
     try {
       const response = await axios({
-        method: updateField === "add-field" ? 'post' : 'put',
-        url: updateField === "add-field"
-          ? 'http://192.168.1.20:7000/bmr-form/add-bmr-field'
-          : `http://192.168.1.20:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
+        method: updateField === "add-field" ? "post" : "put",
+        url:
+          updateField === "add-field"
+            ? "http://192.168.1.3:7000/bmr-form/add-bmr-field"
+            : `http://192.168.1.3:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
         data: { bmr_id, ...fieldData },
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('user-token')}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+          "Content-Type": "application/json",
         },
       });
       addField({ bmr_id, ...fieldData });
       closeModal();
     } catch (error) {
-      console.error('Error saving field:', error);
+      console.error("Error saving field:", error);
     }
   };
 

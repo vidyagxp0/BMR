@@ -4,76 +4,92 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const DeleteModal = ({ onClose, id, newTab, setNewTab, newSection, section_id, itemType , fetchBMRData,bmr_field_id}) => {
-    const handleDelete = async () => {
-        if (itemType === "tab") {
-            try {
-                const response = await axios.delete(`http://192.168.1.20:7000/bmr-form/delete-bmr-tab/${id}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-                            "Content-Type": "application/json",
-                        },
-                    });
+const DeleteModal = ({
+  onClose,
+  id,
+  newTab,
+  setNewTab,
+  newSection,
+  section_id,
+  itemType,
+  fetchBMRData,
+  bmr_field_id,
+}) => {
+  const handleDelete = async () => {
+    if (itemType === "tab") {
+      try {
+        const response = await axios.delete(
+          `http://192.168.1.3:7000/bmr-form/delete-bmr-tab/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-                const updatedTabs = newTab.filter(tab => tab.bmr_tab_id !== id);
-                setNewTab(updatedTabs);
-                fetchBMRData()
-                toast.success("Tab deleted successfully!");
-                onClose();
-            } catch (error) {
-                console.error("Error deleting tab:", error);
-                toast.error("Error deleting tab!");
-            }
-        }
-        else if (itemType === "section") {
-            try {
-                const response = await axios.delete(`http://192.168.1.20:7000/bmr-form/delete-bmr-section/${section_id}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-                            "Content-Type": "application/json",
-                        },
-                    });
-                const updatedSections = newTab.map(tab => {
-                    if (tab.BMR_sections) {
-                        return {
-                            ...tab,
-                            BMR_sections: tab.BMR_sections.filter(section => section.bmr_field_id !== bmr_field_id)
-                        }
-                    }
-                    return tab;
-                });
+        const updatedTabs = newTab.filter((tab) => tab.bmr_tab_id !== id);
+        setNewTab(updatedTabs);
+        fetchBMRData();
+        toast.success("Tab deleted successfully!");
+        onClose();
+      } catch (error) {
+        console.error("Error deleting tab:", error);
+        toast.error("Error deleting tab!");
+      }
+    } else if (itemType === "section") {
+      try {
+        const response = await axios.delete(
+          `http://192.168.1.3:7000/bmr-form/delete-bmr-section/${section_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const updatedSections = newTab.map((tab) => {
+          if (tab.BMR_sections) {
+            return {
+              ...tab,
+              BMR_sections: tab.BMR_sections.filter(
+                (section) => section.bmr_field_id !== bmr_field_id
+              ),
+            };
+          }
+          return tab;
+        });
 
-                setNewTab(updatedSections); // Update the newTab state with the filtered sections
-                fetchBMRData()
-                toast.success("Field deleted successfully!");
-                onClose()
-            }
-            
-            catch (error) {
-                console.error("Error deleting Field:", error);
-                toast.error("Error deleting Field!");
-            }
-        }
-        else if (itemType === "field") {
-            try {
-                const response = await axios.delete(`http://192.168.1.20:7000/bmr-form/delete-bmr-field/${bmr_field_id}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-                            "Content-Type": "application/json",
-                        },
-                    });
-                const updatedSections = newTab.map(tab => {
-                    if (tab.BMR_fields) {
-                        return {
-                            ...tab,
-                            BMR_fields: tab.BMR_fields.filter(section => section.bmr_section_id !== section_id)
-                        }
-                    }
-                    return tab;
-                });
+        setNewTab(updatedSections); // Update the newTab state with the filtered sections
+        fetchBMRData();
+        toast.success("Field deleted successfully!");
+        onClose();
+      } catch (error) {
+        console.error("Error deleting Field:", error);
+        toast.error("Error deleting Field!");
+      }
+    } else if (itemType === "field") {
+      try {
+        const response = await axios.delete(
+          `http://192.168.1.3:7000/bmr-form/delete-bmr-field/${bmr_field_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const updatedSections = newTab.map((tab) => {
+          if (tab.BMR_fields) {
+            return {
+              ...tab,
+              BMR_fields: tab.BMR_fields.filter(
+                (section) => section.bmr_section_id !== section_id
+              ),
+            };
+          }
+          return tab;
+        });
 
         setNewTab(updatedSections); // Update the newTab state with the filtered sections
         fetchBMRData();
