@@ -19,7 +19,7 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
   };
 
   const handleBMRClick = (row) => {
-    navigate(`/details/${row.id}`); // Navigate to details page with row.id
+    navigate(`/details/${row.id}`);
   };
 
   const paginatedData = data.slice(
@@ -28,18 +28,18 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
   );
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-grow overflow-x-auto overflow-y-auto mb-12">
+    <div className="flex flex-col h-full pt-4">
+      <div className="flex-grow overflow-x-auto mb-16">
         <table className="min-w-full border-collapse border border-gray-300">
           <thead className="bg-blue-500">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300">
+              <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300">
                 Sr No
               </th>
               {columns.map((column, index) => (
                 <th
                   key={index}
-                  className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300"
+                  className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300"
                 >
                   {column.header}
                 </th>
@@ -52,20 +52,21 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
                 key={rowIndex}
                 className={rowIndex % 2 === 0 ? "bg-white" : "bg-blue-100"}
               >
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border border-gray-300">
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-gray-300">
                   {(currentPage - 1) * rowsPerPage + rowIndex + 1}
                 </td>
                 {columns.map((column, colIndex) => (
                   <td
                     key={colIndex}
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border border-gray-300"
+                    className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-gray-300"
                     onClick={
                       column.header === "BMR NAME"
                         ? () => handleBMRClick(row)
                         : null
                     }
                     style={{
-                      cursor: column.header === "BMR Name" ? "pointer" : "default"
+                      cursor:
+                        column.header === "BMR Name" ? "pointer" : "default",
                     }}
                   >
                     {column.Cell
@@ -78,7 +79,7 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
           </tbody>
         </table>
       </div>
-      <div className="flex justify-between items-center p-4 border-t border-gray-300 bg-white fixed bottom-0 left-[245px] right-0">
+      <div className="flex justify-between items-center p-4 border-t border-gray-300 bg-white fixed bottom-0 left-0 right-0 sm:left-64 sm:right-0">
         <button
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
@@ -86,9 +87,8 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
         >
           Previous
         </button>
-        <span>
-          Total Users: {data.length} &nbsp;
-          Page {currentPage} of {totalPages}
+        <span className="text-sm sm:text-base">
+          Total Users: {data.length} &nbsp; Page {currentPage} of {totalPages}
         </span>
         <button
           onClick={handleNextPage}
