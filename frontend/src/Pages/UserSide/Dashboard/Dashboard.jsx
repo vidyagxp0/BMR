@@ -120,7 +120,7 @@ const Dashboard = () => {
           <button className="btn">Print</button>
         </div>
 
-        <table>
+        <table className='mb-5'>
           <thead>
             <tr>
               <th>S no</th>

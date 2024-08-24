@@ -17,7 +17,7 @@ function HeaderBottom({ openModal }) {
             (itm) => itm.role_id === 5 || itm.role_id === 1
           ) ? ( */}
           <div className="headerBottomRgt">
-            <div className="themeBtn " onClick={openModal}>
+            <div className="themeBtn bg-sky-200 mt-3 font-bold" onClick={openModal}>
               Create BMR
             </div>
           </div>
