@@ -130,7 +130,7 @@ const BMRProcessDetails = () => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.3:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.2:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -207,7 +207,7 @@ const BMRProcessDetails = () => {
       // data.initiatorAttachment = editData?.initiatorAttachment;
       axios
         .put(
-          "http://192.168.1.3:7000/bmr-form/send-BMR-for-review",
+          "http://192.168.1.2:7000/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -225,7 +225,7 @@ const BMRProcessDetails = () => {
       // data.reviewerAttachment = editData.reviewerAttachment;
       axios
         .put(
-          "http://192.168.1.3:7000/bmr-form/send-BMR-from-review-to-approval",
+          "http://192.168.1.2:7000/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -243,7 +243,7 @@ const BMRProcessDetails = () => {
       // data.reviewerAttachment = editData.reviewerAttachment;
       axios
         .put(
-          "http://192.168.1.3:7000/bmr-form/send-BMR-from-review-to-open",
+          "http://192.168.1.2:7000/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -259,7 +259,7 @@ const BMRProcessDetails = () => {
       // data.approverAttachment = editData.approverAttachment;
       axios
         .put(
-          "http://192.168.1.3:7000/bmr-form/approve-BMR",
+          "http://192.168.1.2:7000/bmr-form/approve-BMR",
           dataObject,
           config
         )
@@ -277,7 +277,7 @@ const BMRProcessDetails = () => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.3:7000/bmr-form/send-BMR-from-approval-to-open",
+          "http://192.168.1.2:7000/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -292,6 +292,21 @@ const BMRProcessDetails = () => {
     setIsPopupOpen(false);
     setPopupAction(null);
   };
+
+  const handleFlowTabClick = (tab) => {
+    setActiveFlowTab(tab);
+  };
+  useEffect(() => {
+    if (data[0]?.stage === 1) {
+      setActiveFlowTab("INITIATION");
+    } else if (data[0]?.stage === 2) {
+      setActiveFlowTab("UNDER REVIEW");
+    } else if (data[0]?.stage === 3) {
+      setActiveFlowTab("UNDER APPROVAL");
+    } else if (data[0]?.stage === 4) {
+      setActiveFlowTab("APPROVED");
+    }
+  }, [data]);
   const updateTab = (tabObject) => { };
   const addSection = (sectionName) => {
     setNewSection((prevSections) => {
@@ -322,9 +337,7 @@ const BMRProcessDetails = () => {
     });
     fetchBMRData();
   };
-  const handleFlowTabClick = (tab) => {
-    setActiveFlowTab(tab);
-  };
+
   const handleDefaultTabClick = (tab) => {
     setActiveDefaultTab(tab);
   };
@@ -572,13 +585,15 @@ const BMRProcessDetails = () => {
         <div className="flex gap-4 mb-4">
           {flowoTabs?.map((tab, index) => (
             <button
+            disabled
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleFlowTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${activeFlowTab === tab
+              className={`py-2 px-4 rounded-full border-2 border-black ${
+                activeFlowTab === tab
                   ? "bg-blue-500 text-white"
                   : "bg-blue-100 text-gray-700"
-                }`}
+              }`}
             >
               {tab}
             </button>
@@ -718,17 +733,18 @@ const BMRProcessDetails = () => {
               ))}
     
        </div>
-       <div className="fixed bottom-0 left-0 w-full bg-white  border-gray-300 p-4 flex justify-end gap-5">
-      {data[0]?.stage === 1 && data[0]?.initiator === userDetails.userId && (
-            <AtmButton
-              label={"Send For Review"}
-              className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                setIsPopupOpen(true);
-                setPopupAction("sendFromOpenToReview"); // Set the action when opening the popup
-              }}
-            />)}
-             {data[0]?.stage === 2 &&
+       <div className="fixed bottom-0 left-0 w-full bg-white border-gray-300 p-4 flex justify-end gap-5">
+        {data[0]?.stage === 1 && data[0]?.initiator === userDetails.userId && (
+          <AtmButton
+            label={"Send For Review"}
+            className="bg-blue-500 hover:bg-blue-700 p-2"
+            onClick={() => {
+              setIsPopupOpen(true);
+              setPopupAction("sendFromOpenToReview"); // Set the action when opening the popup
+            }}
+          />
+        )}
+        {data[0]?.stage === 2 &&
           data[0]?.reviewers.some(
             (reviewer) => reviewer.reviewerId === userDetails.userId
           ) &&
@@ -736,52 +752,6 @@ const BMRProcessDetails = () => {
             (reviewer) => reviewer.reviewerId === userDetails.userId
           )?.status === "reviewed" ? (
             <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded shadow-md">
-            <p className="font-semibold text-lg flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 mr-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
-                />
-              </svg>
-              You have already reviewed this.
-            </p>
-          </div>
-          ) : (
-            <><AtmButton
-              label={"Send For Approval"}
-              className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                setIsPopupOpen(true);
-                setPopupAction("sendFromReviewToApproval"); // Set the action when opening the popup
-              }}
-            />
-            <AtmButton
-              label={"Open BMR"}
-              className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                setIsPopupOpen(true);
-                setPopupAction("sendFromReviewToOpen"); // Set the action when opening the popup
-              }}
-            />
-            </>
-          ))}
-
-{data[0]?.stage === 3 ? (
-          data[0]?.approvers.some(
-            (approver) => approver.approverId === userDetails.userId
-          ) ? (
-            data[0]?.approvers.find(
-              (approver) => approver.approverId === userDetails.userId
-            )?.status === "approved" ? (
-              <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md">
               <p className="font-semibold text-lg flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -797,102 +767,38 @@ const BMRProcessDetails = () => {
                     d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
                   />
                 </svg>
-                You have already approved this.
+                You have already reviewed this.
               </p>
             </div>
-            ) : (
-              <>
-            <AtmButton
-            label={"Approve BMR"}
-                  className="bg-blue-500 hover:bg-blue-700 p-2"
-                  onClick={() => {
-                    setIsPopupOpen(true);
-                    setPopupAction("sendFromApprovalToApproved"); // Set the action when opening the popup
-                  }}
-                />
-                  
-               
-                  <AtmButton
-              label={"Open BMR"}
-              className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                    setIsPopupOpen(true);
-                    setPopupAction("sendFromApprovalToOpen"); // Set the action when opening the popup
-                  }}
-                />
-                 
-              </>
-            )
-          ) : null
-        ) : null}
-        <AtmButton label={"Exit"}  onClick={() => {
-            navigate(-1);
-          }}  />
-          </div>
-          <div className="fixed bottom-0 left-0 w-full bg-white  border-gray-300 p-4 flex justify-end gap-5">
-      {data[0]?.stage === 1 && data[0]?.initiator === userDetails.userId && (
-            <AtmButton
-              label={"Send For Review"}
-              className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                setIsPopupOpen(true);
-                setPopupAction("sendFromOpenToReview"); // Set the action when opening the popup
-              }}
-            />)}
-             {data[0]?.stage === 2 &&
-          data[0]?.reviewers.some(
-            (reviewer) => reviewer.reviewerId === userDetails.userId
-          ) &&
-          (data[0]?.reviewers.find(
-            (reviewer) => reviewer.reviewerId === userDetails.userId
-          )?.status === "reviewed" ? (
+          ) : (
+            <>
+              <AtmButton
+                label={"Send For Approval"}
+                className="bg-blue-500 hover:bg-blue-700 p-2"
+                onClick={() => {
+                  setIsPopupOpen(true);
+                  setPopupAction("sendFromReviewToApproval"); // Set the action when opening the popup
+                }}
+              />
+              <AtmButton
+                label={"Open BMR"}
+                className="bg-blue-500 hover:bg-blue-700 p-2"
+                onClick={() => {
+                  setIsPopupOpen(true);
+                  setPopupAction("sendFromReviewToOpen"); // Set the action when opening the popup
+                }}
+              />
+            </>
+          ))}
+
+        {data[0]?.stage === 3 &&
+        data[0]?.approvers.some(
+          (approver) => approver.approverId === userDetails.userId
+        ) ? (
+          data[0]?.approvers.find(
+            (approver) => approver.approverId === userDetails.userId
+          )?.status === "approved" ? (
             <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md">
-            <p className="font-semibold text-lg flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 mr-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
-                />
-              </svg>
-              You have already reviewed this.
-            </p>
-          </div>
-          ) : (
-            <><AtmButton
-              label={"Send For Approval"}
-              className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                setIsPopupOpen(true);
-                setPopupAction("sendFromReviewToApproval"); // Set the action when opening the popup
-              }}
-            />
-            <AtmButton
-              label={"Open BMR"}
-              className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                setIsPopupOpen(true);
-                setPopupAction("sendFromReviewToOpen"); // Set the action when opening the popup
-              }}
-            />
-            </>
-          ))}
-
-{data[0]?.stage === 3 ? (
-          data[0]?.approvers.some(
-            (approver) => approver.approverId === userDetails.userId
-          ) ? (
-            data[0]?.approvers.find(
-              (approver) => approver.approverId === userDetails.userId
-            )?.status === "approved" ? (
-              <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md">
               <p className="font-semibold text-lg flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -911,35 +817,34 @@ const BMRProcessDetails = () => {
                 You have already approved this.
               </p>
             </div>
-            ) : (
-              <>
-            <AtmButton
-            label={"Approve BMR"}
-                  className="bg-blue-500 hover:bg-blue-700 p-2"
-                  onClick={() => {
-                    setIsPopupOpen(true);
-                    setPopupAction("sendFromApprovalToApproved"); // Set the action when opening the popup
-                  }}
-                />
-                  
-               
-                  <AtmButton
-              label={"Open BMR"}
-              className="bg-blue-500 hover:bg-blue-700 p-2"
-              onClick={() => {
-                    setIsPopupOpen(true);
-                    setPopupAction("sendFromApprovalToOpen"); // Set the action when opening the popup
-                  }}
-                />
-                 
-              </>
-            )
-          ) : null
+          ) : (
+            <>
+              <AtmButton
+                label={"Approve BMR"}
+                className="bg-blue-500 hover:bg-blue-700 p-2"
+                onClick={() => {
+                  setIsPopupOpen(true);
+                  setPopupAction("sendFromApprovalToApproved"); // Set the action when opening the popup
+                }}
+              />
+              <AtmButton
+                label={"Open BMR"}
+                className="bg-blue-500 hover:bg-blue-700 p-2"
+                onClick={() => {
+                  setIsPopupOpen(true);
+                  setPopupAction("sendFromApprovalToOpen"); // Set the action when opening the popup
+                }}
+              />
+            </>
+          )
         ) : null}
-        <AtmButton label={"Exit"}  onClick={() => {
+        <AtmButton
+          label={"Exit"}
+          onClick={() => {
             navigate(-1);
-          }}  />
-          </div>
+          }}
+        />
+      </div>
        </div>
       ) }
 
