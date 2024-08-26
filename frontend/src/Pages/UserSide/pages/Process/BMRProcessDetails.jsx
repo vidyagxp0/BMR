@@ -188,7 +188,15 @@ const BMRProcessDetails = () => {
       fetchBMRData();
     }
   };
-  const handlePopupSubmit = (credentials) => {
+  const handlePopupSubmit = (credentials, onSubmit) => {
+    if (credentials) {
+      // toast.success("");
+      onSubmit({ credentials });
+      console.log("Success!");
+    } else {
+      toast.error("Please fill in all required fields.");
+      console.error("erroRrRrRrRrRr");
+    }
     const dataObject = {
       bmr_id: data[0].bmr_id,
       email: credentials?.email,
@@ -452,7 +460,7 @@ const BMRProcessDetails = () => {
 
   return (
     <div className="p-4 relative h-full">
-            <header className="bg-gray-200 w-full shadow-lg flex justify-between items-center p-4 mb-4">
+      <header className="bg-gray-200 w-full shadow-lg flex justify-between items-center p-4 mb-4">
         <p className="text-lg font-bold">BMR Process Details</p>
         <div className="flex space-x-2">
           {showForm === "default" ? (
@@ -469,7 +477,10 @@ const BMRProcessDetails = () => {
               <AtmButton
                 label="Add Tab"
                 onClick={() => (
-                  setIsAddTabModalOpen(true), setUpdateTabModalOpen("add"),setIsPopupOpen(true),setPopupAction("add-tab")
+                  setIsAddTabModalOpen(true),
+                  setUpdateTabModalOpen("add"),
+                  setIsPopupOpen(true),
+                  setPopupAction("add-tab")
                 )}
                 className="bg-pink-950 hover:bg-pink-700 px-4 py-2"
               />
@@ -608,10 +619,11 @@ const BMRProcessDetails = () => {
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleDefaultTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${activeDefaultTab === tab
+              className={`py-2 px-4 rounded-full border-2 border-black ${
+                activeDefaultTab === tab
                   ? "bg-blue-500 text-white"
                   : "bg-blue-100 text-gray-700"
-                }`}
+              }`}
             >
               {tab}
             </button>
@@ -626,10 +638,11 @@ const BMRProcessDetails = () => {
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleSendFormTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${activeSendFormTab === tab
+              className={`py-2 px-4 rounded-full border-2 border-black ${
+                activeSendFormTab === tab
                   ? "bg-gray-400 text-white"
                   : "bg-gray-200 text-gray-700"
-                }`}
+              }`}
             >
               {tab.tab_name}
             </button>
@@ -637,10 +650,10 @@ const BMRProcessDetails = () => {
         </div>
       )}
 
-      {showForm === "default" &&(
-       <div className="relative h-screen">
-       <div className="overflow-auto mb-16">
-       {activeDefaultTab === "Initiator Remarks" &&
+      {showForm === "default" && (
+        <div className="relative h-screen">
+          <div className="overflow-auto mb-16">
+            {activeDefaultTab === "Initiator Remarks" &&
               fields["Initiator Remarks"]?.length > 0 && (
                 <div className="mb-20">
                   <div className="grid grid-cols-2 gap-4 ">
@@ -854,15 +867,17 @@ const BMRProcessDetails = () => {
             {activeSendFormTab?.BMR_sections?.map((section, index) => (
               <div
                 key={index}
-                className={`mb-2 cursor-pointer ${activeSection === section ? "border border-black" : ""
-                  }`}
+                className={`mb-2 cursor-pointer ${
+                  activeSection === section ? "border border-black" : ""
+                }`}
               >
                 <div onClick={() => handleSectionClick(section)}>
                   <div
-                    className={`py-2 px-4 mb-2 cursor-pointer ${activeSection === section
+                    className={`py-2 px-4 mb-2 cursor-pointer ${
+                      activeSection === section
                         ? "bg-gray-400 text-white"
                         : "bg-gray-200"
-                      }`}
+                    }`}
                   >
                     {section.section_name}
                   </div>
@@ -964,7 +979,7 @@ const BMRProcessDetails = () => {
                       )}
 
                       {field.field_type === "multi-select" && (
-                       <>
+                        <>
                           <Select
                             isMulti
                             options={field?.acceptsMultiple?.map((option) => ({
@@ -1046,7 +1061,7 @@ const BMRProcessDetails = () => {
           onSubmit={handlePopupSubmit}
         />
       )}
-        <ToastContainer />
+      <ToastContainer />
     </div>
   );
 };

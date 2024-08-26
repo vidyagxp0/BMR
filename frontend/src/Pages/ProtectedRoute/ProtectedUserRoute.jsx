@@ -9,7 +9,7 @@ const ProtectedUserRoute = ({ element: Component }) => {
   if (token) {
     try {
       const decodedToken = jwtDecode(token); //? decode the token
-      console.log(decodedToken);
+      // console.log(decodedToken);
 
       const currentTime = Date.now() / 1000; //? Current time ko seconds mein lete hain
       if (decodedToken.exp > currentTime) {

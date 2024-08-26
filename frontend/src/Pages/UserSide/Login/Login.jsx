@@ -78,7 +78,6 @@ const Login = () => {
         style={{
           backgroundColor: "rgba(120, 120, 120, 0.2)",
           backdropFilter: "blur(10px)",
-          
         }}
       >
         <div className="flex justify-center items-center">

@@ -156,55 +156,34 @@ exports.signup = async (req, res) => {
 
 exports.Userlogin = async (req, res) => {
   const { email, password } = req.body;
-  User.findOne({
-    where: {
-      email: email.toLowerCase(),
-      isActive: true,
-    },
-    raw: true,
-  })
-    .then((data) => {
-      bcrypt.compare(password, data.password, async (_err, result) => {
-        if (!result) {
-          res.status(400).json({
-            error: true,
-            message: "Invalid Password!",
-          });
-        } else {
-          const userRoles = await UserRole.findAll({
-            where: {
-              user_id: data.user_id,
-            },
-            attributes: {
-              exclude: ["createdAt", "updatedAt", "userRole_id"],
-            },
-          });
-          const token = jwt.sign(
-            { userId: data.user_id, roles: userRoles },
-            config.development.JWT_SECRET,
-            { expiresIn: "24h" }
-          );
-          if (token) {
-            res.status(200).json({
-              error: false,
-              token: token,
-            });
-          } else {
-            res.status(400).json({
-              error: true,
-              message: "Some unknown error",
-            });
-          }
-        }
-      });
-    })
-    .catch((e) => {
-      res.status(401).json({
-        error: false,
-        message: "Couldn't find User!",
-      });
-    });
+
+  if (!email || !password) {
+    return res.status(400).json({ error: true, message: "Email and password are required" });
+  }
+
+  try {
+    const data = await User.findOne({ where: { email: email.toLowerCase(), isActive: true } });
+    
+    if (!data) {
+      return res.status(401).json({ error: true, message: "Invalid email or password" });
+    }
+
+    const result = await bcrypt.compare(password, data.password);
+
+    if (!result) {
+      return res.status(401).json({ error: true, message: "Invalid password" });
+    }
+
+    const userRoles = await UserRole.findAll({ where: { user_id: data.user_id } });
+    const token = jwt.sign({ userId: data.user_id, roles: userRoles }, config.development.JWT_SECRET, { expiresIn: "24h" });
+
+    return res.status(200).json({ error: false, token: token });
+  } catch (error) {
+    console.error("Error in Userlogin:", error);
+    return res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
 };
+
 
 exports.editUser = async (req, res) => {
   // Check if request body is empty

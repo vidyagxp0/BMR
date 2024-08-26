@@ -70,14 +70,14 @@ const AddFieldModal = ({
           : `http://192.168.1.2:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
         data: { bmr_id, ...fieldData },
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('user-token')}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+          "Content-Type": "application/json",
         },
       });
       addField({ bmr_id, ...fieldData });
       closeModal();
     } catch (error) {
-      console.error('Error saving field:', error);
+      console.error("Error saving field:", error);
     }
   };
 

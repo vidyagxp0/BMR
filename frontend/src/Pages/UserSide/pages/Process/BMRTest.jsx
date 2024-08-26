@@ -806,11 +806,10 @@ const BMRProcessDetails = () => {
           fetchBMRData={fetchBMRData}
         />
       )}
-      
+
       <ToastContainer />
     </div>
   );
 };
 
 export default BMRProcessDetails;
-

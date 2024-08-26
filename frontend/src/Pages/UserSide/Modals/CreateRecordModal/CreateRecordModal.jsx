@@ -63,7 +63,7 @@ function CreateRecordModal({ onClose }) {
         }
       )
       .then((response) => {
-        // console.log(response); 
+        // console.log(response);
         toast.success(response.data.message || "BMR added successfully!");
         dispatch(addBmr(response.data.bmr));
         setFormData({ name: "", reviewers: [], approvers: [] });
@@ -76,7 +76,6 @@ function CreateRecordModal({ onClose }) {
         toast.error("BMR Already Registered");
       });
   };
-  
 
   useEffect(() => {
     const config = {

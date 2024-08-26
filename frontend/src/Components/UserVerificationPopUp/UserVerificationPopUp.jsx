@@ -1,19 +1,46 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
 import "./UserVerificationPopUp.css";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const UserVerificationPopUp = ({ onClose, onSubmit }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [declaration, setDeclaration] = useState("");
+  const Navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit({ email, password, declaration });
+    const data = {
+      email: email,
+      password: password,
+      declaration: declaration,
+    };
+    axios
+      .post("http://192.168.1.2:7000/user/user-login", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        toast.success("Successfully Initiated");
+        localStorage.setItem("user-token", response.data.token);
+        const decoded = jwtDecode(response.data.token);
+        localStorage.setItem("user-details", JSON.stringify(decoded));
+        Navigate("/process/bmr_process");
+        console.log("successss")
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+        console.error(error);
+      });
   };
 
   return (
-    <div className="popup-overlay">
+    <div className="popup-overlay z-50">
       <div className="popup">
         <h2>E-signature</h2>
         <form onSubmit={handleSubmit}>
@@ -47,7 +74,7 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
               <span className="required-asterisk text-red-500">*</span>
             </label>
             <input
-              type="string"
+              type="text"
               value={declaration}
               onChange={(e) => setDeclaration(e.target.value)}
               required
@@ -62,6 +89,7 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
             </button>
           </div>
         </form>
+        <ToastContainer />
       </div>
     </div>
   );
