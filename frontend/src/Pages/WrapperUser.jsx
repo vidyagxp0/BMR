@@ -19,7 +19,7 @@ const WrapperUser = () => {
         </div>
 
         {/* Outlet for rendering content */}
-        <div className="ml-0 lg:ml-64 flex-grow p-4 overflow-auto">
+        <div className="flex-grow ml-0 lg:ml-64 p-4 w-full relative overflow-auto">
           <Outlet />
         </div>
       </div>

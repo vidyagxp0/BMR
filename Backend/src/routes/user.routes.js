@@ -33,7 +33,7 @@ router.post(
   UserController.signup
 );
 
-router.post("/user-login", UserController.Userlogin);
+router.get("/user-login", UserController.Userlogin);
 
 router.put(
   "/edit-user/:id",
