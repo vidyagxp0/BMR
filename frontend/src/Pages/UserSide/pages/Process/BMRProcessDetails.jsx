@@ -188,15 +188,7 @@ const BMRProcessDetails = () => {
       fetchBMRData();
     }
   };
-  const handlePopupSubmit = (credentials, onSubmit) => {
-    if (credentials) {
-      // toast.success("");
-      onSubmit({ credentials });
-      console.log("Success!");
-    } else {
-      toast.error("Please fill in all required fields.");
-      console.error("erroRrRrRrRrRr");
-    }
+  const handlePopupSubmit = (credentials) => {
     const dataObject = {
       bmr_id: data[0].bmr_id,
       email: credentials?.email,
@@ -266,11 +258,7 @@ const BMRProcessDetails = () => {
       dataObject.approverDeclaration = credentials?.declaration;
       // data.approverAttachment = editData.approverAttachment;
       axios
-        .put(
-          "http://192.168.1.2:7000/bmr-form/approve-BMR",
-          dataObject,
-          config
-        )
+        .put("http://192.168.1.2:7000/bmr-form/approve-BMR", dataObject, config)
         .then(() => {
           toast.success("BMR successfully approved");
           navigate(-1);
@@ -315,7 +303,7 @@ const BMRProcessDetails = () => {
       setActiveFlowTab("APPROVED");
     }
   }, [data]);
-  const updateTab = (tabObject) => { };
+  const updateTab = (tabObject) => {};
   const addSection = (sectionName) => {
     setNewSection((prevSections) => {
       const updatedSections = { ...prevSections };
@@ -345,7 +333,6 @@ const BMRProcessDetails = () => {
     });
     fetchBMRData();
   };
-
   const handleDefaultTabClick = (tab) => {
     setActiveDefaultTab(tab);
   };
@@ -457,7 +444,6 @@ const BMRProcessDetails = () => {
     populateApproverFields();
     populateReviewerFields();
   }, [data]);
-
   return (
     <div className="p-4 relative h-full">
       <header className="bg-gray-200 w-full shadow-lg flex justify-between items-center p-4 mb-4">
@@ -596,7 +582,7 @@ const BMRProcessDetails = () => {
         <div className="flex gap-4 mb-4">
           {flowoTabs?.map((tab, index) => (
             <button
-            disabled
+              disabled
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleFlowTabClick(tab)}
@@ -744,122 +730,121 @@ const BMRProcessDetails = () => {
                   </div>
                 </div>
               ))}
-    
-       </div>
-       <div className="fixed bottom-0 left-0 w-full bg-white border-gray-300 p-4 flex justify-end gap-5">
-        {data[0]?.stage === 1 && data[0]?.initiator === userDetails.userId && (
-          <AtmButton
-            label={"Send For Review"}
-            className="bg-blue-500 hover:bg-blue-700 p-2"
-            onClick={() => {
-              setIsPopupOpen(true);
-              setPopupAction("sendFromOpenToReview"); // Set the action when opening the popup
-            }}
-          />
-        )}
-        {data[0]?.stage === 2 &&
-          data[0]?.reviewers.some(
-            (reviewer) => reviewer.reviewerId === userDetails.userId
-          ) &&
-          (data[0]?.reviewers.find(
-            (reviewer) => reviewer.reviewerId === userDetails.userId
-          )?.status === "reviewed" ? (
-            <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded shadow-md">
-              <p className="font-semibold text-lg flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
+          </div>
+          <div className="fixed bottom-0 left-0 w-full bg-white border-gray-300 p-4 flex justify-end gap-5">
+            {data[0]?.stage === 1 &&
+              data[0]?.initiator === userDetails.userId && (
+                <AtmButton
+                  label={"Send For Review"}
+                  className="bg-blue-500 hover:bg-blue-700 p-2"
+                  onClick={() => {
+                    setIsPopupOpen(true);
+                    setPopupAction("sendFromOpenToReview"); // Set the action when opening the popup
+                  }}
+                />
+              )}
+            {data[0]?.stage === 2 &&
+              data[0]?.reviewers.some(
+                (reviewer) => reviewer.reviewerId === userDetails.userId
+              ) &&
+              (data[0]?.reviewers.find(
+                (reviewer) => reviewer.reviewerId === userDetails.userId
+              )?.status === "reviewed" ? (
+                <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded shadow-md">
+                  <p className="font-semibold text-lg flex items-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
+                      />
+                    </svg>
+                    You have already reviewed this.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <AtmButton
+                    label={"Send For Approval"}
+                    className="bg-blue-500 hover:bg-blue-700 p-2"
+                    onClick={() => {
+                      setIsPopupOpen(true);
+                      setPopupAction("sendFromReviewToApproval"); // Set the action when opening the popup
+                    }}
                   />
-                </svg>
-                You have already reviewed this.
-              </p>
-            </div>
-          ) : (
-            <>
-              <AtmButton
-                label={"Send For Approval"}
-                className="bg-blue-500 hover:bg-blue-700 p-2"
-                onClick={() => {
-                  setIsPopupOpen(true);
-                  setPopupAction("sendFromReviewToApproval"); // Set the action when opening the popup
-                }}
-              />
-              <AtmButton
-                label={"Open BMR"}
-                className="bg-blue-500 hover:bg-blue-700 p-2"
-                onClick={() => {
-                  setIsPopupOpen(true);
-                  setPopupAction("sendFromReviewToOpen"); // Set the action when opening the popup
-                }}
-              />
-            </>
-          ))}
-
-        {data[0]?.stage === 3 &&
-        data[0]?.approvers.some(
-          (approver) => approver.approverId === userDetails.userId
-        ) ? (
-          data[0]?.approvers.find(
-            (approver) => approver.approverId === userDetails.userId
-          )?.status === "approved" ? (
-            <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md">
-              <p className="font-semibold text-lg flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
+                  <AtmButton
+                    label={"Open BMR"}
+                    className="bg-blue-500 hover:bg-blue-700 p-2"
+                    onClick={() => {
+                      setIsPopupOpen(true);
+                      setPopupAction("sendFromReviewToOpen"); // Set the action when opening the popup
+                    }}
                   />
-                </svg>
-                You have already approved this.
-              </p>
-            </div>
-          ) : (
-            <>
-              <AtmButton
-                label={"Approve BMR"}
-                className="bg-blue-500 hover:bg-blue-700 p-2"
-                onClick={() => {
-                  setIsPopupOpen(true);
-                  setPopupAction("sendFromApprovalToApproved"); // Set the action when opening the popup
-                }}
-              />
-              <AtmButton
-                label={"Open BMR"}
-                className="bg-blue-500 hover:bg-blue-700 p-2"
-                onClick={() => {
-                  setIsPopupOpen(true);
-                  setPopupAction("sendFromApprovalToOpen"); // Set the action when opening the popup
-                }}
-              />
-            </>
-          )
-        ) : null}
-        <AtmButton
-          label={"Exit"}
-          onClick={() => {
-            navigate(-1);
-          }}
-        />
-      </div>
-       </div>
-      ) }
+                </>
+              ))}
+            {data[0]?.stage === 3 &&
+            data[0]?.approvers.some(
+              (approver) => approver.approverId === userDetails.userId
+            ) ? (
+              data[0]?.approvers.find(
+                (approver) => approver.approverId === userDetails.userId
+              )?.status === "approved" ? (
+                <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md">
+                  <p className="font-semibold text-lg flex items-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
+                      />
+                    </svg>
+                    You have already approved this.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <AtmButton
+                    label={"Approve BMR"}
+                    className="bg-blue-500 hover:bg-blue-700 p-2"
+                    onClick={() => {
+                      setIsPopupOpen(true);
+                      setPopupAction("sendFromApprovalToApproved"); // Set the action when opening the popup
+                    }}
+                  />
+                  <AtmButton
+                    label={"Open BMR"}
+                    className="bg-blue-500 hover:bg-blue-700 p-2"
+                    onClick={() => {
+                      setIsPopupOpen(true);
+                      setPopupAction("sendFromApprovalToOpen"); // Set the action when opening the popup
+                    }}
+                  />
+                </>
+              )
+            ) : null}
+            <AtmButton
+              label={"Exit"}
+              onClick={() => {
+                navigate(-1);
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="">
         {showForm === "sendForm" && activeSendFormTab && (

@@ -12,32 +12,36 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
   const [declaration, setDeclaration] = useState("");
   const Navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const data = {
+  //     email: email,
+  //     password: password,
+  //     declaration: declaration,
+  //   };
+  //   axios
+  //     .post("http://192.168.1.2:7000/user/user-login", data, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     })
+  //     .then((response) => {
+  //       toast.success("Successfully Initiated");
+  //       localStorage.setItem("user-token", response.data.token);
+  //       const decoded = jwtDecode(response.data.token);
+  //       localStorage.setItem("user-details", JSON.stringify(decoded));
+  //       Navigate("/process/bmr_process");
+  //       console.log("successss")
+  //     })
+  //     .catch((error) => {
+  //       toast.error(error.response.data.message);
+  //       console.error(error);
+  //     });
+  // };
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const data = {
-      email: email,
-      password: password,
-      declaration: declaration,
+    onSubmit({ email, password, declaration });
     };
-    axios
-      .post("http://192.168.1.2:7000/user/user-login", data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        toast.success("Successfully Initiated");
-        localStorage.setItem("user-token", response.data.token);
-        const decoded = jwtDecode(response.data.token);
-        localStorage.setItem("user-details", JSON.stringify(decoded));
-        Navigate("/process/bmr_process");
-        console.log("successss")
-      })
-      .catch((error) => {
-        toast.error(error.response.data.message);
-        console.error(error);
-      });
-  };
 
   return (
     <div className="popup-overlay z-50">
@@ -74,7 +78,7 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
               <span className="required-asterisk text-red-500">*</span>
             </label>
             <input
-              type="text"
+              type="string"
               value={declaration}
               onChange={(e) => setDeclaration(e.target.value)}
               required
