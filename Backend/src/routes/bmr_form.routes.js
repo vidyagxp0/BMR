@@ -94,7 +94,7 @@ router.put(
 
 router.put(
   "/send-BMR-from-review-to-open",
-  Auth.checkJwtToken,
+  Auth.checkJwtToken,  
   Auth.authorizeUserRole(3),
   BmrController.SendBMRfromReviewToOpen
 );
