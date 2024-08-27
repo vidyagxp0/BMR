@@ -26,7 +26,7 @@ function checkJwtToken(req, res, next) {
 
 const getFileUrl = (file) => {
   if (file?.filename) {
-    return `http://localhost:7000/profile_pics/${file?.filename}`;
+    return `http://195.35.6.197:7000/profile_pics/${file?.filename}`;
   }
 };
 
@@ -37,19 +37,19 @@ function authorizeUserRole(roleId) {
         user_id: req.user.userId,
       },
       attributes: { exclude: ["createdAt", "updatedAt"] },
-    }).then((userRoles) => {
-      if (hasAccess(userRoles, roleId)) {
-        next(); // User has access, proceed to the next middleware or route handler
-      } else {
-        res
-          .status(403)
-          .json({
+    })
+      .then((userRoles) => {
+        if (hasAccess(userRoles, roleId)) {
+          next(); // User has access, proceed to the next middleware or route handler
+        } else {
+          res.status(403).json({
             message: "Forbidden: You do not have required permissions.",
           });
-      }
-    }).catch((e) => {
-      console.log(e.message);
-    })
+        }
+      })
+      .catch((e) => {
+        console.log(e.message);
+      });
   };
 }
 

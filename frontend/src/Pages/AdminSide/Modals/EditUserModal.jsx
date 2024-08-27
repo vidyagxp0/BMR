@@ -31,20 +31,23 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
   });
   const dispatch = useDispatch();
   useEffect(() => {
-    axios.get("http://192.168.1.2:7000/user/get-all-roles", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
-        "Content-Type": "application/json",
-      }
-    }).then((response) => {
-      const roleOptions = response.data.response.map(role => ({
-        value: role.role_id,
-        label: role.role
-      }));
-      setRoles(roleOptions);
-    }).catch((error) => {
-      console.error(error);
-    });
+    axios
+      .get("http://195.35.6.197:7000/user/get-all-roles", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        const roleOptions = response.data.response.map((role) => ({
+          value: role.role_id,
+          label: role.role,
+        }));
+        setRoles(roleOptions);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
   useEffect(() => {
@@ -71,21 +74,32 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
       id: user.user_id,
     };
 
-    axios.put(`http://192.168.1.2:7000/user/edit-user/${user.user_id}`, updatedFormData, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem("admin-token")}`
-      }
-    }).then((response) => {
-      console.log("API Response: ", response.data);
-      toast.success("User Details Updated Successfully");
-      setAllUsers(prevUsers => prevUsers.map(u => u.user_id === user.user_id ? { ...u, ...updatedFormData } : u));
-      setTimeout(() => {
-        dispatch(fetchUsers());
-        onClose();
-      }, 500);
-    }).catch((error) => {
-      console.error("API Error: ", error.response.data);
+    axios
+      .put(
+        `http://195.35.6.197:7000/user/edit-user/${user.user_id}`,
+        updatedFormData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("API Response: ", response.data);
+        toast.success("User Details Updated Successfully");
+        setAllUsers((prevUsers) =>
+          prevUsers.map((u) =>
+            u.user_id === user.user_id ? { ...u, ...updatedFormData } : u
+          )
+        );
+        setTimeout(() => {
+          dispatch(fetchUsers());
+          onClose();
+        }, 500);
+      })
+      .catch((error) => {
+        console.error("API Error: ", error.response.data);
 
         toast.error(error.response.data.message);
       });

@@ -17,36 +17,35 @@ const modalStyle = {
 };
 
 const ResetPasswordModal = ({ user, onClose, id, setAllUsers }) => {
-    const [currentPassword, setCurrentPassword] = useState('');
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmNewPassword, setConfirmNewPassword] = useState('');
-    const handleReset = (e) => {
-        e.preventDefault();
-        const data = {
-            user_id: user.user_id,
-            current_password: currentPassword,
-            new_password: newPassword,
-            confirm_new_password: confirmNewPassword,
-        };
-        axios
-          .post("http://192.168.1.2:7000/user/reset-password", data, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("admin-token")}`
-            },
-          })
-          .then((response) => {
-           
-            onClose();
-            setTimeout(()=>{
-                toast.success("Password Changed Successfully");
-            },500)
-          })
-          .catch((error) => {
-            toast.error(error.response.data.message || "Paaword Changed failed");
-            console.error(error);
-          });
-      };
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const handleReset = (e) => {
+    e.preventDefault();
+    const data = {
+      user_id: user.user_id,
+      current_password: currentPassword,
+      new_password: newPassword,
+      confirm_new_password: confirmNewPassword,
+    };
+    axios
+      .post("http://195.35.6.197:7000/user/reset-password", data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
+        },
+      })
+      .then((response) => {
+        onClose();
+        setTimeout(() => {
+          toast.success("Password Changed Successfully");
+        }, 500);
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message || "Paaword Changed failed");
+        console.error(error);
+      });
+  };
 
   return (
     <Modal open={true} onClose={onClose}>

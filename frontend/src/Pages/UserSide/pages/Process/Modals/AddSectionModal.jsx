@@ -3,37 +3,25 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AtmButton from "../../../../../AtmComponents/AtmButton";
 
-const AddSectionModal = ({ closeModal, addSection,bmr_tab_id , bmr_section_id , updateSection , existingSectionName }) => {
-    const [sectionName, setSectionName] = useState(updateSection === "edit-section" ? existingSectionName : "");
-    const [limit, setLimit] = useState()
-    const {bmr_id} = useParams()
-    
-    const handleSave = async () => {
-  if(updateSection === "add-section"){
-    try {
-      const response = await axios.post(`http://192.168.1.2:7000/bmr-form/add-bmr-section`,
-        {
-          bmr_id: bmr_id,
-          bmr_tab_id: bmr_tab_id,
-          section_name: sectionName,
-          limit: limit
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      addSection(sectionName);
-      closeModal();
-    } catch (error) {
-      console.error("Error adding tab:", error);
-    }
-    }
-    else if(updateSection === "edit-section"){
+const AddSectionModal = ({
+  closeModal,
+  addSection,
+  bmr_tab_id,
+  bmr_section_id,
+  updateSection,
+  existingSectionName,
+}) => {
+  const [sectionName, setSectionName] = useState(
+    updateSection === "edit-section" ? existingSectionName : ""
+  );
+  const [limit, setLimit] = useState();
+  const { bmr_id } = useParams();
+
+  const handleSave = async () => {
+    if (updateSection === "add-section") {
       try {
-        const response = await axios.put(`http://192.168.1.2:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
+        const response = await axios.post(
+          `http://195.35.6.197:7000/bmr-form/add-bmr-section`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
@@ -55,7 +43,29 @@ const AddSectionModal = ({ closeModal, addSection,bmr_tab_id , bmr_section_id , 
     } else if (updateSection === "edit-section") {
       try {
         const response = await axios.put(
-          `http://192.168.1.2:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          `http://195.35.6.197:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          {
+            bmr_id: bmr_id,
+            bmr_tab_id: bmr_tab_id,
+            section_name: sectionName,
+            limit: limit,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        addSection(sectionName);
+        closeModal();
+      } catch (error) {
+        console.error("Error adding tab:", error);
+      }
+    } else if (updateSection === "edit-section") {
+      try {
+        const response = await axios.put(
+          `http://195.35.6.197:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
