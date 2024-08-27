@@ -20,7 +20,7 @@ const Login = () => {
       password: password,
     };
     axios
-      .post("http://192.168.1.2:7000/user/user-login", data, {
+      .post("http://195.35.6.197:7000/user/user-login", data, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -124,7 +124,7 @@ const Login = () => {
             <AtmInput
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
-              className="mb-5 p-3 h-[48px] text-white text-basey font-bold bg-transparent border border-gray-600 rounded-md focus:outline-none focus:pl-2 focus:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+              className="mb-5 p-3 h-[48px] text-white text-basey font-bold bg-transparent border  border-gray-600 rounded-md focus:outline-none focus:pl-2 focus:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
               labelClassName="text-white"
               label="Password"
               value={password}

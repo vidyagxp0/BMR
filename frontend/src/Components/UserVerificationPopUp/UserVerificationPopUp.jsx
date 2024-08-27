@@ -6,42 +6,53 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
-const UserVerificationPopUp = ({ onClose, onSubmit }) => {
+const UserVerificationPopUp = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [declaration, setDeclaration] = useState("");
-  const Navigate = useNavigate();
+  const navigate = useNavigate(); // Corrected to lowercase 'navigate'
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const data = {
-  //     email: email,
-  //     password: password,
-  //     declaration: declaration,
-  //   };
-  //   axios
-  //     .post("http://192.168.1.2:7000/user/user-login", data, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     })
-  //     .then((response) => {
-  //       toast.success("Successfully Initiated");
-  //       localStorage.setItem("user-token", response.data.token);
-  //       const decoded = jwtDecode(response.data.token);
-  //       localStorage.setItem("user-details", JSON.stringify(decoded));
-  //       Navigate("/process/bmr_process");
-  //       console.log("successss")
-  //     })
-  //     .catch((error) => {
-  //       toast.error(error.response.data.message);
-  //       console.error(error);
-  //     });
-  // };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit({ email, password, declaration });
+
+    const data = {
+      email: email,
+      password: password,
+      declaration: declaration,
     };
+
+    try {
+      const response = await axios.post(
+        "http://195.35.6.197:7000/user/user-verification", // Corrected URL
+        data,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      toast.success("Successfully Initiated");
+
+      const token = response.data.token;
+      localStorage.setItem("user-token", token);
+
+      const decoded = jwtDecode(token);
+      localStorage.setItem("user-details", JSON.stringify(decoded));
+
+      navigate("/process/bmr_process"); // Corrected to lowercase 'navigate'
+      console.log("success");
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("An error occurred. Please try again.");
+      }
+      console.error(error);
+    }
+  };
 
   return (
     <div className="popup-overlay z-50">
@@ -78,7 +89,7 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
               <span className="required-asterisk text-red-500">*</span>
             </label>
             <input
-              type="string"
+              type="text" // Changed to 'text' for proper input handling
               value={declaration}
               onChange={(e) => setDeclaration(e.target.value)}
               required

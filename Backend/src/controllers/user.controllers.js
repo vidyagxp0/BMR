@@ -79,7 +79,6 @@ exports.Adminlogin = async (req, res) => {
       res.status(500).json({ error: true, message: "Internal Server Error" });
     });
 };
-
 exports.signup = async (req, res) => {
   const { password, email, name, rolesArray } = req.body;
 
@@ -153,19 +152,24 @@ exports.signup = async (req, res) => {
     });
   }
 };
-
 exports.Userlogin = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ error: true, message: "Email and password are required" });
+    return res
+      .status(400)
+      .json({ error: true, message: "Email and password are required" });
   }
 
   try {
-    const data = await User.findOne({ where: { email: email.toLowerCase(), isActive: true } });
-    
+    const data = await User.findOne({
+      where: { email: email.toLowerCase(), isActive: true },
+    });
+
     if (!data) {
-      return res.status(401).json({ error: true, message: "Invalid email or password" });
+      return res
+        .status(401)
+        .json({ error: true, message: "Invalid email or password" });
     }
 
     const result = await bcrypt.compare(password, data.password);
@@ -174,17 +178,72 @@ exports.Userlogin = async (req, res) => {
       return res.status(401).json({ error: true, message: "Invalid password" });
     }
 
-    const userRoles = await UserRole.findAll({ where: { user_id: data.user_id } });
-    const token = jwt.sign({ userId: data.user_id, roles: userRoles }, config.development.JWT_SECRET, { expiresIn: "24h" });
+    const userRoles = await UserRole.findAll({
+      where: { user_id: data.user_id },
+    });
+    const token = jwt.sign(
+      { userId: data.user_id, roles: userRoles },
+      config.development.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
 
     return res.status(200).json({ error: false, token: token });
   } catch (error) {
     console.error("Error in Userlogin:", error);
-    return res.status(500).json({ error: true, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: true, message: "Internal Server Error" });
   }
 };
+// User Verification Controller
+// exports.userVerification = async (req, res) => {
+//   const { email, password, declaration } = req.body;
 
+//   if (!email || !password) {
+//     return res
+//       .status(400)
+//       .json({ error: true, message: "Email and password are required" }); 
+//   }
 
+//   try {
+//     const user = await User.findOne({
+//       where: { email: email.toLowerCase(), isActive: true },
+//     });
+
+//     if (!user) {
+//       return res.status(404).json({ error: true, message: "User not found" });
+//     }
+
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     if (!isMatch) {
+//       return res.status(401).json({ error: true, message: "Invalid password" });
+//     }
+
+//     // Update user's verification status
+//     await User.update(
+//       { isVerified: true },
+//       { where: { user_id: user.user_id } }
+//     );
+
+//     const userRoles = await UserRole.findAll({
+//       where: { user_id: user.user_id },
+//     });
+//     const token = jwt.sign(
+//       { userId: user.user_id, roles: userRoles },
+//       config.development.JWT_SECRET,
+//       { expiresIn: "24h" }
+//     );
+
+//     return res
+//       .status(200)
+//       .json({ error: false, message: "Verification successful", token: token });
+//   } catch (error) {
+//     console.error("Error in userVerification:", error);
+//     return res
+//       .status(500)
+//       .json({ error: true, message: "Internal Server Error" });
+//   }
+// };
 exports.editUser = async (req, res) => {
   // Check if request body is empty
   if (!req.body && !req.files) {
@@ -250,7 +309,6 @@ exports.editUser = async (req, res) => {
     });
   }
 };
-
 exports.deleteUser = async (req, res) => {
   const transaction = await sequelize.transaction();
 
@@ -288,7 +346,6 @@ exports.deleteUser = async (req, res) => {
     });
   }
 };
-
 exports.getAllUsers = async (req, res) => {
   User.findAll({
     where: {
@@ -311,7 +368,6 @@ exports.getAllUsers = async (req, res) => {
       });
     });
 };
-
 exports.resetPassword = async (req, res) => {
   let { user_id, current_password, new_password, confirm_new_password } =
     req.body;
@@ -359,7 +415,6 @@ exports.resetPassword = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
-
 exports.getAllRoles = (req, res) => {
   Role.findAll()
     .then((result) => {
@@ -375,7 +430,6 @@ exports.getAllRoles = (req, res) => {
       });
     });
 };
-
 exports.getUserPermissions = (req, res) => {
   UserRole.findAll({
     where: {
