@@ -130,7 +130,7 @@ const BMRProcessDetails = () => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://195.35.6.197:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.11:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -207,7 +207,7 @@ const BMRProcessDetails = () => {
       // data.initiatorAttachment = editData?.initiatorAttachment;
       axios
         .put(
-          "http://195.35.6.197:7000/bmr-form/send-BMR-for-review",
+          "http://192.168.1.11:7000/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -225,7 +225,7 @@ const BMRProcessDetails = () => {
       // data.reviewerAttachment = editData.reviewerAttachment;
       axios
         .put(
-          "http://195.35.6.197:7000/bmr-form/send-BMR-from-review-to-approval",
+          "http://192.168.1.11:7000/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -243,7 +243,7 @@ const BMRProcessDetails = () => {
       // data.reviewerAttachment = editData.reviewerAttachment;
       axios
         .put(
-          "http://195.35.6.197:7000/bmr-form/send-BMR-from-review-to-open",
+          "http://192.168.1.11:7000/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -259,7 +259,7 @@ const BMRProcessDetails = () => {
       // data.approverAttachment = editData.approverAttachment;
       axios
         .put(
-          "http://195.35.6.197:7000/bmr-form/approve-BMR",
+          "http://192.168.1.11:7000/bmr-form/approve-BMR",
           dataObject,
           config
         )
@@ -277,7 +277,7 @@ const BMRProcessDetails = () => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://195.35.6.197:7000/bmr-form/send-BMR-from-approval-to-open",
+          "http://192.168.1.11:7000/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -646,11 +646,11 @@ const BMRProcessDetails = () => {
             {activeDefaultTab === "Initiator Remarks" &&
               fields["Initiator Remarks"]?.length > 0 && (
                 <div className="mb-20">
-                  <div className="grid grid-cols-2 gap-4 ">
+                  <div className="grid grid-cols-2 gap-4  ">
                     {fields["Initiator Remarks"].map((field, index) => (
                       <div
                         key={index}
-                        className="p-4 flex flex-col bg-white shadow border border-gray-300 mb-4"
+                        className="p-4 flex flex-col bg-white rounded-2xl shadow-lg border border-gray-300 mb-4"
                       >
                         <label className="text-lg font-extrabold text-gray-700 mb-2">
                           {field.fieldName}
