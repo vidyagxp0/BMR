@@ -130,7 +130,7 @@ const BMRProcessDetails = () => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.11:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://195.35.6.197:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -207,7 +207,7 @@ const BMRProcessDetails = () => {
       // data.initiatorAttachment = editData?.initiatorAttachment;
       axios
         .put(
-          "http://192.168.1.11:7000/bmr-form/send-BMR-for-review",
+          "http://195.35.6.197:7000/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -225,7 +225,7 @@ const BMRProcessDetails = () => {
       // data.reviewerAttachment = editData.reviewerAttachment;
       axios
         .put(
-          "http://192.168.1.11:7000/bmr-form/send-BMR-from-review-to-approval",
+          "http://195.35.6.197:7000/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -243,7 +243,7 @@ const BMRProcessDetails = () => {
       // data.reviewerAttachment = editData.reviewerAttachment;
       axios
         .put(
-          "http://192.168.1.11:7000/bmr-form/send-BMR-from-review-to-open",
+          "http://195.35.6.197:7000/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -259,7 +259,7 @@ const BMRProcessDetails = () => {
       // data.approverAttachment = editData.approverAttachment;
       axios
         .put(
-          "http://192.168.1.11:7000/bmr-form/approve-BMR",
+          "http://195.35.6.197:7000/bmr-form/approve-BMR",
           dataObject,
           config
         )
@@ -277,7 +277,7 @@ const BMRProcessDetails = () => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.11:7000/bmr-form/send-BMR-from-approval-to-open",
+          "http://195.35.6.197:7000/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -450,7 +450,7 @@ const BMRProcessDetails = () => {
   }, [data]);
   return (
     <div className="p-4 relative h-full">
-      <header className="bg-gray-200 w-full shadow-lg flex justify-between items-center p-4 mb-4">
+      <header className="bg-blue-100 w-full shadow-lg flex justify-between items-center p-4 mb-4">
         <p className="text-lg font-bold">BMR Process Details</p>
         <div className="flex space-x-2">
           {showForm === "default" ? (
@@ -472,7 +472,7 @@ const BMRProcessDetails = () => {
                   setIsPopupOpen(true),
                   setPopupAction("add-tab")
                 )}
-                className="bg-pink-950 hover:bg-pink-700 px-4 py-2"
+                className="bg-pink-700 hover:bg-pink-900 px-4 py-2"
               />
 
               {/* Show "Add Section" button only if a tab is active */}
@@ -486,7 +486,7 @@ const BMRProcessDetails = () => {
                       setIsPopupOpen(true),
                       setPopupAction("add-section")
                     )}
-                    className="bg-purple-950 hover:bg-purple-700 px-4 py-2"
+                    className="bg-purple-700 hover:bg-purple-950 px-4 py-2"
                   />
                 </>
               )}
@@ -502,7 +502,7 @@ const BMRProcessDetails = () => {
                       setIsPopupOpen(true),
                       setPopupAction("add-field")
                     )}
-                    className="bg-green-950 hover:bg-green-700 px-4 py-2"
+                    className="bg-green-700 hover:bg-green-950 px-4 py-2"
                   />
                 </>
               )}
@@ -572,7 +572,7 @@ const BMRProcessDetails = () => {
               />
               <AtmButton
                 label="Delete Tab"
-                className="bg-red-600 hover:bg-red-700"
+                className="bg-red-600 hover:bg-red-800"
                 onClick={() => (
                   setDeleteModalOpen(true), setDeleteItemType("tab")
                 )}
@@ -690,10 +690,9 @@ const BMRProcessDetails = () => {
             {activeDefaultTab !== "Initiator Remarks" &&
               fields[activeDefaultTab]?.map((section, secIndex) => (
                 <div key={secIndex} className="mb-20">
-                  <div className="col-span-3 p-4 mt-4  rounded-lg bg-blue-50 mb-5 font-semibold text-blue-800 border border-blue-200 shadow-sm">
-  {section.section}
-</div>
-
+                  <div className="col-span-3 p-4 mt-4 text-right rounded bg-gray-100 mb-5 font-semibold text-gray-700 border border-gray-300">
+                    {section.section}
+                  </div>
                   <div className="grid grid-cols-2 gap-4">
                     {section.fields?.map((field, index) => (
                       <div

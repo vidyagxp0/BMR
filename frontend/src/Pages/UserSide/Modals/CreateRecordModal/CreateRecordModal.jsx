@@ -7,14 +7,14 @@ import { addBmr } from "../../../../userSlice";
 import axios from "axios";
 
 const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '90%',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "90%",
   maxWidth: 600,
-  bgcolor: 'background.paper',
-  borderRadius: '8px',
+  bgcolor: "background.paper",
+  borderRadius: "8px",
   boxShadow: 24,
   p: 4,
 };
@@ -35,7 +35,7 @@ function CreateRecordModal({ open, onClose }) {
     e.preventDefault();
     axios
       .post(
-        "http://192.168.1.11:7000/bmr-form/add-bmr",
+        "http://195.35.6.197:7000/bmr-form/add-bmr",
         {
           name: formData.name,
           reviewers: isSelectedReviewer.map((reviewer) => ({
@@ -64,6 +64,8 @@ function CreateRecordModal({ open, onClose }) {
         toast.success(response.data.message || "BMR added successfully!");
         dispatch(addBmr(response.data.bmr));
         setFormData({ name: "", reviewers: [], approvers: [] });
+        setIsSelectedReviewer([]);
+        setIsSelectedApprover([]);
         setTimeout(() => {
           onClose();
         }, 1000);
@@ -75,57 +77,69 @@ function CreateRecordModal({ open, onClose }) {
   };
 
   useEffect(() => {
-    axios.post("http://192.168.1.11:7000/bmr-form/get-user-roles", {
-      role_id: 3,
-    }, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-        "Content-Type": "application/json",
-      },
-    })
-    .then((response) => {
-      const reviewerOptions = [
-        ...new Map(
-          response.data.message.map((role) => [
-            role.user_id,
-            {
-              value: role.user_id,
-              label: `${role.User.name}`,
-            },
-          ])
-        ).values(),
-      ];
-      setReviewers(reviewerOptions);
-    })
-    .catch((error) => {
-      console.error("Error: ", error);
-    });
+    axios
+      .post(
+        "http://195.35.6.197:7000/bmr-form/get-user-roles",
+        {
+          role_id: 3,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        const reviewerOptions = [
+          { value: 'select-all', label: 'Select All' },
+          ...new Map(
+            response.data.message.map((role) => [
+              role.user_id,
+              {
+                value: role.user_id,
+                label: `${role.User.name}`,
+              },
+            ])
+          ).values(),
+        ];
+        setReviewers(reviewerOptions);
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
 
-    axios.post("http://192.168.1.11:7000/bmr-form/get-user-roles", {
-      role_id: 4,
-    }, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-        "Content-Type": "application/json",
-      },
-    })
-    .then((response) => {
-      const approverOptions = [
-        ...new Map(
-          response.data.message.map((role) => [
-            role.user_id,
-            {
-              value: role.user_id,
-              label: `${role.User.name}`,
-            },
-          ])
-        ).values(),
-      ];
-      setApprovers(approverOptions);
-    })
-    .catch((error) => {
-      console.error("Error: ", error);
-    });
+    axios
+      .post(
+        "http://195.35.6.197:7000/bmr-form/get-user-roles",
+        {
+          role_id: 4,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        const approverOptions = [
+          { value: 'select-all', label: 'Select All' },
+          ...new Map(
+            response.data.message.map((role) => [
+              role.user_id,
+              {
+                value: role.user_id,
+                label: `${role.User.name}`,
+              },
+            ])
+          ).values(),
+        ];
+        setApprovers(approverOptions);
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
   }, []);
 
   const handleChange = (e) => {
@@ -133,6 +147,21 @@ function CreateRecordModal({ open, onClose }) {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleSelectChange = (selected, field) => {
+    if (selected.some((option) => option.value === 'select-all')) {
+      const allOptions = field === 'reviewers' ? reviewers : approvers;
+      const nonSelectAllOptions = allOptions.filter(
+        (option) => option.value !== 'select-all'
+      );
+      setIsSelectedReviewer(field === 'reviewers' ? nonSelectAllOptions : isSelectedReviewer);
+      setIsSelectedApprover(field === 'approvers' ? nonSelectAllOptions : isSelectedApprover);
+    } else {
+      field === 'reviewers'
+        ? setIsSelectedReviewer(selected)
+        : setIsSelectedApprover(selected);
+    }
   };
 
   useEffect(() => {
@@ -178,14 +207,14 @@ function CreateRecordModal({ open, onClose }) {
               isMulti
               options={reviewers}
               value={isSelectedReviewer}
-              onChange={(selected) => setIsSelectedReviewer(selected)}
+              onChange={(selected) => handleSelectChange(selected, 'reviewers')}
               styles={{
                 control: (provided) => ({
                   ...provided,
-                  borderColor: '#d0d0d0',
-                  boxShadow: 'none',
-                  '&:hover': {
-                    borderColor: '#a0a0a0',
+                  borderColor: "#d0d0d0",
+                  boxShadow: "none",
+                  "&:hover": {
+                    borderColor: "#a0a0a0",
                   },
                 }),
               }}
@@ -201,14 +230,14 @@ function CreateRecordModal({ open, onClose }) {
               isMulti
               options={approvers}
               value={isSelectedApprover}
-              onChange={(selected) => setIsSelectedApprover(selected)}
+              onChange={(selected) => handleSelectChange(selected, 'approvers')}
               styles={{
                 control: (provided) => ({
                   ...provided,
-                  borderColor: '#d0d0d0',
-                  boxShadow: 'none',
-                  '&:hover': {
-                    borderColor: '#a0a0a0',
+                  borderColor: "#d0d0d0",
+                  boxShadow: "none",
+                  "&:hover": {
+                    borderColor: "#a0a0a0",
                   },
                 }),
               }}
@@ -225,12 +254,7 @@ function CreateRecordModal({ open, onClose }) {
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-            >
+            <Button type="submit" variant="contained" color="primary" fullWidth>
               Add BMR
             </Button>
           </div>

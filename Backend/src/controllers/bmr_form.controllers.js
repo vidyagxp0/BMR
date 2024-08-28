@@ -14,7 +14,7 @@ const getUserById = async (user_id) => {
   return user;
 };
 
-exports.postBMR = async (req, res) => { 
+exports.postBMR = async (req, res) => {
   const { name, reviewers, approvers } = req.body;
 
   // Validate input

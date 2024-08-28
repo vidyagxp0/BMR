@@ -48,34 +48,33 @@ const BMRProcess = () => {
         const user = row.original;
         return (
           <div className="flex space-x-2">
-          <button
-            onClick={() => {
-              setSelectedUser(user);
-              setIsEditModalOpen(true);
-            }}
-            className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-indigo-600 hover:to-indigo-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
-          >
-            Edit
-          </button>
-        
-          <button
-            onClick={() => {
-              setSelectedUser(user);
-              setShowDeleteUser(true);
-            }}
-            className="bg-gradient-to-r from-red-500 to-red-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
-          >
-            Delete
-          </button>
-        </div>
-        
+            <button
+              onClick={() => {
+                setSelectedUser(user);
+                setIsEditModalOpen(true);
+              }}
+              className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-indigo-600 hover:to-indigo-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+            >
+              Edit
+            </button>
+
+            <button
+              onClick={() => {
+                setSelectedUser(user);
+                setShowDeleteUser(true);
+              }}
+              className="bg-gradient-to-r from-red-500 to-red-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+            >
+              Delete
+            </button>
+          </div>
         );
       },
     },
   ];
   const fetchBMRData = () => {
     axios
-      .get("http://192.168.1.11:7000/bmr-form/get-all-bmr", {
+      .get("http://195.35.6.197:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },

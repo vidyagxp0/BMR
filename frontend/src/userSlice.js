@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
 
+// Async Thunks
 export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
-  const response = await axios.get("http://192.168.1.11:7000/user/get-users", {
+  const response = await axios.get("http://195.35.6.197:7000/user/get-users", {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
     },
@@ -13,7 +13,7 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
 
 export const fetchBmr = createAsyncThunk("bmr/fetchBmr", async () => {
   const response = await axios.get(
-    "http://192.168.1.11:7000/bmr-form/get-bmr",
+    "http://195.35.6.197:7000/bmr-form/get-bmr",
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -23,10 +23,12 @@ export const fetchBmr = createAsyncThunk("bmr/fetchBmr", async () => {
   return response.data;
 });
 
+// Slice
 const userSlice = createSlice({
   name: "users",
   initialState: {
-    users: [],
+    users: [],  
+    bmrList: [], 
   },
   reducers: {
     setUsers(state, action) {
@@ -36,12 +38,11 @@ const userSlice = createSlice({
       state.users.push(action.payload);
     },
     addBmr(state, action) {
-      state.users.push(action.payload);
+      state.bmrList.push(action.payload);
     },
-
     deleteBmr(state, action) {
-      state.users = state.users.filter(
-        (user) => user.bmr_id !== action.payload
+      state.bmrList = state.bmrList.filter(
+        (bmr) => bmr.bmr_id !== action.payload
       );
     },
     updateUser(state, action) {
@@ -50,16 +51,16 @@ const userSlice = createSlice({
       );
       if (index !== -1) {
         state.users[index] = { ...state.users[index], ...action.payload };
-        console.log("Updated user:", state.users[index]); // Debug log
+        console.log("Updated user:", state.users[index]);
       }
     },
     updateBmr(state, action) {
-      const index = state.users.findIndex(
-        (user) => user.bmr_id === action.payload.id
+      const index = state.bmrList.findIndex(
+        (bmr) => bmr.bmr_id === action.payload.id
       );
       if (index !== -1) {
-        state.users[index] = { ...state.users[index], ...action.payload };
-        console.log("Updated user:", state.users[index]); // Debug log
+        state.bmrList[index] = { ...state.bmrList[index], ...action.payload };
+        console.log("Updated BMR:", state.bmrList[index]); 
       }
     },
     deleteUser(state, action) {
