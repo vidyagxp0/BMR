@@ -23,7 +23,7 @@ const ViewPermissionsModal = ({ user, onClose, id }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-4/12 md:w-3/2 max-h-80 overflow-auto">
+      <div className="bg-white rounded-lg shadow-lg p-6 w-4/12 md:w-3/2 max-h-90 border-black overflow-auto">
         <h2 className="text-center flex justify-center items-center gap-2 text-xl font-semibold text-blue-600 mb-4">
           Permissions for{" "}
           <p className="font-bold text-blue-900"> {user?.name}</p>
