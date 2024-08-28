@@ -35,51 +35,47 @@ const AdminDashBoard = () => {
         const user = row.original;
         return (
           <div className="flex space-x-2">
-            <button
-              onClick={() => {
-                setSelectedUser(user);
-                setShowViewPermissions(true);
-              }}
-              className="bg-teal-600 text-white px-2 py-1 rounded hover:bg-teal-700"
-            >
-              View Permissions
-            </button>
-            <button
-              onClick={() => {
-                setSelectedUser(user);
-                setShowEditUser(true);
-              }}
-              className="bg-indigo-600 text-white px-2 py-1 rounded hover:bg-indigo-700"
-            >
-              Edit
-            </button>
-            {/* <button
-              onClick={() => {
-                navigate("/admin-update-user")
-              }}
-              className="bg-yellow-600 text-white px-2 py-1 rounded hover:bg-yellow-700"
-            >
-              Duplicate
-            </button> */}
-            <button
-              onClick={() => {
-                setSelectedUser(user);
-                setResetPassword(true);
-              }}
-              className="bg-orange-600 text-white px-2 py-1 rounded hover:bg-orange-700"
-            >
-              Reset Password
-            </button>
-            <button
-              onClick={() => {
-                setSelectedUser(user);
-                setShowDeleteUser(true);
-              }}
-              className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
-            >
-              Delete
-            </button>
-          </div>
+  <button
+    onClick={() => {
+      setSelectedUser(user);
+      setShowViewPermissions(true);
+    }}
+    className="bg-gradient-to-r from-teal-500 to-teal-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-teal-600 hover:to-teal-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+  >
+    View Permissions
+  </button>
+  
+  <button
+    onClick={() => {
+      setSelectedUser(user);
+      setShowEditUser(true);
+    }}
+    className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-indigo-600 hover:to-indigo-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+  >
+    Edit
+  </button>
+
+  <button
+    onClick={() => {
+      setSelectedUser(user);
+      setResetPassword(true);
+    }}
+    className="bg-gradient-to-r from-orange-500 to-orange-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-orange-600 hover:to-orange-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+  >
+    Reset Password
+  </button>
+
+  <button
+    onClick={() => {
+      setSelectedUser(user);
+      setShowDeleteUser(true);
+    }}
+    className="bg-gradient-to-r from-red-500 to-red-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+  >
+    Delete
+  </button>
+</div>
+
         );
       },
     },
@@ -87,7 +83,7 @@ const AdminDashBoard = () => {
 
   useEffect(() => {
     axios
-      .get("http://195.35.6.197:7000/user/get-all-users", {
+      .get("http://192.168.1.11:7000/user/get-all-users", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
         },
