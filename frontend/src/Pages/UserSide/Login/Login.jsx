@@ -7,6 +7,7 @@ import AtmButton from "../../../AtmComponents/AtmButton";
 import AtmInput from "../../../AtmComponents/AtmInput";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
+
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -40,6 +41,7 @@ const Login = () => {
         console.error(error);
       });
   };
+
   const backgrounds = [
     "https://c0.wallpaperflare.com/preview/661/131/640/pharmacist-pharmacy-medicine-man.jpg",
     "https://news.mit.edu/sites/default/files/download/201903/MIT-Inactive-Ingredients-PRESS.jpg",
@@ -57,50 +59,40 @@ const Login = () => {
     <div
       className="min-h-screen flex items-center justify-center"
       style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('${backgroundImage}')`,
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('${backgroundImage}')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      {/* <div
-    className="min-h-screen flex items-center justify-center"
-    style={{
-      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://c0.wallpaperflare.com/preview/661/131/640/pharmacist-pharmacy-medicine-man.jpg')`,
-      // backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://news.mit.edu/sites/default/files/download/201903/MIT-Inactive-Ingredients-PRESS.jpg')`,
-      // backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://m.economictimes.com/thumb/msid-87799440,width-1200,height-900,resizemode-4,imgsize-29722/pharma-sector-study-will-identify-steps-to-boost-competition-ensure-drug-affordability-cci-chief.jpg')`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-    }}
-  > */}
-
       <div
-        className="p-8 rounded-lg shadow-lg max-w-md w-full"
+        className="p-8 rounded-lg shadow-2xl max-w-md w-full"
         style={{
-          backgroundColor: "rgba(120, 120, 120, 0.2)",
-          backdropFilter: "blur(10px)",
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          backdropFilter: "blur(12px)",
         }}
       >
-        <div className="flex justify-center items-center">
-          <img src="/vidyalogo2.png" alt="" className="w-80 " />
+        <div className="flex justify-center items-center mb-4">
+          <img src="/vidyalogo2.png" alt="Logo" className="w-60 h-auto" />
         </div>
         <h2
-          className="text-2xl font-[900] mb-6 text-center login"
+          className="text-3xl font-extrabold mb-6 text-center"
           style={{
             backgroundImage: `url('https://newsaf.cgtn.com/news/2021-08-12/WHO-announces-three-new-drugs-for-latest-COVID-19-clinical-trials-12EjQYwJFWU/img/162f401916eb4342a9219c7cf7e207c5/162f401916eb4342a9219c7cf7e207c5.jpeg')`,
             backgroundSize: "cover",
             backgroundClip: "text",
             color: "transparent",
             WebkitBackgroundClip: "text",
+            letterSpacing: "1px",
           }}
         >
-          Welcome To BMR LogIn
+          Welcome To BMR Login
         </h2>
 
         <form onSubmit={handleLogin}>
           <AtmInput
             type="text"
             placeholder="Enter your username"
-            className="mb-5 h-[48px] p-3 text-white text-base font-bold bg-transparent border border-gray-600 rounded-md focus:outline-none focus:pl-2 focus:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+            className="mb-4 h-[48px] p-4 text-white text-lg font-semibold bg-transparent border border-gray-500 rounded-lg focus:outline-none focus:pl-4 focus:bg-gray-800 focus:border-blue-400 focus:ring-2 focus:ring-blue-400 transition-all"
             labelClassName="text-white"
             label="Username"
             value={username}
@@ -108,23 +100,23 @@ const Login = () => {
             InputProps={{
               style: {
                 height: "48px",
-                padding: "0 12px", // Adjust padding
-                boxSizing: "border-box", // Ensure padding and border are included in element's total width and height
+                padding: "0 16px",
+                boxSizing: "border-box",
               },
             }}
             InputLabelProps={{
               style: {
-                top: "-8px", // Adjust label position to float above the input
-                left: "12px", // Adjust label horizontal position if needed
+                top: "-8px",
+                left: "16px",
               },
             }}
           />
 
-          <div className="relative mb-4">
+          <div className="relative mb-5">
             <AtmInput
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
-              className="mb-5 p-3 h-[48px] text-white text-basey font-bold bg-transparent border  border-gray-600 rounded-md focus:outline-none focus:pl-2 focus:bg-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+              className="h-[48px] p-4 text-white text-lg font-semibold bg-transparent border border-gray-500 rounded-lg focus:outline-none focus:pl-4 focus:bg-gray-800 focus:border-blue-400 focus:ring-2 focus:ring-blue-400 transition-all"
               labelClassName="text-white"
               label="Password"
               value={password}
@@ -132,14 +124,14 @@ const Login = () => {
               InputProps={{
                 style: {
                   height: "48px",
-                  padding: "0 12px", // Adjust padding to prevent overlap
-                  boxSizing: "border-box", // Ensure padding and border are included in element's total width and height
+                  padding: "0 16px",
+                  boxSizing: "border-box",
                 },
               }}
               InputLabelProps={{
                 style: {
-                  top: "-8px", // Adjust label position to float above the input
-                  left: "12px", // Adjust label horizontal position if needed
+                  top: "-8px",
+                  left: "16px",
                 },
               }}
             />
@@ -147,16 +139,16 @@ const Login = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 flex items-center px-7 pt-3 text-white cursor-pointer"
+              className="absolute inset-y-0 right-5 top-3 flex items-center px-4 pt-3 text-white cursor-pointer"
             >
-              {showPassword ? (
-                <FaEyeSlash className="" />
-              ) : (
-                <FaEye className="" />
-              )}
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
-          <AtmButton label="Login" type="submit" className="w-full mt-4" />
+          <AtmButton
+            label="Login"
+            type="submit"
+            className="w-full py-3 mt-4 bg-gradient-to-r from-blue-500 to-teal-400 text-white text-lg font-bold rounded-lg hover:from-blue-600 hover:to-teal-500 transition-all"
+          />
         </form>
       </div>
       <ToastContainer />

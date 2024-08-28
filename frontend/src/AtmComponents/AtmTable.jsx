@@ -31,7 +31,7 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
     <div className="flex flex-col h-full pt-4">
       <div className="flex-grow overflow-x-auto mb-16">
         <table className="min-w-full border-collapse border border-gray-300">
-          <thead className="bg-blue-500">
+          <thead className="bg-blue-500 ">
             <tr>
               <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300">
                 Sr No

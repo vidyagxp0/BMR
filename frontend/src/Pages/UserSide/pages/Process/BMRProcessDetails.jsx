@@ -646,11 +646,11 @@ const BMRProcessDetails = () => {
             {activeDefaultTab === "Initiator Remarks" &&
               fields["Initiator Remarks"]?.length > 0 && (
                 <div className="mb-20">
-                  <div className="grid grid-cols-2 gap-4 ">
+                  <div className="grid grid-cols-2 gap-4  ">
                     {fields["Initiator Remarks"].map((field, index) => (
                       <div
                         key={index}
-                        className="p-4 flex flex-col bg-white shadow border border-gray-300 mb-4"
+                        className="p-4 flex flex-col bg-white rounded-2xl shadow-lg border border-gray-300 mb-4"
                       >
                         <label className="text-lg font-extrabold text-gray-700 mb-2">
                           {field.fieldName}

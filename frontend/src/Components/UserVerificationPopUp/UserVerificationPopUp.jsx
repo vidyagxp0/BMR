@@ -10,7 +10,7 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [declaration, setDeclaration] = useState("");
-  const navigate = useNavigate(); // Corrected to lowercase 'navigate'
+  const navigate = useNavigate();
 
 const handleSubmit = (e)=>{
   e.preventDefault();
@@ -94,7 +94,7 @@ const handleSubmit = (e)=>{
               <span className="required-asterisk text-red-500">*</span>
             </label>
             <input
-              type="text" // Changed to 'text' for proper input handling
+              type="text"
               value={declaration}
               onChange={(e) => setDeclaration(e.target.value)}
               required
