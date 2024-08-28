@@ -28,7 +28,7 @@ const handleSubmit = (e)=>{
 
   //   try {
   //     const response = await axios.post(
-  //       "http://192.168.1.11:7000/user/user-verification", // Corrected URL
+  //       "http://195.35.6.197:7000/user/user-verification", // Corrected URL
   //       data,
   //       {
   //         headers: { "Content-Type": "application/json" },

@@ -7,13 +7,13 @@ import { addBmr } from "../../../../userSlice";
 import axios from "axios";
 
 const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: '90%',
   maxWidth: 600,
-  bgcolor: 'background.paper',
+  bgcolor: "background.paper",
   borderRadius: '8px',
   boxShadow: 24,
   p: 4,
@@ -35,7 +35,7 @@ function CreateRecordModal({ open, onClose }) {
     e.preventDefault();
     axios
       .post(
-        "http://192.168.1.11:7000/bmr-form/add-bmr",
+        "http://195.35.6.197:7000/bmr-form/add-bmr",
         {
           name: formData.name,
           reviewers: isSelectedReviewer.map((reviewer) => ({
@@ -61,7 +61,7 @@ function CreateRecordModal({ open, onClose }) {
         }
       )
       .then((response) => {
-        toast.success(response.data.message || "BMR added successfully!");
+        toast.success(response.data.message || "BMR added successfully!"); 
         dispatch(addBmr(response.data.bmr));
         setFormData({ name: "", reviewers: [], approvers: [] });
         setTimeout(() => {
@@ -75,7 +75,7 @@ function CreateRecordModal({ open, onClose }) {
   };
 
   useEffect(() => {
-    axios.post("http://192.168.1.11:7000/bmr-form/get-user-roles", {
+    axios.post("http://195.35.6.197:7000/bmr-form/get-user-roles", {
       role_id: 3,
     }, {
       headers: {
@@ -101,7 +101,7 @@ function CreateRecordModal({ open, onClose }) {
       console.error("Error: ", error);
     });
 
-    axios.post("http://192.168.1.11:7000/bmr-form/get-user-roles", {
+    axios.post("http://195.35.6.197:7000/bmr-form/get-user-roles", {
       role_id: 4,
     }, {
       headers: {

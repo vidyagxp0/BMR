@@ -13,9 +13,10 @@ const modalStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: '90%',
+  maxWidth: 600,
   bgcolor: "background.paper",
-  border: "2px solid #000",
+  borderRadius: '8px',
   boxShadow: 24,
   p: 4,
 };
@@ -48,11 +49,9 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
       })),
     };
 
-    console.log("Updated BMR Data:", updatedBMRData); // Debug log
-
     axios
       .put(
-        `http://192.168.1.11:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
+        `http://195.35.6.197:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
         updatedBMRData,
         {
           headers: {
@@ -80,7 +79,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     const fetchRoles = async () => {
       try {
         const reviewerResponse = await axios.post(
-          "http://192.168.1.11:7000/bmr-form/get-user-roles",
+          "http://195.35.6.197:7000/bmr-form/get-user-roles",
           {
             role_id: 3,
           },
@@ -98,7 +97,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         setReviewers(reviewerOptions);
 
         const approverResponse = await axios.post(
-          "http://192.168.1.11:7000/bmr-form/get-user-roles",
+          "http://195.35.6.197:7000/bmr-form/get-user-roles",
           {
             role_id: 4,
           },
@@ -150,83 +149,96 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
   return (
     <Modal open={true} onClose={onClose}>
-      <Box sx={modalStyle}>
-        <div className="flex justify-center items-center pb-5 font-bold">
-          <Typography
-            variant="h6"
-            component="h2"
-            style={{ fontWeight: "bold" }}
-          >
-            Edit BMR
+    <Box sx={modalStyle}>
+      <Typography variant="h6" component="h2" align="center" gutterBottom>
+        Edit BMR
+      </Typography>
+      <form onSubmit={updateBMR} className="space-y-4">
+        <TextField
+          label="BMR Name"
+          name="name"
+          fullWidth
+          margin="normal"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          variant="outlined"
+          InputProps={{
+            style: {
+              height: "48px",
+            },
+          }}
+          InputLabelProps={{
+            style: {
+              top: "0",
+            },
+          }}
+        />
+        <div>
+          <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+            Reviewer
           </Typography>
-        </div>
-        <form onSubmit={updateBMR}>
-          <TextField
-            label="BMR Name"
-            name="name"
-            fullWidth
-            margin="normal"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            InputProps={{
-              style: {
-                height: "48px",
-              },
-            }}
-            InputLabelProps={{
-              style: {
-                top: "0",
-              },
+          <Select
+            name="reviewers"
+            isMulti
+            options={reviewers}
+            value={isSelectedReviewer}
+            onChange={(selected) => setIsSelectedReviewer(selected)}
+            styles={{
+              control: (provided) => ({
+                ...provided,
+                borderColor: '#d0d0d0',
+                boxShadow: 'none',
+                '&:hover': {
+                  borderColor: '#a0a0a0',
+                },
+              }),
             }}
           />
-          <div>
-            <label htmlFor="" className="text-sm text-blue-500">
-              Reviewer
-            </label>
-            <Select
-              name="reviewers"
-              isMulti
-              options={reviewers}
-              value={isSelectedReviewer}
-              onChange={(selected) => setIsSelectedReviewer(selected)}
-            />
-          </div>
-          <div>
-            <label htmlFor="" className="text-sm text-blue-500">
-              Approver
-            </label>
-            <Select
-              name="approvers"
-              options={approvers}
-              isMulti
-              value={isSelectedApprover}
-              onChange={(selected) => setIsSelectedApprover(selected)}
-            />
-          </div>
-          <div className="flex gap-5">
-            <Button
-              type="button"
-              variant="contained"
-              color="error"
-              fullWidth
-              sx={{ mt: 2 }}
-              onClick={onClose}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ mt: 2 }}
-            >
-              Update BMR
-            </Button>
-          </div>
-        </form>
-      </Box>
-    </Modal>
+        </div>
+        <div>
+          <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+            Approver
+          </Typography>
+          <Select
+            name="approvers"
+            isMulti
+            options={approvers}
+            value={isSelectedApprover}
+            onChange={(selected) => setIsSelectedApprover(selected)}
+            styles={{
+              control: (provided) => ({
+                ...provided,
+                borderColor: '#d0d0d0',
+                boxShadow: 'none',
+                '&:hover': {
+                  borderColor: '#a0a0a0',
+                },
+              }),
+            }}
+          />
+        </div>
+        <div className="flex gap-4">
+          <Button
+            type="button"
+            variant="outlined"
+            color="error"
+            fullWidth
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+          >
+            Update BMR
+          </Button>
+        </div>
+      </form>
+    </Box>
+  </Modal>
   );
 };
 
