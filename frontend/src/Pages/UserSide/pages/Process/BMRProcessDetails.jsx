@@ -13,7 +13,7 @@ import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/
 
 const BMRProcessDetails = () => {
   const [data, setData] = useState([]);
-  // console.log(data, "data");
+  console.log(data, "data");
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
@@ -307,7 +307,6 @@ const BMRProcessDetails = () => {
       setActiveFlowTab("APPROVED");
     }
   }, [data]);
-  const updateTab = (tabObject) => {};
   const addSection = (sectionName) => {
     setNewSection((prevSections) => {
       const updatedSections = { ...prevSections };
@@ -639,10 +638,10 @@ const BMRProcessDetails = () => {
           ))}
         </div>
       )}
-
+ 
       {showForm === "default" && (
-        <div className="relative h-screen">
-          <div className="overflow-auto mb-16">
+        <div className="relative h-screen ">
+          <div className="overflow-auto border border-gray-500 p-6 mb-16">
             {activeDefaultTab === "Initiator Remarks" &&
               fields["Initiator Remarks"]?.length > 0 && (
                 <div className="mb-20">

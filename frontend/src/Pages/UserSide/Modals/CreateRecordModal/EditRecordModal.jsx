@@ -12,9 +12,10 @@ const modalStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: '90%',
+  maxWidth: 600,
   bgcolor: "background.paper",
-  border: "2px solid #000",
+  borderRadius: '8px',
   boxShadow: 24,
   p: 4,
 };
@@ -90,10 +91,11 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
       ), // Ensure unique options
     ];
   };
+  
 
   const handleSelectChange = (selected, setSelected, options) => {
     if (selected && selected.some((option) => option.value === "selectAll")) {
-      setSelected(options);
+      setSelected(options.filter((option) => option.value !== "selectAll"));
     } else {
       setSelected(selected || []);
     }
@@ -173,35 +175,31 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
   return (
     <Modal open={true} onClose={onClose}>
-      <Box sx={modalStyle}>
-        <div className="flex justify-center items-center pb-5 font-bold">
-          <Typography
-            variant="h6"
-            component="h2"
-            style={{ fontWeight: "bold" }}
-          >
-            Edit BMR
-          </Typography>
-        </div>
-        <form onSubmit={updateBMR}>
-          <TextField
-            label="BMR Name"
-            name="name"
-            fullWidth
-            margin="normal"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            InputProps={{
-              style: {
-                height: "48px",
-              },
-            }}
-            InputLabelProps={{
-              style: {
-                top: "0",
-              },
-            }}
-          />
+    <Box sx={modalStyle}>
+      <Typography variant="h6" component="h2" align="center" gutterBottom>
+        Edit BMR
+      </Typography>
+      <form onSubmit={updateBMR} className="space-y-4">
+        <TextField
+          label="BMR Name"
+          name="name"
+          fullWidth
+          margin="normal"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          variant="outlined"
+          InputProps={{
+            style: {
+              height: "48px",
+            },
+          }}
+          InputLabelProps={{
+            style: {
+              top: "0",
+            },
+          }}
+        />
+       
           <div>
             <label htmlFor="" className="text-sm text-blue-500">
               Reviewer

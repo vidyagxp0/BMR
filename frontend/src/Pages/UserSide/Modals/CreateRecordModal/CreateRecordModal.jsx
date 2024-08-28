@@ -61,7 +61,7 @@ function CreateRecordModal({ open, onClose }) {
         }
       )
       .then((response) => {
-        toast.success(response.data.message || "BMR added successfully!");
+        toast.success(response.data.message || "BMR added successfully!"); 
         dispatch(addBmr(response.data.bmr));
         setFormData({ name: "", reviewers: [], approvers: [] });
         setIsSelectedReviewer([]);

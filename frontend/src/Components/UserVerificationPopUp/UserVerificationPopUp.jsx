@@ -20,13 +20,51 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
       toast.error("An error occurred. Please try again.");
       console.log(flag,"errorrrr")
     }
-  }, [flag, navigate]);aad
+  }, [flag, navigate]);
 
   const handleFlag = () => {
     setFlag(true);
     console.log("Flag is set to true", flag);
   };
 
+  //   const data = {
+  //     email: email,
+  //     password: password,
+  //     declaration: declaration,
+  //   };
+
+  //   try {
+  //     const response = await axios.post(
+  //       "http://195.35.6.197:7000/user/user-verification", // Corrected URL
+  //       data,
+  //       {
+  //         headers: { "Content-Type": "application/json" },
+  //       }
+  //     );
+
+  //     toast.success("Successfully Initiated");
+
+  //     const token = response.data.token;
+  //     localStorage.setItem("user-token", token);
+
+  //     const decoded = jwtDecode(token);
+  //     localStorage.setItem("user-details", JSON.stringify(decoded));
+
+  //     navigate("/process/bmr_process"); // Corrected to lowercase 'navigate'
+  //     console.log("success");
+  //   } catch (error) {
+  //     if (
+  //       error.response &&
+  //       error.response.data &&
+  //       error.response.data.message
+  //     ) {
+  //       toast.error(error.response.data.message);
+  //     } else {
+  //       toast.error("An error occurred. Please try again.");
+  //     }
+  //     console.error(error);
+  //   }
+  // };
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit({ email, password, declaration }, handleFlag);
