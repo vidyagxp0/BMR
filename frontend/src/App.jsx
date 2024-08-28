@@ -19,7 +19,7 @@ import BMRProcessDetails from "./Pages/UserSide/pages/Process/BMRProcessDetails"
 function App() {
   return (
     <>
-      <BrowserRouter>zz
+      <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
 

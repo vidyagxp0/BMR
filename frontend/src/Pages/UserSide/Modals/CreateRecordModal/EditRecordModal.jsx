@@ -91,10 +91,11 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
       ), // Ensure unique options
     ];
   };
+  
 
   const handleSelectChange = (selected, setSelected, options) => {
     if (selected && selected.some((option) => option.value === "selectAll")) {
-      setSelected(options);
+      setSelected(options.filter((option) => option.value !== "selectAll"));
     } else {
       setSelected(selected || []);
     }
