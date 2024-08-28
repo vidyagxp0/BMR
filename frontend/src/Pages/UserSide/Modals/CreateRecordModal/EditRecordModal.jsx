@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import "../General.css";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import Select from "react-select";
@@ -22,7 +21,7 @@ const modalStyle = {
 
 const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
   const [formData, setFormData] = useState({
-    name: bmrData.name || "",
+    name: bmrData?.name || "",
     reviewers: [],
     approvers: [],
   });
@@ -34,6 +33,12 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
   const updateBMR = (e) => {
     e.preventDefault();
+
+    if (!bmrData?.bmr_id) {
+      toast.error("BMR ID is missing!");
+      return;
+    }
+
     const updatedBMRData = {
       name: formData.name,
       reviewers: isSelectedReviewer.map((reviewer) => ({
@@ -48,11 +53,9 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
       })),
     };
 
-    console.log("Updated BMR Data:", updatedBMRData); // Debug log
-
     axios
       .put(
-        `http://192.168.1.11:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
+        `http://195.35.6.197:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
         updatedBMRData,
         {
           headers: {
@@ -62,25 +65,45 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         }
       )
       .then((response) => {
-        dispatch(updateBmr(response.data.bmr));
-        fetchBMRData(); // Refresh data
-        toast.success("BMR updated successfully!");
-        onClose();
+        if (response.status >= 200 && response.status < 300) {
+          dispatch(updateBmr(response.data.bmr));
+          fetchBMRData(); // Refresh data
+          toast.success("BMR updated successfully!");
+          onClose();
+        } else {
+          toast.error("Unexpected response status code: " + response.status);
+        }
       })
-      .catch((err) => {
-        console.error(
-          "Error updating BMR:",
-          err.response ? err.response.data : err
-        ); // Improved error log
-        toast.error("Failed to update BMR");
+      .catch((error) => {
+        toast.error("Failed to update BMR: " + (error.response?.data?.message || error.message));
       });
+  };
+
+  const addSelectAllOption = (options, label = "Select All") => {
+    return [
+      {
+        value: "selectAll",
+        label,
+      },
+      ...options.filter((option, index, self) =>
+        index === self.findIndex((t) => t.value === option.value)
+      ), // Ensure unique options
+    ];
+  };
+
+  const handleSelectChange = (selected, setSelected, options) => {
+    if (selected && selected.some((option) => option.value === "selectAll")) {
+      setSelected(options);
+    } else {
+      setSelected(selected || []);
+    }
   };
 
   useEffect(() => {
     const fetchRoles = async () => {
       try {
         const reviewerResponse = await axios.post(
-          "http://192.168.1.11:7000/bmr-form/get-user-roles",
+          "http://195.35.6.197:7000/bmr-form/get-user-roles",
           {
             role_id: 3,
           },
@@ -95,10 +118,10 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
           value: role.user_id,
           label: role.User.name,
         }));
-        setReviewers(reviewerOptions);
+        setReviewers(addSelectAllOption(reviewerOptions));
 
         const approverResponse = await axios.post(
-          "http://192.168.1.11:7000/bmr-form/get-user-roles",
+          "http://195.35.6.197:7000/bmr-form/get-user-roles",
           {
             role_id: 4,
           },
@@ -113,9 +136,9 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
           value: role.user_id,
           label: role.User.name,
         }));
-        setApprovers(approverOptions);
+        setApprovers(addSelectAllOption(approverOptions));
       } catch (error) {
-        console.error("Error: ", error);
+        console.error("Error fetching roles: ", error);
       }
     };
 
@@ -130,7 +153,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
           reviewers.find((r) => r.value === reviewer.reviewerId)?.label ||
           "Unknown",
       }));
-      const selectedApprovers = bmrData.approvers.map((approver) => ({
+      const selectedApprovers = bmrData?.approvers?.map((approver) => ({
         value: approver.approverId,
         label:
           approvers.find((a) => a.value === approver.approverId)?.label ||
@@ -188,7 +211,9 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
               isMulti
               options={reviewers}
               value={isSelectedReviewer}
-              onChange={(selected) => setIsSelectedReviewer(selected)}
+              onChange={(selected) =>
+                handleSelectChange(selected, setIsSelectedReviewer, reviewers)
+              }
             />
           </div>
           <div>
@@ -200,7 +225,9 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
               options={approvers}
               isMulti
               value={isSelectedApprover}
-              onChange={(selected) => setIsSelectedApprover(selected)}
+              onChange={(selected) =>
+                handleSelectChange(selected, setIsSelectedApprover, approvers)
+              }
             />
           </div>
           <div className="flex gap-5">

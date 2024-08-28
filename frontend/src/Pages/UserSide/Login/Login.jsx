@@ -21,7 +21,7 @@ const Login = () => {
       password: password,
     };
     axios
-      .post("http://192.168.1.11:7000/user/user-login", data, {
+      .post("http://195.35.6.197:7000/user/user-login", data, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -38,7 +38,7 @@ const Login = () => {
       })
       .catch((error) => {
         toast.error(error.response.data.message);
-        console.error(error);
+        console.error(error, "Error in toast");
       });
   };
 

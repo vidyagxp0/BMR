@@ -5,7 +5,7 @@ import HeaderTop from '../Components/Header/HeaderTop';
 
 const WrapperUser = () => {
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen ">
       {/* Header */}
       <div className="fixed top-0 left-0 w-full z-50">
         <HeaderTop />
