@@ -6,53 +6,58 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
-const UserVerificationPopUp = ({ onClose }) => {
+const UserVerificationPopUp = ({ onClose, onSubmit }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [declaration, setDeclaration] = useState("");
   const navigate = useNavigate(); // Corrected to lowercase 'navigate'
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = (e)=>{
+  e.preventDefault();
+  onSubmit({email, password, declaration})
+}
 
-    const data = {
-      email: email,
-      password: password,
-      declaration: declaration,
-    };
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
 
-    try {
-      const response = await axios.post(
-        "http://195.35.6.197:7000/user/user-verification", // Corrected URL
-        data,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+  //   const data = {
+  //     email: email,
+  //     password: password,
+  //     declaration: declaration,
+  //   };
 
-      toast.success("Successfully Initiated");
+  //   try {
+  //     const response = await axios.post(
+  //       "http://192.168.1.11:7000/user/user-verification", // Corrected URL
+  //       data,
+  //       {
+  //         headers: { "Content-Type": "application/json" },
+  //       }
+  //     );
 
-      const token = response.data.token;
-      localStorage.setItem("user-token", token);
+  //     toast.success("Successfully Initiated");
 
-      const decoded = jwtDecode(token);
-      localStorage.setItem("user-details", JSON.stringify(decoded));
+  //     const token = response.data.token;
+  //     localStorage.setItem("user-token", token);
 
-      navigate("/process/bmr_process"); // Corrected to lowercase 'navigate'
-      console.log("success");
-    } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("An error occurred. Please try again.");
-      }
-      console.error(error);
-    }
-  };
+  //     const decoded = jwtDecode(token);
+  //     localStorage.setItem("user-details", JSON.stringify(decoded));
+
+  //     navigate("/process/bmr_process"); // Corrected to lowercase 'navigate'
+  //     console.log("success");
+  //   } catch (error) {
+  //     if (
+  //       error.response &&
+  //       error.response.data &&
+  //       error.response.data.message
+  //     ) {
+  //       toast.error(error.response.data.message);
+  //     } else {
+  //       toast.error("An error occurred. Please try again.");
+  //     }
+  //     console.error(error);
+  //   }
+  // };
 
   return (
     <div className="popup-overlay z-50">

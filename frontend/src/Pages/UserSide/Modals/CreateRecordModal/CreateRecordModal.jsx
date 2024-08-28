@@ -1,26 +1,25 @@
 import { useState, useEffect } from "react";
-import "../General.css";
-import "./CreateRecordModal.css";
-import axios from "axios";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import Select from "react-select";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { addBmr } from "../../../../userSlice";
+import axios from "axios";
 
 const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '90%',
+  maxWidth: 600,
+  bgcolor: 'background.paper',
+  borderRadius: '8px',
   boxShadow: 24,
   p: 4,
 };
 
-function CreateRecordModal({ onClose }) {
+function CreateRecordModal({ open, onClose }) {
   const [formData, setFormData] = useState({
     name: "",
     reviewers: [],
@@ -29,7 +28,6 @@ function CreateRecordModal({ onClose }) {
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
-  // console.log(isSelectedReviewer, "isSelectedReview");
   const [isSelectedApprover, setIsSelectedApprover] = useState([]);
   const dispatch = useDispatch();
 
@@ -37,7 +35,7 @@ function CreateRecordModal({ onClose }) {
     e.preventDefault();
     axios
       .post(
-        "http://195.35.6.197:7000/bmr-form/add-bmr",
+        "http://192.168.1.11:7000/bmr-form/add-bmr",
         {
           name: formData.name,
           reviewers: isSelectedReviewer.map((reviewer) => ({
@@ -63,7 +61,6 @@ function CreateRecordModal({ onClose }) {
         }
       )
       .then((response) => {
-        // console.log(response);
         toast.success(response.data.message || "BMR added successfully!");
         dispatch(addBmr(response.data.bmr));
         setFormData({ name: "", reviewers: [], approvers: [] });
@@ -78,68 +75,57 @@ function CreateRecordModal({ onClose }) {
   };
 
   useEffect(() => {
-    const config = {
-      method: "post",
-      url: "http://195.35.6.197:7000/bmr-form/get-user-roles",
+    axios.post("http://192.168.1.11:7000/bmr-form/get-user-roles", {
+      role_id: 3,
+    }, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",
       },
-      data: {
-        role_id: 3,
-      },
-    };
+    })
+    .then((response) => {
+      const reviewerOptions = [
+        ...new Map(
+          response.data.message.map((role) => [
+            role.user_id,
+            {
+              value: role.user_id,
+              label: `${role.User.name}`,
+            },
+          ])
+        ).values(),
+      ];
+      setReviewers(reviewerOptions);
+    })
+    .catch((error) => {
+      console.error("Error: ", error);
+    });
 
-    axios(config)
-      .then((response) => {
-        const reviewerOptions = [
-          ...new Map(
-            response.data.message.map((role) => [
-              role.user_id,
-              {
-                value: role.user_id,
-                label: `${role.User.name}`,
-              },
-            ])
-          ).values(),
-        ];
-        setReviewers(reviewerOptions);
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
-      });
-
-    const newConfig = {
-      method: "post",
-      url: "http://195.35.6.197:7000/bmr-form/get-user-roles",
+    axios.post("http://192.168.1.11:7000/bmr-form/get-user-roles", {
+      role_id: 4,
+    }, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         "Content-Type": "application/json",
       },
-      data: {
-        role_id: 4,
-      },
-    };
-
-    axios(newConfig)
-      .then((response) => {
-        console.log(response[0], "response");
-        const approverOptions = [
-          ...new Map(
-            response.data.message.map((role) => [
-              role.user_id,
-              {
-                value: role.user_id,
-                label: `${role.User.name}`,
-              },
-            ])
-          ).values(),
-        ];
-        setApprovers(approverOptions);
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
-      });
+    })
+    .then((response) => {
+      const approverOptions = [
+        ...new Map(
+          response.data.message.map((role) => [
+            role.user_id,
+            {
+              value: role.user_id,
+              label: `${role.User.name}`,
+            },
+          ])
+        ).values(),
+      ];
+      setApprovers(approverOptions);
+    })
+    .catch((error) => {
+      console.error("Error: ", error);
+    });
   }, []);
 
   const handleChange = (e) => {
@@ -152,94 +138,105 @@ function CreateRecordModal({ onClose }) {
   useEffect(() => {
     setFormData({
       ...formData,
-      reviewer: isSelectedReviewer,
-      approver: isSelectedApprover,
+      reviewers: isSelectedReviewer,
+      approvers: isSelectedApprover,
     });
   }, [isSelectedReviewer, isSelectedApprover]);
 
   return (
-    <>
-      <Modal open={true} onClose={onClose}>
-        <Box sx={modalStyle}>
-          <div className="flex justify-center items-center pb-5 font-bold">
-            <Typography
-              variant="h6"
-              component="h2"
-              style={{ fontWeight: "bold" }}
-            >
-              Add BMR
+    <Modal open={true} onClose={onClose}>
+      <Box sx={modalStyle}>
+        <Typography variant="h6" component="h2" align="center" gutterBottom>
+          Add BMR
+        </Typography>
+        <form onSubmit={addBMRs} className="space-y-4">
+          <TextField
+            label="BMR Name"
+            name="name"
+            fullWidth
+            margin="normal"
+            value={formData.name}
+            onChange={handleChange}
+            variant="outlined"
+            InputProps={{
+              style: {
+                height: "48px",
+              },
+            }}
+            InputLabelProps={{
+              style: {
+                top: "0",
+              },
+            }}
+          />
+          <div>
+            <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+              Reviewer
             </Typography>
-          </div>
-          <form onSubmit={addBMRs}>
-            <TextField
-              label="BMR Name"
-              name="name"
-              fullWidth
-              margin="normal"
-              value={formData.name}
-              onChange={handleChange}
-              InputProps={{
-                style: {
-                  height: "48px",
-                },
-              }}
-              InputLabelProps={{
-                style: {
-                  top: "0",
-                },
+            <Select
+              name="reviewers"
+              isMulti
+              options={reviewers}
+              value={isSelectedReviewer}
+              onChange={(selected) => setIsSelectedReviewer(selected)}
+              styles={{
+                control: (provided) => ({
+                  ...provided,
+                  borderColor: '#d0d0d0',
+                  boxShadow: 'none',
+                  '&:hover': {
+                    borderColor: '#a0a0a0',
+                  },
+                }),
               }}
             />
-            <div>
-              <label htmlFor="" className="text-sm text-blue-500">
-                Reviewer
-              </label>
-              <Select
-                name="reviewers"
-                isMulti
-                options={reviewers}
-                value={isSelectedReviewer}
-                onChange={(selected) => setIsSelectedReviewer(selected)}
-              />
-            </div>
+          </div>
 
-            <div>
-              <label htmlFor="" className="text-sm text-blue-500">
-                Approver
-              </label>
-              <Select
-                name="approvers"
-                options={approvers}
-                isMulti
-                value={isSelectedApprover}
-                onChange={(selected) => setIsSelectedApprover(selected)}
-              />
-            </div>
+          <div>
+            <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+              Approver
+            </Typography>
+            <Select
+              name="approvers"
+              isMulti
+              options={approvers}
+              value={isSelectedApprover}
+              onChange={(selected) => setIsSelectedApprover(selected)}
+              styles={{
+                control: (provided) => ({
+                  ...provided,
+                  borderColor: '#d0d0d0',
+                  boxShadow: 'none',
+                  '&:hover': {
+                    borderColor: '#a0a0a0',
+                  },
+                }),
+              }}
+            />
+          </div>
 
-            <div className="flex gap-5">
-              <Button
-                type="button"
-                variant="contained"
-                color="error"
-                fullWidth
-                sx={{ mt: 2 }}
-                onClick={onClose}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{ mt: 2 }}
-              >
-                Add BMR
-              </Button>
-            </div>
-          </form>
-        </Box>
-      </Modal>
-    </>
+          <div className="flex gap-4">
+            <Button
+              type="button"
+              variant="outlined"
+              color="error"
+              fullWidth
+              onClick={onClose}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+            >
+              Add BMR
+            </Button>
+          </div>
+        </form>
+      </Box>
+    </Modal>
   );
 }
 

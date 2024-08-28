@@ -2,9 +2,10 @@
   position: relative;
   height: 82px;
   width: 100%;
-  border-bottom: 1px solid rgb(235, 228, 228);
+  border-bottom: 1px solid #ebebeb;
   overflow: visible;
   padding: 0 20px;
+  background-color: #f8f9fa;
 }
 
 .Header_Top .header_inner {
@@ -41,8 +42,9 @@
   width: 100%;
   max-width: 500px;
   display: flex;
-  border-radius: 50px;
-  box-shadow: 5px 5px 15px 5px rgb(155, 155, 155);
+  border-radius: 25px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
 }
 
 .Header_Top .header_inner .center .inputContainer .inputInnerLeft {
@@ -62,8 +64,10 @@
   flex: 1;
   padding: 10px;
   border: none;
-  border-radius: 0 50px 50px 0;
+  border-radius: 0 25px 25px 0;
   outline: none;
+  font-size: 16px;
+  color: #333;
 }
 
 .Header_Top .header_inner .center .inputContainer .inputInnerRight button {
@@ -71,8 +75,13 @@
   background-color: #207ec6;
   color: white;
   border: none;
-  border-radius: 0 50px 50px 0;
+  border-radius: 0 25px 25px 0;
   cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.Header_Top .header_inner .center .inputContainer .inputInnerRight button:hover {
+  background-color: #1a639b;
 }
 
 .Header_Top .header_inner .right {
@@ -100,6 +109,11 @@
   color: white;
   border-radius: 50%;
   cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.drop-container .drop-btn:hover {
+  background-color: #1a639b;
 }
 
 .drop-container .drop-list {
@@ -108,9 +122,9 @@
   top: 100%;
   right: 0;
   background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  width: 200px;
+  width: 220px;
   z-index: 999;
 }
 
@@ -119,16 +133,25 @@
 }
 
 .drop-container .drop-list .drop-item {
-  padding: 10px 15px;
+  padding: 12px 20px;
   display: flex;
+  gap:"10px";
   align-items: center;
   color: #333;
   text-decoration: none;
-  cursor: pointer;
+  font-size: 15px;
+  transition: background-color 0.3s, color 0.3s;
+  font-weight: 700;
+}
+
+.drop-container .drop-list .drop-item i {
+  margin-right: 10px;
+  font-size: 18px;
 }
 
 .drop-container .drop-list .drop-item:hover {
   background-color: #f1f1f1;
+  color: #207ec6;
 }
 
 @media (max-width: 768px) {

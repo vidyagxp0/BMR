@@ -4,7 +4,7 @@ import "./HeaderTop.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-
+import { FaCog, FaGlobe, FaHandsHelping, FaHeadset, FaSignOutAlt } from 'react-icons/fa'
 function HeaderTop() {
   const navigate = useNavigate();
   const [User, setUser] = useState(null);
@@ -83,27 +83,26 @@ function HeaderTop() {
                 </div>
               </div>
               <div className="drop-list">
-                <div className="image">
-                  {/* <img src={User?.profile_pic} alt="..." />
-                  <div className="manager-name">{User?.name}</div> */}
-                </div>
-                <Link to="#" className="drop-item">
-                  <i className="ri-settings-2-line"></i> Settings
-                </Link>
-                <Link to="#" className="drop-item">
-                  <i className="ri-global-line"></i>About
-                </Link>
-                <Link to="#" className="drop-item">
-                  <i className="ri-hand-heart-line"></i>Help
-                </Link>
-                <Link to="#" className="drop-item">
-                  <i className="ri-customer-service-2-line"></i>
-                  Helpdesk Personnel
-                </Link>
-                <Link to="/" className="drop-item" onClick={"handleLogout"}>
-                  <i className="ri-logout-circle-line"></i>Logout
-                </Link>
-              </div>
+  {/* <div className="image">
+    <img src={User?.profile_pic} alt="Profile Picture" /> 
+    <div className="manager-name">{User?.name}</div>
+  </div> */}
+  <Link to="#" className="drop-item">
+    <FaCog size={24}  /> <div style={{paddingLeft:"10px"}}>Settings</div> 
+  </Link>
+  <Link to="#" className="drop-item">
+    <FaGlobe size={24}  /> <div style={{paddingLeft:"10px"}}>About</div> 
+  </Link>
+  <Link to="#" className="drop-item">
+    <FaHandsHelping size={24}  /> <div style={{paddingLeft:"10px"}}>Help</div> 
+  </Link>
+  <Link to="#" className="drop-item">
+    <FaHeadset size={24}  /> <div style={{paddingLeft:"10px"}}>Helpdesk Personnel</div>  
+  </Link>
+  <Link to="/" className="drop-item" onClick={"handleLogout"}>
+    <FaSignOutAlt size={24}  /> <div style={{paddingLeft:"10px"}}>Logout</div> 
+  </Link>
+</div>
             </div>
           </div>
         </div>
