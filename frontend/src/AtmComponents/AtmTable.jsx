@@ -39,7 +39,7 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
               {columns.map((column, index) => (
                 <th
                   key={index}
-                  className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300"
+                  className="px-4 py-2 text-lef text-xs font-medium text-white uppercase tracking-wider border border-gray-300"
                 >
                   {column.header}
                 </th>

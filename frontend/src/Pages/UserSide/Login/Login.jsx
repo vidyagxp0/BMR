@@ -38,7 +38,7 @@ const Login = () => {
       })
       .catch((error) => {
         toast.error(error.response.data.message);
-        console.error(error);
+        console.error(error, "Error in toast");
       });
   };
 

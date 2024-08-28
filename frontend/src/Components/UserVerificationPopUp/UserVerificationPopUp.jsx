@@ -1,9 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./UserVerificationPopUp.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
 const UserVerificationPopUp = ({ onClose, onSubmit }) => {
@@ -11,14 +9,23 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
   const [password, setPassword] = useState("");
   const [declaration, setDeclaration] = useState("");
   const navigate = useNavigate();
+  const [flag, setFlag] = useState(false);
 
-const handleSubmit = (e)=>{
-  e.preventDefault();
-  onSubmit({email, password, declaration})
-}
+  useEffect(() => {
+    if (flag) {
+      toast.success("Successfully Initiated");
+      navigate("/process/bmr_process");
+      console.log(flag,"okkkkkkk")
+    } else {
+      toast.error("An error occurred. Please try again.");
+      console.log(flag,"errorrrr")
+    }
+  }, [flag, navigate]);aad
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
+  const handleFlag = () => {
+    setFlag(true);
+    console.log("Flag is set to true", flag);
+  };
 
   //   const data = {
   //     email: email,
@@ -58,6 +65,11 @@ const handleSubmit = (e)=>{
   //     console.error(error);
   //   }
   // };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit({ email, password, declaration }, handleFlag);
+    setFlag(!false);
+  };
 
   return (
     <div className="popup-overlay z-50">

@@ -23,6 +23,7 @@ const AddUser = () => {
 
   const [roles, setRoles] = useState([]);
   const [errors, setErrors] = useState({});
+
   useEffect(() => {
     axios
       .get("http://195.35.6.197:7000/user/get-all-roles", {
@@ -36,7 +37,12 @@ const AddUser = () => {
           value: role.role_id,
           label: role.role,
         }));
-        setRoles(roleOptions);
+
+        // Add "Select All" option
+        setRoles([
+          { value: "select_all", label: "Select All" },
+          ...roleOptions,
+        ]);
       })
       .catch((error) => {
         console.error(error);
@@ -65,13 +71,21 @@ const AddUser = () => {
   };
 
   const handleSelectChange = (selectedOptions) => {
-    console.log(selectedOptions, "selectedOptions");
-    setFormData({
-      ...formData,
-      rolesArray: selectedOptions
-        ? selectedOptions.map((option) => option.value)
-        : [],
-    });
+    if (selectedOptions.some((option) => option.value === "select_all")) {
+      setFormData({
+        ...formData,
+        rolesArray: roles
+          .filter((role) => role.value !== "select_all")
+          .map((role) => role.value),
+      });
+    } else {
+      setFormData({
+        ...formData,
+        rolesArray: selectedOptions
+          ? selectedOptions.map((option) => option.value)
+          : [],
+      });
+    }
   };
 
   const handleSubmit = (e) => {
