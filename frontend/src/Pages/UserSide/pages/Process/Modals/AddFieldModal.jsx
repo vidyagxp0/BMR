@@ -131,6 +131,7 @@ const AddFieldModal = ({
             <option value="email">Email</option>
             <option value="date">Date</option>
             <option value="date-time">Date&Time</option>
+            <option value="grid">Grid</option>
             <option value="number">Number</option>
             <option value="checkbox">Checkbox</option>
             <option value="dropdown">Dropdown</option>

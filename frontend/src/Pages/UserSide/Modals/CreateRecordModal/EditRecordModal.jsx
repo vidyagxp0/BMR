@@ -47,12 +47,14 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         status: "pending",
         comment: null,
       })),
+      
       approvers: isSelectedApprover.map((approver) => ({
         approverId: approver.value,
         status: "pending",
         comment: null,
       })),
     };
+
 
     axios
       .put(
@@ -92,7 +94,6 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     ];
   };
   
-
   const handleSelectChange = (selected, setSelected, options) => {
     if (selected && selected.some((option) => option.value === "selectAll")) {
       setSelected(options.filter((option) => option.value !== "selectAll"));

@@ -152,6 +152,7 @@ const BMRProcess = () => {
           setData={setData}
         />
       )}
+      
     </div>
   );
 };
