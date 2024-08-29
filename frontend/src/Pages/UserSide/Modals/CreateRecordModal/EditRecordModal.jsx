@@ -12,10 +12,10 @@ const modalStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: '90%',
+  width: "90%",
   maxWidth: 600,
   bgcolor: "background.paper",
-  borderRadius: '8px',
+  borderRadius: "8px",
   boxShadow: 24,
   p: 4,
 };
@@ -78,7 +78,10 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         }
       })
       .catch((error) => {
-        toast.error("Failed to update BMR: " + (error.response?.data?.message || error.message));
+        toast.error(
+          "Failed to update BMR: " +
+            (error.response?.data?.message || error.message)
+        );
       });
   };
 
@@ -88,8 +91,9 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         value: "selectAll",
         label,
       },
-      ...options.filter((option, index, self) =>
-        index === self.findIndex((t) => t.value === option.value)
+      ...options.filter(
+        (option, index, self) =>
+          index === self.findIndex((t) => t.value === option.value)
       ), // Ensure unique options
     ];
   };
@@ -176,31 +180,31 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
   return (
     <Modal open={true} onClose={onClose}>
-    <Box sx={modalStyle}>
-      <Typography variant="h6" component="h2" align="center" gutterBottom>
-        Edit BMR
-      </Typography>
-      <form onSubmit={updateBMR} className="space-y-4">
-        <TextField
-          label="BMR Name"
-          name="name"
-          fullWidth
-          margin="normal"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          variant="outlined"
-          InputProps={{
-            style: {
-              height: "48px",
-            },
-          }}
-          InputLabelProps={{
-            style: {
-              top: "0",
-            },
-          }}
-        />
-       
+      <Box sx={modalStyle}>
+        <Typography variant="h6" component="h2" align="center" gutterBottom>
+          Edit BMR
+        </Typography>
+        <form onSubmit={updateBMR} className="space-y-4">
+          <TextField
+            label="BMR Name"
+            name="name"
+            fullWidth
+            margin="normal"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            variant="outlined"
+            InputProps={{
+              style: {
+                height: "48px",
+              },
+            }}
+            InputLabelProps={{
+              style: {
+                top: "0",
+              },
+            }}
+          />
+
           <div>
             <label htmlFor="" className="text-sm text-blue-500">
               Reviewer

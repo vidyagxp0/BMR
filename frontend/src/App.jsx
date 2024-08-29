@@ -15,7 +15,7 @@ import WrapperUser from "./Pages/WrapperUser";
 import BMRProcess from "./Pages/UserSide/pages/Process/BMRProcess";
 import BMRDetails from "./Pages/UserSide/pages/BMRDetails/BMRDetails";
 import BMRProcessDetails from "./Pages/UserSide/pages/Process/BMRProcessDetails";
-
+import BMRRecords from "./Pages/UserSide/pages/BMRRecords/BMRRecords";
 function App() {
   return (
     <>
@@ -39,6 +39,11 @@ function App() {
             <Route
               path="/process/processdetails/:bmr_id"
               element={<ProtectedUserRoute element={<BMRProcessDetails />} />}
+            />
+
+            <Route
+              path="/bmr_records"
+              element={<BMRRecords element={<BMRRecords />} />}
             />
           </Route>
 

@@ -631,8 +631,8 @@ const BMRProcessDetails = () => {
               onClick={() => handleSendFormTabClick(tab)}
               className={`py-2 px-4 rounded-full border-2 border-black ${
                 activeSendFormTab === tab
-                  ? "bg-gray-400 text-white"
-                  : "bg-gray-200 text-gray-700"
+                  ? "bg-blue-500 text-white text-lg"
+                  : "bg-blue-200 text-black text-lg"
               }`}
             >
               {tab.tab_name}
@@ -865,8 +865,8 @@ const BMRProcessDetails = () => {
                   <div
                     className={`py-2 px-4 mb-2 cursor-pointer ${
                       activeSection === section
-                        ? "bg-gray-400 text-white"
-                        : "bg-gray-200"
+                        ? "bg-blue-300 text-gray-700"
+                        : "bg-blue-200 text-gray-400"
                     }`}
                   >
                     {section.section_name}
@@ -877,9 +877,9 @@ const BMRProcessDetails = () => {
                     <div
                       key={index}
                       onClick={() => handleFieldClick(field)}
-                      className="p-4 rounded bg-white shadow border border-gray-300"
+                      className="p-4 rounded bg-gray-50 shadow border border-gray-600"
                     >
-                      <label className="text-lg font-extrabold text-gray-700 flex gap-1 mb-2">
+                      <label className="text-lg font-extrabold text-gray-900 flex gap-1 mb-2">
                         {field.label}
                         <div className="text-red-500">
                           {field.isMandatory && " *"}
@@ -904,7 +904,7 @@ const BMRProcessDetails = () => {
                           placeholder={field.placeholder}
                           style={{ border: "1px solid gray", height: "48px" }}
                           type="password"
-                          className="border border-gray-600 p-2 w-full rounded"
+                          className="border border-gray-600 text-gray-600 p-2 w-full rounded"
                           required={field.isMandatory}
                           readOnly={field.isReadonly}
                         />
