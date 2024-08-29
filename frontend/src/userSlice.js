@@ -3,7 +3,7 @@ import axios from "axios";
 
 // Async Thunks
 export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
-  const response = await axios.get("http://195.35.6.197:7000/user/get-users", {
+  const response = await axios.get("http://192.168.1.29:7000/user/get-users", {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
     },
@@ -13,7 +13,7 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
 
 export const fetchBmr = createAsyncThunk("bmr/fetchBmr", async () => {
   const response = await axios.get(
-    "http://195.35.6.197:7000/bmr-form/get-bmr",
+    "http://192.168.1.29:7000/bmr-form/get-bmr",
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -27,8 +27,8 @@ export const fetchBmr = createAsyncThunk("bmr/fetchBmr", async () => {
 const userSlice = createSlice({
   name: "users",
   initialState: {
-    users: [],  
-    bmrList: [], 
+    users: [],
+    bmrList: [],
   },
   reducers: {
     setUsers(state, action) {
@@ -60,7 +60,7 @@ const userSlice = createSlice({
       );
       if (index !== -1) {
         state.bmrList[index] = { ...state.bmrList[index], ...action.payload };
-        console.log("Updated BMR:", state.bmrList[index]); 
+        console.log("Updated BMR:", state.bmrList[index]);
       }
     },
     deleteUser(state, action) {
