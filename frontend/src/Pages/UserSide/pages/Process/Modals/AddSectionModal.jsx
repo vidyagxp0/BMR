@@ -91,7 +91,7 @@ const AddSectionModal = ({
     <div>
       <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-filter backdrop-blur-sm">
         <div
-          className="bg-white p-4 rounded shadow-lg"
+          className="bg-wihte border-2  p-4 rounded shadow-lg"
           style={{ width: "400px" }}
         >
           <h2 className="text-lg font-bold mb-4">

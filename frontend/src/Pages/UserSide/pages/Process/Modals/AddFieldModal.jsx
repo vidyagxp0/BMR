@@ -134,7 +134,9 @@ const AddFieldModal = ({
             <option value="number">Number</option>
             <option value="checkbox">Checkbox</option>
             <option value="dropdown">Dropdown</option>
+            <option value="grid">Grid</option>
             <option value="multi-select">Multi Select</option>
+
           </select>
           <input
             type="text"

@@ -1,19 +1,52 @@
-import React, { useEffect, useState } from 'react'
-import HeaderTop from '../../../Components/Header/HeaderTop'
-import HeaderBottom from '../../../Components/Header/HeaderBottom'
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import HeaderTop from "../../../Components/Header/HeaderTop";
+import HeaderBottom from "../../../Components/Header/HeaderBottom";
+import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
+import axios from "axios";
+import InitiateModal from "../Modals/InitiateModal";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [eLogSelect, setELogSelect] = useState("All_Records");
-  const [differentialPressureElogs, setDifferentialPressureElogs] = useState(
-    []
-  );
-  const [tempratureRecordElogs, setTempratureRecordElogs] = useState([]);
-  const [areaAndERecordElogs, setAreaAndERecordElogs] = useState([]);
-  const [equipmentCRecordElogs, setEquipmentCRecordElogs] = useState([]);
-  const userDetails = JSON.parse(localStorage.getItem("user-details"));
+  // const [eLogSelect, setELogSelect] = useState("All_Records");
+  // const [differentialPressureElogs, setDifferentialPressureElogs] = useState(
+  //   []
+  // );
+  // const [tempratureRecordElogs, setTempratureRecordElogs] = useState([]);
+  // const [areaAndERecordElogs, setAreaAndERecordElogs] = useState([]);
+  // const [equipmentCRecordElogs, setEquipmentCRecordElogs] = useState([]);
+  // const userDetails = JSON.parse(localStorage.getItem("user-details"));
+  const [showModal, setShowModal] = useState(false);
+  const [approvedBMR, setApprovedBMR] = useState([]);
+  useEffect(() => {
+    axios
+      .get(
+        "http://192.168.1.29:7000/bmr-form/get-approved-bmrs",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+          },
+        },
+        approvedBMR
+      )
+
+      .then((response) => {
+        setApprovedBMR(response.data.message);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
+
+  // Function to open the modal
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  // Function to close the modal
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
   // useEffect(() => {
   //   const newConfig = {
@@ -95,32 +128,28 @@ const Dashboard = () => {
   // };
   return (
     <div>
-    
       <div className="desktop-input-table-wrapper">
         <div className="input-wrapper">
           <div className="group-input-2">
             <label>BMR</label>
-            <select
-              // value={eLogSelect}
-              // onChange={(e) => setELogSelect(e.target.value)}
-            >
-              <option value="All_Records">All Records</option>
-              <option value="diffrential_pressure">
-                Diffrential Pressure Record
-              </option>
-              <option value="area_and_equipment">
-                Area & Equipment Usage Log
-              </option>
-              <option value="equipment_cleaning">
-                Equipment Cleaning Checklist
-              </option>
-              <option value="temperature_records">Temperature Records</option>
+            <select id="options" name="options">
+              {approvedBMR.map((item, index) => (
+                <option key={index} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
             </select>
           </div>
-          <button className="btn">Print</button>
+          <button className="btn" onClick={openModal}>
+            Initiate
+          </button>
         </div>
 
-        <table className='mb-5'>
+        {showModal && (
+          <InitiateModal approvedBMR={approvedBMR} onClose={closeModal} />
+        )}
+
+        <table className="mb-5">
           <thead>
             <tr>
               <th>S no</th>
@@ -291,7 +320,7 @@ const Dashboard = () => {
         </table>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;
