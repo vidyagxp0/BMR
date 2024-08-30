@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 import BMRRecords from "../pages/BMRRecords/BMRRecords";
-import HeaderTop from "../../../Components/Header/HeaderTop";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const InitiateModal = ({ approvedBMR, onClose }) => {
   const [openBMRRecordsModal, setOpenBMRRecordsModal] = useState(false);
-  const navigate = useNavigate();
+  const [selectedBMR, setSelectedBMR] = useState(null);
 
-  const handleOpenRecordModal = () => {
+  const handleOpenRecordModal = (item) => {
+    setSelectedBMR(item);
     setOpenBMRRecordsModal(true);
+    console.log(selectedBMR, "selectedBMR: ");
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      {/* <HeaderTop/> */}
       <div className="bg-gray-100 rounded-lg shadow-lg w-full max-w-lg">
         <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-pretty text-xl w-full font-semibold text-gray-800 ">
+          <h2 className="text-xl font-semibold text-gray-800">
             Initiate BMR Record
           </h2>
           <button
@@ -34,9 +34,10 @@ const InitiateModal = ({ approvedBMR, onClose }) => {
                 className="px-4 py-2 bg-white hover:bg-blue-100 rounded-md shadow-lg"
               >
                 <button
-                  className="text-gray-800 border-1 hover:font-extrabold cursor-pointer border-black font-thin"
-                  onClick={handleOpenRecordModal}
-                >• {item.name}
+                  className="text-gray-800 font-thin hover:font-extrabold cursor-pointer"
+                  onClick={() => handleOpenRecordModal(item)}
+                >
+                  • {item.name}
                 </button>
               </div>
             ))}
@@ -44,7 +45,7 @@ const InitiateModal = ({ approvedBMR, onClose }) => {
         </div>
         <div className="flex justify-end p-4 border-t">
           <button
-            className="px-4 py-2  bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-1000 focus:outline-none"
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-1000 focus:outline-none"
             onClick={onClose}
           >
             Close
@@ -52,11 +53,7 @@ const InitiateModal = ({ approvedBMR, onClose }) => {
         </div>
       </div>
       {openBMRRecordsModal && (
-        <BMRRecords
-          approvedBMR={approvedBMR}
-          onClose={onClose}
-          navigate="process/processdetails/bmr_records"
-        />
+        <BMRRecords selectedBMR={selectedBMR} onClose={onClose} />
       )}
     </div>
   );

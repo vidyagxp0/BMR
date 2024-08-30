@@ -438,9 +438,8 @@ const BMRProcessDetails = () => {
 
         "Reviewer Remarks": reviewerFields,
       }));
-      console.log(reviewerFields,"reviewer")
+      console.log(reviewerFields, "reviewer");
     }
-  
   };
 
   // Call the functions when the component mounts or data changes
@@ -1000,6 +999,8 @@ const BMRProcessDetails = () => {
           bmr_tab_id={currentTabId}
           existingTabName={existingTabName}
           openConfirmPopup={isPopupOpen}
+          setIsPopupOpen ={setIsPopupOpen}
+
         />
       )}
 
@@ -1049,7 +1050,7 @@ const BMRProcessDetails = () => {
           onSubmit={handlePopupSubmit}
         />
       )}
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 };
