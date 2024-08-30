@@ -30,7 +30,6 @@ function CreateRecordModal({ open, onClose }) {
   const [approvers, setApprovers] = useState([]);
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
   const [isSelectedApprover, setIsSelectedApprover] = useState([]);
-  const [isUserVerified, setIsUserVerified] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   const dispatch = useDispatch();

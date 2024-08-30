@@ -29,6 +29,9 @@ const AddSectionModal = ({
             bmr_tab_id: bmr_tab_id,
             section_name: sectionName,
             limit: limit,
+            email:verified.email,
+            password: verified.password,
+            declaration:verified.declaration
           },
           {
             headers: {
@@ -76,6 +79,9 @@ const AddSectionModal = ({
             bmr_tab_id: bmr_tab_id,
             section_name: sectionName,
             limit: limit,
+            email:verified.email,
+            password: verified.password,
+            declaration:verified.declaration
           },
           {
             headers: {

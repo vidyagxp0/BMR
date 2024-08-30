@@ -6,6 +6,7 @@ import Select from "react-select";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { updateBmr } from "../../../../userSlice";
+import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
 
 const modalStyle = {
   position: "absolute",
@@ -30,10 +31,15 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
   const [approvers, setApprovers] = useState([]);
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
   const [isSelectedApprover, setIsSelectedApprover] = useState([]);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+
   const dispatch = useDispatch();
 
+  const closeUserVerifiedModal = () => {
+    setShowVerificationModal(false);
+  };
+
   const updateBMR = (e) => {
-    e.preventDefault();
 
     if (!bmrData?.bmr_id) {
       toast.error("BMR ID is missing!");
@@ -53,6 +59,9 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         status: "pending",
         comment: null,
       })),
+      email:e.email,
+      password:e.password,
+      declaration:e.declaration,
     };
 
     axios
@@ -177,13 +186,19 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     }
   }, [bmrData, reviewers, approvers]);
 
+  const handleEditBmrClick = () => {
+    // Close the CreateRecordModal and open the UserVerificationPopUp
+    setShowVerificationModal(true);
+  };
+
   return (
-    <Modal open={true} onClose={onClose}>
+    <>
+    <Box open={true} onClose={onClose} sx={{ zIndex: 10 }}>
       <Box sx={modalStyle}>
         <Typography variant="h6" component="h2" align="center" gutterBottom>
           Edit BMR
         </Typography>
-        <form onSubmit={updateBMR} className="space-y-4">
+        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
           <TextField
             label="BMR Name"
             name="name"
@@ -249,13 +264,21 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
               color="primary"
               fullWidth
               sx={{ mt: 2 }}
+              onClick={handleEditBmrClick}
             >
               Update BMR
             </Button>
           </div>
         </form>
       </Box>
-    </Modal>
+    </Box>
+     {showVerificationModal && (
+      <UserVerificationPopUp
+        onClose={closeUserVerifiedModal}
+        onSubmit={updateBMR}
+      />
+    )}
+    </>
   );
 };
 
