@@ -59,9 +59,9 @@ function CreateRecordModal({ open, onClose }) {
             date_of_approval: "NA",
             comment: null,
           })),
-          email:email.email,
-          password:email.password,
-          declaration:email.declaration,
+          email:verified.email,
+          password:verified.password,
+          declaration:verified.declaration,
         }
        
         ,
@@ -192,7 +192,7 @@ function CreateRecordModal({ open, onClose }) {
 
   return (
     <>
-      <Modal open={true} onClose={onClose}>
+      <Box open={true} onClose={onClose} sx={{ zIndex: 10 }}>
         <Box sx={modalStyle}>
           <Typography variant="h6" component="h2" align="center" gutterBottom>
             Add BMR
@@ -285,7 +285,7 @@ function CreateRecordModal({ open, onClose }) {
             </div>
           </form>
         </Box>
-      </Modal>
+      </Box>
       {showVerificationModal && (
         <UserVerificationPopUp
           onClose={closeUserVerifiedModal}
