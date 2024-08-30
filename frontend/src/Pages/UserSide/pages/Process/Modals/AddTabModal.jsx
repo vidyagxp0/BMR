@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import AtmButton from "../../../../../AtmComponents/AtmButton";
 
@@ -9,59 +9,85 @@ const AddTabModal = ({
   updateTab,
   bmr_tab_id,
   existingTabName,
+  setIsPopupOpen,
 }) => {
-  // Set tabName directly from props if in edit mode
   const [tabName, setTabName] = useState(
     updateTab === "edit" ? existingTabName : ""
   );
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [declaration, setDeclaration] = useState("");
+  console.log(email, password, declaration, "doneeeeeee");
 
   const { bmr_id } = useParams();
+  const token = localStorage.getItem("user-token");
 
-  const handleSave = async () => {
-    if (updateTab === "add") {
-      try {
-        const response = await axios.post(
-          "http://192.168.1.29:7000/bmr-form/add-bmr-tab",
-          {
-            bmr_id: bmr_id,
-            tab_name: tabName,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-              "Content-Type": "application/json",
-            },
-          }
+  useEffect(() => {
+    // Fetch the existing data when the modal opens for editing
+    if (updateTab === "edit") {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(
+            `http://192.168.1.26:7000/bmr-form/get-bmr-tab/${bmr_tab_id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const { email, password, declaration } = response.data;
+          console.log(response, "fghf");
+          setEmail(email);
+          setPassword(password);
+          setDeclaration(declaration);
+        } catch (error) {
+          console.error("Error fetching tab data:", error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [updateTab, bmr_tab_id, token]);
+
+  const handleSave = async (very) => {
+    try {
+      const requestData = {
+        bmr_id:very.bmr_id,
+        tab_name: very.tabName,
+        email: very.email,
+        password: very.password,
+        declaration: very.declaration,
+      };
+  
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      };
+  
+      if (updateTab === "add") {
+        await axios.post(
+          "http://192.168.1.26:7000/bmr-form/add-bmr-tab",
+          requestData,
+          config
         );
-
-        addTab({ tab_name: tabName });
-        closeModal();
-      } catch (error) {
-        console.error("Error adding tab:", error);
-      }
-    } else if (updateTab === "edit") {
-      try {
-        const response = await axios.put(
-          `http://192.168.1.29:7000/bmr-form/edit-bmr-tab/${bmr_tab_id}`,
-          {
-            bmr_id: bmr_id,
-            tab_name: tabName,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-              "Content-Type": "application/json",
-            },
-          }
+      } else if (updateTab === "edit") {
+        await axios.put(
+          `http://192.168.1.26:7000/bmr-form/edit-bmr-tab/${bmr_tab_id}`,
+          requestData,
+          config
         );
-
-        addTab({ tab_name: tabName });
-        closeModal();
-      } catch (error) {
-        console.error("Error editing tab:", error);
       }
+  
+      addTab({ tab_name: tabName });
+      closeModal();
+      setIsPopupOpen(true);
+    } catch (error) {
+      console.error("Error handling tab operation:", error.response ? error.response.data : error.message);
     }
   };
+
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-filter backdrop-blur-sm">

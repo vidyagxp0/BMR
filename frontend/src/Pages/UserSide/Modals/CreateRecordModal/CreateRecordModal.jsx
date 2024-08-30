@@ -35,7 +35,7 @@ function CreateRecordModal({ open, onClose }) {
     e.preventDefault();
     axios
       .post(
-        "http://192.168.1.29:7000/bmr-form/add-bmr",
+        "http://192.168.1.26:7000/bmr-form/add-bmr",
         {
           name: formData.name,
           reviewers: isSelectedReviewer.map((reviewer) => ({
@@ -79,7 +79,7 @@ function CreateRecordModal({ open, onClose }) {
   useEffect(() => {
     axios
       .post(
-        "http://192.168.1.29:7000/bmr-form/get-user-roles",
+        "http://192.168.1.26:7000/bmr-form/get-user-roles",
         {
           role_id: 3,
         },
@@ -111,7 +111,7 @@ function CreateRecordModal({ open, onClose }) {
 
     axios
       .post(
-        "http://192.168.1.29:7000/bmr-form/get-user-roles",
+        "http://192.168.1.26:7000/bmr-form/get-user-roles",
         {
           role_id: 4,
         },
