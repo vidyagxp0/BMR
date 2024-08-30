@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import AtmButton from "../../../../../AtmComponents/AtmButton";
 import UserVerificationPopUp from "../../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
@@ -10,6 +10,7 @@ const AddTabModal = ({
   updateTab,
   bmr_tab_id,
   existingTabName,
+  setIsPopupOpen,
 }) => {
   const [tabName, setTabName] = useState(
     updateTab === "edit" ? existingTabName : ""
@@ -17,6 +18,7 @@ const AddTabModal = ({
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   const { bmr_id } = useParams();
+  const token = localStorage.getItem("user-token");
 
   const handleVerificationSubmit = async (verified) => {
     try {
