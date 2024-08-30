@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import UserVerificationPopUp from "../../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
 
 const AddFieldModal = ({
   closeModal,
@@ -32,6 +33,8 @@ const AddFieldModal = ({
     bmr_section_id: bmr_section_id,
   });
 
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+
   useEffect(() => {
     if (updateField === "edit-field" && existingFieldData) {
       setFieldData((prevData) => ({
@@ -61,7 +64,7 @@ const AddFieldModal = ({
     }));
   };
 
-  const handleSave = async () => {
+  const handleVerificationSubmit = async (verified) => {
     try {
       const response = await axios({
         method: updateField === "add-field" ? "post" : "put",
@@ -69,7 +72,10 @@ const AddFieldModal = ({
           updateField === "add-field"
             ? "http://192.168.1.26:7000/bmr-form/add-bmr-field"
             : `http://192.168.1.26:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
-        data: { bmr_id, ...fieldData },
+        data: { bmr_id, ...fieldData , 
+          email:verified.email,
+          password:verified.password,
+          declaration:verified.declaration},
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",
@@ -96,6 +102,14 @@ const AddFieldModal = ({
       ...prevData,
       acceptsMultiple: [...prevData.acceptsMultiple, ""],
     }));
+  };
+
+  const handleSave = () => {
+    setShowVerificationModal(true);
+  };
+
+  const handleVerificationClose = () => {
+    setShowVerificationModal(false);
   };
 
   return (
@@ -295,6 +309,12 @@ const AddFieldModal = ({
           </button>
         </div>
       </div>
+      {showVerificationModal && (
+        <UserVerificationPopUp
+          onClose={handleVerificationClose}
+          onSubmit={handleVerificationSubmit}
+        />
+      )}
     </div>
   );
 };
