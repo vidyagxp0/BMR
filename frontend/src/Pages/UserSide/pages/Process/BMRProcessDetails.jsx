@@ -640,7 +640,7 @@ const BMRProcessDetails = () => {
           ))}
         </div>
       )}
- 
+
       {showForm === "default" && (
         <div className="relative h-screen ">
           <div className="overflow-auto border border-gray-500 p-6 mb-16">

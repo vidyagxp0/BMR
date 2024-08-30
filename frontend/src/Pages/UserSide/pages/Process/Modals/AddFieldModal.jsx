@@ -137,7 +137,6 @@ const AddFieldModal = ({
             <option value="dropdown">Dropdown</option>
             <option value="grid">Grid</option>
             <option value="multi-select">Multi Select</option>
-
           </select>
           <input
             type="text"

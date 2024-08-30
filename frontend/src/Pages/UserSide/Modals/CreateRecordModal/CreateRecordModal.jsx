@@ -61,7 +61,7 @@ function CreateRecordModal({ open, onClose }) {
         }
       )
       .then((response) => {
-        toast.success(response.data.message || "BMR added successfully!"); 
+        toast.success(response.data.message || "BMR added successfully!");
         dispatch(addBmr(response.data.bmr));
         setFormData({ name: "", reviewers: [], approvers: [] });
         setIsSelectedReviewer([]);
@@ -92,7 +92,7 @@ function CreateRecordModal({ open, onClose }) {
       )
       .then((response) => {
         const reviewerOptions = [
-          { value: 'select-all', label: 'Select All' },
+          { value: "select-all", label: "Select All" },
           ...new Map(
             response.data.message.map((role) => [
               role.user_id,
@@ -124,7 +124,7 @@ function CreateRecordModal({ open, onClose }) {
       )
       .then((response) => {
         const approverOptions = [
-          { value: 'select-all', label: 'Select All' },
+          { value: "select-all", label: "Select All" },
           ...new Map(
             response.data.message.map((role) => [
               role.user_id,
@@ -150,15 +150,19 @@ function CreateRecordModal({ open, onClose }) {
   };
 
   const handleSelectChange = (selected, field) => {
-    if (selected.some((option) => option.value === 'select-all')) {
-      const allOptions = field === 'reviewers' ? reviewers : approvers;
+    if (selected.some((option) => option.value === "select-all")) {
+      const allOptions = field === "reviewers" ? reviewers : approvers;
       const nonSelectAllOptions = allOptions.filter(
-        (option) => option.value !== 'select-all'
+        (option) => option.value !== "select-all"
       );
-      setIsSelectedReviewer(field === 'reviewers' ? nonSelectAllOptions : isSelectedReviewer);
-      setIsSelectedApprover(field === 'approvers' ? nonSelectAllOptions : isSelectedApprover);
+      setIsSelectedReviewer(
+        field === "reviewers" ? nonSelectAllOptions : isSelectedReviewer
+      );
+      setIsSelectedApprover(
+        field === "approvers" ? nonSelectAllOptions : isSelectedApprover
+      );
     } else {
-      field === 'reviewers'
+      field === "reviewers"
         ? setIsSelectedReviewer(selected)
         : setIsSelectedApprover(selected);
     }
@@ -208,7 +212,7 @@ function CreateRecordModal({ open, onClose }) {
               isMulti
               options={reviewers}
               value={isSelectedReviewer}
-              onChange={(selected) => handleSelectChange(selected, 'reviewers')}
+              onChange={(selected) => handleSelectChange(selected, "reviewers")}
               styles={{
                 control: (provided) => ({
                   ...provided,
@@ -231,7 +235,7 @@ function CreateRecordModal({ open, onClose }) {
               isMulti
               options={approvers}
               value={isSelectedApprover}
-              onChange={(selected) => handleSelectChange(selected, 'approvers')}
+              onChange={(selected) => handleSelectChange(selected, "approvers")}
               styles={{
                 control: (provided) => ({
                   ...provided,

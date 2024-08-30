@@ -27,8 +27,8 @@ export const fetchBmr = createAsyncThunk("bmr/fetchBmr", async () => {
 const userSlice = createSlice({
   name: "users",
   initialState: {
-    users: [],  
-    bmrList: [], 
+    users: [],
+    bmrList: [],
   },
   reducers: {
     setUsers(state, action) {
@@ -60,7 +60,7 @@ const userSlice = createSlice({
       );
       if (index !== -1) {
         state.bmrList[index] = { ...state.bmrList[index], ...action.payload };
-        console.log("Updated BMR:", state.bmrList[index]); 
+        console.log("Updated BMR:", state.bmrList[index]);
       }
     },
     deleteUser(state, action) {
