@@ -59,12 +59,11 @@ function CreateRecordModal({ open, onClose }) {
             date_of_approval: "NA",
             comment: null,
           })),
-          email:email.email,
-          password:email.password,
-          declaration:email.declaration,
-        }
-       
-        ,
+          email: email.email,
+          password: email.password,
+          declaration: email.declaration,
+        },
+
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -218,7 +217,11 @@ function CreateRecordModal({ open, onClose }) {
               }}
             />
             <div>
-              <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+              <Typography
+                variant="subtitle2"
+                color="textSecondary"
+                gutterBottom
+              >
                 Reviewer
               </Typography>
               <Select
@@ -226,7 +229,9 @@ function CreateRecordModal({ open, onClose }) {
                 isMulti
                 options={reviewers}
                 value={isSelectedReviewer}
-                onChange={(selected) => handleSelectChange(selected, "reviewers")}
+                onChange={(selected) =>
+                  handleSelectChange(selected, "reviewers")
+                }
                 styles={{
                   control: (provided) => ({
                     ...provided,
@@ -241,7 +246,11 @@ function CreateRecordModal({ open, onClose }) {
             </div>
 
             <div>
-              <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+              <Typography
+                variant="subtitle2"
+                color="textSecondary"
+                gutterBottom
+              >
                 Approver
               </Typography>
               <Select
@@ -249,7 +258,9 @@ function CreateRecordModal({ open, onClose }) {
                 isMulti
                 options={approvers}
                 value={isSelectedApprover}
-                onChange={(selected) => handleSelectChange(selected, "approvers")}
+                onChange={(selected) =>
+                  handleSelectChange(selected, "approvers")
+                }
                 styles={{
                   control: (provided) => ({
                     ...provided,

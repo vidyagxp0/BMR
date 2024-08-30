@@ -28,9 +28,9 @@ const AddTabModal = ({
           {
             bmr_id: bmr_id,
             tab_name: tabName,
-            email:verified.email,
-            password:verified.password,
-            declaration:verified.declaration
+            email: verified.email,
+            password: verified.password,
+            declaration: verified.declaration,
           },
           {
             headers: {

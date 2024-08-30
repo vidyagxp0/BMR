@@ -3,6 +3,7 @@ import HeaderTop from "../../../../Components/Header/HeaderTop";
 
 const BMRRecords = ({ selectedBMR, onClose }) => {
   const [activeTab, setActiveTab] = useState("General Information");
+  console.log(activeTab, "activeTab");
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -26,7 +27,7 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
           </h2>
         </div>
 
-        <div className="flex justify-around items-center bg-gradient-to-r from-green-400 to-blue-500 mt-2 p-4 rounded-lg shadow-lg">
+        <div className="flex justify-around items-center bg-gradient-to-r from-blue-400 to-cyan-500 mt-2 p-4 rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold text-white font-sans">
             BMR ID :{" "}
             <span className="text-gray-800"> {selectedBMR.bmr_id}</span>
@@ -47,7 +48,7 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
         <div className="flex justify-start space-x-2 px-4 pb-4">
           {[
             "General Information",
-            ...selectedBMR.BMR_Tabs.map((tab) => tab.name),
+            ...selectedBMR.BMR_Tabs.map((tab) => tab.tab_name),
           ].map((tab) => (
             <Button
               key={tab}
@@ -61,22 +62,37 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
         <div className="p-6">
           {activeTab === "General Information" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <InputField label="Initiator Name" />
-              <InputField label="Date of Initiation" type="date" />
+              <InputField label="Initiator Name" value={selectedBMR.name} />
+              <InputField
+                label="Date of Initiation"
+                type="date"
+                value={formattedDate}
+              />
               <div className="relative">
-                <InputField label="Initiator Comments" type="text" />
+                <InputField
+                  label="Initiator Comments"  
+                  value={selectedBMR.initiatorComment || ""}
+                />
               </div>
             </div>
           )}
 
           {selectedBMR.BMR_Tabs.map(
             (tab) =>
-              activeTab === tab.name && (
+              activeTab === tab.tab_name && (
                 <div
-                  key={tab.name}
+                  key={tab.tab_name}
                   className="grid grid-cols-1 md:grid-cols-3 gap-10"
                 >
-                  <InputField label={tab.name} />
+                  {tab.BMR_sections.map((section, index) => (
+                    <InputField
+                      key={index}
+                      label={section.label}
+                      type={section.type || "text"}
+                      value={section.value || ""}
+                      placeholder={section.placeholder}
+                    />
+                  ))}
                 </div>
               )
           )}
@@ -114,7 +130,7 @@ const Button = ({ label, active, onClick }) => (
   </button>
 );
 
-const InputField = ({ label, type = "text", placeholder }) => (
+const InputField = ({ label, type = "text", placeholder, value }) => (
   <div>
     <label
       className="block text-gray-700 font-bold p-2 mb-2"
@@ -126,6 +142,7 @@ const InputField = ({ label, type = "text", placeholder }) => (
     <input
       type={type}
       placeholder={placeholder}
+      value={value}
       className="w-full px-3 h-10 p-2 border border-gray-400 rounded shadow-md  focus:border-blue-500 transition duration-200"
     />
   </div>
