@@ -21,7 +21,7 @@ const AddTabModal = ({
     if (updateTab === "add") {
       try {
         const response = await axios.post(
-          "http://195.35.6.197:7000/bmr-form/add-bmr-tab",
+          "http://192.168.1.29:7000/bmr-form/add-bmr-tab",
           {
             bmr_id: bmr_id,
             tab_name: tabName,
@@ -42,7 +42,7 @@ const AddTabModal = ({
     } else if (updateTab === "edit") {
       try {
         const response = await axios.put(
-          `http://195.35.6.197:7000/bmr-form/edit-bmr-tab/${bmr_tab_id}`,
+          `http://192.168.1.29:7000/bmr-form/edit-bmr-tab/${bmr_tab_id}`,
           {
             bmr_id: bmr_id,
             tab_name: tabName,
