@@ -130,7 +130,7 @@ const BMRProcessDetails = () => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.29:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.26:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -207,7 +207,7 @@ const BMRProcessDetails = () => {
       // data.initiatorAttachment = editData?.initiatorAttachment;
       axios
         .put(
-          "http://192.168.1.29:7000/bmr-form/send-BMR-for-review",
+          "http://192.168.1.26:7000/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -225,7 +225,7 @@ const BMRProcessDetails = () => {
       // data.reviewerAttachment = editData.reviewerAttachment;
       axios
         .put(
-          "http://192.168.1.29:7000/bmr-form/send-BMR-from-review-to-approval",
+          "http://192.168.1.26:7000/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -243,7 +243,7 @@ const BMRProcessDetails = () => {
       // data.reviewerAttachment = editData.reviewerAttachment;
       axios
         .put(
-          "http://192.168.1.29:7000/bmr-form/send-BMR-from-review-to-open",
+          "http://192.168.1.26:7000/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -259,7 +259,7 @@ const BMRProcessDetails = () => {
       // data.approverAttachment = editData.approverAttachment;
       axios
         .put(
-          "http://192.168.1.29:7000/bmr-form/approve-BMR",
+          "http://192.168.1.26:7000/bmr-form/approve-BMR",
           dataObject,
           config
         )
@@ -277,7 +277,7 @@ const BMRProcessDetails = () => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.29:7000/bmr-form/send-BMR-from-approval-to-open",
+          "http://192.168.1.26:7000/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -470,7 +470,6 @@ const BMRProcessDetails = () => {
                 onClick={() => (
                   setIsAddTabModalOpen(true),
                   setUpdateTabModalOpen("add"),
-                  setIsPopupOpen(true),
                   setPopupAction("add-tab")
                 )}
                 className="bg-pink-700 hover:bg-pink-900 px-4 py-2"
@@ -484,7 +483,6 @@ const BMRProcessDetails = () => {
                     onClick={() => (
                       setIsSectionModalOpen(true),
                       setUpdateSectionModalOpen("add-section"),
-                      setIsPopupOpen(true),
                       setPopupAction("add-section")
                     )}
                     className="bg-purple-700 hover:bg-purple-950 px-4 py-2"
@@ -500,7 +498,6 @@ const BMRProcessDetails = () => {
                     onClick={() => (
                       setIsAddFieldModalOpen(true),
                       setUpdateFieldModalOpen("add-field"),
-                      setIsPopupOpen(true),
                       setPopupAction("add-field")
                     )}
                     className="bg-green-700 hover:bg-green-950 px-4 py-2"
