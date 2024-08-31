@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
 import HeaderTop from "../../../../Components/Header/HeaderTop";
 
@@ -6,23 +7,16 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
   const [initiatorName, setInitiatorName] = useState(selectedBMR.name || "");
   const [initiatorComment, setInitiatorComment] = useState(selectedBMR.initiatorComment || "");
   const [dateOfInitiation, setDateOfInitiation] = useState(selectedBMR.date_of_initiation || "");
+  const [dynamicFields, setDynamicFields] = useState({"General Information": {},...selectedBMR.BMR_Tabs.reduce((acc, tab) =>{acc[tab.tab_name]={}; return acc}, {})});
 
-  // State to hold dynamic field values for each tab
-  const [dynamicFields, setDynamicFields] = useState({
-    "General Information": {},
-    ...selectedBMR.BMR_Tabs.reduce((acc, tab) => {
-      acc[tab.tab_name] = {};
-      return acc;
-    }, {}),
-  });
+  console.log(initiatorName,initiatorComment,dateOfInitiation,dynamicFields,"Completed Storing Data here Successfully!!");
 
   useEffect(() => {
-    // Initialize dynamic fields state based on selectedBMR.BMR_Tabs
     const initialFields = {};
-    selectedBMR.BMR_Tabs.forEach(tab => {
-      tab.BMR_sections.forEach(section => {
-        section.BMR_fields.forEach(field => {
-          initialFields[field.id] = field.value || ""; // Assuming each field has a unique 'id'
+    selectedBMR.BMR_Tabs.forEach((tab) => {
+      tab.BMR_sections.forEach((section) => {
+        section.BMR_fields.forEach((field) => {
+          initialFields[field.id] = field.value || ""; 
         });
       });
     });
@@ -31,14 +25,12 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
       "General Information": initialFields,
     }));
   }, [selectedBMR]);
-
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
 
-  const formattedDate = new Date(dateOfInitiation).toISOString().split("T")[0]; // Format date for input
+  const formattedDate = new Date(dateOfInitiation).toISOString().split("T")[0]; 
 
-  // Handler for dynamic field changes
   const handleDynamicFieldChange = (id, value, tab) => {
     setDynamicFields((prevFields) => ({
       ...prevFields,
@@ -54,21 +46,27 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
       <div className="w-full h-full bg-white shadow-lg rounded-lg overflow-hidden ">
         <HeaderTop />
         <div className="flex justify-around items-center bg-gradient-to-r bg-gray-50 mt-2 p-4 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold text-black font-serif">Initiate BMR Records</h2>
+          <h2 className="text-2xl font-bold text-black font-serif">
+            Initiate BMR Records
+          </h2>
         </div>
 
         <div className="flex justify-around items-center bg-gradient-to-r from-cyan-400 to-gray-200 mt-2 p-4 rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold text-white font-sans">
-            BMR ID : <span className="text-gray-800"> {selectedBMR.bmr_id}</span>
+            BMR ID :{" "}
+            <span className="text-gray-800"> {selectedBMR.bmr_id}</span>
           </h2>
           <h2 className="text-lg font-semibold text-white font-sans">
-            BMR Name : <span className="text-gray-800"> {selectedBMR.name}</span>
+            BMR Name :{" "}
+            <span className="text-gray-800"> {selectedBMR.name}</span>
           </h2>
           <h2 className="text-lg font-semibold text-white font-sans">
-            Date of Initiation : <span className="text-gray-800"> {formattedDate}</span>
+            Date of Approval :{" "}
+            <span className="text-gray-800"> {formattedDate}</span>
           </h2>
           <h2 className="text-lg font-semibold text-white font-sans">
-            Status : <span className="text-gray-800 ">{selectedBMR.status}</span>
+            Status :{" "}
+            <span className="text-gray-800 ">{selectedBMR.status}</span>
           </h2>
         </div>
 
@@ -92,8 +90,8 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
               <div className="p-4 border border-gray-300 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95 shadow-lg">
                 <InputField
                   label="Initiator Name"
-                  value={selectedBMR.name}
-                  // onChange={(e) => setInitiatorName(e.target.value)}
+                  value={selectedBMR.initiator}
+                  onChange={(e) => setInitiatorName(e.target.value)}
                   className="rounded-md p-2 focus:outline-none"
                 />
               </div>
@@ -144,7 +142,13 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
                           type={field.type || "text"}
                           value={dynamicFields[activeTab][field.id] || ""} // Bind to dynamic field state based on active tab
                           placeholder={field.placeholder}
-                          onChange={(e) => handleDynamicFieldChange(field.id, e.target.value, activeTab)} // Update dynamic field value based on active tab
+                          onChange={(e) =>
+                            handleDynamicFieldChange(
+                              field.id,
+                              e.target.value,
+                              activeTab
+                            )
+                          } // Update dynamic field value based on active tab
                           className="mb-4 rounded-md p-2"
                         />
                       ))}
