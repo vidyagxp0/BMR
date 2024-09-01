@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UserVerificationPopUp from "../../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
 
 const DeleteModal = ({
   onClose,
@@ -15,38 +16,34 @@ const DeleteModal = ({
   fetchBMRData,
   bmr_field_id,
 }) => {
-  const handleDelete = async () => {
-    if (itemType === "tab") {
-      try {
-        const response = await axios.delete(
-          `http://195.35.6.197:7000/bmr-form/delete-bmr-tab/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
 
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+
+  const handleVerificationSubmit = async (verified) => {
+    console.log("Verification data:", verified);
+    try {
+      const commonConfig = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+          "Content-Type": "application/json",
+        },
+      };
+  
+      if (itemType === "tab") {
+        const response = await axios.delete(
+          `http://192.168.1.17:7000/bmr-form/delete-bmr-tab/${id}`,
+          commonConfig,
+          {email: verified.email,
+            password: verified.password,
+            declaration: verified.declaration},
+        );
         const updatedTabs = newTab.filter((tab) => tab.bmr_tab_id !== id);
         setNewTab(updatedTabs);
-        fetchBMRData();
         toast.success("Tab deleted successfully!");
-        onClose();
-      } catch (error) {
-        console.error("Error deleting tab:", error);
-        toast.error("Error deleting tab!");
-      }
-    } else if (itemType === "section") {
-      try {
+      } else if (itemType === "section") {
         const response = await axios.delete(
-          `http://195.35.6.197:7000/bmr-form/delete-bmr-section/${section_id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-              "Content-Type": "application/json",
-            },
-          }
+          `http://192.168.1.17:7000/bmr-form/delete-bmr-section/${section_id}`,
+          commonConfig
         );
         const updatedSections = newTab.map((tab) => {
           if (tab.BMR_sections) {
@@ -59,48 +56,48 @@ const DeleteModal = ({
           }
           return tab;
         });
-
-        setNewTab(updatedSections); // Update the newTab state with the filtered sections
-        fetchBMRData();
+        setNewTab(updatedSections);
         toast.success("Field deleted successfully!");
-        onClose();
-      } catch (error) {
-        console.error("Error deleting Field:", error);
-        toast.error("Error deleting Field!");
-      }
-    } else if (itemType === "field") {
-      try {
+      } else if (itemType === "field") {
         const response = await axios.delete(
-          `http://195.35.6.197:7000/bmr-form/delete-bmr-field/${bmr_field_id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-              "Content-Type": "application/json",
-            },
-          }
+          `http://192.168.1.17:7000/bmr-form/delete-bmr-field/${bmr_field_id}`,
+          commonConfig,
+          {email: verified.email,
+            password: verified.password,
+            declaration: verified.declaration}
         );
         const updatedSections = newTab.map((tab) => {
           if (tab.BMR_fields) {
             return {
               ...tab,
               BMR_fields: tab.BMR_fields.filter(
-                (section) => section.bmr_section_id !== section_id
+                (field) => field.bmr_section_id !== section_id
               ),
             };
           }
           return tab;
         });
-
-        setNewTab(updatedSections); // Update the newTab state with the filtered sections
-        fetchBMRData();
+        setNewTab(updatedSections);
         toast.success("Section deleted successfully!");
-        onClose();
-      } catch (error) {
-        console.error("Error deleting Section:", error);
-        toast.error("Error deleting Section!");
       }
+  
+      fetchBMRData();
+      onClose();
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Error deleting item!");
     }
   };
+  
+
+  const handleDelete = () => {
+    setShowVerificationModal(true);
+  };
+
+  const handleVerificationClose = () => {
+    setShowVerificationModal(false);
+  };
+
 
   return (
     <div>
@@ -129,6 +126,12 @@ const DeleteModal = ({
         </div>
         <ToastContainer />
       </div>
+      {showVerificationModal && (
+        <UserVerificationPopUp
+          onClose={handleVerificationClose}
+          onSubmit={handleVerificationSubmit}
+        />
+      )}
     </div>
   );
 };

@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AtmButton from "../../../../../AtmComponents/AtmButton";
+import UserVerificationPopUp from "../../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
 
 const AddSectionModal = ({
   closeModal,
@@ -15,18 +16,22 @@ const AddSectionModal = ({
     updateSection === "edit-section" ? existingSectionName : ""
   );
   const [limit, setLimit] = useState();
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
   const { bmr_id } = useParams();
 
-  const handleSave = async () => {
+  const handleVerificationSubmit = async (verified) => {
     if (updateSection === "add-section") {
       try {
         const response = await axios.post(
-          `http://195.35.6.197:7000/bmr-form/add-bmr-section`,
+          `http://192.168.1.17:7000/bmr-form/add-bmr-section`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
             section_name: sectionName,
             limit: limit,
+            email:verified.email,
+            password: verified.password,
+            declaration:verified.declaration
           },
           {
             headers: {
@@ -43,12 +48,15 @@ const AddSectionModal = ({
     } else if (updateSection === "edit-section") {
       try {
         const response = await axios.put(
-          `http://195.35.6.197:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          `http://192.168.1.17:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
             section_name: sectionName,
             limit: limit,
+            email: verified.email,
+            password: verified.password,
+            declaration: verified.declaration,
           },
           {
             headers: {
@@ -65,12 +73,15 @@ const AddSectionModal = ({
     } else if (updateSection === "edit-section") {
       try {
         const response = await axios.put(
-          `http://195.35.6.197:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          `http://192.168.1.17:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
             section_name: sectionName,
             limit: limit,
+            email:verified.email,
+            password: verified.password,
+            declaration:verified.declaration
           },
           {
             headers: {
@@ -87,11 +98,19 @@ const AddSectionModal = ({
     }
   };
 
+  const handleVerificationClose = () => {
+    setShowVerificationModal(false);
+  };
+
+  const handleSave = () => {
+    setShowVerificationModal(true);
+  };
+
   return (
     <div>
       <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-filter backdrop-blur-sm">
         <div
-          className="bg-white p-4 rounded shadow-lg"
+          className="bg-wihte border-2  p-4 rounded shadow-lg"
           style={{ width: "400px" }}
         >
           <h2 className="text-lg font-bold mb-4">
@@ -141,6 +160,12 @@ const AddSectionModal = ({
           </div>
         </div>
       </div>
+      {showVerificationModal && (
+        <UserVerificationPopUp
+          onClose={handleVerificationClose}
+          onSubmit={handleVerificationSubmit}
+        />
+      )}
     </div>
   );
 };

@@ -6,16 +6,17 @@ import Select from "react-select";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { updateBmr } from "../../../../userSlice";
+import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
 
 const modalStyle = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: '90%',
+  width: "90%",
   maxWidth: 600,
   bgcolor: "background.paper",
-  borderRadius: '8px',
+  borderRadius: "8px",
   boxShadow: 24,
   p: 4,
 };
@@ -30,10 +31,15 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
   const [approvers, setApprovers] = useState([]);
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
   const [isSelectedApprover, setIsSelectedApprover] = useState([]);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+
   const dispatch = useDispatch();
 
+  const closeUserVerifiedModal = () => {
+    setShowVerificationModal(false);
+  };
+
   const updateBMR = (e) => {
-    e.preventDefault();
 
     if (!bmrData?.bmr_id) {
       toast.error("BMR ID is missing!");
@@ -47,16 +53,20 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         status: "pending",
         comment: null,
       })),
+
       approvers: isSelectedApprover.map((approver) => ({
         approverId: approver.value,
         status: "pending",
         comment: null,
       })),
+      email:e.email,
+      password:e.password,
+      declaration:e.declaration,
     };
 
     axios
       .put(
-        `http://195.35.6.197:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
+        `http://192.168.1.17:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
         updatedBMRData,
         {
           headers: {
@@ -76,7 +86,10 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         }
       })
       .catch((error) => {
-        toast.error("Failed to update BMR: " + (error.response?.data?.message || error.message));
+        toast.error(
+          "Failed to update BMR: " +
+            (error.response?.data?.message || error.message)
+        );
       });
   };
 
@@ -86,12 +99,12 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         value: "selectAll",
         label,
       },
-      ...options.filter((option, index, self) =>
-        index === self.findIndex((t) => t.value === option.value)
+      ...options.filter(
+        (option, index, self) =>
+          index === self.findIndex((t) => t.value === option.value)
       ), // Ensure unique options
     ];
   };
-  
 
   const handleSelectChange = (selected, setSelected, options) => {
     if (selected && selected.some((option) => option.value === "selectAll")) {
@@ -105,7 +118,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     const fetchRoles = async () => {
       try {
         const reviewerResponse = await axios.post(
-          "http://195.35.6.197:7000/bmr-form/get-user-roles",
+          "http://192.168.1.17:7000/bmr-form/get-user-roles",
           {
             role_id: 3,
           },
@@ -123,7 +136,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         setReviewers(addSelectAllOption(reviewerOptions));
 
         const approverResponse = await axios.post(
-          "http://195.35.6.197:7000/bmr-form/get-user-roles",
+          "http://192.168.1.17:7000/bmr-form/get-user-roles",
           {
             role_id: 4,
           },
@@ -173,33 +186,39 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     }
   }, [bmrData, reviewers, approvers]);
 
+  const handleEditBmrClick = () => {
+    // Close the CreateRecordModal and open the UserVerificationPopUp
+    setShowVerificationModal(true);
+  };
+
   return (
-    <Modal open={true} onClose={onClose}>
-    <Box sx={modalStyle}>
-      <Typography variant="h6" component="h2" align="center" gutterBottom>
-        Edit BMR
-      </Typography>
-      <form onSubmit={updateBMR} className="space-y-4">
-        <TextField
-          label="BMR Name"
-          name="name"
-          fullWidth
-          margin="normal"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          variant="outlined"
-          InputProps={{
-            style: {
-              height: "48px",
-            },
-          }}
-          InputLabelProps={{
-            style: {
-              top: "0",
-            },
-          }}
-        />
-       
+    <>
+    <Box open={true} onClose={onClose} sx={{ zIndex: 10 }}>
+      <Box sx={modalStyle}>
+        <Typography variant="h6" component="h2" align="center" gutterBottom>
+          Edit BMR
+        </Typography>
+        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+          <TextField
+            label="BMR Name"
+            name="name"
+            fullWidth
+            margin="normal"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            variant="outlined"
+            InputProps={{
+              style: {
+                height: "48px",
+              },
+            }}
+            InputLabelProps={{
+              style: {
+                top: "0",
+              },
+            }}
+          />
+
           <div>
             <label htmlFor="" className="text-sm text-blue-500">
               Reviewer
@@ -245,13 +264,21 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
               color="primary"
               fullWidth
               sx={{ mt: 2 }}
+              onClick={handleEditBmrClick}
             >
               Update BMR
             </Button>
           </div>
         </form>
       </Box>
-    </Modal>
+    </Box>
+     {showVerificationModal && (
+      <UserVerificationPopUp
+        onClose={closeUserVerifiedModal}
+        onSubmit={updateBMR}
+      />
+    )}
+    </>
   );
 };
 

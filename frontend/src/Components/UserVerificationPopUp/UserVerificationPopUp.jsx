@@ -11,20 +11,21 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
   const navigate = useNavigate();
   const [flag, setFlag] = useState(false);
 
-  useEffect(() => {
-    if (flag) {
-      toast.success("Successfully Initiated");
-      navigate("/process/bmr_process");
-      console.log(flag,"okkkkkkk")
-    } else {
-      toast.error("An error occurred. Please try again.");
-      console.log(flag,"errorrrr")
-    }
-  }, [flag, navigate]);
+  // useEffect(() => {
+  //   if (flag) {
+  //     toast.success("Successfully Initiated");
+  //     navigate("/process/bmr_process");
+  //     console.log(flag, "okkkkkkk");
+  //   } else {
+  //     toast.error("An error occurred. Please try again.");
+  //     console.log(flag, "errorrrr");
+  //   }
+  // }, [flag, navigate]);
 
   const handleFlag = () => {
     setFlag(true);
     console.log("Flag is set to true", flag);
+    navigate("/process/bmr_process");
   };
 
   //   const data = {
@@ -35,7 +36,7 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
 
   //   try {
   //     const response = await axios.post(
-  //       "http://195.35.6.197:7000/user/user-verification", // Corrected URL
+  //       "http://192.168.1.17:7000/user/user-verification",
   //       data,
   //       {
   //         headers: { "Content-Type": "application/json" },

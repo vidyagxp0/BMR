@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { addBmr } from "../../../../userSlice";
 import axios from "axios";
+import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
 
 const modalStyle = {
   position: "absolute",
@@ -29,13 +30,18 @@ function CreateRecordModal({ open, onClose }) {
   const [approvers, setApprovers] = useState([]);
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
   const [isSelectedApprover, setIsSelectedApprover] = useState([]);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+
   const dispatch = useDispatch();
 
-  const addBMRs = (e) => {
-    e.preventDefault();
+  const closeUserVerifiedModal = () => {
+    setShowVerificationModal(false);
+  };
+
+  const handleVerificationSubmit = (verified) => {
     axios
       .post(
-        "http://195.35.6.197:7000/bmr-form/add-bmr",
+        "http://192.168.1.17:7000/bmr-form/add-bmr",
         {
           name: formData.name,
           reviewers: isSelectedReviewer.map((reviewer) => ({
@@ -52,7 +58,12 @@ function CreateRecordModal({ open, onClose }) {
             date_of_approval: "NA",
             comment: null,
           })),
-        },
+          email:verified.email,
+          password:verified.password,
+          declaration:verified.declaration,
+        }
+       
+        ,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -61,12 +72,13 @@ function CreateRecordModal({ open, onClose }) {
         }
       )
       .then((response) => {
-        toast.success(response.data.message || "BMR added successfully!"); 
+        toast.success(response.data.message || "BMR added successfully!");
         dispatch(addBmr(response.data.bmr));
         setFormData({ name: "", reviewers: [], approvers: [] });
         setIsSelectedReviewer([]);
         setIsSelectedApprover([]);
         setTimeout(() => {
+          closeUserVerifiedModal();
           onClose();
         }, 1000);
       })
@@ -79,10 +91,8 @@ function CreateRecordModal({ open, onClose }) {
   useEffect(() => {
     axios
       .post(
-        "http://195.35.6.197:7000/bmr-form/get-user-roles",
-        {
-          role_id: 3,
-        },
+        "http://192.168.1.17:7000/bmr-form/get-user-roles",
+        { role_id: 3 },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -92,7 +102,7 @@ function CreateRecordModal({ open, onClose }) {
       )
       .then((response) => {
         const reviewerOptions = [
-          { value: 'select-all', label: 'Select All' },
+          { value: "select-all", label: "Select All" },
           ...new Map(
             response.data.message.map((role) => [
               role.user_id,
@@ -111,10 +121,8 @@ function CreateRecordModal({ open, onClose }) {
 
     axios
       .post(
-        "http://195.35.6.197:7000/bmr-form/get-user-roles",
-        {
-          role_id: 4,
-        },
+        "http://192.168.1.17:7000/bmr-form/get-user-roles",
+        { role_id: 4 },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -124,7 +132,7 @@ function CreateRecordModal({ open, onClose }) {
       )
       .then((response) => {
         const approverOptions = [
-          { value: 'select-all', label: 'Select All' },
+          { value: "select-all", label: "Select All" },
           ...new Map(
             response.data.message.map((role) => [
               role.user_id,
@@ -150,15 +158,19 @@ function CreateRecordModal({ open, onClose }) {
   };
 
   const handleSelectChange = (selected, field) => {
-    if (selected.some((option) => option.value === 'select-all')) {
-      const allOptions = field === 'reviewers' ? reviewers : approvers;
+    if (selected.some((option) => option.value === "select-all")) {
+      const allOptions = field === "reviewers" ? reviewers : approvers;
       const nonSelectAllOptions = allOptions.filter(
-        (option) => option.value !== 'select-all'
+        (option) => option.value !== "select-all"
       );
-      setIsSelectedReviewer(field === 'reviewers' ? nonSelectAllOptions : isSelectedReviewer);
-      setIsSelectedApprover(field === 'approvers' ? nonSelectAllOptions : isSelectedApprover);
+      setIsSelectedReviewer(
+        field === "reviewers" ? nonSelectAllOptions : isSelectedReviewer
+      );
+      setIsSelectedApprover(
+        field === "approvers" ? nonSelectAllOptions : isSelectedApprover
+      );
     } else {
-      field === 'reviewers'
+      field === "reviewers"
         ? setIsSelectedReviewer(selected)
         : setIsSelectedApprover(selected);
     }
@@ -172,95 +184,126 @@ function CreateRecordModal({ open, onClose }) {
     });
   }, [isSelectedReviewer, isSelectedApprover]);
 
+  const handleAddBmrClick = () => {
+    // Close the CreateRecordModal and open the UserVerificationPopUp
+    setShowVerificationModal(true);
+  };
+
   return (
-    <Modal open={true} onClose={onClose}>
-      <Box sx={modalStyle}>
-        <Typography variant="h6" component="h2" align="center" gutterBottom>
-          Add BMR
-        </Typography>
-        <form onSubmit={addBMRs} className="space-y-4">
-          <TextField
-            label="BMR Name"
-            name="name"
-            fullWidth
-            margin="normal"
-            value={formData.name}
-            onChange={handleChange}
-            variant="outlined"
-            InputProps={{
-              style: {
-                height: "48px",
-              },
-            }}
-            InputLabelProps={{
-              style: {
-                top: "0",
-              },
-            }}
-          />
-          <div>
-            <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-              Reviewer
-            </Typography>
-            <Select
-              name="reviewers"
-              isMulti
-              options={reviewers}
-              value={isSelectedReviewer}
-              onChange={(selected) => handleSelectChange(selected, 'reviewers')}
-              styles={{
-                control: (provided) => ({
-                  ...provided,
-                  borderColor: "#d0d0d0",
-                  boxShadow: "none",
-                  "&:hover": {
-                    borderColor: "#a0a0a0",
-                  },
-                }),
-              }}
-            />
-          </div>
-
-          <div>
-            <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-              Approver
-            </Typography>
-            <Select
-              name="approvers"
-              isMulti
-              options={approvers}
-              value={isSelectedApprover}
-              onChange={(selected) => handleSelectChange(selected, 'approvers')}
-              styles={{
-                control: (provided) => ({
-                  ...provided,
-                  borderColor: "#d0d0d0",
-                  boxShadow: "none",
-                  "&:hover": {
-                    borderColor: "#a0a0a0",
-                  },
-                }),
-              }}
-            />
-          </div>
-
-          <div className="flex gap-4">
-            <Button
-              type="button"
-              variant="outlined"
-              color="error"
+    <>
+      <Box open={true} onClose={onClose} sx={{ zIndex: 10 }}>
+        <Box sx={modalStyle}>
+          <Typography variant="h6" component="h2" align="center" gutterBottom>
+            Add BMR
+          </Typography>
+          <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+            <TextField
+              label="BMR Name"
+              name="name"
               fullWidth
-              onClick={onClose}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" variant="contained" color="primary" fullWidth>
-              Add BMR
-            </Button>
-          </div>
-        </form>
+              margin="normal"
+              value={formData.name}
+              onChange={handleChange}
+              variant="outlined"
+              InputProps={{
+                style: {
+                  height: "48px",
+                },
+              }}
+              InputLabelProps={{
+                style: {
+                  top: "0",
+                },
+              }}
+            />
+            <div>
+              <Typography
+                variant="subtitle2"
+                color="textSecondary"
+                gutterBottom
+              >
+                Reviewer
+              </Typography>
+              <Select
+                name="reviewers"
+                isMulti
+                options={reviewers}
+                value={isSelectedReviewer}
+                onChange={(selected) =>
+                  handleSelectChange(selected, "reviewers")
+                }
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    borderColor: "#d0d0d0",
+                    boxShadow: "none",
+                    "&:hover": {
+                      borderColor: "#a0a0a0",
+                    },
+                  }),
+                }}
+              />
+            </div>
+
+            <div>
+              <Typography
+                variant="subtitle2"
+                color="textSecondary"
+                gutterBottom
+              >
+                Approver
+              </Typography>
+              <Select
+                name="approvers"
+                isMulti
+                options={approvers}
+                value={isSelectedApprover}
+                onChange={(selected) =>
+                  handleSelectChange(selected, "approvers")
+                }
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    borderColor: "#d0d0d0",
+                    boxShadow: "none",
+                    "&:hover": {
+                      borderColor: "#a0a0a0",
+                    },
+                  }),
+                }}
+              />
+            </div>
+
+            <div className="flex gap-4">
+              <Button
+                type="button"
+                variant="outlined"
+                color="error"
+                fullWidth
+                onClick={onClose}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={handleAddBmrClick}
+              >
+                Add BMR
+              </Button>
+            </div>
+          </form>
+        </Box>
       </Box>
-    </Modal>
+      {showVerificationModal && (
+        <UserVerificationPopUp
+          onClose={closeUserVerifiedModal}
+          onSubmit={handleVerificationSubmit}
+        />
+      )}
+    </>
   );
 }
 

@@ -130,7 +130,7 @@ const BMRProcessDetails = () => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://195.35.6.197:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.17:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -195,6 +195,7 @@ const BMRProcessDetails = () => {
       password: credentials?.password,
       reviewComment: "editData.reviewComment",
       approverComment: "editData.approverComment",
+      declaration:credentials?.declaration, 
     };
     const config = {
       headers: {
@@ -207,7 +208,7 @@ const BMRProcessDetails = () => {
       // data.initiatorAttachment = editData?.initiatorAttachment;
       axios
         .put(
-          "http://195.35.6.197:7000/bmr-form/send-BMR-for-review",
+          "http://192.168.1.17:7000/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -225,7 +226,7 @@ const BMRProcessDetails = () => {
       // data.reviewerAttachment = editData.reviewerAttachment;
       axios
         .put(
-          "http://195.35.6.197:7000/bmr-form/send-BMR-from-review-to-approval",
+          "http://192.168.1.17:7000/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -243,7 +244,7 @@ const BMRProcessDetails = () => {
       // data.reviewerAttachment = editData.reviewerAttachment;
       axios
         .put(
-          "http://195.35.6.197:7000/bmr-form/send-BMR-from-review-to-open",
+          "http://192.168.1.17:7000/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -259,7 +260,7 @@ const BMRProcessDetails = () => {
       // data.approverAttachment = editData.approverAttachment;
       axios
         .put(
-          "http://195.35.6.197:7000/bmr-form/approve-BMR",
+          "http://192.168.1.17:7000/bmr-form/approve-BMR",
           dataObject,
           config
         )
@@ -277,7 +278,7 @@ const BMRProcessDetails = () => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://195.35.6.197:7000/bmr-form/send-BMR-from-approval-to-open",
+          "http://192.168.1.17:7000/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -438,6 +439,7 @@ const BMRProcessDetails = () => {
 
         "Reviewer Remarks": reviewerFields,
       }));
+      console.log(reviewerFields, "reviewer");
     }
   };
 
@@ -468,7 +470,6 @@ const BMRProcessDetails = () => {
                 onClick={() => (
                   setIsAddTabModalOpen(true),
                   setUpdateTabModalOpen("add"),
-                  setIsPopupOpen(true),
                   setPopupAction("add-tab")
                 )}
                 className="bg-pink-700 hover:bg-pink-900 px-4 py-2"
@@ -482,7 +483,6 @@ const BMRProcessDetails = () => {
                     onClick={() => (
                       setIsSectionModalOpen(true),
                       setUpdateSectionModalOpen("add-section"),
-                      setIsPopupOpen(true),
                       setPopupAction("add-section")
                     )}
                     className="bg-purple-700 hover:bg-purple-950 px-4 py-2"
@@ -498,7 +498,6 @@ const BMRProcessDetails = () => {
                     onClick={() => (
                       setIsAddFieldModalOpen(true),
                       setUpdateFieldModalOpen("add-field"),
-                      setIsPopupOpen(true),
                       setPopupAction("add-field")
                     )}
                     className="bg-green-700 hover:bg-green-950 px-4 py-2"
@@ -629,8 +628,8 @@ const BMRProcessDetails = () => {
               onClick={() => handleSendFormTabClick(tab)}
               className={`py-2 px-4 rounded-full border-2 border-black ${
                 activeSendFormTab === tab
-                  ? "bg-gray-400 text-white"
-                  : "bg-gray-200 text-gray-700"
+                  ? "bg-blue-500 text-white text-lg"
+                  : "bg-blue-200 text-black text-lg"
               }`}
             >
               {tab.tab_name}
@@ -638,7 +637,7 @@ const BMRProcessDetails = () => {
           ))}
         </div>
       )}
- 
+
       {showForm === "default" && (
         <div className="relative h-screen ">
           <div className="overflow-auto border border-gray-500 p-6 mb-16">
@@ -863,8 +862,8 @@ const BMRProcessDetails = () => {
                   <div
                     className={`py-2 px-4 mb-2 cursor-pointer ${
                       activeSection === section
-                        ? "bg-gray-400 text-white"
-                        : "bg-gray-200"
+                        ? "bg-blue-300 text-gray-700"
+                        : "bg-blue-200 text-gray-400"
                     }`}
                   >
                     {section.section_name}
@@ -875,9 +874,9 @@ const BMRProcessDetails = () => {
                     <div
                       key={index}
                       onClick={() => handleFieldClick(field)}
-                      className="p-4 rounded bg-white shadow border border-gray-300"
+                      className="p-4 rounded bg-gray-50 shadow border border-gray-600"
                     >
-                      <label className="text-lg font-extrabold text-gray-700 flex gap-1 mb-2">
+                      <label className="text-lg font-extrabold text-gray-900 flex gap-1 mb-2">
                         {field.label}
                         <div className="text-red-500">
                           {field.isMandatory && " *"}
@@ -902,7 +901,7 @@ const BMRProcessDetails = () => {
                           placeholder={field.placeholder}
                           style={{ border: "1px solid gray", height: "48px" }}
                           type="password"
-                          className="border border-gray-600 p-2 w-full rounded"
+                          className="border border-gray-600 text-gray-600 p-2 w-full rounded"
                           required={field.isMandatory}
                           readOnly={field.isReadonly}
                         />
@@ -1000,6 +999,9 @@ const BMRProcessDetails = () => {
           updateTab={updateTabModalOpen}
           bmr_tab_id={currentTabId}
           existingTabName={existingTabName}
+          openConfirmPopup={isPopupOpen}
+          setIsPopupOpen ={setIsPopupOpen}
+
         />
       )}
 
