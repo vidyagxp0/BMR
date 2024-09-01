@@ -147,25 +147,25 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
       <div className="w-full h-full bg-white shadow-lg rounded-lg overflow-hidden ">
         <HeaderTop />
         <div className="flex justify-around items-center bg-gradient-to-r bg-gray-50 mt-2 p-4 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold text-black font-serif">
+          <h2 className="text-2xl font-bold text-black ">
             Initiate BMR Records
           </h2>
         </div>
 
         <div className="flex justify-around items-center bg-gradient-to-r from-cyan-400 to-gray-200 mt-2 p-4 rounded-lg shadow-lg">
-          <h2 className="text-lg font-semibold text-white font-sans">
+          <h2 className="text-lg font-semibold text-white ">
             BMR ID :{" "}
             <span className="text-gray-800"> {selectedBMR.bmr_id}</span>
           </h2>
-          <h2 className="text-lg font-semibold text-white font-sans">
+          <h2 className="text-lg font-semibold text-white ">
             BMR Name :{" "}
             <span className="text-gray-800"> {selectedBMR.name}</span>
           </h2>
-          <h2 className="text-lg font-semibold text-white font-sans">
+          <h2 className="text-lg font-semibold text-white ">
             Date of Approval :{" "}
             <span className="text-gray-800"> {formattedDate}</span>
           </h2>
-          <h2 className="text-lg font-semibold text-white font-sans">
+          <h2 className="text-lg font-semibold text-white ">
             Status :{" "}
             <span className="text-gray-800 ">{selectedBMR.status}</span>
           </h2>
@@ -319,7 +319,7 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
 
 const Button1 = ({ label, active, onClick }) => (
   <button
-    className={`px-4 py-2 my-4 text-gray-600 font-serif font-bold rounded-3xl transition duration-100 ${
+    className={`px-4 py-2 my-4 text-gray-600 font-semibold rounded-3xl transition duration-100 ${
       active
         ? "bg-blue-600 text-white hover:bg-blue-700"
         : "bg-blue-200 hover:bg-blue-600 hover:text-white"
