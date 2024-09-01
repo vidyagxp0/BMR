@@ -70,12 +70,15 @@ const AddFieldModal = ({
         method: updateField === "add-field" ? "post" : "put",
         url:
           updateField === "add-field"
-            ? "http://192.168.1.26:7000/bmr-form/add-bmr-field"
-            : `http://192.168.1.26:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
-        data: { bmr_id, ...fieldData , 
-          email:verified.email,
-          password:verified.password,
-          declaration:verified.declaration},
+            ? "http://195.35.6.197:7000/bmr-form/add-bmr-field"
+            : `http://195.35.6.197:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
+        data: {
+          bmr_id,
+          ...fieldData,
+          email: verified.email,
+          password: verified.password,
+          declaration: verified.declaration,
+        },
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",
