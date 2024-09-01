@@ -25,12 +25,12 @@ const BMRProcess = () => {
       Cell: ({ row }) => {
         return (
           <span
-            onClick={() => {
-              navigate(`/process/processdetails/${row.original.bmr_id}`);
-            }}
+           
             className="cursor-pointer hover:text-blue-500"
           >
-            {row.original.name}
+          <div  onClick={() => {
+              navigate(`/process/processdetails/${row.original.bmr_id}`);
+            }}>  {row.original.name}</div>
           </span>
         );
       },
@@ -74,7 +74,7 @@ const BMRProcess = () => {
   ];
   const fetchBMRData = () => {
     axios
-      .get("http://192.168.1.17:7000/bmr-form/get-all-bmr", {
+      .get("http://195.35.6.197:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },

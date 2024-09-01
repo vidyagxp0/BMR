@@ -66,7 +66,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
     axios
       .put(
-        `http://192.168.1.17:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
+        `http://195.35.6.197:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
         updatedBMRData,
         {
           headers: {
@@ -118,7 +118,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     const fetchRoles = async () => {
       try {
         const reviewerResponse = await axios.post(
-          "http://192.168.1.17:7000/bmr-form/get-user-roles",
+          "http://195.35.6.197:7000/bmr-form/get-user-roles",
           {
             role_id: 3,
           },
@@ -136,7 +136,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         setReviewers(addSelectAllOption(reviewerOptions));
 
         const approverResponse = await axios.post(
-          "http://192.168.1.17:7000/bmr-form/get-user-roles",
+          "http://195.35.6.197:7000/bmr-form/get-user-roles",
           {
             role_id: 4,
           },
