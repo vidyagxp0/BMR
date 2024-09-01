@@ -16,7 +16,6 @@ const DeleteModal = ({
   fetchBMRData,
   bmr_field_id,
 }) => {
-
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   const handleVerificationSubmit = async (verified) => {
@@ -28,14 +27,16 @@ const DeleteModal = ({
           "Content-Type": "application/json",
         },
       };
-  
+
       if (itemType === "tab") {
         const response = await axios.delete(
           `http://195.35.6.197:7000/bmr-form/delete-bmr-tab/${id}`,
           commonConfig,
-          {email: verified.email,
+          {
+            email: verified.email,
             password: verified.password,
-            declaration: verified.declaration},
+            declaration: verified.declaration,
+          }
         );
         const updatedTabs = newTab.filter((tab) => tab.bmr_tab_id !== id);
         setNewTab(updatedTabs);
@@ -62,9 +63,11 @@ const DeleteModal = ({
         const response = await axios.delete(
           `http://195.35.6.197:7000/bmr-form/delete-bmr-field/${bmr_field_id}`,
           commonConfig,
-          {email: verified.email,
+          {
+            email: verified.email,
             password: verified.password,
-            declaration: verified.declaration}
+            declaration: verified.declaration,
+          }
         );
         const updatedSections = newTab.map((tab) => {
           if (tab.BMR_fields) {
@@ -80,7 +83,7 @@ const DeleteModal = ({
         setNewTab(updatedSections);
         toast.success("Section deleted successfully!");
       }
-  
+
       fetchBMRData();
       onClose();
     } catch (error) {
@@ -88,7 +91,6 @@ const DeleteModal = ({
       toast.error("Error deleting item!");
     }
   };
-  
 
   const handleDelete = () => {
     setShowVerificationModal(true);
@@ -97,7 +99,6 @@ const DeleteModal = ({
   const handleVerificationClose = () => {
     setShowVerificationModal(false);
   };
-
 
   return (
     <div>

@@ -40,7 +40,6 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
   };
 
   const updateBMR = (e) => {
-
     if (!bmrData?.bmr_id) {
       toast.error("BMR ID is missing!");
       return;
@@ -59,9 +58,9 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         status: "pending",
         comment: null,
       })),
-      email:e.email,
-      password:e.password,
-      declaration:e.declaration,
+      email: e.email,
+      password: e.password,
+      declaration: e.declaration,
     };
 
     axios
@@ -193,91 +192,93 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
   return (
     <>
-    <Box open={true} onClose={onClose} sx={{ zIndex: 10 }}>
-      <Box sx={modalStyle}>
-        <Typography variant="h6" component="h2" align="center" gutterBottom>
-          Edit BMR
-        </Typography>
-        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
-          <TextField
-            label="BMR Name"
-            name="name"
-            fullWidth
-            margin="normal"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            variant="outlined"
-            InputProps={{
-              style: {
-                height: "48px",
-              },
-            }}
-            InputLabelProps={{
-              style: {
-                top: "0",
-              },
-            }}
-          />
+      <Box open={true} onClose={onClose} sx={{ zIndex: 10 }}>
+        <Box sx={modalStyle}>
+          <Typography variant="h6" component="h2" align="center" gutterBottom>
+            Edit BMR
+          </Typography>
+          <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+            <TextField
+              label="BMR Name"
+              name="name"
+              fullWidth
+              margin="normal"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              variant="outlined"
+              InputProps={{
+                style: {
+                  height: "48px",
+                },
+              }}
+              InputLabelProps={{
+                style: {
+                  top: "0",
+                },
+              }}
+            />
 
-          <div>
-            <label htmlFor="" className="text-sm text-blue-500">
-              Reviewer
-            </label>
-            <Select
-              name="reviewers"
-              isMulti
-              options={reviewers}
-              value={isSelectedReviewer}
-              onChange={(selected) =>
-                handleSelectChange(selected, setIsSelectedReviewer, reviewers)
-              }
-            />
-          </div>
-          <div>
-            <label htmlFor="" className="text-sm text-blue-500">
-              Approver
-            </label>
-            <Select
-              name="approvers"
-              options={approvers}
-              isMulti
-              value={isSelectedApprover}
-              onChange={(selected) =>
-                handleSelectChange(selected, setIsSelectedApprover, approvers)
-              }
-            />
-          </div>
-          <div className="flex gap-5">
-            <Button
-              type="button"
-              variant="contained"
-              color="error"
-              fullWidth
-              sx={{ mt: 2 }}
-              onClick={onClose}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ mt: 2 }}
-              onClick={handleEditBmrClick}
-            >
-              Update BMR
-            </Button>
-          </div>
-        </form>
+            <div>
+              <label htmlFor="" className="text-sm text-blue-500">
+                Reviewer
+              </label>
+              <Select
+                name="reviewers"
+                isMulti
+                options={reviewers}
+                value={isSelectedReviewer}
+                onChange={(selected) =>
+                  handleSelectChange(selected, setIsSelectedReviewer, reviewers)
+                }
+              />
+            </div>
+            <div>
+              <label htmlFor="" className="text-sm text-blue-500">
+                Approver
+              </label>
+              <Select
+                name="approvers"
+                options={approvers}
+                isMulti
+                value={isSelectedApprover}
+                onChange={(selected) =>
+                  handleSelectChange(selected, setIsSelectedApprover, approvers)
+                }
+              />
+            </div>
+            <div className="flex gap-5">
+              <Button
+                type="button"
+                variant="contained"
+                color="error"
+                fullWidth
+                sx={{ mt: 2 }}
+                onClick={onClose}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{ mt: 2 }}
+                onClick={handleEditBmrClick}
+              >
+                Update BMR
+              </Button>
+            </div>
+          </form>
+        </Box>
       </Box>
-    </Box>
-     {showVerificationModal && (
-      <UserVerificationPopUp
-        onClose={closeUserVerifiedModal}
-        onSubmit={updateBMR}
-      />
-    )}
+      {showVerificationModal && (
+        <UserVerificationPopUp
+          onClose={closeUserVerifiedModal}
+          onSubmit={updateBMR}
+        />
+      )}
     </>
   );
 };

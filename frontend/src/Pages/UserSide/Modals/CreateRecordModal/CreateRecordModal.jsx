@@ -58,12 +58,11 @@ function CreateRecordModal({ open, onClose }) {
             date_of_approval: "NA",
             comment: null,
           })),
-          email:verified.email,
-          password:verified.password,
-          declaration:verified.declaration,
-        }
-       
-        ,
+          email: verified.email,
+          password: verified.password,
+          declaration: verified.declaration,
+        },
+
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("user-token")}`,
