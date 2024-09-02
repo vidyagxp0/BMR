@@ -23,7 +23,7 @@ const AddSectionModal = ({
     if (updateSection === "add-section") {
       try {
         const response = await axios.post(
-          `http://192.168.1.17:7000/bmr-form/add-bmr-section`,
+          `http://195.35.6.197:7000/bmr-form/add-bmr-section`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
@@ -48,7 +48,7 @@ const AddSectionModal = ({
     } else if (updateSection === "edit-section") {
       try {
         const response = await axios.put(
-          `http://192.168.1.17:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          `http://195.35.6.197:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
@@ -73,15 +73,40 @@ const AddSectionModal = ({
     } else if (updateSection === "edit-section") {
       try {
         const response = await axios.put(
-          `http://192.168.1.17:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          `http://195.35.6.197:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
             section_name: sectionName,
             limit: limit,
-            email:verified.email,
+            email: verified.email,
             password: verified.password,
-            declaration:verified.declaration
+            declaration: verified.declaration,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        addSection(sectionName);
+        closeModal();
+      } catch (error) {
+        console.error("Error adding tab:", error);
+      }
+    } else if (updateSection === "edit-section") {
+      try {
+        const response = await axios.put(
+          `http://195.35.6.197:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          {
+            bmr_id: bmr_id,
+            bmr_tab_id: bmr_tab_id,
+            section_name: sectionName,
+            limit: limit,
+            email: verified.email,
+            password: verified.password,
+            declaration: verified.declaration,
           },
           {
             headers: {

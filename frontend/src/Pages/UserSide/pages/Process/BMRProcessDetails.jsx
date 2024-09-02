@@ -13,7 +13,6 @@ import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/
 
 const BMRProcessDetails = () => {
   const [data, setData] = useState([]);
-  console.log(data, "data");
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
@@ -111,10 +110,45 @@ const BMRProcessDetails = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteItemType, setDeleteItemType] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState({});
+  const [gridData, setGridData] = useState({});
   const { bmr_id } = useParams();
   const navigate = useNavigate();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
+
+  const handleGridChange = (tabName, rowIndex, columnName, value) => {
+    setFields((prevFields) => {
+      const updatedFields = { ...prevFields };
+      const field = updatedFields[tabName].find(
+        (fld) => fld.field_type === "grid"
+      );
+
+      if (field) {
+        field.gridData[rowIndex][columnName] = value;
+      }
+
+      return updatedFields;
+    });
+  };
+
+  const handleAddRow = (tabName) => {
+    setFields((prevFields) => {
+      const updatedFields = { ...prevFields };
+      const field = updatedFields[tabName].find(
+        (fld) => fld.field_type === "grid"
+      );
+      if (field) {
+        const newRow = field.acceptsMultiple.columns.reduce((acc, column) => {
+          acc[column.name] = "";
+          return acc;
+        }, {});
+        field.gridData.push(newRow);
+        field.acceptsMultiple.rows.push(newRow);
+      }
+      return updatedFields;
+    });
+  };
+
   const userDetails = JSON.parse(localStorage.getItem("user-details"));
   const handlePopupClose = () => {
     setIsPopupOpen(false);
@@ -130,7 +164,7 @@ const BMRProcessDetails = () => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.17:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://195.35.6.197:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -160,12 +194,10 @@ const BMRProcessDetails = () => {
 
   useEffect(() => {
     if (showForm === "sendForm" && newTab.length > 0) {
-      // Automatically set the first tab (index 0) as active
       const firstTab = newTab[0];
       setActiveSendFormTab(firstTab);
       setCurrentTabId(firstTab.bmr_tab_id);
     } else if (showForm === "sendForm" && newTab.length === 0) {
-      // Handle the case where there are no tabs (optional)
       setActiveSendFormTab(null);
       setCurrentTabId(null);
     }
@@ -176,12 +208,9 @@ const BMRProcessDetails = () => {
       setNewTab(updatedTabs);
       setNewFields({ ...newFields, [tabObject.tab_name]: [] });
       setNewSection({ ...newSection, [tabObject.tab_name]: [] });
-
-      // Check if it's the first tab being added, then set it as the active tab
       if (updatedTabs.length === 1) {
         setActiveSendFormTab(updatedTabs[0]);
       } else if (!activeSendFormTab) {
-        // If no tab is active, set the first tab as active
         setActiveSendFormTab(updatedTabs[0]);
       }
 
@@ -195,7 +224,7 @@ const BMRProcessDetails = () => {
       password: credentials?.password,
       reviewComment: "editData.reviewComment",
       approverComment: "editData.approverComment",
-      declaration:credentials?.declaration, 
+      declaration: credentials?.declaration,
     };
     const config = {
       headers: {
@@ -205,10 +234,9 @@ const BMRProcessDetails = () => {
     };
     if (popupAction === "sendFromOpenToReview") {
       dataObject.initiatorDeclaration = credentials?.declaration;
-      // data.initiatorAttachment = editData?.initiatorAttachment;
       axios
         .put(
-          "http://192.168.1.17:7000/bmr-form/send-BMR-for-review",
+          "http://195.35.6.197:7000/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -223,10 +251,9 @@ const BMRProcessDetails = () => {
         });
     } else if (popupAction === "sendFromReviewToApproval") {
       dataObject.reviewerDeclaration = credentials?.declaration;
-      // data.reviewerAttachment = editData.reviewerAttachment;
       axios
         .put(
-          "http://192.168.1.17:7000/bmr-form/send-BMR-from-review-to-approval",
+          "http://195.35.6.197:7000/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -241,10 +268,9 @@ const BMRProcessDetails = () => {
         });
     } else if (popupAction === "sendFromReviewToOpen") {
       dataObject.reviewerDeclaration = credentials?.declaration;
-      // data.reviewerAttachment = editData.reviewerAttachment;
       axios
         .put(
-          "http://192.168.1.17:7000/bmr-form/send-BMR-from-review-to-open",
+          "http://195.35.6.197:7000/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -257,10 +283,9 @@ const BMRProcessDetails = () => {
         });
     } else if (popupAction === "sendFromApprovalToApproved") {
       dataObject.approverDeclaration = credentials?.declaration;
-      // data.approverAttachment = editData.approverAttachment;
       axios
         .put(
-          "http://192.168.1.17:7000/bmr-form/approve-BMR",
+          "http://195.35.6.197:7000/bmr-form/approve-BMR",
           dataObject,
           config
         )
@@ -274,11 +299,10 @@ const BMRProcessDetails = () => {
           );
         });
     } else if (popupAction === "sendFromApprovalToOpen") {
-      // data.approverAttachment = editData.approverAttachment;
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.17:7000/bmr-form/send-BMR-from-approval-to-open",
+          "http://195.35.6.197:7000/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -311,11 +335,9 @@ const BMRProcessDetails = () => {
   const addSection = (sectionName) => {
     setNewSection((prevSections) => {
       const updatedSections = { ...prevSections };
-      // Ensure the activeTab exists in the updatedSections object
       if (!updatedSections[activeSendFormTab]) {
         updatedSections[activeSendFormTab] = [];
       }
-      // Check if the section already exists, if not, add it
       if (
         !updatedSections[activeSendFormTab].some(
           (section) => section.section_name === sectionName
@@ -324,10 +346,8 @@ const BMRProcessDetails = () => {
         updatedSections[activeSendFormTab].push({ section_name: sectionName });
         fetchBMRData();
       }
-      // Return the updated sections
       return updatedSections;
     });
-    // Update the sections state for the active tab
     setSection(activeSendFormTab, newSection[activeSendFormTab]);
   };
   const addField = (field) => {
@@ -342,11 +362,9 @@ const BMRProcessDetails = () => {
   };
   const handleSendFormTabClick = (tab) => {
     const tabIndex = newTab.findIndex((t) => t.bmr_tab_id === tab.bmr_tab_id);
-    // Set the active tab based on the index found
     setActiveSendFormTab(tab);
     setIsActiveTab(tabIndex);
     setCurrentTabId(tab.bmr_tab_id);
-    // console.log(tab.section_name,"handleSendFormTabClick")
     setActiveSection(null);
     setActiveField(null);
     setExistingTabName(tab.tab_name);
@@ -358,7 +376,6 @@ const BMRProcessDetails = () => {
     setExistingSectionName(section.section_name);
     setActiveField(null);
     setExistingFieldName(section);
-    // console.log(section,'section')
   };
 
   const handleFieldClick = (field) => {
@@ -369,7 +386,6 @@ const BMRProcessDetails = () => {
   const populateApproverFields = () => {
     if (data.length > 0) {
       const approvers = data[0].approvers || [];
-      // console.log(approvers, "approvers");
 
       const approverFields = approvers.flatMap((approver, idx) => [
         {
@@ -402,8 +418,6 @@ const BMRProcessDetails = () => {
       }));
     }
   };
-
-  // Populate the reviewers' data into the fields
 
   const populateReviewerFields = () => {
     if (data.length > 0) {
@@ -442,8 +456,6 @@ const BMRProcessDetails = () => {
       console.log(reviewerFields, "reviewer");
     }
   };
-
-  // Call the functions when the component mounts or data changes
 
   useEffect(() => {
     populateApproverFields();
@@ -688,7 +700,7 @@ const BMRProcessDetails = () => {
             {activeDefaultTab !== "Initiator Remarks" &&
               fields[activeDefaultTab]?.map((section, secIndex) => (
                 <div key={secIndex} className="mb-20">
-                  <div className="col-span-3 p-4 mt-4 text-right rounded bg-gray-100 mb-5 font-semibold text-gray-700 border border-gray-300">
+                  <div className="col-span-3 p-4 mt-4 rounded bg-gray-100 mb-5 font-semibold text-gray-700 border border-gray-300">
                     {section.section}
                   </div>
                   <div className="grid grid-cols-2 gap-4">
@@ -850,7 +862,7 @@ const BMRProcessDetails = () => {
 
       <div className="">
         {showForm === "sendForm" && activeSendFormTab && (
-          <div className="text-lg text-right flex flex-col gap-9 font-bold text-gray-500">
+          <div className="text-lg flex flex-col gap-9 font-bold text-gray-500">
             {activeSendFormTab?.BMR_sections?.map((section, index) => (
               <div
                 key={index}
@@ -894,6 +906,62 @@ const BMRProcessDetails = () => {
                           required={field.isMandatory}
                           readOnly={field.isReadonly}
                         />
+                      )}
+
+                      {field.field_type === "grid" && (
+                        <div>
+                          <table className="table-auto w-full border border-gray-600 mb-4">
+                            <thead>
+                              <tr>
+                                {field?.acceptsMultiple?.columns?.map(
+                                  (column, idx) => (
+                                    <th
+                                      key={idx}
+                                      className="border border-gray-600 p-2"
+                                    >
+                                      {column.name}
+                                    </th>
+                                  )
+                                )}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {field?.gridData?.map((row, rowIndex) => (
+                                <tr key={rowIndex}>
+                                  {field?.acceptsMultiple?.columns?.map(
+                                    (column, colIdx) => (
+                                      <td
+                                        key={colIdx}
+                                        className="border border-gray-600 p-2"
+                                      >
+                                        <input
+                                          type="text"
+                                          placeholder={column.placeholder}
+                                          value={row[column.name] || ""}
+                                          onChange={(e) =>
+                                            handleGridChange(
+                                              activeDefaultTab,
+                                              rowIndex,
+                                              column.name,
+                                              e.target.value
+                                            )
+                                          }
+                                          className="border border-gray-600 p-2 w-full rounded"
+                                        />
+                                      </td>
+                                    )
+                                  )}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                          <button
+                            onClick={() => handleAddRow(activeDefaultTab)}
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
+                          >
+                            Add Row
+                          </button>
+                        </div>
                       )}
 
                       {field.field_type === "password" && (
@@ -1000,8 +1068,7 @@ const BMRProcessDetails = () => {
           bmr_tab_id={currentTabId}
           existingTabName={existingTabName}
           openConfirmPopup={isPopupOpen}
-          setIsPopupOpen ={setIsPopupOpen}
-
+          setIsPopupOpen={setIsPopupOpen}
         />
       )}
 
