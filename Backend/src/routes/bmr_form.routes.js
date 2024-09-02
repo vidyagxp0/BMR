@@ -127,4 +127,10 @@ router.post(
   BmrController.GetUserOnBasisOfRoleGroup
 );
 
+router.post(
+  "/generate-report",
+  Auth.checkJwtToken,
+  BmrController.generateReport
+);
+
 module.exports = router;
