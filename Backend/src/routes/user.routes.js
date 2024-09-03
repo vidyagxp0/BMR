@@ -50,6 +50,7 @@ router.delete(
 );
 
 router.get("/get-all-users", Auth.checkJwtToken, UserController.getAllUsers);
+router.get("/get-a-user/:id", Auth.checkJwtToken, UserController.getAUser);
 
 router.post(
   "/reset-password",

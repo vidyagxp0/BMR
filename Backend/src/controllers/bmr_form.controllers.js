@@ -2524,3 +2524,41 @@ exports.generateReport = async (req, res) => {
     res.status(500).send("Error generating PDF");
   }
 };
+
+exports.getBMRformAuditTrail = async (req, res) => {
+  try {
+    // Extract bmr_id from request parameters
+    const BMRformId = req.params.id;
+
+    // Check if bmr_id is provided
+    if (!BMRformId) {
+      return res
+        .status(400)
+        .json({ error: true, message: "BMR Form ID is required." });
+    }
+
+    // Find all audit trail entries for the given bmr_id
+    const auditTrail = await FormAuditTrail.findAll({
+      where: { bmr_id: BMRformId },
+      include: {
+        model: User,
+        attributes: ["user_id", "name"],
+      },
+      order: [["auditTrail_id", "DESC"]],
+    });
+
+    if (!auditTrail || auditTrail.length === 0) {
+      return res.status(404).json({
+        error: true,
+        message: "No audit trail found for the given BMR form ID.",
+      });
+    }
+
+    return res.status(200).json({ error: false, auditTrail });
+  } catch (error) {
+    return res.status(500).json({
+      error: true,
+      message: `Error retrieving audit trail: ${error.message}`,
+    });
+  }
+}

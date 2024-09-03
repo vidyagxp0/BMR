@@ -202,7 +202,7 @@ exports.Userlogin = async (req, res) => {
 //   if (!email || !password) {
 //     return res
 //       .status(400)
-//       .json({ error: true, message: "Email and password are required" }); 
+//       .json({ error: true, message: "Email and password are required" });
 //   }
 
 //   try {
@@ -353,6 +353,26 @@ exports.getAllUsers = async (req, res) => {
     },
     include: {
       model: UserRole,
+    },
+  })
+    .then((result) => {
+      res.status(200).json({
+        error: false,
+        response: result,
+      });
+    })
+    .catch((e) => {
+      res.status(400).json({
+        error: true,
+        response: e.message,
+      });
+    });
+};
+exports.getAUser = async (req, res) => {
+  User.findOne({
+    where: {
+      isActive: true,
+      user_id: req.params.id,
     },
   })
     .then((result) => {
