@@ -2390,6 +2390,8 @@ exports.GetUserOnBasisOfRoleGroup = async (req, res) => {
 exports.generateReport = async (req, res) => {
   try {
     let reportData = req.body.reportData;
+    let initiator_name = await getUserById(reportData?.initiator);
+    reportData.initiator_name = initiator_name?.name;
 
     const getCurrentDateTime = () => {
       const now = new Date();
@@ -2434,13 +2436,14 @@ exports.generateReport = async (req, res) => {
         <div class="header-container">
           <table class="header-table">
             <tr>
-              <th colspan="2" class="header-title">BMR Report</th>
-              <th rowspan="2" class="header-logo">
-                <img src="${logoDataUri}" alt="Logo" style="max-width: 100px; height: auto;" />
+              <th colspan="2" class="header-title">BMR Form Report</th>
+              <th rowspan="1" class="header-logo">
+                <img src="${logoDataUri}" alt="Logo" style="height: 60px; width: auto;" />
               </th>
             </tr>
             <tr>
               <td class="header-info">BMR ID: ${reportData.bmr_id}</td>
+              <td class="header-info">BMR Name: ${reportData?.name}</td>
               <td class="header-info">Status: ${reportData?.status}</td>
             </tr>
           </table>
@@ -2561,4 +2564,4 @@ exports.getBMRformAuditTrail = async (req, res) => {
       message: `Error retrieving audit trail: ${error.message}`,
     });
   }
-}
+};
