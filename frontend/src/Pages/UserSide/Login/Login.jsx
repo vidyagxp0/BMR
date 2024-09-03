@@ -7,12 +7,16 @@ import AtmButton from "../../../AtmComponents/AtmButton";
 import AtmInput from "../../../AtmComponents/AtmInput";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
+import BMRRecords from "../pages/BMRRecords/BMRRecords";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [token, setToken] = useState("");
   const navigate = useNavigate();
+
+  console.log(token, "hgftghfghjgfgh");
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -21,24 +25,33 @@ const Login = () => {
       password: password,
     };
     axios
-      .post("http://195.35.6.197:7000/user/user-login", data, {
+      .post("http://192.168.1.27:7000/user/user-login", data, {
         headers: {
           "Content-Type": "application/json",
         },
       })
       .then((response) => {
-        navigate("/dashboard");
-        toast.success("Login Successful");
-        localStorage.setItem("user-token", response.data.token);
+        console.log("API Response:", response.data); // Log the entire response
+        const newToken = response.data.token;
+        console.log("Token:", newToken); // Log the token
 
-        const decoded = jwtDecode(response.data.token);
+        if (newToken) {
+          setToken(newToken); // Update state with new token
+          localStorage.setItem("user-token", newToken);
+          navigate("/dashboard");
+          toast.success("Login Successful");
 
-        // Storing the decoded user details in local storage
-        localStorage.setItem("user-details", JSON.stringify(decoded));
+          const decoded = jwtDecode(newToken);
+
+          // Storing the decoded user details in local storage
+          localStorage.setItem("user-details", JSON.stringify(decoded));
+        } else {
+          toast.error("Token not received from server");
+        }
       })
       .catch((error) => {
-        toast.error(error.response.data.message);
-        console.error(error, "Error in toast");
+        console.error("Login Error:", error); // Log error details
+        toast.error(error.response?.data?.message || "Login failed");
       });
   };
 
@@ -150,6 +163,7 @@ const Login = () => {
             className="w-full py-3 mt-4 bg-gradient-to-r from-blue-500 to-teal-400 text-white text-lg font-bold rounded-lg hover:from-blue-600 hover:to-teal-500 transition-all"
           />
         </form>
+        {/* <BMRRecords token={token} /> */}
       </div>
       <ToastContainer />
     </div>
