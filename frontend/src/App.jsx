@@ -16,6 +16,8 @@ import BMRProcess from "./Pages/UserSide/pages/Process/BMRProcess";
 import BMRDetails from "./Pages/UserSide/pages/BMRDetails/BMRDetails";
 import BMRProcessDetails from "./Pages/UserSide/pages/Process/BMRProcessDetails";
 import BMRRecords from "./Pages/UserSide/pages/BMRRecords/BMRRecords";
+import AuditTrail from "./Pages/UserSide/auditTrail/auditTrail";
+
 function App() {
   return (
     <>
@@ -47,6 +49,10 @@ function App() {
             />
           </Route>
 
+          <Route
+            path="/audit-trail"
+            element={<ProtectedUserRoute element={<AuditTrail />} />}
+          />
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="" element={<Wrapper />}>
             <Route

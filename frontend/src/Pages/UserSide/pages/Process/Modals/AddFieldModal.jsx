@@ -85,8 +85,8 @@ const AddFieldModal = ({
         method: updateField === "add-field" ? "post" : "put",
         url:
           updateField === "add-field"
-            ? "http://195.35.6.197:7000/bmr-form/add-bmr-field"
-            : `http://195.35.6.197:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
+            ? "http://localhost:7000/bmr-form/add-bmr-field"
+            : `http://localhost:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
         data: { bmr_id, ...fieldData , 
           email:verified.email,
           password:verified.password,
