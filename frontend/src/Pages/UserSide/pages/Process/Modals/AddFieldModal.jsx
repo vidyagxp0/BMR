@@ -33,10 +33,11 @@ const AddFieldModal = ({
     bmr_section_id: bmr_section_id,
   });
 
-  console.log(fieldData.acceptsMultiple,"hgdhfsdfjh")
+  console.log(fieldData.acceptsMultiple, "hgdhfsdfjh");
 
   const [showVerificationModal, setShowVerificationModal] = useState(false);
-  const [showGridColumnConfigModal, setShowGridColumnConfigModal] = useState(false);
+  const [showGridColumnConfigModal, setShowGridColumnConfigModal] =
+    useState(false);
 
   useEffect(() => {
     if (updateField === "edit-field" && existingFieldData) {
@@ -78,20 +79,24 @@ const AddFieldModal = ({
     }
   };
 
-  
   const handleVerificationSubmit = async (verified) => {
     try {
       const response = await axios({
         method: updateField === "add-field" ? "post" : "put",
         url:
           updateField === "add-field"
-            ? "http://195.35.6.197:7000/bmr-form/add-bmr-field"
-            : `http://195.35.6.197:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
-        data: { bmr_id, ...fieldData , 
-          email:verified.email,
-          password:verified.password,
-          declaration:verified.declaration,
-          acceptsMultiple: fieldData.field_type === "grid" ? fieldData.acceptsMultiple : fieldData.acceptsMultiple,
+            ? "http://192.168.1.27:7000/bmr-form/add-bmr-field"
+            : `http://192.168.1.27:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
+        data: {
+          bmr_id,
+          ...fieldData,
+          email: verified.email,
+          password: verified.password,
+          declaration: verified.declaration,
+          acceptsMultiple:
+            fieldData.field_type === "grid"
+              ? fieldData.acceptsMultiple
+              : fieldData.acceptsMultiple,
         },
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -337,13 +342,13 @@ const AddFieldModal = ({
           onSubmit={handleVerificationSubmit}
         />
       )}
-         {showGridColumnConfigModal && (
-          <GridColumnConfigModal
+      {showGridColumnConfigModal && (
+        <GridColumnConfigModal
           columns={fieldData.acceptsMultiple}
-            onSave={handleGridColumnConfigSave}
-            onClose={() => setShowGridColumnConfigModal(false)}
-          />
-        )}
+          onSave={handleGridColumnConfigSave}
+          onClose={() => setShowGridColumnConfigModal(false)}
+        />
+      )}
     </div>
   );
 };
