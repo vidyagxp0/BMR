@@ -4,17 +4,31 @@ import "./HeaderTop.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { FaCog, FaGlobe, FaHandsHelping, FaHeadset, FaSignOutAlt } from 'react-icons/fa'
+import { FaPeopleLine } from "react-icons/fa6";
+
+import {
+  FaCog,
+  FaGlobe,
+  FaHandsHelping,
+  FaHeadset,
+  FaSignOutAlt,
+} from "react-icons/fa";
 function HeaderTop() {
   const navigate = useNavigate();
   const [User, setUser] = useState(null);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user-token");
+    localStorage.removeItem("admin-token");
+    navigate("/");
+  };
 
   // const loggedInUser = useSelector((state) => state.loggedInUser.loggedInUser);
   // useEffect(() => {
   //   const requestOptions = {
   //     method: "GET",
-  //     url: `http://localhost:1000/user/get-a-user/${loggedInUser?.userId}`, 
-  //     headers: {}, 
+  //     url: `http://localhost:1000/user/get-a-user/${loggedInUser?.userId}`,
+  //     headers: {},
   //   };
 
   //   axios(requestOptions)
@@ -75,34 +89,43 @@ function HeaderTop() {
             <div className="bellLeft">
               <i className="ri-notification-3-fill"></i>
             </div>
-
+            <div className="mr-8">
+              <p className="text-black font-semibold font-serif mt-2 ">
+                Anshul Thakur
+              </p>
+            </div>
             <div className="drop-container">
-              <div className="drop-btn name-btn">
+              <div className="drop-btn name-btn ">
                 <div className="profile-img">
                   {/* <img src={User?.profile_pic} alt="Profile Picture" /> */}
                 </div>
               </div>
               <div className="drop-list">
-  {/* <div className="image">
-    <img src={User?.profile_pic} alt="Profile Picture" /> 
-    <div className="manager-name">{User?.name}</div>
-  </div> */}
-  <Link to="#" className="drop-item">
-    <FaCog size={24}  /> <div style={{paddingLeft:"10px"}}>Settings</div> 
-  </Link>
-  <Link to="#" className="drop-item">
-    <FaGlobe size={24}  /> <div style={{paddingLeft:"10px"}}>About</div> 
-  </Link>
-  <Link to="#" className="drop-item">
-    <FaHandsHelping size={24}  /> <div style={{paddingLeft:"10px"}}>Help</div> 
-  </Link>
-  <Link to="#" className="drop-item">
-    <FaHeadset size={24}  /> <div style={{paddingLeft:"10px"}}>Helpdesk Personnel</div>  
-  </Link>
-  <Link to="/" className="drop-item" onClick={"handleLogout"}>
-    <FaSignOutAlt size={24}  /> <div style={{paddingLeft:"10px"}}>Logout</div> 
-  </Link>
-</div>
+                {/* <div className="image">
+                <img src={User?.profile_pic} alt="Profile Picture" /> 
+                <div className="manager-name">{User?.name}</div>
+                </div> */}
+                <Link to="/boardOfDirectors" className="drop-item">
+                  <FaPeopleLine size={24} />
+                  <div style={{ paddingLeft: "10px" }}>Board Members</div>
+                </Link>
+                <Link to="/about" className="drop-item">
+                  <FaGlobe size={24} />
+                  <div style={{ paddingLeft: "10px" }}>About</div>
+                </Link>
+                <Link to="/help" className="drop-item">
+                  <FaHandsHelping size={24} />
+                  <div style={{ paddingLeft: "10px" }}>Help</div>
+                </Link>
+                <Link to="/helpdesk" className="drop-item">
+                  <FaHeadset size={24} />
+                  <div style={{ paddingLeft: "10px" }}>Helpdesk Personnel</div>
+                </Link>
+                <Link to="/" className="drop-item" onClick={handleLogout}>
+                  <FaSignOutAlt size={24} />
+                  <div style={{ paddingLeft: "10px" }}>Logout</div>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

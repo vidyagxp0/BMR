@@ -24,13 +24,15 @@ const BMRProcess = () => {
       accessor: "name",
       Cell: ({ row }) => {
         return (
-          <span
-           
-            className="cursor-pointer hover:text-blue-500"
-          >
-          <div  onClick={() => {
-              navigate(`/process/processdetails/${row.original.bmr_id}`);
-            }}>  {row.original.name}</div>
+          <span className="cursor-pointer hover:text-blue-500">
+            <div
+              onClick={() => {
+                navigate(`/process/processdetails/${row.original.bmr_id}`);
+              }}
+            >
+              {" "}
+              {row.original.name}
+            </div>
           </span>
         );
       },

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import BMRRecords from "../pages/BMRRecords/BMRRecords";
 import { useNavigate } from "react-router-dom";
+import BMRProcessDetails from "../pages/Process/BMRProcessDetails";
 
 const InitiateModal = ({ approvedBMR, onClose }) => {
   const [openBMRRecordsModal, setOpenBMRRecordsModal] = useState(false);
@@ -55,6 +56,7 @@ const InitiateModal = ({ approvedBMR, onClose }) => {
       {openBMRRecordsModal && (
         <BMRRecords selectedBMR={selectedBMR} onClose={onClose} />
       )}
+       
     </div>
   );
 };

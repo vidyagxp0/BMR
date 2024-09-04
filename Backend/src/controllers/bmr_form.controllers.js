@@ -9,6 +9,9 @@ const bcrypt = require("bcrypt");
 const { Op } = require("sequelize");
 const Mailer = require("../middlewares/mailer");
 const FormAuditTrail = require("../models/form_audittrail.model");
+const puppeteer = require("puppeteer");
+const path = require("path");
+const fs = require("fs");
 
 const getUserById = async (user_id) => {
   const user = await User.findOne({ where: { user_id, isActive: true } });
@@ -2381,5 +2384,143 @@ exports.GetUserOnBasisOfRoleGroup = async (req, res) => {
       error: true,
       message: `Error fetching users: ${error.message}`,
     });
+  }
+};
+
+exports.generateReport = async (req, res) => {
+  try {
+    let reportData = req.body.reportData;
+
+    const getCurrentDateTime = () => {
+      const now = new Date();
+      return now.toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+    };
+
+    const html = await new Promise((resolve, reject) => {
+      res.render("bmr_form_report", { reportData }, (err, html) => {
+        if (err) return reject(err);
+        resolve(html);
+      });
+    });
+
+    const browser = await puppeteer.launch({
+      headless: true,
+      timeout: 120000,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+
+    const page = await browser.newPage();
+    const logoPath = path.join(__dirname, "../public/vidyalogo.png.png");
+    const logoBase64 = fs.readFileSync(logoPath).toString("base64");
+    const logoDataUri = `data:image/png;base64,${logoBase64}`;
+
+    const user = await getUserById(req.user.userId);
+
+    await page.setContent(html, { waitUntil: "networkidle0" });
+
+    const pdf = await page.pdf({
+      format: "A4",
+      printBackground: true,
+      displayHeaderFooter: true,
+      headerTemplate: `
+        <div class="header-container">
+          <table class="header-table">
+            <tr>
+              <th colspan="2" class="header-title">BMR Report</th>
+              <th rowspan="2" class="header-logo">
+                <img src="${logoDataUri}" alt="Logo" style="max-width: 100px; height: auto;" />
+              </th>
+            </tr>
+            <tr>
+              <td class="header-info">BMR ID: ${reportData.bmr_id}</td>
+              <td class="header-info">Status: ${reportData?.status}</td>
+            </tr>
+          </table>
+        </div>
+        <style>
+          .header-container {
+            width: 100%;
+            padding: 0 50px;
+            box-sizing: border-box;
+          }
+          .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+            table-layout: fixed;
+          }
+          .header-table th, .header-table td {
+            border: 1px solid #000;
+            padding: 8px;
+          }
+          .header-title {
+            text-align: center;
+            font-size: 18px;
+            margin: 10px 0;
+          }
+          .header-info {
+            font-size: 12px;
+            text-align: center;
+          }
+        </style>
+      `,
+      footerTemplate: `
+        <style>
+          .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            font-size: 10px;
+            padding: 5px 0;
+          }
+          .leftContent, .centerContent, .rightContent {
+            display: inline-block;
+          }
+          .centerContent {
+            flex-grow: 1;
+            text-align: center;
+          }
+          .leftContent {
+            flex-grow: 0;
+            padding-left: 20px;
+          }
+          .rightContent {
+            flex-grow: 0;
+            padding-right: 20px;
+          }
+        </style>
+        <div class="footer">
+          <span class="leftContent">Printed on: ${getCurrentDateTime()}</span>
+          <span class="centerContent">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
+          <span class="rightContent">Printed by: ${
+            user ? user.name : "Unknown"
+          }</span>
+        </div>
+      `,
+      margin: {
+        top: "120px",
+        bottom: "60px",
+        right: "30px",
+        left: "30px",
+      },
+    });
+
+    await browser.close();
+
+    res.set("Content-Type", "application/pdf");
+    res.send(pdf);
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    res.status(500).send("Error generating PDF");
   }
 };

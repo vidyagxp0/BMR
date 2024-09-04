@@ -4,15 +4,12 @@ import HeaderTop from "../../../../Components/Header/HeaderTop";
 import Select from "react-select";
 import { Button } from "@mui/material";
 import axios from "axios";
-
+import { useParams } from "react-router-dom";
+import BMRProcessDetails from "../Process/BMRProcessDetails";
 const BMRRecords = ({ selectedBMR, onClose }) => {
   const [activeTab, setActiveTab] = useState("General Information");
-  const [initiatorName, setInitiatorName] = useState(selectedBMR.name || "");
-  const [initiatorComment, setInitiatorComment] = useState(
-    selectedBMR.initiatorComment || ""
-  );
   const [dateOfInitiation, setDateOfInitiation] = useState(
-    selectedBMR.date_of_initiation || ""
+    new Date().toISOString().split("T")[0] // Default to current date
   );
   const [dynamicFields, setDynamicFields] = useState({
     "General Information": {},
@@ -21,19 +18,35 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
       return acc;
     }, {}),
   });
-
-  console.log(
-    initiatorName,
-    initiatorComment,
-    dateOfInitiation,
-    dynamicFields,
-    "Completed Storing Data here Successfully!!"
-  );
-
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [selectedReviewers, setSelectedReviewers] = useState([]);
   const [selectedApprovers, setSelectedApprovers] = useState([]);
+  const Id = selectedBMR.initiator;
+  const { initiatorId: initiatorIdFromParams } = useParams();
+  const initiatorId = selectedBMR.initiator;
+  // console.log(initiatorId);a
+  // console.log(initiatorIdFromParams);
+  const [initiatorName, setInitiatorName] = useState(null);
+  // console.log(initiatorName);
+  const apiUrl = `http://195.35.6.197:7000/user/get-a-user/${Id}`;
+  const fetchUserData = async () => {
+    try {
+      const token = localStorage.getItem("user-token");
+      const response = await axios.get(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setInitiatorName(response.data.response.name);
+      console.log(response.data.response.name, "++++++++++++++++++");
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchUserData();
+  }, [Id]);
 
   useEffect(() => {
     const initialFields = {};
@@ -49,10 +62,10 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
       "General Information": initialFields,
     }));
   }, [selectedBMR]);
+
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
-
   useEffect(() => {
     const fetchUserRoles = async () => {
       try {
@@ -78,7 +91,6 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
             }
           ),
         ]);
-
         const reviewerOptions = [
           { value: "select-all", label: "Select All" },
           ...new Map(
@@ -113,7 +125,6 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
 
     fetchUserRoles();
   }, []);
-
   const handleSelectChange = (selected, field) => {
     if (selected.some((option) => option.value === "select-all")) {
       const allOptions = field === "reviewers" ? reviewers : approvers;
@@ -129,9 +140,9 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
         : setSelectedApprovers(selected);
     }
   };
-
-  const formattedDate = new Date(dateOfInitiation).toISOString().split("T")[0];
-
+  const formattedDate = new Date(selectedBMR.date_of_initiation)
+    .toISOString()
+    .split("T")[0];
   const handleDynamicFieldChange = (id, value, tab) => {
     setDynamicFields((prevFields) => ({
       ...prevFields,
@@ -141,7 +152,6 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
       },
     }));
   };
-
   return (
     <div className="w-full h-full absolute flex items-center justify-center mb-4">
       <div className="w-full h-full bg-white shadow-lg rounded-lg overflow-hidden ">
@@ -151,7 +161,6 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
             Initiate BMR Records
           </h2>
         </div>
-
         <div className="flex justify-around items-center bg-gradient-to-r from-cyan-400 to-gray-200 mt-2 p-4 rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold text-white ">
             BMR ID :{" "}
@@ -163,14 +172,13 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
           </h2>
           <h2 className="text-lg font-semibold text-white ">
             Date of Approval :{" "}
-            <span className="text-gray-800"> {formattedDate}</span>
+            <span className="text-gray-800">{formattedDate || "N/A"}</span>
           </h2>
           <h2 className="text-lg font-semibold text-white ">
             Status :{" "}
             <span className="text-gray-800 ">{selectedBMR.status}</span>
           </h2>
         </div>
-
         <div className="flex justify-start space-x-2 px-4 pb-4">
           {[
             "General Information",
@@ -184,14 +192,13 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
             />
           ))}
         </div>
-
         <div className="p-6">
           {activeTab === "General Information" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 p-6 text-lg font-semibold text-black rounded-lg shadow-lg">
               <div className="p-4 border border-gray-300 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95 shadow-lg">
                 <InputField
                   label="Initiator Name"
-                  value={selectedBMR.initiator}
+                  value={initiatorName}
                   onChange={(e) => setInitiatorName(e.target.value)}
                   className="rounded-md p-2 focus:outline-none"
                 />
@@ -202,7 +209,6 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
                   type="date"
                   value={dateOfInitiation}
                   onChange={(e) => setDateOfInitiation(e.target.value)}
-                  className="rounded-md p-2 focus:outline-none"
                 />
               </div>
               <div className="p-4 border border-gray-300 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95 shadow-lg">
@@ -253,7 +259,6 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
               </div>
             </div>
           )}
-
           {selectedBMR.BMR_Tabs.map(
             (tab) =>
               activeTab === tab.tab_name && (
@@ -279,7 +284,7 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
                           key={idx}
                           label={field.label || "Field Name"}
                           type={field.type || "text"}
-                          value={dynamicFields[activeTab][field.id] || ""} // Bind to dynamic field state based on active tab
+                          value={dynamicFields[activeTab][field.id] || ""}
                           placeholder={field.placeholder}
                           onChange={(e) =>
                             handleDynamicFieldChange(
@@ -287,7 +292,7 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
                               e.target.value,
                               activeTab
                             )
-                          } // Update dynamic field value based on active tab
+                          }
                           className="mb-4 rounded-md p-2"
                         />
                       ))}
@@ -297,7 +302,6 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
               )
           )}
         </div>
-
         <div className="flex justify-end gap-4 items-end p-4 border-t">
           <button
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none transition duration-200"
@@ -313,10 +317,11 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
           </button>
         </div>
       </div>
+
+      {/* {initiatorName && <BMRProcessDetails initiatorName2={initiatorName}/>} */}
     </div>
   );
 };
-
 const Button1 = ({ label, active, onClick }) => (
   <button
     className={`px-4 py-2 my-4 text-gray-600 font-semibold rounded-3xl transition duration-100 ${
@@ -329,7 +334,6 @@ const Button1 = ({ label, active, onClick }) => (
     {label}
   </button>
 );
-
 const InputField = ({ label, type = "text", placeholder, value, onChange }) => (
   <div>
     <label className="block text-gray-700 font-bold p-2 mb-2">
@@ -345,5 +349,4 @@ const InputField = ({ label, type = "text", placeholder, value, onChange }) => (
     />
   </div>
 );
-
 export default BMRRecords;
