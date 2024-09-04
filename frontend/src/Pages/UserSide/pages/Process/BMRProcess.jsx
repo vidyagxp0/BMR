@@ -80,13 +80,17 @@ const BMRProcess = () => {
         },
       })
       .then((response) => {
-        setData(response.data.message);
+        const sortedData = response.data.message.sort((a, b) => 
+          new Date(b.date_of_initiation) - new Date(a.date_of_initiation)
+        );
+        setData(sortedData);
       })
       .catch((error) => {
         console.log(error);
         toast.error("Error Fetching BMR");
       });
   };
+  
 
   useEffect(() => {
     fetchBMRData();
@@ -104,7 +108,7 @@ const BMRProcess = () => {
     const approverNames = approvers.map((app) => app.label).join(", ");
 
     setData((prevData) => [
-      ...prevData,
+     
       {
         name,
         status,
@@ -113,6 +117,7 @@ const BMRProcess = () => {
         approvers: approverNames,
         bmr_tab_id,
       },
+      ...prevData,
     ]);
     setIsModalOpen(false);
     fetchBMRData();

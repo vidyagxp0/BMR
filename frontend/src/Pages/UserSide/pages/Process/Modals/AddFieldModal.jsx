@@ -27,30 +27,25 @@ const AddFieldModal = ({
     isVisible: true,
     isRequired: false,
     isReadOnly: false,
-    acceptsMultiple: [],
+    acceptsMultiple: { columns: [], rows: [] },
     selectedValues: [], // Manage selected values here
     bmr_tab_id: bmr_tab_id,
     bmr_section_id: bmr_section_id,
   });
 
-  console.log(fieldData.acceptsMultiple,"hgdhfsdfjh")
-
   const [showVerificationModal, setShowVerificationModal] = useState(false);
-  const [showGridColumnConfigModal, setShowGridColumnConfigModal] = useState(false);
+  const [showGridColumnConfigModal, setShowGridColumnConfigModal] =
+    useState(false);
+  console.log(fieldData.acceptsMultiple.columns, "<><><><><>");
 
   useEffect(() => {
     if (updateField === "edit-field" && existingFieldData) {
-      setFieldData((prevData) => ({
+      setFieldData(prevData => ({
         ...prevData,
         ...existingFieldData,
         selectedValues: existingFieldData.selectedValues || [],
+        acceptsMultiple: existingFieldData.acceptsMultiple || { columns: [], rows: [] }, // Ensure proper structure when editing
       }));
-      if (existingFieldData.field_type === "grid") {
-        setFieldData((prevData) => ({
-          ...prevData,
-          acceptsMultiple: existingFieldData.acceptsMultiple,
-        }));
-      }
     }
   }, [existingFieldData, updateField]);
 
@@ -58,10 +53,10 @@ const AddFieldModal = ({
     setShowVerificationModal(true);
   };
 
-  const handleGridColumnConfigSave = () => {
-    setFieldData((prevData) => ({
+  const handleGridColumnConfigSave = (columns) => {
+    setFieldData(prevData => ({
       ...prevData,
-      acceptsMultiple: { ...prevData.acceptsMultiple },
+      acceptsMultiple: { ...prevData.acceptsMultiple, columns },
     }));
     setShowGridColumnConfigModal(false);
   };
@@ -72,13 +67,22 @@ const AddFieldModal = ({
       ...prevData,
       [name]: type === "checkbox" ? checked : value,
     }));
-
     if (name === "field_type" && value === "grid") {
       setShowGridColumnConfigModal(true);
     }
   };
 
-  
+  const handleSelectChange = (e) => {
+    const selectedOptions = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
+    setFieldData((prevData) => ({
+      ...prevData,
+      selectedValues: selectedOptions,
+    }));
+  };
+
   const handleVerificationSubmit = async (verified) => {
     try {
       const response = await axios({
@@ -87,11 +91,12 @@ const AddFieldModal = ({
           updateField === "add-field"
             ? "http://195.35.6.197:7000/bmr-form/add-bmr-field"
             : `http://195.35.6.197:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
-        data: { bmr_id, ...fieldData , 
-          email:verified.email,
-          password:verified.password,
-          declaration:verified.declaration,
-          acceptsMultiple: fieldData.field_type === "grid" ? fieldData.acceptsMultiple : fieldData.acceptsMultiple,
+        data: {
+          bmr_id,
+          ...fieldData,
+          email: verified.email,
+          password: verified.password,
+          declaration: verified.declaration,
         },
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -105,29 +110,20 @@ const AddFieldModal = ({
     }
   };
 
-  const handleAddRow = () => {
+  const handleOptionChange = (index, value) => {
+    const newOptions = [...fieldData.acceptsMultiple];
+    newOptions[index] = value;
     setFieldData((prevData) => ({
       ...prevData,
-      acceptsMultiple: {
-        ...prevData.acceptsMultiple,
-        rows: [...prevData.acceptsMultiple.rows, {}],
-      },
+      acceptsMultiple: newOptions,
     }));
   };
 
-  const handleGridChange = (rowIndex, columnName, value) => {
-    setFieldData((prevData) => {
-      const updatedRows = prevData.acceptsMultiple.rows.map((row, idx) =>
-        idx === rowIndex ? { ...row, [columnName]: value } : row
-      );
-      return {
-        ...prevData,
-        acceptsMultiple: {
-          ...prevData.acceptsMultiple,
-          rows: updatedRows,
-        },
-      };
-    });
+  const handleAddOption = () => {
+    setFieldData((prevData) => ({
+      ...prevData,
+      acceptsMultiple: [...prevData.acceptsMultiple, ""],
+    }));
   };
 
   const handleVerificationClose = () => {
@@ -174,6 +170,43 @@ const AddFieldModal = ({
             <option value="grid">Grid</option>
             <option value="multi-select">Multi Select</option>
           </select>
+          {fieldData.field_type === "grid" && (
+            <div className="mb-4">
+              <h3 className="text-sm font-medium text-gray-700 mb-2">
+                Grid Columns
+              </h3>
+              {fieldData?.acceptsMultiple?.columns?.length > 0 ? (
+                <table className="w-full border border-gray-300">
+                  <thead>
+                    <tr>
+                      {fieldData.acceptsMultiple.columns.map((col, idx) => (
+                        <th key={idx} className="border border-gray-300 p-2">
+                          {col.name}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {fieldData?.acceptsMultiple?.rows?.map((_, rowIdx) => (
+                      <tr key={rowIdx}>
+                        {fieldData?.acceptsMultiple?.columns.map(
+                          (_, colIdx) => (
+                            <td
+                              key={colIdx}
+                              className="border border-gray-300 p-2"
+                            ></td>
+                          )
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p>No columns available.</p>
+              )}
+            </div>
+          )}
+
           <input
             type="text"
             name="placeholder"
@@ -275,7 +308,7 @@ const AddFieldModal = ({
               <h3 className="text-sm font-medium text-gray-700 mb-2">
                 Options
               </h3>
-              {fieldData.acceptsMultiple?.map((option, index) => (
+              {fieldData.acceptsMultiple?.rows?.map((option, index) => (
                 <input
                   key={index}
                   type="text"
@@ -337,109 +370,101 @@ const AddFieldModal = ({
           onSubmit={handleVerificationSubmit}
         />
       )}
-         {showGridColumnConfigModal && (
-          <GridColumnConfigModal
-          columns={fieldData.acceptsMultiple}
-            onSave={handleGridColumnConfigSave}
-            onClose={() => setShowGridColumnConfigModal(false)}
-          />
-        )}
+      {showGridColumnConfigModal && (
+        <GridColumnConfigModal
+          columns={fieldData.acceptsMultiple.columns}
+          onSave={handleGridColumnConfigSave}
+          onClose={() => setShowGridColumnConfigModal(false)}
+        />
+      )}
     </div>
   );
 };
 
-const GridColumnConfigModal = ({ onClose, onSave }) => {
-  const [columns, setColumns] = useState([
-    { name: "", type: "text", required: false, isDisabled: false },
-  ]);
+const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
+  const [columnConfig, setColumnConfig] = useState(columns);
 
   const handleColumnChange = (index, field, value) => {
-    const newColumns = [...columns];
-    newColumns[index][field] = value;
-    setColumns(newColumns);
+    const newConfig = [...columnConfig];
+    newConfig[index] = { ...newConfig[index], [field]: value };
+    setColumnConfig(newConfig);
   };
 
   const handleAddColumn = () => {
-    setColumns([
-      ...columns,
-      { name: "", type: "text", required: false, isDisabled: false },
+    setColumnConfig([
+      ...columnConfig,
+      { name: "New Column", isRequired: false, isVisible: true },
     ]);
   };
 
   const handleSave = () => {
-    onSave(columns);
-    onClose();
+    onSave(columnConfig);
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-filter backdrop-blur-sm">
-      <div className="bg-white p-4 rounded shadow-lg w-[400px]">
-        <h2 className="text-lg font-bold mb-2">Configure Grid Columns</h2>
+      <div
+        className="bg-white p-4 rounded shadow-lg"
+        style={{ width: "600px" }}
+      >
+        <h2 className="text-lg font-bold mb-2">Configure Columns</h2>
         <div>
-          {columns.map((column, index) => (
-            <div key={index} className="mb-4">
-              <input
-                type="text"
-                placeholder="Column Name"
-                value={column.name}
-                onChange={(e) =>
-                  handleColumnChange(index, "name", e.target.value)
-                }
-                className="border border-gray-300 p-2 w-full mb-2"
-              />
-              <select
-                value={column.type}
-                onChange={(e) =>
-                  handleColumnChange(index, "type", e.target.value)
-                }
-                className="border p-2 w-full mb-2"
+          {columnConfig?.map((col, index) => (
+            <div key={index} className="mb-2">
+              <div className="flex items-center mb-2">
+                <input
+                  type="text"
+                  value={col.name}
+                  onChange={(e) => handleColumnChange(index, "name", e.target.value)}
+                  className="border border-gray-300 p-2 w-full mr-2"
+                  placeholder="Column Name"
+                />
+                <label className="flex items-center mr-2">
+                  <input
+                    type="checkbox"
+                    checked={col.isRequired}
+                    onChange={(e) => handleColumnChange(index, "isRequired", e.target.checked)}
+                  />
+                  <span className="ml-1">Required</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={col.isVisible}
+                    onChange={(e) => handleColumnChange(index, "isVisible", e.target.checked)}
+                  />
+                  <span className="ml-1">Visible</span>
+                </label>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleColumnChange(index, "name", "")}
+                className="border p-2 bg-red-500 text-white"
               >
-                <option value="text">Text</option>
-                <option value="number">Number</option>
-                <option value="date">Date</option>
-                <option value="checkbox">Checkbox</option>
-              </select>
-              <div className="flex items-center mb-2">
-                <input
-                  type="checkbox"
-                  checked={column.required}
-                  onChange={(e) =>
-                    handleColumnChange(index, "required", e.target.checked)
-                  }
-                  className="mr-2"
-                />
-                <label>Required</label>
-              </div>
-              <div className="flex items-center mb-2">
-                <input
-                  type="checkbox"
-                  checked={column.isDisabled}
-                  onChange={(e) =>
-                    handleColumnChange(index, "isDisabled", e.target.checked)
-                  }
-                  className="mr-2"
-                />
-                <label>Disabled</label>
-              </div>
+                Remove
+              </button>
             </div>
           ))}
-          <button
-            onClick={handleAddColumn}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
-          >
-            Add Column
-          </button>
         </div>
+        <button
+          type="button"
+          onClick={handleAddColumn}
+          className="border p-2 bg-green-500 text-white mt-2"
+        >
+          Add Column
+        </button>
         <div className="mt-4 flex justify-end">
           <button
+            type="button"
             onClick={handleSave}
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            className="border p-2 bg-blue-500 text-white mr-2"
           >
             Save
           </button>
           <button
+            type="button"
             onClick={onClose}
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2"
+            className="border p-2 bg-red-500 text-white"
           >
             Cancel
           </button>

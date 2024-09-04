@@ -11,7 +11,7 @@ import DeleteModal from "./Modals/DeleteModal";
 import "react-toastify/dist/ReactToastify.css";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
 
-const BMRProcessDetails = () => {
+const BMRProcessDetails = ({ bmrFields }) => {
   const [data, setData] = useState([]);
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
@@ -110,11 +110,72 @@ const BMRProcessDetails = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteItemType, setDeleteItemType] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState({});
-  const [gridData, setGridData] = useState({});
   const { bmr_id } = useParams();
   const navigate = useNavigate();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
+
+  const renderTable = (field) => {
+    if (field.field_type === "grid" && field.acceptsMultiple.columns.length > 0) {
+      return (
+        <div key={field.label}>
+          <h3>{field.label}</h3>
+          <table className="table-auto w-full border-collapse border border-gray-400">
+            <thead>
+              <tr>
+                {field.acceptsMultiple.columns.map((column, index) => (
+                  <th key={index} className="border border-gray-300 p-2">
+                    {column.name}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {field.acceptsMultiple.rows.length > 0 ? (
+                field.acceptsMultiple.rows.map((row, rowIndex) => (
+                  <tr key={rowIndex}>
+                    {field.acceptsMultiple.columns.map((column, colIndex) => (
+                      <td key={colIndex} className="border border-gray-300 p-2">
+                        {row[column.name]}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={field.acceptsMultiple.columns.length}
+                    className="border border-gray-300 p-2 text-center"
+                  >
+                    No Data Available
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+  };
+
+
+  const handleAddRow = (tabName) => {
+    setFields((prevFields) => {
+      const updatedFields = { ...prevFields };
+      const field = updatedFields[tabName].find(
+        (fld) => fld.field_type === "grid"
+      );
+
+      if (field) {
+        const newRow = field.acceptsMultiple.columns.reduce((acc, column) => {
+          acc[column.name] = "";
+          return acc;
+        }, {});
+        field.gridData.push(newRow);
+      }
+      return updatedFields;
+    });
+  };
 
   const handleGridChange = (tabName, rowIndex, columnName, value) => {
     setFields((prevFields) => {
@@ -126,28 +187,56 @@ const BMRProcessDetails = () => {
       if (field) {
         field.gridData[rowIndex][columnName] = value;
       }
-
       return updatedFields;
     });
   };
 
-  const handleAddRow = (tabName) => {
-    setFields((prevFields) => {
-      const updatedFields = { ...prevFields };
-      const field = updatedFields[tabName].find(
-        (fld) => fld.field_type === "grid"
-      );
-      if (field) {
-        const newRow = field.acceptsMultiple.columns.reduce((acc, column) => {
-          acc[column.name] = "";
-          return acc;
-        }, {});
-        field.gridData.push(newRow);
-        field.acceptsMultiple.rows.push(newRow);
-      }
-      return updatedFields;
-    });
+  const renderGridTable = (tabName) => {
+    const field = fields[tabName]?.find((fld) => fld.field_type === "grid");
+    if (!field) return null;
+
+    return (
+      <div>
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr>
+              {field.acceptsMultiple.columns.map((column, idx) => (
+                <th key={idx} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {column.name}
+                </th>
+              ))}
+              <th className="px-6 py-3"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {field.gridData.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {field.acceptsMultiple.columns.map((column, colIndex) => (
+                  <td key={colIndex} className="px-6 py-4 whitespace-nowrap">
+                    <input
+                      type="text"
+                      value={row[column.name] || ""}
+                      onChange={(e) =>
+                        handleGridChange(tabName, rowIndex, column.name, e.target.value)
+                      }
+                      className="border border-gray-300 p-2 w-full"
+                    />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <button
+          onClick={() => handleAddRow(tabName)}
+          className="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Add Row
+        </button>
+      </div>
+    );
   };
+
 
   const userDetails = JSON.parse(localStorage.getItem("user-details"));
   const handlePopupClose = () => {
@@ -202,6 +291,7 @@ const BMRProcessDetails = () => {
       setCurrentTabId(null);
     }
   }, [showForm, newTab]);
+
   const addTab = (tabObject) => {
     if (!newTab.some((tab) => tab.tab_name === tabObject.tab_name)) {
       const updatedTabs = [...newTab, tabObject];
@@ -453,7 +543,6 @@ const BMRProcessDetails = () => {
 
         "Reviewer Remarks": reviewerFields,
       }));
-      console.log(reviewerFields, "reviewer");
     }
   };
 
@@ -461,6 +550,7 @@ const BMRProcessDetails = () => {
     populateApproverFields();
     populateReviewerFields();
   }, [data]);
+
   return (
     <div className="p-4 relative h-full">
       <header className="bg-blue-100 w-full shadow-lg flex justify-between items-center p-4 mb-4">
@@ -468,11 +558,16 @@ const BMRProcessDetails = () => {
         <div className="flex space-x-2">
           {showForm === "default" ? (
             <>
-              <AtmButton
-                label="Edit Form"
-                onClick={() => setShowForm("sendForm")}
-                className="bg-blue-500 hover:bg-blue-700 px-4 py-2"
-              />
+                    
+          {activeFlowTab === "INITIATION" && (
+            <AtmButton
+              label="Edit Form"
+              onClick={() => setShowForm("sendForm")}
+              className="bg-blue-500 hover:bg-blue-700 px-4 py-2"
+            />
+          )}
+        
+
             </>
           ) : showForm === "sendForm" ? (
             <>
@@ -863,198 +958,207 @@ const BMRProcessDetails = () => {
       <div className="">
         {showForm === "sendForm" && activeSendFormTab && (
           <div className="text-lg flex flex-col gap-9 font-bold text-gray-500">
-            {activeSendFormTab?.BMR_sections?.map((section, index) => (
-              <div
-                key={index}
-                className={`mb-2 cursor-pointer ${
-                  activeSection === section ? "border border-black" : ""
-                }`}
-              >
-                <div onClick={() => handleSectionClick(section)}>
-                  <div
-                    className={`py-2 px-4 mb-2 cursor-pointer ${
-                      activeSection === section
-                        ? "bg-blue-300 text-gray-700"
-                        : "bg-blue-200 text-gray-400"
-                    }`}
-                  >
-                    {section.section_name}
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 shadow-xl gap-4 px-5 py-[64px]">
-                  {section.BMR_fields?.map((field, index) => (
+
+            {activeSendFormTab?.BMR_sections?.map((section, index) => {
+              return (
+                <div
+                  key={index}
+                  className={`mb-2 cursor-pointer ${
+                    activeSection === section ? "border border-black" : ""
+                  }`}
+                >
+                  <div onClick={() => handleSectionClick(section)}>
                     <div
-                      key={index}
-                      onClick={() => handleFieldClick(field)}
-                      className="p-4 rounded bg-gray-50 shadow border border-gray-600"
+                      className={`py-2 px-4 mb-2 cursor-pointer ${
+                        activeSection === section
+                          ? "bg-blue-300 text-gray-700"
+                          : "bg-blue-200 text-gray-400"
+                      }`}
                     >
-                      <label className="text-lg font-extrabold text-gray-900 flex gap-1 mb-2">
-                        {field.label}
-                        <div className="text-red-500">
-                          {field.isMandatory && " *"}
-                        </div>
-                      </label>
-
-                      {/* Render input fields based on type */}
-
-                      {field.field_type === "text" && (
-                        <input
-                          placeholder={field.placeholder}
-                          style={{ border: "1px solid gray", height: "48px" }}
-                          type="text"
-                          className="border border-gray-600 p-2 w-full rounded"
-                          required={field.isMandatory}
-                          readOnly={field.isReadonly}
-                        />
-                      )}
-
-                      {field.field_type === "grid" && (
-                        <div>
-                          <table className="table-auto w-full border border-gray-600 mb-4">
-                            <thead>
-                              <tr>
-                                {field?.acceptsMultiple?.columns?.map(
-                                  (column, idx) => (
-                                    <th
-                                      key={idx}
-                                      className="border border-gray-600 p-2"
-                                    >
-                                      {column.name}
-                                    </th>
-                                  )
-                                )}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {field?.gridData?.map((row, rowIndex) => (
-                                <tr key={rowIndex}>
+                      {section.section_name}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 shadow-xl gap-4 px-5 py-[64px]">
+                    {section.BMR_fields?.map((field, index) => {
+                       
+                      return(
+                        <div
+                        key={index}
+                        onClick={() => handleFieldClick(field)}
+                        className="p-4 rounded bg-gray-50 shadow border border-gray-600"
+                      >
+                        <label className="text-lg font-extrabold text-gray-900 flex gap-1 mb-2">
+                          {field.label}
+                          <div className="text-red-500">
+                            {field.isMandatory && " *"}
+                          </div>
+                        </label>
+  
+                        {/* Render input fields based on type */}
+  
+                        {field.field_type === "text" && (
+                          <input
+                            placeholder={field.placeholder}
+                            style={{ border: "1px solid gray", height: "48px" }}
+                            type="text"
+                            className="border border-gray-600 p-2 w-full rounded"
+                            required={field.isMandatory}
+                            readOnly={field.isReadonly}
+                          />
+                        )}
+  
+                        {field.field_type === "grid" && (
+                          <div>
+                            <table className="table-auto w-full border border-gray-600 mb-4">
+                              <thead>
+                                <tr>
                                   {field?.acceptsMultiple?.columns?.map(
-                                    (column, colIdx) => (
-                                      <td
-                                        key={colIdx}
+                                    (column, idx) => {
+                                      console.log(column,"columns")
+                                      return(
+                                        <th
+                                        key={idx}
                                         className="border border-gray-600 p-2"
                                       >
-                                        <input
-                                          type="text"
-                                          placeholder={column.placeholder}
-                                          value={row[column.name] || ""}
-                                          onChange={(e) =>
-                                            handleGridChange(
-                                              activeDefaultTab,
-                                              rowIndex,
-                                              column.name,
-                                              e.target.value
-                                            )
-                                          }
-                                          className="border border-gray-600 p-2 w-full rounded"
-                                        />
-                                      </td>
-                                    )
+                                        {column}
+                                      </th>
+                                      )
+                                    }
                                   )}
                                 </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                          <button
-                            onClick={() => handleAddRow(activeDefaultTab)}
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
-                          >
-                            Add Row
-                          </button>
-                        </div>
-                      )}
-
-                      {field.field_type === "password" && (
-                        <input
-                          placeholder={field.placeholder}
-                          style={{ border: "1px solid gray", height: "48px" }}
-                          type="password"
-                          className="border border-gray-600 text-gray-600 p-2 w-full rounded"
-                          required={field.isMandatory}
-                          readOnly={field.isReadonly}
-                        />
-                      )}
-
-                      {field.field_type === "date" && (
-                        <input
-                          placeholder={field.placeholder}
-                          style={{ border: "1px solid gray", height: "48px" }}
-                          type="date"
-                          className="border border-gray-600 p-2 w-full rounded"
-                          required={field.isMandatory}
-                          readOnly={field.isReadonly}
-                        />
-                      )}
-
-                      {field.field_type === "email" && (
-                        <input
-                          placeholder={field.placeholder}
-                          style={{ border: "1px solid gray", height: "48px" }}
-                          type="email"
-                          className="border border-gray-600 p-2 w-full rounded"
-                          required={field.isMandatory}
-                          readOnly={field.isReadonly}
-                        />
-                      )}
-
-                      {field.field_type === "number" && (
-                        <input
-                          placeholder={field.placeholder}
-                          style={{ border: "1px solid gray", height: "48px" }}
-                          type="number"
-                          className="border border-gray-600 p-2 w-full rounded"
-                          required={field.isMandatory}
-                          readOnly={field.isReadonly}
-                        />
-                      )}
-
-                      {field.field_type === "checkbox" && (
-                        <input
-                          placeholder={field.placeholder}
-                          style={{ border: "1px solid gray", height: "48px" }}
-                          type="checkbox"
-                          className="border border-gray-600 p-2 rounded"
-                          required={field.isMandatory}
-                          readOnly={field.isReadonly}
-                        />
-                      )}
-
-                      {field.field_type === "dropdown" && (
-                        <select
-                          className="border border-gray-600 p-2 w-full rounded"
-                          style={{ border: "1px solid gray", height: "48px" }}
-                          required={field.isMandatory}
-                        >
-                          {field?.acceptsMultiple?.map((option, idx) => (
-                            <option key={idx} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </select>
-                      )}
-
-                      {field.field_type === "multi-select" && (
-                        <>
-                          <Select
-                            isMulti
-                            options={field?.acceptsMultiple?.map((option) => ({
-                              value: option,
-                              label: option,
-                            }))}
-                            value={selectedOptions[field.id] || []}
-                            onChange={(options) =>
-                              handleMultiSelectChange(field.id, options)
-                            }
-                            formatOptionLabel={formatOptionLabel}
-                            className="text-start"
+                              </thead>
+                              <tbody>
+                                {field?.gridData?.map((row, rowIndex) => (
+                                  <tr key={rowIndex}>
+                                    {field?.acceptsMultiple?.columns?.map(
+                                      (column, colIdx) => (
+                                        <td
+                                          key={colIdx}
+                                          className="border border-gray-600 p-2"
+                                        >
+                                          <input
+                                            type="text"
+                                            placeholder={column.placeholder}
+                                            value={row[column.name] || ""}
+                                            onChange={(e) =>
+                                              handleGridChange(
+                                                activeDefaultTab,
+                                                rowIndex,
+                                                column.name,
+                                                e.target.value
+                                              )
+                                            }
+                                            className="border border-gray-600 p-2 w-full rounded"
+                                          />
+                                        </td>
+                                      )
+                                    )}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                            <button
+                              onClick={() => handleAddRow(activeDefaultTab)}
+                              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
+                            >
+                              Add Row
+                            </button>
+                          </div>
+                        )}
+  
+                        {field.field_type === "password" && (
+                          <input
+                            placeholder={field.placeholder}
+                            style={{ border: "1px solid gray", height: "48px" }}
+                            type="password"
+                            className="border border-gray-600 text-gray-600 p-2 w-full rounded"
+                            required={field.isMandatory}
+                            readOnly={field.isReadonly}
                           />
-                        </>
-                      )}
-                    </div>
-                  ))}
+                        )}
+  
+                        {field.field_type === "date" && (
+                          <input
+                            placeholder={field.placeholder}
+                            style={{ border: "1px solid gray", height: "48px" }}
+                            type="date"
+                            className="border border-gray-600 p-2 w-full rounded"
+                            required={field.isMandatory}
+                            readOnly={field.isReadonly}
+                          />
+                        )}
+  
+                        {field.field_type === "email" && (
+                          <input
+                            placeholder={field.placeholder}
+                            style={{ border: "1px solid gray", height: "48px" }}
+                            type="email"
+                            className="border border-gray-600 p-2 w-full rounded"
+                            required={field.isMandatory}
+                            readOnly={field.isReadonly}
+                          />
+                        )}
+  
+                        {field.field_type === "number" && (
+                          <input
+                            placeholder={field.placeholder}
+                            style={{ border: "1px solid gray", height: "48px" }}
+                            type="number"
+                            className="border border-gray-600 p-2 w-full rounded"
+                            required={field.isMandatory}
+                            readOnly={field.isReadonly}
+                          />
+                        )}
+  
+                        {field.field_type === "checkbox" && (
+                          <input
+                            placeholder={field.placeholder}
+                            style={{ border: "1px solid gray", height: "48px" }}
+                            type="checkbox"
+                            className="border border-gray-600 p-2 rounded"
+                            required={field.isMandatory}
+                            readOnly={field.isReadonly}
+                          />
+                        )}
+  
+                        {field.field_type === "dropdown" && (
+                          <select
+                            className="border border-gray-600 p-2 w-full rounded"
+                            style={{ border: "1px solid gray", height: "48px" }}
+                            required={field.isMandatory}
+                          >
+                            {field?.acceptsMultiple?.map((option, idx) => (
+                              <option key={idx} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </select>
+                        )}
+  
+                        {field.field_type === "multi-select" && (
+                          <>
+                            <Select
+                              isMulti
+                              options={field?.acceptsMultiple?.map((option) => ({
+                                value: option,
+                                label: option,
+                              }))}
+                              value={selectedOptions[field.id] || []}
+                              onChange={(options) =>
+                                handleMultiSelectChange(field.id, options)
+                              }
+                              formatOptionLabel={formatOptionLabel}
+                              className="text-start"
+                            />
+                          </>
+                        )}
+                      </div>
+                      )
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
