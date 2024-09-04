@@ -47,7 +47,7 @@ function App() {
 
             <Route
               path="/bmr_records"
-              element={<BMRRecords element={<BMRRecords />} />}
+             element={<BMRRecords />}
             />
           </Route>
 

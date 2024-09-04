@@ -6,10 +6,11 @@ import BMRProcessDetails from "../pages/Process/BMRProcessDetails";
 const InitiateModal = ({ approvedBMR, onClose }) => {
   const [openBMRRecordsModal, setOpenBMRRecordsModal] = useState(false);
   const [selectedBMR, setSelectedBMR] = useState(null);
+  const navigate =useNavigate()
 
   const handleOpenRecordModal = (item) => {
     setSelectedBMR(item);
-    setOpenBMRRecordsModal(true);
+    navigate("/bmr_records", { state: { selectedBMR: item } })
     console.log(selectedBMR, "selectedBMR: ");
   };
 
@@ -53,9 +54,6 @@ const InitiateModal = ({ approvedBMR, onClose }) => {
           </button>
         </div>
       </div>
-      {openBMRRecordsModal && (
-        <BMRRecords selectedBMR={selectedBMR} onClose={onClose} />
-      )}
        
     </div>
   );

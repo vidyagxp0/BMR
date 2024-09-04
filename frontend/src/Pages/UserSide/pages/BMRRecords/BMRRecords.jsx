@@ -4,31 +4,33 @@ import HeaderTop from "../../../../Components/Header/HeaderTop";
 import Select from "react-select";
 import { Button } from "@mui/material";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import BMRProcessDetails from "../Process/BMRProcessDetails";
-const BMRRecords = ({ selectedBMR, onClose }) => {
-  const [activeTab, setActiveTab] = useState("General Information");
-  const [dateOfInitiation, setDateOfInitiation] = useState(
-    new Date().toISOString().split("T")[0] // Default to current date
-  );
-  const [dynamicFields, setDynamicFields] = useState({
-    "General Information": {},
-    ...selectedBMR.BMR_Tabs.reduce((acc, tab) => {
-      acc[tab.tab_name] = {};
-      return acc;
-    }, {}),
-  });
+const BMRRecords = () => {
+  const location = useLocation();
+    const selectedBMR = location.state?.selectedBMR;
+
+    // Rest of your state and logic
+    const [activeTab, setActiveTab] = useState("General Information");
+    const [dateOfInitiation, setDateOfInitiation] = useState(
+        new Date().toISOString().split("T")[0]
+    );
+    const [dynamicFields, setDynamicFields] = useState({
+        "General Information": {},
+        ...selectedBMR.BMR_Tabs.reduce((acc, tab) => {
+            acc[tab.tab_name] = {};
+            return acc;
+        }, {}),
+    });
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [selectedReviewers, setSelectedReviewers] = useState([]);
   const [selectedApprovers, setSelectedApprovers] = useState([]);
   const Id = selectedBMR.initiator;
-  const { initiatorId: initiatorIdFromParams } = useParams();
   const initiatorId = selectedBMR.initiator;
-  // console.log(initiatorId);a
-  // console.log(initiatorIdFromParams);
   const [initiatorName, setInitiatorName] = useState(null);
-  // console.log(initiatorName);
+  const navigate = useNavigate()
+
   const apiUrl = `http://195.35.6.197:7000/user/get-a-user/${Id}`;
   const fetchUserData = async () => {
     try {
@@ -154,8 +156,7 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
   };
   return (
     <div className="w-full h-full absolute flex items-center justify-center mb-4">
-      <div className="w-full h-full bg-white shadow-lg rounded-lg overflow-hidden ">
-        <HeaderTop />
+      <div className="w-full h-full bg-white shadow-lg rounded-lg  ">
         <div className="flex justify-around items-center bg-gradient-to-r bg-gray-50 mt-2 p-4 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-black ">
             Initiate BMR Records
@@ -305,13 +306,13 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
         <div className="flex justify-end gap-4 items-end p-4 border-t">
           <button
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none transition duration-200"
-            onClick={onClose}
+            onClick={()=>navigate("/dashboard")}
           >
             Save
           </button>
           <button
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none transition duration-200"
-            onClick={onClose}
+            onClick={()=>navigate("/dashboard")}
           >
             Exit
           </button>
