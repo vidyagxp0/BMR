@@ -453,7 +453,7 @@ const BMRProcessDetails = () => {
 
         "Reviewer Remarks": reviewerFields,
       }));
-      console.log(reviewerFields, "reviewer");
+      // console.log(reviewerFields, "reviewer");
     }
   };
 

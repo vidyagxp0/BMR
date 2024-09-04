@@ -16,6 +16,10 @@ import BMRProcess from "./Pages/UserSide/pages/Process/BMRProcess";
 import BMRDetails from "./Pages/UserSide/pages/BMRDetails/BMRDetails";
 import BMRProcessDetails from "./Pages/UserSide/pages/Process/BMRProcessDetails";
 import BMRRecords from "./Pages/UserSide/pages/BMRRecords/BMRRecords";
+import About from "./Pages/HeaderComponents/About";
+import Help from "./Pages/HeaderComponents/Help";
+import HelpdeskPersonnel from "./Pages/HeaderComponents/HelpdeskPersonnel";
+import BoardOfDirectors from "./Pages/HeaderComponents/BoardOfDirectors";
 function App() {
   return (
     <>
@@ -62,6 +66,10 @@ function App() {
               element={<ProtectedAdminRoute element={<UpdateUser />} />}
             />
           </Route>
+          <Route path="/boardOfDirectors" element={<BoardOfDirectors />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/helpdesk" element={<HelpdeskPersonnel />} />
         </Routes>
         <ToastContainer />
       </BrowserRouter>

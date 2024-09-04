@@ -16,7 +16,7 @@ const Login = () => {
   const [token, setToken] = useState("");
   const navigate = useNavigate();
 
-  console.log(token, "hgftghfghjgfgh");
+  // console.log(token, "hgftghfghjgfgh");
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -25,15 +25,15 @@ const Login = () => {
       password: password,
     };
     axios
-      .post("http://192.168.1.27:7000/user/user-login", data, {
+      .post("http://195.35.6.197:7000/user/user-login", data, {
         headers: {
           "Content-Type": "application/json",
         },
       })
       .then((response) => {
-        console.log("API Response:", response.data); // Log the entire response
+        // console.log("API Response:", response.data); // Log the entire response
         const newToken = response.data.token;
-        console.log("Token:", newToken); // Log the token
+        // console.log("Token:", newToken); // Log the token
 
         if (newToken) {
           setToken(newToken); // Update state with new token
