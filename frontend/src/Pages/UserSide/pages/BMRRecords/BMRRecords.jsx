@@ -22,6 +22,7 @@ const BMRRecords = () => {
             return acc;
         }, {}),
     });
+    
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [selectedReviewers, setSelectedReviewers] = useState([]);
