@@ -7,7 +7,7 @@ import AtmButton from "../../../AtmComponents/AtmButton";
 import AtmInput from "../../../AtmComponents/AtmInput";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
-import BMRRecords from "../pages/BMRRecords/BMRRecords";
+// import BMRRecords from "../pages/BMRRecords/BMRRecords";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -31,26 +31,23 @@ const Login = () => {
         },
       })
       .then((response) => {
-        // console.log("API Response:", response.data); // Log the entire response
         const newToken = response.data.token;
-        // console.log("Token:", newToken); // Log the token
-
         if (newToken) {
-          setToken(newToken); // Update state with new token
+          setToken(newToken);
           localStorage.setItem("user-token", newToken);
-          navigate("/dashboard");
           toast.success("Login Successful");
 
           const decoded = jwtDecode(newToken);
-
-          // Storing the decoded user details in local storage
           localStorage.setItem("user-details", JSON.stringify(decoded));
+
+          // Prevent back navigation to login page
+          navigate("/dashboard", { replace: true });
+          window.history.replaceState(null, null, "/dashboard");
         } else {
           toast.error("Token not received from server");
         }
       })
       .catch((error) => {
-        console.error("Login Error:", error); // Log error details
         toast.error(error.response?.data?.message || "Login failed");
       });
   };

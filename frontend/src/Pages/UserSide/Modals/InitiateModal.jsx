@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CiSearch } from "react-icons/ci";
+import { FcSearch } from "react-icons/fc";
 
 const InitiateModal = ({ approvedBMR, onClose }) => {
   const [selectedBMR, setSelectedBMR] = useState(null);
@@ -19,7 +19,6 @@ const InitiateModal = ({ approvedBMR, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ">
       <div className="bg-white rounded-xl shadow-lg w-full max-w-6xl h-[90vh] overflow-hidden ">
-        {" "}
         <div className="flex justify-center  items-center p-5 bg-gradient-to-r from-blue-600 to-blue-800">
           <h2 className="text-2xl font-bold text-white">Initiate BMR Record</h2>
           <button
@@ -30,18 +29,21 @@ const InitiateModal = ({ approvedBMR, onClose }) => {
           </button>
         </div>
         <div className="p-4 ">
-          <div className="mb-4 relative flex gap-10  w-full">
-            {" "}
-            <input
-              type="text"
-              placeholder="Search BMR Records..."
-              className="w-[100%] p-3 pl-10 rounded-lg "
-              style={{ paddingTop: "5px", boxShadow: "0px 0px 6px gray" }}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-           
+          <div className="mb-4 relative flex justify-center items-center w-full">
+            <div className="relative w-[35%]">
+              <span className="absolute top-1/2 left-80 transform -translate-y-1/2 text-[20px] text-gray-500">
+                <FcSearch />
+              </span>
+              <input
+                type="text"
+                placeholder="Search BMR Records..."
+                className="w-full p-3 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:p-3"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
           </div>
+
           <div className="space-y-3 max-h-100 overflow-y-auto ">
             {filteredBMR.map((item, index) => (
               <div
