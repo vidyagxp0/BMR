@@ -116,7 +116,10 @@ const BMRProcessDetails = ({ bmrFields }) => {
   const [popupAction, setPopupAction] = useState(null);
 
   const renderTable = (field) => {
-    if (field.field_type === "grid" && field.acceptsMultiple.columns.length > 0) {
+    if (
+      field.field_type === "grid" &&
+      field.acceptsMultiple.columns.length > 0
+    ) {
       return (
         <div key={field.label}>
           <h3>{field.label}</h3>
@@ -157,7 +160,6 @@ const BMRProcessDetails = ({ bmrFields }) => {
       );
     }
   };
-
 
   const handleAddRow = (tabName) => {
     setFields((prevFields) => {
@@ -201,7 +203,10 @@ const BMRProcessDetails = ({ bmrFields }) => {
           <thead>
             <tr>
               {field.acceptsMultiple.columns.map((column, idx) => (
-                <th key={idx} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  key={idx}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   {column.name}
                 </th>
               ))}
@@ -217,7 +222,12 @@ const BMRProcessDetails = ({ bmrFields }) => {
                       type="text"
                       value={row[column.name] || ""}
                       onChange={(e) =>
-                        handleGridChange(tabName, rowIndex, column.name, e.target.value)
+                        handleGridChange(
+                          tabName,
+                          rowIndex,
+                          column.name,
+                          e.target.value
+                        )
                       }
                       className="border border-gray-300 p-2 w-full"
                     />
@@ -237,7 +247,6 @@ const BMRProcessDetails = ({ bmrFields }) => {
     );
   };
 
-
   const userDetails = JSON.parse(localStorage.getItem("user-details"));
   const handlePopupClose = () => {
     setIsPopupOpen(false);
@@ -253,7 +262,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`https://bmrapi.mydemosoftware.com/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://localhost:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -326,7 +335,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.initiatorDeclaration = credentials?.declaration;
       axios
         .put(
-          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-for-review",
+          "http://localhost:7000/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -343,7 +352,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-approval",
+          "http://localhost:7000/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -360,7 +369,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-open",
+          "http://localhost:7000/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -374,11 +383,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
     } else if (popupAction === "sendFromApprovalToApproved") {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
-        .put(
-          "https://bmrapi.mydemosoftware.com/bmr-form/approve-BMR",
-          dataObject,
-          config
-        )
+        .put("http://localhost:7000/bmr-form/approve-BMR", dataObject, config)
         .then(() => {
           toast.success("BMR successfully approved");
           navigate(-1);
@@ -392,7 +397,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-approval-to-open",
+          "http://localhost:7000/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -477,7 +482,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
         // Make API request to generate PDF
         const response = await axios({
-          url: "http://https://bmrapi.mydemosoftware.com:7000/bmr-form/generate-report",
+          url: "http://localhost:7000/bmr-form/generate-report",
           method: "POST",
           responseType: "blob",
           headers: {
@@ -730,16 +735,29 @@ const BMRProcessDetails = ({ bmrFields }) => {
         <div className="flex space-x-2">
           {showForm === "default" ? (
             <>
-                    
-          {activeFlowTab === "INITIATION" && (
-            <AtmButton
-              label="Edit Form"
-              onClick={() => setShowForm("sendForm")}
-              className="bg-blue-500 hover:bg-blue-700 px-4 py-2"
-            />
-          )}
-        
-
+              <AtmButton
+                label="Audit Trail"
+                onClick={() => {
+                  navigate("/audit-trail", { state: data[0] });
+                }}
+                className="bg-blue-500 hover:bg-blue-700 px-4 py-2"
+              />
+              <AtmButton
+                label="Generate Report"
+                onClick={() => {
+                  generateReport();
+                }}
+                className="bg-blue-500 hover:bg-blue-700 px-4 py-2"
+              />
+              {activeFlowTab === "INITIATION" && (
+                <>
+                  <AtmButton
+                    label="Edit Form"
+                    onClick={() => setShowForm("sendForm")}
+                    className="bg-blue-500 hover:bg-blue-700 px-4 py-2"
+                  />
+                </>
+              )}
             </>
           ) : showForm === "sendForm" ? (
             <>
@@ -1130,7 +1148,6 @@ const BMRProcessDetails = ({ bmrFields }) => {
       <div className="">
         {showForm === "sendForm" && activeSendFormTab && (
           <div className="text-lg flex flex-col gap-9 font-bold text-gray-500">
-
             {activeSendFormTab?.BMR_sections?.map((section, index) => {
               return (
                 <div
@@ -1152,184 +1169,206 @@ const BMRProcessDetails = ({ bmrFields }) => {
                   </div>
                   <div className="grid grid-cols-2 shadow-xl gap-4 px-5 py-[64px]">
                     {section.BMR_fields?.map((field, index) => {
-                       
-                      return(
+                      return (
                         <div
-                        key={index}
-                        onClick={() => handleFieldClick(field)}
-                        className="p-4 rounded bg-gray-50 shadow border border-gray-600"
-                      >
-                        <label className="text-lg font-extrabold text-gray-900 flex gap-1 mb-2">
-                          {field.label}
-                          <div className="text-red-500">
-                            {field.isMandatory && " *"}
-                          </div>
-                        </label>
-  
-                        {/* Render input fields based on type */}
-  
-                        {field.field_type === "text" && (
-                          <input
-                            placeholder={field.placeholder}
-                            style={{ border: "1px solid gray", height: "48px" }}
-                            type="text"
-                            className="border border-gray-600 p-2 w-full rounded"
-                            required={field.isMandatory}
-                            readOnly={field.isReadonly}
-                          />
-                        )}
-  
-                        {field.field_type === "grid" && (
-                          <div>
-                            <table className="table-auto w-full border border-gray-600 mb-4">
-                              <thead>
-                                <tr>
-                                  {field?.acceptsMultiple?.columns?.map(
-                                    (column, idx) => {
-                                      console.log(column,"columns")
-                                      return(
-                                        <th
-                                        key={idx}
-                                        className="border border-gray-600 p-2"
-                                      >
-                                        {column}
-                                      </th>
-                                      )
-                                    }
-                                  )}
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {field?.gridData?.map((row, rowIndex) => (
-                                  <tr key={rowIndex}>
+                          key={index}
+                          onClick={() => handleFieldClick(field)}
+                          className="p-4 rounded bg-gray-50 shadow border border-gray-600"
+                        >
+                          <label className="text-lg font-extrabold text-gray-900 flex gap-1 mb-2">
+                            {field.label}
+                            <div className="text-red-500">
+                              {field.isMandatory && " *"}
+                            </div>
+                          </label>
+
+                          {/* Render input fields based on type */}
+
+                          {field.field_type === "text" && (
+                            <input
+                              placeholder={field.placeholder}
+                              style={{
+                                border: "1px solid gray",
+                                height: "48px",
+                              }}
+                              type="text"
+                              className="border border-gray-600 p-2 w-full rounded"
+                              required={field.isMandatory}
+                              readOnly={field.isReadonly}
+                            />
+                          )}
+
+                          {field.field_type === "grid" && (
+                            <div>
+                              <table className="table-auto w-full border border-gray-600 mb-4">
+                                <thead>
+                                  <tr>
                                     {field?.acceptsMultiple?.columns?.map(
-                                      (column, colIdx) => (
-                                        <td
-                                          key={colIdx}
-                                          className="border border-gray-600 p-2"
-                                        >
-                                          <input
-                                            type="text"
-                                            placeholder={column.placeholder}
-                                            value={row[column.name] || ""}
-                                            onChange={(e) =>
-                                              handleGridChange(
-                                                activeDefaultTab,
-                                                rowIndex,
-                                                column.name,
-                                                e.target.value
-                                              )
-                                            }
-                                            className="border border-gray-600 p-2 w-full rounded"
-                                          />
-                                        </td>
-                                      )
+                                      (column, idx) => {
+                                        console.log(column, "columns");
+                                        return (
+                                          <th
+                                            key={idx}
+                                            className="border border-gray-600 p-2"
+                                          >
+                                            {column}
+                                          </th>
+                                        );
+                                      }
                                     )}
                                   </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                            <button
-                              onClick={() => handleAddRow(activeDefaultTab)}
-                              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
-                            >
-                              Add Row
-                            </button>
-                          </div>
-                        )}
-  
-                        {field.field_type === "password" && (
-                          <input
-                            placeholder={field.placeholder}
-                            style={{ border: "1px solid gray", height: "48px" }}
-                            type="password"
-                            className="border border-gray-600 text-gray-600 p-2 w-full rounded"
-                            required={field.isMandatory}
-                            readOnly={field.isReadonly}
-                          />
-                        )}
-  
-                        {field.field_type === "date" && (
-                          <input
-                            placeholder={field.placeholder}
-                            style={{ border: "1px solid gray", height: "48px" }}
-                            type="date"
-                            className="border border-gray-600 p-2 w-full rounded"
-                            required={field.isMandatory}
-                            readOnly={field.isReadonly}
-                          />
-                        )}
-  
-                        {field.field_type === "email" && (
-                          <input
-                            placeholder={field.placeholder}
-                            style={{ border: "1px solid gray", height: "48px" }}
-                            type="email"
-                            className="border border-gray-600 p-2 w-full rounded"
-                            required={field.isMandatory}
-                            readOnly={field.isReadonly}
-                          />
-                        )}
-  
-                        {field.field_type === "number" && (
-                          <input
-                            placeholder={field.placeholder}
-                            style={{ border: "1px solid gray", height: "48px" }}
-                            type="number"
-                            className="border border-gray-600 p-2 w-full rounded"
-                            required={field.isMandatory}
-                            readOnly={field.isReadonly}
-                          />
-                        )}
-  
-                        {field.field_type === "checkbox" && (
-                          <input
-                            placeholder={field.placeholder}
-                            style={{ border: "1px solid gray", height: "48px" }}
-                            type="checkbox"
-                            className="border border-gray-600 p-2 rounded"
-                            required={field.isMandatory}
-                            readOnly={field.isReadonly}
-                          />
-                        )}
-  
-                        {field.field_type === "dropdown" && (
-                          <select
-                            className="border border-gray-600 p-2 w-full rounded"
-                            style={{ border: "1px solid gray", height: "48px" }}
-                            required={field.isMandatory}
-                          >
-                            {field?.acceptsMultiple?.map((option, idx) => (
-                              <option key={idx} value={option}>
-                                {option}
-                              </option>
-                            ))}
-                          </select>
-                        )}
-  
-                        {field.field_type === "multi-select" && (
-                          <>
-                            <Select
-                              isMulti
-                              options={field?.acceptsMultiple?.map((option) => ({
-                                value: option,
-                                label: option,
-                              }))}
-                              value={selectedOptions[field.id] || []}
-                              onChange={(options) =>
-                                handleMultiSelectChange(field.id, options)
-                              }
-                              formatOptionLabel={formatOptionLabel}
-                              className="text-start"
+                                </thead>
+                                <tbody>
+                                  {field?.gridData?.map((row, rowIndex) => (
+                                    <tr key={rowIndex}>
+                                      {field?.acceptsMultiple?.columns?.map(
+                                        (column, colIdx) => (
+                                          <td
+                                            key={colIdx}
+                                            className="border border-gray-600 p-2"
+                                          >
+                                            <input
+                                              type="text"
+                                              placeholder={column.placeholder}
+                                              value={row[column.name] || ""}
+                                              onChange={(e) =>
+                                                handleGridChange(
+                                                  activeDefaultTab,
+                                                  rowIndex,
+                                                  column.name,
+                                                  e.target.value
+                                                )
+                                              }
+                                              className="border border-gray-600 p-2 w-full rounded"
+                                            />
+                                          </td>
+                                        )
+                                      )}
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                              <button
+                                onClick={() => handleAddRow(activeDefaultTab)}
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
+                              >
+                                Add Row
+                              </button>
+                            </div>
+                          )}
+
+                          {field.field_type === "password" && (
+                            <input
+                              placeholder={field.placeholder}
+                              style={{
+                                border: "1px solid gray",
+                                height: "48px",
+                              }}
+                              type="password"
+                              className="border border-gray-600 text-gray-600 p-2 w-full rounded"
+                              required={field.isMandatory}
+                              readOnly={field.isReadonly}
                             />
-                          </>
-                        )}
-                      </div>
-                      )
+                          )}
+
+                          {field.field_type === "date" && (
+                            <input
+                              placeholder={field.placeholder}
+                              style={{
+                                border: "1px solid gray",
+                                height: "48px",
+                              }}
+                              type="date"
+                              className="border border-gray-600 p-2 w-full rounded"
+                              required={field.isMandatory}
+                              readOnly={field.isReadonly}
+                            />
+                          )}
+
+                          {field.field_type === "email" && (
+                            <input
+                              placeholder={field.placeholder}
+                              style={{
+                                border: "1px solid gray",
+                                height: "48px",
+                              }}
+                              type="email"
+                              className="border border-gray-600 p-2 w-full rounded"
+                              required={field.isMandatory}
+                              readOnly={field.isReadonly}
+                            />
+                          )}
+
+                          {field.field_type === "number" && (
+                            <input
+                              placeholder={field.placeholder}
+                              style={{
+                                border: "1px solid gray",
+                                height: "48px",
+                              }}
+                              type="number"
+                              className="border border-gray-600 p-2 w-full rounded"
+                              required={field.isMandatory}
+                              readOnly={field.isReadonly}
+                            />
+                          )}
+
+                          {field.field_type === "checkbox" && (
+                            <input
+                              placeholder={field.placeholder}
+                              style={{
+                                border: "1px solid gray",
+                                height: "48px",
+                              }}
+                              type="checkbox"
+                              className="border border-gray-600 p-2 rounded"
+                              required={field.isMandatory}
+                              readOnly={field.isReadonly}
+                            />
+                          )}
+
+                          {field.field_type === "dropdown" && (
+                            <select
+                              className="border border-gray-600 p-2 w-full rounded"
+                              style={{
+                                border: "1px solid gray",
+                                height: "48px",
+                              }}
+                              required={field.isMandatory}
+                            >
+                              {field?.acceptsMultiple?.map((option, idx) => (
+                                <option key={idx} value={option}>
+                                  {option}
+                                </option>
+                              ))}
+                            </select>
+                          )}
+
+                          {field.field_type === "multi-select" && (
+                            <>
+                              <Select
+                                isMulti
+                                options={field?.acceptsMultiple?.map(
+                                  (option) => ({
+                                    value: option,
+                                    label: option,
+                                  })
+                                )}
+                                value={selectedOptions[field.id] || []}
+                                onChange={(options) =>
+                                  handleMultiSelectChange(field.id, options)
+                                }
+                                formatOptionLabel={formatOptionLabel}
+                                className="text-start"
+                              />
+                            </>
+                          )}
+                        </div>
+                      );
                     })}
                   </div>
                 </div>
-              )
+              );
             })}
           </div>
         )}

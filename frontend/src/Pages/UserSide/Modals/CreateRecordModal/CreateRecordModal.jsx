@@ -41,7 +41,7 @@ function CreateRecordModal({ open, onClose }) {
   const handleVerificationSubmit = (verified) => {
     axios
       .post(
-        "https://bmrapi.mydemosoftware.com/bmr-form/add-bmr",
+        "http://localhost:7000/bmr-form/add-bmr",
         {
           name: formData.name,
           reviewers: isSelectedReviewer.map((reviewer) => ({
@@ -90,7 +90,7 @@ function CreateRecordModal({ open, onClose }) {
   useEffect(() => {
     axios
       .post(
-        "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+        "http://localhost:7000/bmr-form/get-user-roles",
         { role_id: 3 },
         {
           headers: {
@@ -120,7 +120,7 @@ function CreateRecordModal({ open, onClose }) {
 
     axios
       .post(
-        "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+        "http://localhost:7000/bmr-form/get-user-roles",
         { role_id: 4 },
         {
           headers: {

@@ -18,6 +18,7 @@ import About from "./Pages/HeaderComponents/About";
 import Help from "./Pages/HeaderComponents/Help";
 import HelpdeskPersonnel from "./Pages/HeaderComponents/HelpdeskPersonnel";
 import BoardOfDirectors from "./Pages/HeaderComponents/BoardOfDirectors";
+import AuditTrail from "./Pages/UserSide/auditTrail/auditTrail";
 
 function App() {
   return (
@@ -47,6 +48,10 @@ function App() {
               element={<ProtectedUserRoute element={<BMRRecords />} />}
             />
           </Route>
+          <Route
+            path="/audit-trail"
+            element={<ProtectedUserRoute element={<AuditTrail />} />}
+          />
 
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="" element={<Wrapper />}>

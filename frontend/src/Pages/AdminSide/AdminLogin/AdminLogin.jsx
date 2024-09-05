@@ -21,7 +21,7 @@ const AdminLogin = () => {
       password: password,
     };
     axios
-      .post("https://bmrapi.mydemosoftware.com/user/admin-login", data, {
+      .post("http://localhost:7000/user/admin-login", data, {
         headers: {
           "Content-Type": "application/json",
         },
