@@ -156,7 +156,7 @@ const BMRRecords = () => {
     }));
   };
   return (
-    <div className="w-full h-full absolute flex items-center justify-center mb-4">
+    <div className="w-full h-full flex items-center justify-center mb-4">
       <div className="w-full h-full bg-white shadow-lg rounded-lg  ">
         <div className="flex justify-around items-center bg-gradient-to-r bg-gray-50 mt-2 p-4 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-black ">
@@ -196,7 +196,7 @@ const BMRRecords = () => {
         </div>
         <div className="p-6">
           {activeTab === "General Information" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 p-6 text-lg font-semibold text-black rounded-lg shadow-lg">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 p-6 text-lg font-semibold text-black rounded-lg ">
               <div className="p-4 border border-gray-300 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95 shadow-lg">
                 <InputField
                   label="Initiator Name"
@@ -266,14 +266,14 @@ const BMRRecords = () => {
               activeTab === tab.tab_name && (
                 <div
                   key={tab.tab_name}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-10 p-6 text-lg font-semibold text-black rounded-lg shadow-lg"
+                  className="grid grid-cols-1 w-full p-6 text-lg font-semibold text-black rounded-lg "
                 >
                   {tab.BMR_sections.map((section, index) => (
                     <div
                       key={index}
-                      className="p-4 border border-gray-500 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95 shadow-lg "
+                      className="p-4 border mb-4 border-gray-500 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95 "
                     >
-                      <h3 className="font-semibold text-gray-600 mb-3 text-lg">
+                      <h3 className="font-semibold text-gray-600 mb-3 text-lg bg-gray-200 p-3">
                         <div className="flex items-center gap-5 ">
                           <p>Section :</p>
                           <span className="block text-black">
@@ -281,25 +281,25 @@ const BMRRecords = () => {
                           </span>
                         </div>
                       </h3>
-                      {section.BMR_fields.map((field, idx) => (
-                    <div className="flex">
-                          <InputField
-                          key={idx}
-                          label={field.label || "Field Name"}
-                          type={field.type || "text"}
-                          // value={dynamicFields[activeTab][field.id] || ""}
-                          placeholder={field.placeholder}
-                          onChange={(e) =>
-                            handleDynamicFieldChange(
-                              field.id,
-                              e.target.value,
-                              activeTab
-                            )
-                          }
-                          className="mb-4 rounded-md p-2"
-                        />
-                    </div>
-                      ))}
+                      <div className="grid grid-cols-2 gap-4">
+  {section.BMR_fields.map((field, idx) => (
+    <div key={idx} className="border border-gray-300 p-2">
+      <InputField
+        label={field.label || "Field Name"}
+        type={field.type || "text"}
+        placeholder={field.placeholder}
+        onChange={(e) =>
+          handleDynamicFieldChange(
+            field.id,
+            e.target.value,
+            activeTab
+          )
+        }
+        className="mb-4 rounded-md p-2"
+      />
+    </div>
+  ))}
+</div>
                     </div>
                   ))}
                 </div>
@@ -349,7 +349,8 @@ const InputField = ({ label, type = "text", placeholder, value, onChange }) => (
       placeholder={placeholder}
       value={value}
       onChange={onChange}
-      className="w-full px-3 h-10 p-2 border border-gray-500 rounded shadow-md focus:border-blue-500 transition duration-200"
+      className="w-full px-3 h-10 p-2 border-2 border-gray-500 rounded shadow-md focus:border-blue-500 transition duration-200"
+      style={{border:"1px solid gray"}}
     />
   </div>
 );
