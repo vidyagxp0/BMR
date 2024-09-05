@@ -8,20 +8,21 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import BMRProcessDetails from "../Process/BMRProcessDetails";
 const BMRRecords = () => {
   const location = useLocation();
-    const selectedBMR = location.state?.selectedBMR;
+  const selectedBMR = location.state?.selectedBMR;
 
-    // Rest of your state and logic
-    const [activeTab, setActiveTab] = useState("General Information");
-    const [dateOfInitiation, setDateOfInitiation] = useState(
-        new Date().toISOString().split("T")[0]
-    );
-    const [dynamicFields, setDynamicFields] = useState({
-        "General Information": {},
-        ...selectedBMR.BMR_Tabs.reduce((acc, tab) => {
-            acc[tab.tab_name] = {};
-            return acc;
-        }, {}),
-    });
+  // Rest of your state and logic
+  const [activeTab, setActiveTab] = useState("General Information");
+  const [dateOfInitiation, setDateOfInitiation] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [dynamicFields, setDynamicFields] = useState({
+    "General Information": {},
+    ...selectedBMR.BMR_Tabs.reduce((acc, tab) => {
+      acc[tab.tab_name] = {};
+      return acc;
+    }, {}),
+  });
+
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [selectedReviewers, setSelectedReviewers] = useState([]);
@@ -29,7 +30,7 @@ const BMRRecords = () => {
   const Id = selectedBMR.initiator;
   const initiatorId = selectedBMR.initiator;
   const [initiatorName, setInitiatorName] = useState(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const apiUrl = `https://bmrapi.mydemosoftware.com/user/get-a-user/${Id}`;
   const fetchUserData = async () => {
@@ -308,13 +309,13 @@ const BMRRecords = () => {
         <div className="flex justify-end gap-4 items-end p-4 border-t">
           <button
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none transition duration-200"
-            onClick={()=>navigate("/dashboard")}
+            onClick={() => navigate("/dashboard")}
           >
             Save
           </button>
           <button
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none transition duration-200"
-            onClick={()=>navigate("/dashboard")}
+            onClick={() => navigate("/dashboard")}
           >
             Exit
           </button>

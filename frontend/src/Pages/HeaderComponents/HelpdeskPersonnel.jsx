@@ -23,6 +23,24 @@ const personnelData = [
     photo:
       "https://media.istockphoto.com/id/653832634/photo/portrait-of-male-doctor-standing-with-arms-crossed.jpg?s=612x612&w=0&k=20&c=YKusn_UfkRfMdBWJR1thZOaJtMlZsNNf-cA2jlRbtGQ=",
   },
+  {
+    name: "Anshul Thakur",
+    position: "Helpdesk Coordinator",
+    phone: "+91  987-987-6543",
+    email: "anshul.thakur@example.com",
+    location: "Indore",
+    photo:
+      "https://media.istockphoto.com/id/653832634/photo/portrait-of-male-doctor-standing-with-arms-crossed.jpg?s=612x612&w=0&k=20&c=YKusn_UfkRfMdBWJR1thZOaJtMlZsNNf-cA2jlRbtGQ=",
+  },
+  {
+    name: "Anshul Thakur",
+    position: "Helpdesk Coordinator",
+    phone: "+91  987-987-6543",
+    email: "anshul.thakur@example.com",
+    location: "Indore",
+    photo:
+      "https://media.istockphoto.com/id/653832634/photo/portrait-of-male-doctor-standing-with-arms-crossed.jpg?s=612x612&w=0&k=20&c=YKusn_UfkRfMdBWJR1thZOaJtMlZsNNf-cA2jlRbtGQ=",
+  },
 ];
 
 const HelpdeskPersonnel = () => {
@@ -34,11 +52,11 @@ const HelpdeskPersonnel = () => {
         <HeaderTop />
       </div>
       <div className="relative top-24">
-        <div className="relative max-w-4xl mx-auto bg-gray-100 bg-opacity-80 p-8 rounded-lg shadow-lg">
-          <h1 className="text-5xl font-bold mb-6 text-center text-blue-800">
+        <div className="relative max-w-4xl h-[80vh]  mx-auto bg-gray-100 overflow-y-scroll   bg-opacity-80   rounded-lg shadow-lg">
+          <h1 className="text-5xl font-bold bg-white z-50  text-center fixed w-[120vh] h-28  text-blue-800">
             Meet Our Helpdesk Team
           </h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-1 mt-20 gap-8 ">
             {personnelData.map((person, index) => (
               <div
                 key={index}

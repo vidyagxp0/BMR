@@ -1,5 +1,3 @@
-import React from "react";
-import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AdminLogin from "./Pages/AdminSide/AdminLogin/AdminLogin";
 import AdminDashBoard from "./Pages/AdminSide/AdminDashBoard/AdminDashBoard";
@@ -20,13 +18,13 @@ import About from "./Pages/HeaderComponents/About";
 import Help from "./Pages/HeaderComponents/Help";
 import HelpdeskPersonnel from "./Pages/HeaderComponents/HelpdeskPersonnel";
 import BoardOfDirectors from "./Pages/HeaderComponents/BoardOfDirectors";
+
 function App() {
   return (
     <>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
-
           <Route path="" element={<WrapperUser />}>
             <Route
               path="/dashboard"
@@ -44,10 +42,9 @@ function App() {
               path="/process/processdetails/:bmr_id"
               element={<ProtectedUserRoute element={<BMRProcessDetails />} />}
             />
-
             <Route
               path="/bmr_records"
-             element={<BMRRecords />}
+              element={<ProtectedUserRoute element={<BMRRecords />} />}
             />
           </Route>
 
