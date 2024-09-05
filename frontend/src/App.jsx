@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import AdminLogin from "./Pages/AdminSide/AdminLogin/AdminLogin";
 import AdminDashBoard from "./Pages/AdminSide/AdminDashBoard/AdminDashBoard";
 import { ToastContainer } from "react-toastify";
@@ -19,63 +19,87 @@ import Help from "./Pages/HeaderComponents/Help";
 import HelpdeskPersonnel from "./Pages/HeaderComponents/HelpdeskPersonnel";
 import BoardOfDirectors from "./Pages/HeaderComponents/BoardOfDirectors";
 import AuditTrail from "./Pages/UserSide/auditTrail/auditTrail";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 function App() {
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="" element={<WrapperUser />}>
-            <Route
-              path="/dashboard"
-              element={<ProtectedUserRoute element={<Dashboard />} />}
-            />
-            <Route
-              path="/process/bmr_process"
-              element={<ProtectedUserRoute element={<BMRProcess />} />}
-            />
-            <Route
-              path="/process/bmr_details"
-              element={<ProtectedUserRoute element={<BMRDetails />} />}
-            />
-            <Route
-              path="/process/processdetails/:bmr_id"
-              element={<ProtectedUserRoute element={<BMRProcessDetails />} />}
-            />
-            <Route
-              path="/bmr_records"
-              element={<ProtectedUserRoute element={<BMRRecords />} />}
-            />
-          </Route>
-          <Route
-            path="/audit-trail"
-            element={<ProtectedUserRoute element={<AuditTrail />} />}
-          />
+    <BrowserRouter>
+      <RouteGuard />
+      <ToastContainer />
+    </BrowserRouter>
+  );
+}
 
-          <Route path="/admin-login" element={<AdminLogin />} />
-          <Route path="" element={<Wrapper />}>
-            <Route
-              path="/admin-dashboard"
-              element={<ProtectedAdminRoute element={<AdminDashBoard />} />}
-            />
-            <Route
-              path="/admin-add-user"
-              element={<ProtectedAdminRoute element={<AddUser />} />}
-            />
-            <Route
-              path="/admin-update-user"
-              element={<ProtectedAdminRoute element={<UpdateUser />} />}
-            />
-          </Route>
-          <Route path="/boardOfDirectors" element={<BoardOfDirectors />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/help" element={<Help />} />
-          <Route path="/helpdesk" element={<HelpdeskPersonnel />} />
-        </Routes>
-        <ToastContainer />
-      </BrowserRouter>
-    </>
+function RouteGuard() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      if (location.pathname === "/dashboard") {
+        // Prevent going back from dashboard
+        navigate("/dashboard", { replace: true });
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [location, navigate]);
+
+  return (
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="" element={<WrapperUser />}>
+        <Route
+          path="/dashboard"
+          element={<ProtectedUserRoute element={<Dashboard />} />}
+        />
+        <Route
+          path="/process/bmr_process"
+          element={<ProtectedUserRoute element={<BMRProcess />} />}
+        />
+        <Route
+          path="/process/bmr_details"
+          element={<ProtectedUserRoute element={<BMRDetails />} />}
+        />
+        <Route
+          path="/process/processdetails/:bmr_id"
+          element={<ProtectedUserRoute element={<BMRProcessDetails />} />}
+        />
+        <Route
+          path="/bmr_records"
+          element={<ProtectedUserRoute element={<BMRRecords />} />}
+        />
+      </Route>
+      <Route
+        path="/audit-trail"
+        element={<ProtectedUserRoute element={<AuditTrail />} />}
+      />
+
+      <Route path="/admin-login" element={<AdminLogin />} />
+      <Route path="" element={<Wrapper />}>
+        <Route
+          path="/admin-dashboard"
+          element={<ProtectedAdminRoute element={<AdminDashBoard />} />}
+        />
+        <Route
+          path="/admin-add-user"
+          element={<ProtectedAdminRoute element={<AddUser />} />}
+        />
+        <Route
+          path="/admin-update-user"
+          element={<ProtectedAdminRoute element={<UpdateUser />} />}
+        />
+      </Route>
+      <Route path="/boardOfDirectors" element={<BoardOfDirectors />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/help" element={<Help />} />
+      <Route path="/helpdesk" element={<HelpdeskPersonnel />} />
+    </Routes>
   );
 }
 

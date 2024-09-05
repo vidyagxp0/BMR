@@ -19,7 +19,7 @@ const InitiateModal = ({ approvedBMR, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-xl shadow-lg w-full max-w-6xl h-[90vh] flex flex-col overflow-hidden">
-        <div className="flex justify-center gap-14 items-center p-5 bg-gradient-to-r from-blue-500 to-blue-700">
+        <div className="flex justify-center gap-14 items-center p-5  bg-[#207Ec6]">
           <h2 className="text-2xl font-bold text-white">Initiate BMR Record</h2>
           <button
             className="text-white text-2xl rounded-full p-2 focus:outline-none"
@@ -32,9 +32,9 @@ const InitiateModal = ({ approvedBMR, onClose }) => {
         <div className="p-4 flex-1 overflow-y-auto">
           <div className="mb-4 relative flex justify-center items-center w-full">
             <div className="relative w-[35%]">
-              {/* <span className="absolute top-1/2 left-80 transform -translate-y-1/2 text-[20px] text-gray-500">
+              <span className="absolute top-1/2 left-80 transform -translate-y-1/2 text-[20px] text-gray-500">
                 <FcSearch />
-              </span> */}
+              </span>
               <input
                 type="text"
                 placeholder="Search BMR Records..."
