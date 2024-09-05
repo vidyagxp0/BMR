@@ -51,7 +51,7 @@ const Dashboard = () => {
   // useEffect(() => {
   //   const newConfig = {
   //     method: "get",
-  //     url: "http://localhost:1000/differential-pressure/get-all-differential-pressure",
+  //     url: "http://https://bmrapi.mydemosoftware.com:1000/differential-pressure/get-all-differential-pressure",
   //     headers: {
   //       Authorization: `Bearer ${localStorage.getItem("user-token")}`,
   //       "Content-Type": "application/json",
@@ -79,7 +79,7 @@ const Dashboard = () => {
 
   //   const newConfigTemp = {
   //     method: "get",
-  //     url: "http://localhost:1000/temprature-record/get-all-temprature-record",
+  //     url: "http://https://bmrapi.mydemosoftware.com:1000/temprature-record/get-all-temprature-record",
   //     headers: {
   //       Authorization: `Bearer ${localStorage.getItem("user-token")}`,
   //       "Content-Type": "application/json",
