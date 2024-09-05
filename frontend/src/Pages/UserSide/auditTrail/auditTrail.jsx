@@ -7,6 +7,7 @@ function AuditTrail() {
   const [auditTrails, setAuditTrails] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
+  console.log('hello');
 
   useEffect(() => {
     const fetchAuditTrail = async () => {
