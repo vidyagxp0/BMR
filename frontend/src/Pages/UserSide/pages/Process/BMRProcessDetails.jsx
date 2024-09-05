@@ -253,7 +253,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://195.35.6.197:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`https://bmrapi.mydemosoftware.com/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -326,7 +326,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.initiatorDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://195.35.6.197:7000/bmr-form/send-BMR-for-review",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -343,7 +343,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://195.35.6.197:7000/bmr-form/send-BMR-from-review-to-approval",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -360,7 +360,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://195.35.6.197:7000/bmr-form/send-BMR-from-review-to-open",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -375,7 +375,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://195.35.6.197:7000/bmr-form/approve-BMR",
+          "https://bmrapi.mydemosoftware.com/bmr-form/approve-BMR",
           dataObject,
           config
         )
@@ -392,7 +392,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://195.35.6.197:7000/bmr-form/send-BMR-from-approval-to-open",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )

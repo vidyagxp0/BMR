@@ -26,7 +26,7 @@ const UpdateUser = () => {
 
   useEffect(() => {
     axios
-      .get("http://195.35.6.197:7000/user/get-all-roles", {
+      .get("https://bmrapi.mydemosoftware.com/user/get-all-roles", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "application/json",
@@ -91,7 +91,7 @@ const UpdateUser = () => {
     });
 
     axios
-      .post("http://195.35.6.197:7000/user/add-user", formDataToSend, {
+      .post("https://bmrapi.mydemosoftware.com/user/add-user", formDataToSend, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "multipart/form-data",

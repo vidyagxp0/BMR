@@ -31,7 +31,7 @@ const BMRRecords = () => {
   const [initiatorName, setInitiatorName] = useState(null);
   const navigate = useNavigate()
 
-  const apiUrl = `http://195.35.6.197:7000/user/get-a-user/${Id}`;
+  const apiUrl = `https://bmrapi.mydemosoftware.com/user/get-a-user/${Id}`;
   const fetchUserData = async () => {
     try {
       const token = localStorage.getItem("user-token");
@@ -73,7 +73,7 @@ const BMRRecords = () => {
       try {
         const [reviewersResponse, approversResponse] = await Promise.all([
           axios.post(
-            "http://195.35.6.197:7000/bmr-form/get-user-roles",
+            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
             { role_id: 3 },
             {
               headers: {
@@ -83,7 +83,7 @@ const BMRRecords = () => {
             }
           ),
           axios.post(
-            "http://195.35.6.197:7000/bmr-form/get-user-roles",
+            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
             { role_id: 4 },
             {
               headers: {
@@ -281,11 +281,12 @@ const BMRRecords = () => {
                         </div>
                       </h3>
                       {section.BMR_fields.map((field, idx) => (
-                        <InputField
+                    <div className="flex">
+                          <InputField
                           key={idx}
                           label={field.label || "Field Name"}
                           type={field.type || "text"}
-                          value={dynamicFields[activeTab][field.id] || ""}
+                          // value={dynamicFields[activeTab][field.id] || ""}
                           placeholder={field.placeholder}
                           onChange={(e) =>
                             handleDynamicFieldChange(
@@ -296,6 +297,7 @@ const BMRRecords = () => {
                           }
                           className="mb-4 rounded-md p-2"
                         />
+                    </div>
                       ))}
                     </div>
                   ))}
