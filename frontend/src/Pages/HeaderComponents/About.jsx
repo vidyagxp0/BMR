@@ -20,6 +20,13 @@ function About() {
             alt="Background Image"
             className="w-full object-cover rounded-md shadow-lg"
           />
+          <p className="family">
+            At BMR, we streamline batch manufacturing <br /> records with
+            precision and innovation, ensuring <br /> compliance and efficiency
+            in pharmaceutical
+            <br />
+            production.
+          </p>
         </div>
 
         <div className="text-center max-w-full mb-8 bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-lg shadow-md">
