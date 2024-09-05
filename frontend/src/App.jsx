@@ -38,7 +38,6 @@ function RouteGuard() {
   useEffect(() => {
     const handlePopState = (event) => {
       if (location.pathname === "/dashboard") {
-        // Prevent going back from dashboard
         navigate("/dashboard", { replace: true });
       }
     };
@@ -51,7 +50,7 @@ function RouteGuard() {
   }, [location, navigate]);
 
   return (
-    <Routes>
+    <Routes>a
       <Route path="/" element={<Login />} />
       <Route path="" element={<WrapperUser />}>
         <Route
