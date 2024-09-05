@@ -133,4 +133,10 @@ router.post(
   BmrController.generateReport
 );
 
+router.get(
+  "/get-bmr-form-audit-trail/:id",
+  Auth.checkJwtToken,
+  BmrController.getBMRformAuditTrail
+);
+
 module.exports = router;
