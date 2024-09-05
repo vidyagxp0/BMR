@@ -74,7 +74,7 @@ const BMRProcess = () => {
   ];
   const fetchBMRData = () => {
     axios
-      .get("http://localhost:7000/bmr-form/get-all-bmr", {
+      .get("http://https://bmrapi.mydemosoftware.com:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },

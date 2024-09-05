@@ -24,7 +24,7 @@ const AddTabModal = ({
     try {
       if (updateTab === "add") {
         await axios.post(
-          "http://localhost:7000/bmr-form/add-bmr-tab",
+          "http://https://bmrapi.mydemosoftware.com:7000/bmr-form/add-bmr-tab",
           {
             bmr_id: bmr_id,
             tab_name: tabName,
@@ -42,7 +42,7 @@ const AddTabModal = ({
         addTab({ tab_name: tabName });
       } else if (updateTab === "edit") {
         await axios.put(
-          `http://localhost:7000/bmr-form/edit-bmr-tab/${bmr_tab_id}`,
+          `http://https://bmrapi.mydemosoftware.com:7000/bmr-form/edit-bmr-tab/${bmr_tab_id}`,
           {
             bmr_id: bmr_id,
             tab_name: tabName,

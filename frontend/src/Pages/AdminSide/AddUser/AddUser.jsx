@@ -26,7 +26,7 @@ const AddUser = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:7000/user/get-all-roles", {
+      .get("http://https://bmrapi.mydemosoftware.com:7000/user/get-all-roles", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "application/json",
@@ -102,7 +102,7 @@ const AddUser = () => {
     });
 
     axios
-      .post("http://localhost:7000/user/add-user", formDataToSend, {
+      .post("http://https://bmrapi.mydemosoftware.com:7000/user/add-user", formDataToSend, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "multipart/form-data",

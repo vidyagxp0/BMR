@@ -83,7 +83,7 @@ const AdminDashBoard = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:7000/user/get-all-users", {
+      .get("http://https://bmrapi.mydemosoftware.com:7000/user/get-all-users", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
         },

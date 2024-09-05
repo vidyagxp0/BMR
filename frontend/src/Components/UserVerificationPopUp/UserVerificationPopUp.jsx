@@ -36,7 +36,7 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
 
   //   try {
   //     const response = await axios.post(
-  //       "http://localhost:7000/user/user-verification",
+  //       "http://https://bmrapi.mydemosoftware.com:7000/user/user-verification",
   //       data,
   //       {
   //         headers: { "Content-Type": "application/json" },

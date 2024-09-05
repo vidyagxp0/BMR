@@ -13,7 +13,7 @@ function HeaderTop() {
   // useEffect(() => {
   //   const requestOptions = {
   //     method: "GET",
-  //     url: `http://localhost:1000/user/get-a-user/${loggedInUser?.userId}`, 
+  //     url: `http://https://bmrapi.mydemosoftware.com:1000/user/get-a-user/${loggedInUser?.userId}`, 
   //     headers: {}, 
   //   };
 

@@ -23,7 +23,7 @@ const AddSectionModal = ({
     if (updateSection === "add-section") {
       try {
         const response = await axios.post(
-          `http://localhost:7000/bmr-form/add-bmr-section`,
+          `http://https://bmrapi.mydemosoftware.com:7000/bmr-form/add-bmr-section`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
@@ -48,7 +48,7 @@ const AddSectionModal = ({
     } else if (updateSection === "edit-section") {
       try {
         const response = await axios.put(
-          `http://localhost:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          `http://https://bmrapi.mydemosoftware.com:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
@@ -73,7 +73,7 @@ const AddSectionModal = ({
     } else if (updateSection === "edit-section") {
       try {
         const response = await axios.put(
-          `http://localhost:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          `http://https://bmrapi.mydemosoftware.com:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
@@ -98,7 +98,7 @@ const AddSectionModal = ({
     } else if (updateSection === "edit-section") {
       try {
         const response = await axios.put(
-          `http://localhost:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          `http://https://bmrapi.mydemosoftware.com:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
