@@ -163,19 +163,19 @@ const BMRRecords = () => {
             Initiate BMR Records
           </h2>
         </div>
-        <div className="flex justify-around items-center bg-gradient-to-r from-cyan-400 to-gray-200 mt-2 p-4 rounded-lg shadow-lg">
-          <h2 className="text-lg font-semibold text-white ">
+        <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-cyan-400 to-gray-200 mt-2 p-4 rounded-lg shadow-lg">
+          {/* <h2 className="text-lg font-semibold text-white ">
             BMR ID :{" "}
             <span className="text-gray-800"> {selectedBMR.bmr_id}</span>
-          </h2>
+          </h2> */}
           <h2 className="text-lg font-semibold text-white ">
             BMR Name :{" "}
             <span className="text-gray-800"> {selectedBMR.name}</span>
           </h2>
-          <h2 className="text-lg font-semibold text-white ">
+          {/* <h2 className="text-lg font-semibold text-white ">
             Date of Approval :{" "}
             <span className="text-gray-800">{formattedDate || "N/A"}</span>
-          </h2>
+          </h2> */}
           <h2 className="text-lg font-semibold text-white ">
             Status :{" "}
             <span className="text-gray-800 ">{selectedBMR.status}</span>
