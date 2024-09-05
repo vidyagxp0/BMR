@@ -262,7 +262,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://localhost:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`https://bmrapi.mydemosoftware.com/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -335,7 +335,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.initiatorDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://localhost:7000/bmr-form/send-BMR-for-review",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -352,7 +352,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://localhost:7000/bmr-form/send-BMR-from-review-to-approval",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -369,7 +369,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://localhost:7000/bmr-form/send-BMR-from-review-to-open",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -383,7 +383,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
     } else if (popupAction === "sendFromApprovalToApproved") {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
-        .put("http://localhost:7000/bmr-form/approve-BMR", dataObject, config)
+        .put("https://bmrapi.mydemosoftware.com/bmr-form/approve-BMR", dataObject, config)
         .then(() => {
           toast.success("BMR successfully approved");
           navigate(-1);
@@ -397,7 +397,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://localhost:7000/bmr-form/send-BMR-from-approval-to-open",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -482,7 +482,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
         // Make API request to generate PDF
         const response = await axios({
-          url: "http://localhost:7000/bmr-form/generate-report",
+          url: "https://bmrapi.mydemosoftware.com/bmr-form/generate-report",
           method: "POST",
           responseType: "blob",
           headers: {

@@ -27,7 +27,7 @@ function HeaderTop() {
   // useEffect(() => {
   //   const requestOptions = {
   //     method: "GET",
-  //     url: `http://localhost:7000:1000/user/get-a-user/${loggedInUser?.userId}`, 
+  //     url: `https://bmrapi.mydemosoftware.com:1000/user/get-a-user/${loggedInUser?.userId}`, 
   //     headers: {}, 
   //   };
 
