@@ -8,6 +8,8 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [declaration, setDeclaration] = useState("");
+  const [comments, setComments] = useState("");
+
   const navigate = useNavigate();
   const [flag, setFlag] = useState(false);
 
@@ -120,8 +122,8 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
             </label>
             <input
               type="text"
-              value={declaration}
-              onChange={(e) => setDeclaration(e.target.value)}
+              value={comments}
+              onChange={(e) => setComments(e.target.value)}
               required
             />
           </div>

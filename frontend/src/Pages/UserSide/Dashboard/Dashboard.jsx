@@ -6,6 +6,7 @@ import axios from "axios";
 import InitiateModal from "../Modals/InitiateModal";
 import ReactApexChart from "react-apexcharts";
 import "./Dashboard.css";
+import DashboardBottom from "../../../Components/Header/DashboardBottom";
 
 const localizer = momentLocalizer(moment);
 
@@ -135,6 +136,7 @@ const Dashboard = () => {
 
   return (
     <div>
+      {/* <DashboardBottom/> */}
       <div className="desktop-input-table-wrapper">
         <div className="input-wrapper">
           <div className="group-input-2">
@@ -162,12 +164,13 @@ const Dashboard = () => {
           <thead>
             <tr>
               <th>S no</th>
-              <th>BMR no</th>
-              <th>Initiator</th>
+              <th>BMR Name</th>
               <th>Date of initiation</th>
-              <th>Short description</th>
+              <th>Division</th>
+              <th>Description</th>
+              <th>Due Date</th>
               <th>Status</th>
-              <th>Site</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody></tbody>

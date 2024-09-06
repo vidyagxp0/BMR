@@ -770,15 +770,13 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
               {activeFlowTab === "INITIATION" && (
                 <>
-                  <Tooltip title="Create Form">
-                    <IconButton>
-                      <IoIosCreate
-                        size={28}
-                        className="flex justify-center items-center cursor-pointer "
-                        onClick={() => setShowForm("sendForm")}
-                      />
-                    </IconButton>
-                  </Tooltip>
+                
+                 <AtmButton
+                label={newTab.BMR_Tabs?.length > 0 ?"Edit Form":"Create Form"}
+                onClick={() => setShowForm("sendForm")}
+                className="bg-blue-500 hover:bg-blue-600 px-4 py-2"
+              />
+                 
                 </>
               )}
             </>

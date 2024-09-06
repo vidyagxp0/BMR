@@ -22,6 +22,7 @@ const BMRProcess = () => {
   const navigate = useNavigate();
 
   const columns = [
+    { header: "BMR Id", accessor: "bmr_id" },
     {
       header: "BMR Name",
       accessor: "name",
@@ -39,12 +40,20 @@ const BMRProcess = () => {
         );
       },
     },
-    { header: "Status", accessor: "status" },
+    { header: "Division", accessor: "division" },
     {
       header: "Date Of Initiation",
       accessor: "date_of_initiation",
       Cell: ({ row }) => formattedDate(row.original.date_of_initiation),
     },
+    { header: "Description", accessor: "description" },
+    {
+      header: "Due Date",
+      accessor: "due_date",
+      Cell: ({ row }) => formattedDate(row.original.due_date),
+    },
+    { header: "Status", accessor: "status" },
+   
     {
       header: "Actions",
       accessor: "actions",
@@ -57,7 +66,7 @@ const BMRProcess = () => {
                 setSelectedUser(user);
                 setIsEditModalOpen(true);
               }}
-              className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-indigo-600 hover:to-indigo-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-indigo-300 to-indigo-500 text-white px-4 py-2 rounded-full shadow-lg hover:from-indigo-200 hover:to-indigo-400 transition duration-300 ease-in-out transform hover:-translate-y-1"
             >
               Edit
             </button>
@@ -67,7 +76,7 @@ const BMRProcess = () => {
                 setSelectedUser(user);
                 setShowDeleteUser(true);
               }}
-              className="bg-gradient-to-r from-red-500 to-red-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-red-300 to-red-500 text-white px-4 py-2 rounded-full shadow-lg hover:from-red-200 hover:to-red-400 transition duration-300 ease-in-out transform hover:-translate-y-1"
             >
               Delete
             </button>

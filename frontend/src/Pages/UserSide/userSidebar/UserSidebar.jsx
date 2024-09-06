@@ -5,7 +5,7 @@ const UserSidebar = () => {
     <aside>
       <div className="inner-block">
         <div className="sidebar-link"></div>
-        <div className="bg-[#0A6249] text-white">
+        <div className="bg-[#0A6249] text-white rounded">
           <p className="p-2">• Work Flow </p>
         </div>
       </div>

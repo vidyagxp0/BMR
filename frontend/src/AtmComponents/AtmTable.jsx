@@ -88,7 +88,7 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
           Previous
         </button>
         <span className="text-sm sm:text-base">
-          Total Users: {data.length} &nbsp; Page {currentPage} of {totalPages}
+          Total BMRs: {data.length} &nbsp; Page {currentPage} of {totalPages}
         </span>
         <button
           onClick={handleNextPage}

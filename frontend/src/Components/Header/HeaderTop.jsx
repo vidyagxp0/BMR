@@ -54,7 +54,7 @@ function HeaderTop() {
             />
           </div>
         </div>
-        <div className="center ">
+        {/* <div className="center ">
           <div className="inputContainer border-2 border-gray-500 w-96">
             <div className="inputInnerLeft">
               <svg
@@ -70,9 +70,9 @@ function HeaderTop() {
             <input type="search" placeholder="Search..." />
             <button className="search-button">Search</button>
           </div>
-        </div>
+        </div> */}
 
-        <div className=" flex items-center justify-center w-72 -ml-10  gap-10">
+        {/* <div className=" flex items-center justify-center w-72 -ml-10  gap-10">
           {Each({
             of: asideLinks,
             render: (item) => (
@@ -131,7 +131,7 @@ function HeaderTop() {
               </div>
             ),
           })}
-        </div>
+        </div> */}
 
         <div className="right">
           <div className="notification-icon">
