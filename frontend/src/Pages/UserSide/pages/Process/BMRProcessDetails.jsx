@@ -383,7 +383,11 @@ const BMRProcessDetails = ({ bmrFields }) => {
     } else if (popupAction === "sendFromApprovalToApproved") {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
-        .put("https://bmrapi.mydemosoftware.com/bmr-form/approve-BMR", dataObject, config)
+        .put(
+          "https://bmrapi.mydemosoftware.com/bmr-form/approve-BMR",
+          dataObject,
+          config
+        )
         .then(() => {
           toast.success("BMR successfully approved");
           navigate(-1);
@@ -740,21 +744,21 @@ const BMRProcessDetails = ({ bmrFields }) => {
                 onClick={() => {
                   navigate("/audit-trail", { state: data[0] });
                 }}
-                className="bg-blue-500 hover:bg-blue-700 px-4 py-2"
+                className="bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
               />
               <AtmButton
                 label="Generate Report"
                 onClick={() => {
                   generateReport();
                 }}
-                className="bg-blue-500 hover:bg-blue-700 px-4 py-2"
+                className="bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
               />
               {activeFlowTab === "INITIATION" && (
                 <>
                   <AtmButton
                     label="Edit Form"
                     onClick={() => setShowForm("sendForm")}
-                    className="bg-blue-500 hover:bg-blue-700 px-4 py-2"
+                    className="bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
                   />
                 </>
               )}
@@ -887,8 +891,8 @@ const BMRProcessDetails = ({ bmrFields }) => {
               onClick={() => handleFlowTabClick(tab)}
               className={`py-2 px-4 rounded-full border-2 border-black ${
                 activeFlowTab === tab
-                  ? "bg-blue-500 text-white"
-                  : "bg-blue-100 text-gray-700"
+                  ? "bg-[#6beeac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
+                  : "bg-[#8dccac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
               }`}
             >
               {tab}
@@ -906,8 +910,8 @@ const BMRProcessDetails = ({ bmrFields }) => {
               onClick={() => handleDefaultTabClick(tab)}
               className={`py-2 px-4 rounded-full border-2 border-black ${
                 activeDefaultTab === tab
-                  ? "bg-blue-500 text-white"
-                  : "bg-blue-100 text-gray-700"
+                  ? "bg-[#6beeac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
+                  : "bg-[#8dccac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
               }`}
             >
               {tab}

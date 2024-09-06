@@ -14,12 +14,12 @@ const WrapperUser = () => {
       {/* Main Content */}
       <div className="flex flex-grow mt-16">
         {/* Sidebar */}
-        <div className="fixed top-16 left-0 w-64 h-full z-40 hidden lg:block">
+        <div className="fixed  left-0 w-64 h-full z-40 hidden lg:block">
           <UserSidebar />
         </div>
 
         {/* Outlet for rendering content */}
-        <div className="flex-grow ml-0 lg:ml-64 p-4 w-full relative overflow-auto">
+        <div className="flex-grow ml-0 lg:ml-64 bg-[#e5faef] p-4 w-full relative overflow-auto">
           <Outlet />
         </div>
       </div>

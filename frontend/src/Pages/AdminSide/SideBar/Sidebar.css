@@ -30,16 +30,18 @@ aside .inner-block .sidebar-link .link-head {
   font-weight: bold;
   cursor: pointer;
   border-radius: 5px;
-  box-shadow: rgba(247, 207, 106, 0.3) 0px 1px 2px 0px, rgba(247, 206, 103, 0.15) 0px 2px 6px 2px;
+  box-shadow: rgba(247, 207, 106, 0.3) 0px 1px 2px 0px,
+    rgba(247, 206, 103, 0.15) 0px 2px 6px 2px;
 }
 
 aside .inner-block .sidebar-link .link-head:hover,
 aside .inner-block .sidebar-link .link-head.active {
   background: #5aa3f2;
-  box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px;
+  box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px,
+    rgba(17, 17, 26, 0.1) 0px 0px 8px;
 }
 
-aside .inner-block .sidebar-link .link-head>div:nth-child(1) {
+aside .inner-block .sidebar-link .link-head > div:nth-child(1) {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -64,7 +66,7 @@ aside .inner-block .sidebar-link .sidebar-subList::before {
   transform: translate(0px, 0);
 } */
 
-aside .inner-block .sidebar-link .sidebar-subList>* {
+aside .inner-block .sidebar-link .sidebar-subList > * {
   transition: all 0.3s linear;
   cursor: pointer;
   position: relative;
@@ -82,7 +84,7 @@ aside .inner-block .sidebar-link .sidebar-subList>* {
   background: var(--themeColor);
 } */
 
-aside .inner-block .sidebar-link .sidebar-subList>*:hover,
+aside .inner-block .sidebar-link .sidebar-subList > *:hover,
 aside .inner-block .sidebar-link .sidebar-subList .active {
   color: #5195df;
 }
@@ -100,15 +102,15 @@ aside .inner-block .sidebar-link .sidebar-subList .active {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  padding: 0.5rem 1rem; 
+  padding: 0.5rem 1rem;
   border: 1px solid transparent;
-  border-radius: 0.25rem; 
+  border-radius: 0.25rem;
   transition: background-color 0.2s, border-color 0.2s;
 }
 
 .link-head:hover {
   background-color: #f9fafb;
-  border-color: #d1d5db; 
+  border-color: #d1d5db;
 }
 
 .sidebar-subList {
@@ -117,18 +119,18 @@ aside .inner-block .sidebar-link .sidebar-subList .active {
 
 .sidebar-subLink {
   display: block;
-  padding: 0.25rem 1rem; 
-  border-radius: 0.25rem; 
+  padding: 0.25rem 1rem;
+  border-radius: 0.25rem;
   transition: background-color 0.2s;
 }
 
 .sidebar-subLink:hover {
-  background-color: #aad2fa; 
+  background-color: #aad2fa;
 }
 
 .active-link {
-  background-color: #207ec6; 
-  color: #fff; 
+  background-color: #1a9e66;
+  color: #fff;
 }
 
 .inactive-link {
@@ -137,8 +139,8 @@ aside .inner-block .sidebar-link .sidebar-subList .active {
 }
 
 .active-subLink {
-  background-color:#207ec6 ;
-  color:#fff ; 
+  background-color: #1a9e66;
+  color: #fff;
 }
 
 .inactive-subLink {

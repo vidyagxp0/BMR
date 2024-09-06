@@ -163,7 +163,7 @@ const BMRRecords = () => {
             Initiate BMR Records
           </h2>
         </div>
-        <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-cyan-400 to-gray-200 mt-2 p-4 rounded-lg shadow-lg">
+        <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-[#1a9e66] to-[#75D6A5] mt-2 p-4 rounded-lg shadow-lg">
           {/* <h2 className="text-lg font-semibold text-white ">
             BMR ID :{" "}
             <span className="text-gray-800"> {selectedBMR.bmr_id}</span>
@@ -181,7 +181,7 @@ const BMRRecords = () => {
             <span className="text-gray-800 ">{selectedBMR.status}</span>
           </h2>
         </div>
-        <div className="flex justify-start space-x-2 px-4 pb-4">
+        <div className="flex justify-start space-x-2 px-4 pb-4 ">
           {[
             "General Information",
             ...selectedBMR.BMR_Tabs.map((tab) => tab.tab_name),
@@ -330,8 +330,8 @@ const Button1 = ({ label, active, onClick }) => (
   <button
     className={`px-4 py-2 my-4 text-gray-600 font-semibold rounded-3xl transition duration-100 ${
       active
-        ? "bg-[#207ec6] text-white hover:bg-[#2e6a97]"
-        : "bg-blue-200 hover:bg-blue-600 hover:text-white"
+        ? "bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#d0f8ec]"
+        : "bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#d0f8ec]"
     }`}
     onClick={onClick}
   >

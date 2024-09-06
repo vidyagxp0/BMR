@@ -57,3 +57,19 @@
     box-shadow: 1px 2px 2px 0px #c6adad;
   }
   
+  .themeBtn {
+    background-color: #1a9e66; /* Default background color */
+    color: white; /* Default text color */
+    padding: 10px 20px; /* Adjust padding as needed */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Optional: adjust border radius for rounded corners */
+    font-weight: bold; /* Font weight for bold text */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background 0.3s, color 0.3s; /* Smooth transition for background and color changes */
+  }
+  
+  .themeBtn:hover {
+    background: radial-gradient(circle, #0a6249, #1a9e66); /* Radial gradient background on hover */
+    color: white; /* Text color on hover */
+  }
+  
