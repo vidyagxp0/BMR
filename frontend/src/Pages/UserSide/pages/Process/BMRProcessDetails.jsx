@@ -910,8 +910,8 @@ const BMRProcessDetails = ({ bmrFields }) => {
               onClick={() => handleFlowTabClick(tab)}
               className={`py-2 px-4 rounded border-2 border-black ${
                 activeFlowTab === tab
-                  ? "bg-blue-500 text-white"
-                  : "bg-blue-100 text-gray-700"
+                  ? "bg-[#6beeac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
+                  : "bg-[#8dccac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
               }`}
             >
               {tab}
@@ -929,8 +929,8 @@ const BMRProcessDetails = ({ bmrFields }) => {
               onClick={() => handleDefaultTabClick(tab)}
               className={`py-2 px-4 rounded border-2 border-black ${
                 activeDefaultTab === tab
-                  ? "bg-blue-500 text-white"
-                  : "bg-blue-100 text-gray-700"
+                  ? "bg-[#6beeac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
+                  : "bg-[#8dccac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
               }`}
             >
               {tab}

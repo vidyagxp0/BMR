@@ -139,8 +139,8 @@ const Dashboard = () => {
         <div className="input-wrapper">
           <div className="group-input-2">
             <label>BMR</label>
-            <select id="options" name="options">
-              <option value="">All Records</option>
+            <select id="options" name="options" >
+              <option value="" >All Records</option>
               {approvedBMR.map((item, index) => (
                 <option key={index} value={item.id}>
                   {item.name}
