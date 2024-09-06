@@ -32,9 +32,9 @@ const InitiateModal = ({ approvedBMR, onClose }) => {
         <div className="p-4 flex-1 overflow-y-auto">
           <div className="mb-4 relative flex justify-center items-center w-full">
             <div className="relative w-[35%]">
-              {/* <span className="absolute top-1/2 left-80 transform -translate-y-1/2 text-[20px] text-gray-500">
+              <span className="absolute top-1/2 left-80 transform -translate-y-1/2 text-[20px] text-gray-500">
                 <FcSearch />
-              </span> */}
+              </span>
               <input
                 type="text"
                 placeholder="Search BMR Records..."
