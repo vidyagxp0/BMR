@@ -215,6 +215,25 @@ function CreateRecordModal({ open, onClose }) {
                 },
               }}
             />
+             <TextField
+              label="Description"
+              name="name"
+              fullWidth
+              margin="normal"
+              value={formData.name}
+              onChange={handleChange}
+              variant="outlined"
+              InputProps={{
+                style: {
+                  height: "48px",
+                },
+              }}
+              InputLabelProps={{
+                style: {
+                  top: "0",
+                },
+              }}
+            />
             <div>
               <Typography
                 variant="subtitle2"
