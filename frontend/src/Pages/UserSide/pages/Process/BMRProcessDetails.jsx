@@ -908,7 +908,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleFlowTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${
+              className={`py-2 px-4 rounded border-2 border-black ${
                 activeFlowTab === tab
                   ? "bg-blue-500 text-white"
                   : "bg-blue-100 text-gray-700"
@@ -927,7 +927,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleDefaultTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${
+              className={`py-2 px-4 rounded border-2 border-black ${
                 activeDefaultTab === tab
                   ? "bg-blue-500 text-white"
                   : "bg-blue-100 text-gray-700"
@@ -946,7 +946,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleSendFormTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${
+              className={`py-2 px-4 rounded border-2 border-black ${
                 activeSendFormTab === tab
                   ? "bg-blue-500 text-white text-lg"
                   : "bg-blue-200 text-black text-lg"
