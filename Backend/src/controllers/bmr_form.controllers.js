@@ -19,7 +19,18 @@ const getUserById = async (user_id) => {
 };
 
 exports.postBMR = async (req, res) => {
-  const { name, reviewers, approvers, password, declaration } = req.body;
+  const {
+    name,
+    description,
+    division_id,
+    department_id,
+    due_date,
+    reviewers,
+    approvers,
+    password,
+    declaration,
+    comments,
+  } = req.body;
 
   const transaction = await sequelize.transaction(); // Start a transaction
 
@@ -57,7 +68,11 @@ exports.postBMR = async (req, res) => {
       !Array.isArray(reviewers) ||
       !Array.isArray(approvers) ||
       reviewers.length === 0 ||
-      approvers.length === 0
+      approvers.length === 0 ||
+      !due_date ||
+      !division_id ||
+      !department_id ||
+      !description
     ) {
       return res.status(400).json({
         error: true,
@@ -86,6 +101,10 @@ exports.postBMR = async (req, res) => {
         name: name,
         reviewers: reviewers,
         approvers: approvers,
+        description: description,
+        division_id: division_id,
+        department_id: department_id,
+        due_date: due_date,
         initiator: req.user.userId,
         stage: 1,
         status: "Under Initiation",
@@ -104,6 +123,7 @@ exports.postBMR = async (req, res) => {
           previous_status: "Not Applicable",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "BMR Created",
         },
         { transaction }
@@ -183,7 +203,7 @@ exports.postBMR = async (req, res) => {
 };
 
 exports.postBMRTab = async (req, res) => {
-  const { bmr_id, tab_name, password, declaration } = req.body;
+  const { bmr_id, tab_name, password, declaration, comments } = req.body;
 
   // Validate password and declaration
   if (!password || !declaration) {
@@ -262,6 +282,7 @@ exports.postBMRTab = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Tab Added",
         },
         { transaction }
@@ -291,8 +312,15 @@ exports.postBMRTab = async (req, res) => {
 };
 
 exports.postBMRSection = async (req, res) => {
-  const { bmr_id, bmr_tab_id, section_name, limit, password, declaration } =
-    req.body;
+  const {
+    bmr_id,
+    bmr_tab_id,
+    section_name,
+    limit,
+    password,
+    declaration,
+    comments,
+  } = req.body;
 
   // Validate password and declaration
   if (!password || !declaration) {
@@ -375,6 +403,7 @@ exports.postBMRSection = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Section Added",
         },
         { transaction }
@@ -423,6 +452,7 @@ exports.postBMRField = async (req, res) => {
     acceptsMultiple, // This will now potentially hold either options or grid definitions
     password,
     declaration,
+    comments,
   } = req.body;
 
   // Validate password and declaration
@@ -456,13 +486,7 @@ exports.postBMRField = async (req, res) => {
     }
 
     // Check for required fields
-    if (
-      !bmr_id ||
-      !bmr_tab_id ||
-      !bmr_section_id ||
-      !label ||
-      isRequired === undefined
-    ) {
+    if (!bmr_id || !bmr_tab_id || !bmr_section_id || !label || !field_type) {
       await transaction.rollback();
       return res.status(400).json({
         error: true,
@@ -553,6 +577,7 @@ exports.postBMRField = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Field Added",
         },
         { transaction }
@@ -584,7 +609,18 @@ exports.postBMRField = async (req, res) => {
 
 exports.editBMR = async (req, res) => {
   const bmr_id = req.params.id;
-  const { name, reviewers, approvers, password, declaration } = req.body;
+  const {
+    name,
+    due_date,
+    department_id,
+    division_id,
+    description,
+    reviewers,
+    approvers,
+    password,
+    declaration,
+    comments,
+  } = req.body;
 
   // Validate password and declaration
   if (!password || !declaration) {
@@ -666,6 +702,10 @@ exports.editBMR = async (req, res) => {
         name: name,
         reviewers: reviewers,
         approvers: approvers,
+        description: description,
+        division_id: division_id,
+        department_id: department_id,
+        due_date: due_date,
       },
       { where: { bmr_id: bmr_id }, transaction }
     );
@@ -681,6 +721,7 @@ exports.editBMR = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "BMR Updated",
         },
         { transaction }
@@ -712,7 +753,7 @@ exports.editBMR = async (req, res) => {
 
 exports.editBMRTab = async (req, res) => {
   const bmr_tab_id = req.params.id;
-  const { bmr_id, tab_name, password, declaration } = req.body;
+  const { bmr_id, tab_name, password, declaration, comments } = req.body;
 
   const transaction = await sequelize.transaction(); // Start a transaction
 
@@ -800,6 +841,7 @@ exports.editBMRTab = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Tab Updated",
         },
         { transaction }
@@ -831,8 +873,15 @@ exports.editBMRTab = async (req, res) => {
 
 exports.editBMRSection = async (req, res) => {
   const bmr_section_id = req.params.id;
-  const { bmr_id, section_name, bmr_tab_id, limit, password, declaration } =
-    req.body;
+  const {
+    bmr_id,
+    section_name,
+    bmr_tab_id,
+    limit,
+    password,
+    declaration,
+    comments,
+  } = req.body;
 
   // Validate password and declaration
   if (!password || !declaration) {
@@ -934,6 +983,7 @@ exports.editBMRSection = async (req, res) => {
           previous_status: "Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Section Updated",
         },
         { transaction }
@@ -983,6 +1033,7 @@ exports.editBMRField = async (req, res) => {
     acceptsMultiple,
     password,
     declaration,
+    comments,
   } = req.body;
 
   // Validate password and declaration
@@ -1104,15 +1155,27 @@ exports.editBMRField = async (req, res) => {
 
     // Log audit trail synchronously to ensure consistency within the transaction
     try {
+      const previousField = await BMR_field.findOne({
+        where: {
+          bmr_id: bmr_id,
+          bmr_tab_id: bmr_tab_id,
+          bmr_section_id: bmr_section_id,
+          bmr_field_id: bmr_field_id,
+          isActive: true,
+        },
+        transaction,
+      });
+
       await FormAuditTrail.create(
         {
           bmr_id: bmr_id,
           changed_by: req.user.userId,
-          previous_value: JSON.stringify(existingField.label),
+          previous_value: JSON.stringify(previousField?.label),
           new_value: JSON.stringify(label),
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Field Updated",
         },
         { transaction }
@@ -1143,7 +1206,7 @@ exports.editBMRField = async (req, res) => {
 
 exports.deleteBMR = async (req, res) => {
   const bmrId = req.params.id;
-  const { password, declaration } = req.body;
+  const { password, declaration, comments } = req.body;
 
   // Validate password and declaration before starting the transaction
   if (!password || !declaration) {
@@ -1209,6 +1272,7 @@ exports.deleteBMR = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "BMR Deleted",
         },
         { transaction }
@@ -1239,7 +1303,7 @@ exports.deleteBMR = async (req, res) => {
 
 exports.deleteBMRTab = async (req, res) => {
   const bmrTabId = req.params.id;
-  const { password, declaration } = req.body;
+  const { password, declaration, comments } = req.body;
 
   // Validate password and declaration before starting the transaction
   if (!password || !declaration) {
@@ -1305,6 +1369,7 @@ exports.deleteBMRTab = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Tab Deleted",
         },
         { transaction }
@@ -1335,7 +1400,7 @@ exports.deleteBMRTab = async (req, res) => {
 
 exports.deleteBMRSection = async (req, res) => {
   const bmrSectionId = req.params.id;
-  const { password, declaration } = req.body;
+  const { password, declaration, comments } = req.body;
 
   // Validate password and declaration before starting the transaction
   if (!password || !declaration) {
@@ -1401,6 +1466,7 @@ exports.deleteBMRSection = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Section Deleted",
         },
         { transaction }
@@ -1431,7 +1497,7 @@ exports.deleteBMRSection = async (req, res) => {
 
 exports.deleteBMRField = async (req, res) => {
   const bmrFieldId = req.params.id;
-  const { password, declaration } = req.body;
+  const { password, declaration, comments } = req.body;
 
   // Validate password and declaration before starting the transaction
   if (!password || !declaration) {
@@ -1497,6 +1563,7 @@ exports.deleteBMRField = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Field Deleted",
         },
         { transaction }
@@ -1654,7 +1721,8 @@ exports.getApprovedBMRs = async (req, res) => {
 };
 
 exports.SendBMRForReview = async (req, res) => {
-  const { bmr_id, email, password, initiatorComment, declaration } = req.body;
+  const { bmr_id, email, password, initiatorComment, declaration, comments } =
+    req.body;
 
   // Validate required fields
   if (!bmr_id) {
@@ -1723,6 +1791,7 @@ exports.SendBMRForReview = async (req, res) => {
         previous_status: "Under Initiation",
         new_status: "Under Review",
         declaration: declaration,
+        comments: comments,
         action: "Send for Review",
       },
       { transaction }
@@ -1770,7 +1839,7 @@ exports.SendBMRForReview = async (req, res) => {
 };
 
 exports.SendBMRfromReviewToOpen = async (req, res) => {
-  const { bmr_id, email, password, declaration } = req.body;
+  const { bmr_id, email, password, declaration, comments } = req.body;
 
   // Validate required fields
   if (!bmr_id) {
@@ -1847,6 +1916,7 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
           previous_status: "Under Review",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Send from Review to Open",
         },
         { transaction }
@@ -1908,7 +1978,7 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
 };
 
 exports.SendBMRReviewToApproval = async (req, res) => {
-  const { bmr_id, reviewComment, password, declaration } = req.body;
+  const { bmr_id, reviewComment, password, declaration, comments } = req.body;
 
   // Validate required fields
   if (!password || !declaration) {
@@ -2015,6 +2085,7 @@ exports.SendBMRReviewToApproval = async (req, res) => {
           previous_status: "Under Review",
           new_status: "Under Approval",
           declaration: declaration,
+          comments: comments,
           action: "Send from Review to Approval",
         },
         { transaction }
@@ -2060,6 +2131,7 @@ exports.SendBMRReviewToApproval = async (req, res) => {
           previous_status: "Under Review",
           new_status: "Under Review",
           declaration: declaration,
+          comments: comments,
           action: "Send from Review to Approval",
         },
         { transaction }
@@ -2087,7 +2159,7 @@ exports.SendBMRReviewToApproval = async (req, res) => {
 };
 
 exports.SendBMRfromApprovalToOpen = async (req, res) => {
-  const { bmr_id, email, password, declaration } = req.body;
+  const { bmr_id, email, password, declaration, comments } = req.body;
 
   // Validate required fields
   if (!bmr_id) {
@@ -2172,6 +2244,7 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
           previous_status: "Under Approval",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Send from Approval to Open",
         },
         { transaction }
@@ -2234,7 +2307,7 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
 };
 
 exports.ApproveBMR = async (req, res) => {
-  const { bmr_id, approvalComment, password, declaration } = req.body;
+  const { bmr_id, approvalComment, password, declaration, comments } = req.body;
 
   // Validate required fields
   if (!password || !declaration) {
@@ -2333,6 +2406,7 @@ exports.ApproveBMR = async (req, res) => {
         previous_status: "Under Approval",
         new_status: allApproved ? "Approved" : "Under Approval",
         declaration: declaration,
+        comments: comments,
         action: "Approve BMR form",
       },
       { transaction }
