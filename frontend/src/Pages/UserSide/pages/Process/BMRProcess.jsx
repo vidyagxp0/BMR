@@ -9,9 +9,11 @@ import DeleteUserModal from "../../Modals/CreateRecordModal/DeleteUserModal";
 import { formattedDate } from "../../../../AtmComponents/Helper";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 const BMRProcess = () => {
   const [data, setData] = useState([]);
-  // console.log(data , "data")
+  console.log(data)
+  const [activeTab, setActiveTab] = useState('All'); // State for active tab
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [showDeleteUser, setShowDeleteUser] = useState(false);
@@ -30,7 +32,6 @@ const BMRProcess = () => {
                 navigate(`/process/processdetails/${row.original.bmr_id}`);
               }}
             >
-              {" "}
               {row.original.name}
             </div>
           </span>
@@ -74,6 +75,7 @@ const BMRProcess = () => {
       },
     },
   ];
+
   const fetchBMRData = () => {
     axios
       .get("https://bmrapi.mydemosoftware.com/bmr-form/get-all-bmr", {
@@ -82,8 +84,8 @@ const BMRProcess = () => {
         },
       })
       .then((response) => {
-        const sortedData = response.data.message.sort((a, b) => 
-          new Date(b.date_of_initiation) - new Date(a.date_of_initiation)
+        const sortedData = response.data.message.sort(
+          (a, b) => new Date(b.date_of_initiation) - new Date(a.date_of_initiation)
         );
         setData(sortedData);
       })
@@ -92,11 +94,27 @@ const BMRProcess = () => {
         toast.error("Error Fetching BMR");
       });
   };
-  
 
   useEffect(() => {
     fetchBMRData();
   }, []);
+
+  // Filter data based on active tab
+  const filteredData = data.filter((item) => {
+    switch (activeTab) {
+      case 'Under Initiation':
+        return item.status === 'Under Initiation';
+      case 'Under Reviewer':
+        return item.status === 'Under Review';
+      case 'Under Approver':
+        return item.status === 'Under Approval';
+      case 'Approved':
+        return item.status === 'Approved';
+      case 'All':
+      default:
+        return true; // Show all data
+    }
+  });
 
   const handleAddBMR = (
     name,
@@ -110,7 +128,6 @@ const BMRProcess = () => {
     const approverNames = approvers.map((app) => app.label).join(", ");
 
     setData((prevData) => [
-     
       {
         name,
         status,
@@ -129,7 +146,30 @@ const BMRProcess = () => {
     <div>
       <ToastContainer />
       <HeaderBottom openModal={() => setIsModalOpen(true)} />
-      <AtmTable columns={columns} data={data} />
+
+      {/* Tabs for filtering */}
+      <div className="tabs flex justify-start border-b">
+  {['All', 'Under Initiation', 'Under Reviewer', 'Under Approver', 'Approved'].map((tab) => (
+    <button
+      key={tab}
+      onClick={() => setActiveTab(tab)}
+      className={`relative px-6 py-2 text-sm font-semibold focus:outline-none transition
+      ${activeTab === tab ? 'text-black bg-gray-100 border-b-2 border-black' : 'text-gray-500 hover:text-black hover:bg-gray-50'} 
+      rounded-t-lg`}
+      style={{
+        borderBottom: activeTab === tab ? '2px solid blue' : '',
+        backgroundColor: activeTab === tab ? '#f3f4f6' : '', // Light gray for selected tab
+      }}
+    >
+      {tab}
+    </button>
+  ))}
+</div>
+
+      <div className="table-container">
+        <AtmTable columns={columns} data={filteredData} />
+      </div>
+
       {isModalOpen && (
         <CreateRecordModal
           onClose={() => {
@@ -151,6 +191,7 @@ const BMRProcess = () => {
           bmr_tab_id={selectedUser?.bmr_tab_id}
         />
       )}
+
       {showDeleteUser && (
         <DeleteUserModal
           user={selectedUser}
