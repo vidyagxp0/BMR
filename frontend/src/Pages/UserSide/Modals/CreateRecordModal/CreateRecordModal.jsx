@@ -25,11 +25,20 @@ function CreateRecordModal({ open, onClose }) {
     name: "",
     reviewers: [],
     approvers: [],
+    department: "",
+    division: "",
+    due_date: "",
   });
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
+  const [department, setDepartment] = useState([]);
+  const [division, setDivision] = useState([]);
+
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
   const [isSelectedApprover, setIsSelectedApprover] = useState([]);
+  const [isSelectedDepartment, setIsSelectedDepartmentr] = useState([]);
+  const [isSelectedDivision, setIsSelectedDivision] = useState([]);
+
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   const dispatch = useDispatch();
@@ -41,7 +50,7 @@ function CreateRecordModal({ open, onClose }) {
   const handleVerificationSubmit = (verified) => {
     axios
       .post(
-        "http://localhost:7000/bmr-form/add-bmr",
+        "https://bmrapi.mydemosoftware.com/bmr-form/add-bmr",
         {
           name: formData.name,
           reviewers: isSelectedReviewer.map((reviewer) => ({
@@ -90,7 +99,7 @@ function CreateRecordModal({ open, onClose }) {
   useEffect(() => {
     axios
       .post(
-        "http://localhost:7000/bmr-form/get-user-roles",
+        "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
         { role_id: 3 },
         {
           headers: {
@@ -120,7 +129,7 @@ function CreateRecordModal({ open, onClose }) {
 
     axios
       .post(
-        "http://localhost:7000/bmr-form/get-user-roles",
+        "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
         { role_id: 4 },
         {
           headers: {
@@ -190,7 +199,8 @@ function CreateRecordModal({ open, onClose }) {
 
   return (
     <>
-      <Box open={true} onClose={onClose} sx={{ zIndex: 10 }}>
+     <div className="h-[40%]">
+     <Box open={true} onClose={onClose} sx={{ zIndex: 10 }}>
         <Box sx={modalStyle}>
           <Typography variant="h6" component="h2" align="center" gutterBottom>
             Add BMR
@@ -215,6 +225,109 @@ function CreateRecordModal({ open, onClose }) {
                 },
               }}
             />
+             <TextField
+              label="Description"
+              name="name"
+              fullWidth
+              margin="normal"
+              value={formData.name}
+              onChange={handleChange}
+              variant="outlined"
+              InputProps={{
+                style: {
+                  height: "48px",
+                },
+              }}
+              InputLabelProps={{
+                style: {
+                  top: "0",
+                },
+              }}
+            />
+
+<div>
+              <Typography
+                variant="subtitle2"
+                color="textSecondary"
+                gutterBottom
+              >
+                Department
+              </Typography>
+              <Select
+                name="department"
+                options={department}
+                value={isSelectedDepartment}
+                onChange={(selected) =>
+                  handleSelectChange(selected, "department")
+                }
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    borderColor: "#d0d0d0",
+                    boxShadow: "none",
+                    "&:hover": {
+                      borderColor: "#a0a0a0",
+                    },
+                  }),
+                }}
+              />
+            </div>
+            <div>
+              <Typography
+                variant="subtitle2"
+                color="textSecondary"
+                gutterBottom
+              >
+                Division
+              </Typography>
+              <Select
+                name="division"
+                options={division}
+                value={isSelectedDivision}
+                onChange={(selected) =>
+                  handleSelectChange(selected, "divisions")
+                }
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    borderColor: "#d0d0d0",
+                    boxShadow: "none",
+                    "&:hover": {
+                      borderColor: "#a0a0a0",
+                    },
+                  }),
+                }}
+              />
+            </div>
+            <div>
+            <Typography
+                variant="subtitle2"
+                color="textSecondary"
+                gutterBottom
+              >
+                Due Date
+              </Typography>
+            <TextField
+              // label="Due Date"
+              name="name"
+              type="date"
+              fullWidth
+              margin="normal"
+              value={formData.due_date}
+              onChange={handleChange}
+              variant="outlined"
+              InputProps={{
+                style: {
+                  height: "48px",
+                },
+              }}
+              InputLabelProps={{
+                style: {
+                  top: "0",
+                },
+              }}
+            />
+            </div>
             <div>
               <Typography
                 variant="subtitle2"
@@ -296,6 +409,7 @@ function CreateRecordModal({ open, onClose }) {
           </form>
         </Box>
       </Box>
+     </div>
       {showVerificationModal && (
         <UserVerificationPopUp
           onClose={closeUserVerifiedModal}

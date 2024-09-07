@@ -1,58 +1,65 @@
 /*! ============================================================================= */
 /*! SIDEBAR CSS */
 /*! ============================================================================= */
+
 aside {
-    width: 300px;
-    position: fixed;
-    top: 80px; /* Adjust this value to match the height of the header */
-    left: 0;
-    width: 16rem; /* 64 in Tailwind CSS rem units */
-    height: calc(100vh - 64px); /* Full height minus the header height */
-    background-color: white;
-    overflow-y: auto;
-    border-right: 1px solid #e5e7eb;
-  }
-  /* .admin-console{
+  width: 300px;
+  position: fixed;
+  top: 109px; /* Adjust this value to match the height of the header */
+  left: 0;
+  width: 16rem; /* 64 in Tailwind CSS rem units */
+  height: calc(100vh - 64px); /* Full height minus the header height */
+  /* background: linear-gradient(135deg, #1d6a4a, #1ebc7a, #338a65); */
+  /* background: linear-gradient(135deg, #a3e5c2, #65a282, #7ed8a9, #1d6a4a); */
+
+  background-color: #e5faef;
+  overflow-y: auto;
+  /* border-right: 1px solid #e5e7eb; */
+}
+/* .admin-console{
     border-right: 1px dashed #808080;
   } */
-  aside .inner-block {
-    display: grid;
-    gap: 20px;
-    align-items: start;
-  }
-  
-  aside .inner-block .sidebar-link .link-head {
-    padding: 10px 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: all 0.3s linear;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 5px;
-    box-shadow: rgba(247, 207, 106, 0.3) 0px 1px 2px 0px, rgba(247, 206, 103, 0.15) 0px 2px 6px 2px;
-  }
-  
-  aside .inner-block .sidebar-link .link-head:hover,
-  aside .inner-block .sidebar-link .link-head.active {
-    background: #5aa3f2;
-    box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px;
-  }
-  
-  aside .inner-block .sidebar-link .link-head>div:nth-child(1) {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.9rem;
-  }
-  
-  aside .inner-block .sidebar-link .sidebar-subList {
-    padding: 10px 0 10px 45px;
-    display: grid;
-    gap: 10px;
-    position: relative;
-  }
-  /* 
+aside .inner-block {
+  display: grid;
+  gap: 20px;
+  align-items: start;
+}
+
+aside .inner-block .sidebar-link .link-head2 {
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s linear;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: rgba(247, 207, 106, 0.3) 0px 1px 2px 0px,
+    rgba(247, 206, 103, 0.15) 0px 2px 6px 2px;
+}
+
+aside .inner-block .sidebar-link .link-head2:hover,
+aside .inner-block .sidebar-link .link-head2.active {
+  background: #0a6249;
+  color: #4bf6c6;
+  box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px,
+    rgba(17, 17, 26, 0.1) 0px 0px 8px;
+}
+
+aside .inner-block .sidebar-link .link-head2 > div:nth-child(1) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+
+aside .inner-block .sidebar-link .sidebar-subList {
+  padding: 10px 0 10px 45px;
+  display: grid;
+  gap: 10px;
+  position: relative;
+}
+/* 
   aside .inner-block .sidebar-link .sidebar-subList::before {
     content: '';
     position: absolute;
@@ -63,15 +70,15 @@ aside {
     background: var(--themeColor);
     transform: translate(0px, 0);
   } */
-  
-  aside .inner-block .sidebar-link .sidebar-subList>* {
-    transition: all 0.3s linear;
-    cursor: pointer;
-    position: relative;
-    font-size: 0.8rem;
-  }
-  
-  /* aside .inner-block .sidebar-link .sidebar-subList>*::before {
+
+aside .inner-block .sidebar-link .sidebar-subList > * {
+  transition: all 0.3s linear;
+  cursor: pointer;
+  position: relative;
+  font-size: 0.8rem;
+}
+
+/* aside .inner-block .sidebar-link .sidebar-subList>*::before {
     content: '';
     position: absolute;
     right: 100%;
@@ -81,67 +88,66 @@ aside {
     height: 1px;
     background: var(--themeColor);
   } */
-  
-  aside .inner-block .sidebar-link .sidebar-subList>*:hover,
-  aside .inner-block .sidebar-link .sidebar-subList .active {
-    color: #5195df;
-  }
-  
-  .inner-block {
-    padding: 1rem;
-  }
-  
-  .sidebar-link {
-    margin-bottom: 0.5rem;
-  }
-  
-  .link-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    padding: 0.5rem 1rem; 
-    border: 1px solid transparent;
-    border-radius: 0.25rem; 
-    transition: background-color 0.2s, border-color 0.2s;
-  }
-  
-  .link-head:hover {
-    background-color: #f9fafb;
-    border-color: #d1d5db; 
-  }
-  
-  .sidebar-subList {
-    padding-left: 1.5rem;
-  }
-  
-  .sidebar-subLink {
-    display: block;
-    padding: 0.25rem 1rem; 
-    border-radius: 0.25rem; 
-    transition: background-color 0.2s;
-  }
-  
-  .sidebar-subLink:hover {
-    background-color: #aad2fa; 
-  }
 
-  .active-link {
-    background-color: #207ec6; 
-    color: #fff; 
-  }
-  
-  .inactive-link {
-    background-color: transparent;
-    color: #000000;
-  }
-  
-  .active-subLink {
-    background-color:#207ec6 ;
-    color:#fff ; 
-  }
-  
-  .inactive-subLink {
-    color: #000000;
-  }
-  
+aside .inner-block .sidebar-link .sidebar-subList > *:hover,
+aside .inner-block .sidebar-link .sidebar-subList .active {
+  color: #4bf6c6;
+}
+
+.inner-block {
+  padding: 1rem;
+}
+
+.sidebar-link {
+  margin-bottom: 0.5rem;
+}
+
+.link-head2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.link-head2:hover {
+  background-color: transparent;
+  border-color: #d1d5db;
+}
+
+.sidebar-subList {
+  padding-left: 1.5rem;
+}
+
+.sidebar-subLink {
+  display: block;
+  padding: 0.25rem 1rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+}
+
+.sidebar-subLink:hover {
+  background-color: #0a6249;
+}
+
+.active-link {
+  background-color: transparent;
+  color: black;
+}
+
+.inactive-link {
+  background-color: transparent;
+  color: #000000;
+}
+
+.active-subLink {
+  background-color: #0a6249;
+  color: #fff;
+}
+
+.inactive-subLink {
+  color: #000000;
+}

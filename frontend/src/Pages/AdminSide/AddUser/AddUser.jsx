@@ -26,7 +26,7 @@ const AddUser = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:7000/user/get-all-roles", {
+      .get("https://bmrapi.mydemosoftware.com/user/get-all-roles", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "application/json",
@@ -102,7 +102,7 @@ const AddUser = () => {
     });
 
     axios
-      .post("http://localhost:7000/user/add-user", formDataToSend, {
+      .post("https://bmrapi.mydemosoftware.com/user/add-user", formDataToSend, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "multipart/form-data",
@@ -115,7 +115,7 @@ const AddUser = () => {
           name: "",
           email: "",
           password: "",
-          profile_pic: null,
+          profile_pic: "",
           rolesArray: [],
         });
         setErrors({});
@@ -181,6 +181,7 @@ const AddUser = () => {
                 type="file"
                 name="profile_pic"
                 id="profile_pic"
+                value={formData.profile_pic}
                 onChange={handleFileChange}
                 labelClassName="text-blue-500"
               />

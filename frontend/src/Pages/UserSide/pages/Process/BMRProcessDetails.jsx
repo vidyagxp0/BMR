@@ -10,6 +10,11 @@ import { toast, ToastContainer } from "react-toastify";
 import DeleteModal from "./Modals/DeleteModal";
 import "react-toastify/dist/ReactToastify.css";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
+import { FaRegFilePdf } from "react-icons/fa";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import { IoIosCreate } from "react-icons/io";
+import { AiOutlineAudit } from "react-icons/ai";
 
 const BMRProcessDetails = ({ bmrFields }) => {
   const [data, setData] = useState([]);
@@ -262,7 +267,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://localhost:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`https://bmrapi.mydemosoftware.com/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -335,7 +340,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.initiatorDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://localhost:7000/bmr-form/send-BMR-for-review",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -352,7 +357,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://localhost:7000/bmr-form/send-BMR-from-review-to-approval",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -369,7 +374,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://localhost:7000/bmr-form/send-BMR-from-review-to-open",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -383,7 +388,11 @@ const BMRProcessDetails = ({ bmrFields }) => {
     } else if (popupAction === "sendFromApprovalToApproved") {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
-        .put("http://localhost:7000/bmr-form/approve-BMR", dataObject, config)
+        .put(
+          "https://bmrapi.mydemosoftware.com/bmr-form/approve-BMR",
+          dataObject,
+          config
+        )
         .then(() => {
           toast.success("BMR successfully approved");
           navigate(-1);
@@ -397,7 +406,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://localhost:7000/bmr-form/send-BMR-from-approval-to-open",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -482,7 +491,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
         // Make API request to generate PDF
         const response = await axios({
-          url: "http://localhost:7000/bmr-form/generate-report",
+          url: "https://bmrapi.mydemosoftware.com/bmr-form/generate-report",
           method: "POST",
           responseType: "blob",
           headers: {
@@ -735,27 +744,39 @@ const BMRProcessDetails = ({ bmrFields }) => {
         <div className="flex space-x-2">
           {showForm === "default" ? (
             <>
-              <AtmButton
-                label="Audit Trail"
-                onClick={() => {
-                  navigate("/audit-trail", { state: data[0] });
-                }}
-                className="bg-blue-500 hover:bg-blue-700 px-4 py-2"
-              />
-              <AtmButton
-                label="Generate Report"
-                onClick={() => {
-                  generateReport();
-                }}
-                className="bg-blue-500 hover:bg-blue-700 px-4 py-2"
-              />
+              <Tooltip title="Audit Trail">
+                <IconButton>
+                  <AiOutlineAudit
+                    size={28}
+                    className="flex justify-center items-center cursor-pointer "
+                    onClick={() => {
+                      navigate("/audit-trail", { state: data[0] });
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Generate PDF">
+                <IconButton>
+                  <FaRegFilePdf
+                    size={28}
+                    className="flex justify-center items-center cursor-pointer "
+                    onClick={() => {
+                      generateReport();
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
+
               {activeFlowTab === "INITIATION" && (
                 <>
-                  <AtmButton
-                    label="Edit Form"
-                    onClick={() => setShowForm("sendForm")}
-                    className="bg-blue-500 hover:bg-blue-700 px-4 py-2"
-                  />
+                
+                 <AtmButton
+                label={newTab.BMR_Tabs?.length > 0 ?"Edit Form":"Create Form"}
+                onClick={() => setShowForm("sendForm")}
+                className="bg-blue-500 hover:bg-blue-600 px-4 py-2"
+              />
+                 
                 </>
               )}
             </>
@@ -885,10 +906,10 @@ const BMRProcessDetails = ({ bmrFields }) => {
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleFlowTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${
+              className={`py-2 px-4 rounded border-2 border-black ${
                 activeFlowTab === tab
-                  ? "bg-blue-500 text-white"
-                  : "bg-blue-100 text-gray-700"
+                  ? "bg-[#6beeac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
+                  : "bg-[#8dccac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
               }`}
             >
               {tab}
@@ -904,10 +925,10 @@ const BMRProcessDetails = ({ bmrFields }) => {
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleDefaultTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${
+              className={`py-2 px-4 rounded border-2 border-black ${
                 activeDefaultTab === tab
-                  ? "bg-blue-500 text-white"
-                  : "bg-blue-100 text-gray-700"
+                  ? "bg-[#6beeac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
+                  : "bg-[#8dccac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
               }`}
             >
               {tab}
@@ -923,7 +944,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleSendFormTabClick(tab)}
-              className={`py-2 px-4 rounded-full border-2 border-black ${
+              className={`py-2 px-4 rounded border-2 border-black ${
                 activeSendFormTab === tab
                   ? "bg-blue-500 text-white text-lg"
                   : "bg-blue-200 text-black text-lg"

@@ -3,23 +3,20 @@ import { Route, Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 const ProtectedUserRoute = ({ element: Component }) => {
-  const token = localStorage.getItem("user-token"); //? take 'user-token' from local storage and stored in 'token' variable.
+  const token = localStorage.getItem("user-token");
   let isAuthenticated = false;
 
   if (token) {
     try {
-      const decodedToken = jwtDecode(token); //? decode the token
-      // console.log(decodedToken);
-
-      const currentTime = Date.now() / 1000; //? Current time ko seconds mein lete hain
+      const decodedToken = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
       if (decodedToken.exp > currentTime) {
         isAuthenticated = true;
-        // console.log(decodedToken)
       } else {
-        localStorage.removeItem("user-token"); //?  Token expire hone par remove kar dete hain
+        localStorage.removeItem("user-token");
       }
     } catch (error) {
-      localStorage.removeItem("user-token"); //? Agar token invalid ho to remove kar dete hain
+      localStorage.removeItem("user-token");
     }
   }
 

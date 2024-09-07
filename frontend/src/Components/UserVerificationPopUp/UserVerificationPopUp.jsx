@@ -8,6 +8,8 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [declaration, setDeclaration] = useState("");
+  const [comments, setComments] = useState("");
+
   const navigate = useNavigate();
   const [flag, setFlag] = useState(false);
 
@@ -36,7 +38,7 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
 
   //   try {
   //     const response = await axios.post(
-  //       "http://localhost:7000/user/user-verification",
+  //       "https://bmrapi.mydemosoftware.com/user/user-verification",
   //       data,
   //       {
   //         headers: { "Content-Type": "application/json" },
@@ -110,6 +112,18 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
               type="text"
               value={declaration}
               onChange={(e) => setDeclaration(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="color-label">
+              Comment{" "}
+              
+            </label>
+            <input
+              type="text"
+              value={comments}
+              onChange={(e) => setComments(e.target.value)}
               required
             />
           </div>

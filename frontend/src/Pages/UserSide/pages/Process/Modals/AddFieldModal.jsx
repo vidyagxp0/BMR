@@ -40,11 +40,14 @@ const AddFieldModal = ({
 
   useEffect(() => {
     if (updateField === "edit-field" && existingFieldData) {
-      setFieldData(prevData => ({
+      setFieldData((prevData) => ({
         ...prevData,
         ...existingFieldData,
         selectedValues: existingFieldData.selectedValues || [],
-        acceptsMultiple: existingFieldData.acceptsMultiple || { columns: [], rows: [] }, // Ensure proper structure when editing
+        acceptsMultiple: existingFieldData.acceptsMultiple || {
+          columns: [],
+          rows: [],
+        }, // Ensure proper structure when editing
       }));
     }
   }, [existingFieldData, updateField]);
@@ -54,7 +57,7 @@ const AddFieldModal = ({
   };
 
   const handleGridColumnConfigSave = (columns) => {
-    setFieldData(prevData => ({
+    setFieldData((prevData) => ({
       ...prevData,
       acceptsMultiple: { ...prevData.acceptsMultiple, columns },
     }));
@@ -89,8 +92,8 @@ const AddFieldModal = ({
         method: updateField === "add-field" ? "post" : "put",
         url:
           updateField === "add-field"
-            ? "http://localhost:7000/bmr-form/add-bmr-field"
-            : `http://localhost:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
+            ? "https://bmrapi.mydemosoftware.com/bmr-form/add-bmr-field"
+            : `https://bmrapi.mydemosoftware.com/bmr-form/edit-bmr-field/${bmr_field_id}`,
         data: {
           bmr_id,
           ...fieldData,
@@ -207,146 +210,176 @@ const AddFieldModal = ({
             </div>
           )}
 
-          <input
-            type="text"
-            name="placeholder"
-            placeholder="Placeholder"
-            value={fieldData.placeholder}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
-          />
-          <input
-            type="text"
-            name="defaultValue"
-            placeholder="Default Value"
-            value={fieldData.defaultValue}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
-          />
-          <input
-            type="text"
-            name="helpText"
-            placeholder="Help Text"
-            value={fieldData.helpText}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
-          />
-          <input
-            type="number"
-            name="minValue"
-            placeholder="Min Value"
-            value={fieldData.minValue}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
-          />
-          <input
-            type="number"
-            name="maxValue"
-            placeholder="Max Value"
-            value={fieldData.maxValue}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
-          />
-          <input
-            type="number"
-            name="order"
-            placeholder="Order"
-            value={fieldData.order}
-            onChange={handleChange}
-            className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
-          />
-          <div className="flex items-center mb-4">
-            <input
-              type="checkbox"
-              name="isVisible"
-              checked={fieldData.isVisible}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            <label>Is Visible</label>
-          </div>
-          <div className="flex items-center mb-4">
-            <input
-              type="checkbox"
-              name="isRequired"
-              checked={fieldData.isRequired}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            <label>Is Required</label>
-          </div>
-          <div className="flex items-center mb-4">
-            <input
-              type="checkbox"
-              name="isReadOnly"
-              checked={fieldData.isReadOnly}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            <label>Is Read Only</label>
-          </div>
-          <div className="flex items-center mb-4">
-            <input
-              type="checkbox"
-              name="acceptsMultiple"
-              checked={fieldData.acceptsMultiple.length > 0}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            <label>Accepts Multiple</label>
-          </div>
-
-          {(fieldData.field_type === "dropdown" ||
-            fieldData.field_type === "multi-select") && (
-            <div className="mb-4">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">
-                Options
-              </h3>
-              {fieldData.acceptsMultiple?.rows?.map((option, index) => (
+          {fieldData.field_type !== "grid" && (
+            <>
+              <input
+                type="text"
+                name="placeholder"
+                placeholder="Placeholder"
+                value={fieldData.placeholder}
+                onChange={handleChange}
+                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  width: "100%",
+                }}
+              />
+              <input
+                type="text"
+                name="defaultValue"
+                placeholder="Default Value"
+                value={fieldData.defaultValue}
+                onChange={handleChange}
+                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  width: "100%",
+                }}
+              />
+              <input
+                type="text"
+                name="helpText"
+                placeholder="Help Text"
+                value={fieldData.helpText}
+                onChange={handleChange}
+                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  width: "100%",
+                }}
+              />
+              <input
+                type="number"
+                name="minValue"
+                placeholder="Min Value"
+                value={fieldData.minValue}
+                onChange={handleChange}
+                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  width: "100%",
+                }}
+              />
+              <input
+                type="number"
+                name="maxValue"
+                placeholder="Max Value"
+                value={fieldData.maxValue}
+                onChange={handleChange}
+                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  width: "100%",
+                }}
+              />
+              <input
+                type="number"
+                name="order"
+                placeholder="Order"
+                value={fieldData.order}
+                onChange={handleChange}
+                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  width: "100%",
+                }}
+              />
+              <div className="flex items-center mb-4">
                 <input
-                  key={index}
-                  type="text"
-                  placeholder={`Option ${index + 1}`}
-                  value={option}
-                  onChange={(e) => handleOptionChange(index, e.target.value)}
-                  className="border border-gray-300 p-2 w-full mb-2"
+                  type="checkbox"
+                  name="isVisible"
+                  checked={fieldData.isVisible}
+                  onChange={handleChange}
+                  className="mr-2"
                 />
-              ))}
-              <button
-                onClick={handleAddOption}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
-              >
-                Add Option
-              </button>
-            </div>
-          )}
-          {fieldData.field_type === "multi-select" && (
-            <div>
-              <select
-                multiple
-                className="border border-gray-600 p-2 w-full rounded"
-                style={{ border: "1px solid gray", height: "100%" }}
-                required={fieldData.isMandatory}
-                onChange={handleSelectChange}
-                value={fieldData.selectedValues}
-              >
-                {fieldData.acceptsMultiple?.map((option, idx) => (
-                  <option key={idx} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              <div className="mt-2">
-                <strong>Selected: </strong>
-                {fieldData.selectedValues.join(", ")}
+                <label>Is Visible</label>
               </div>
-            </div>
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  name="isRequired"
+                  checked={fieldData.isRequired}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                <label>Is Required</label>
+              </div>
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  name="isReadOnly"
+                  checked={fieldData.isReadOnly}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                <label>Is Read Only</label>
+              </div>
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  name="acceptsMultiple"
+                  checked={fieldData.acceptsMultiple.length > 0}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                <label>Accepts Multiple</label>
+              </div>
+
+              {(fieldData.field_type === "dropdown" ||
+                fieldData.field_type === "multi-select") && (
+                <div className="mb-4">
+                  <h3 className="text-sm font-medium text-gray-700 mb-2">
+                    Options
+                  </h3>
+                  {fieldData.acceptsMultiple?.rows?.map((option, index) => (
+                    <input
+                      key={index}
+                      type="text"
+                      placeholder={`Option ${index + 1}`}
+                      value={option}
+                      onChange={(e) =>
+                        handleOptionChange(index, e.target.value)
+                      }
+                      className="border border-gray-300 p-2 w-full mb-2"
+                    />
+                  ))}
+                  <button
+                    onClick={handleAddOption}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
+                  >
+                    Add Option
+                  </button>
+                </div>
+              )}
+              {fieldData.field_type === "multi-select" && (
+                <div>
+                  <select
+                    multiple
+                    className="border border-gray-600 p-2 w-full rounded"
+                    style={{ border: "1px solid gray", height: "100%" }}
+                    required={fieldData.isMandatory}
+                    onChange={handleSelectChange}
+                    value={fieldData.selectedValues}
+                  >
+                    {fieldData.acceptsMultiple?.map((option, idx) => (
+                      <option key={idx} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="mt-2">
+                    <strong>Selected: </strong>
+                    {fieldData.selectedValues.join(", ")}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
         <div className="mt-4 flex justify-end">
@@ -393,8 +426,13 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
   const handleAddColumn = () => {
     setColumnConfig([
       ...columnConfig,
-      { name: "New Column", isRequired: false, isVisible: true },
+      { name: "", isRequired: false, isVisible: true },
     ]);
+  };
+
+  const handleRemoveColumn = (index) => {
+    const newConfig = columnConfig.filter((_, colIndex) => colIndex !== index);
+    setColumnConfig(newConfig);
   };
 
   const handleSave = () => {
@@ -402,47 +440,163 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-filter backdrop-blur-sm">
-      <div
-        className="bg-white p-4 rounded shadow-lg"
-        style={{ width: "600px" }}
-      >
+    <div className="fixed  inset-0 flex items-center justify-center bg-opacity-50 backdrop-filter backdrop-blur-sm">
+      
+  <div
+    className="bg-white p-4 rounded shadow-lg"
+    style={{ width: "600px", maxHeight: "600px", overflowY: "auto" }}>
         <h2 className="text-lg font-bold mb-2">Configure Columns</h2>
         <div>
           {columnConfig?.map((col, index) => (
             <div key={index} className="mb-2">
-              <div className="flex items-center mb-2">
+              <div className=" items-center mb-2">
                 <input
                   type="text"
                   value={col.name}
-                  onChange={(e) => handleColumnChange(index, "name", e.target.value)}
-                  className="border border-gray-300 p-2 w-full mr-2"
+                  onChange={(e) =>
+                    handleColumnChange(index, "name", e.target.value)
+                  }
+                  className="border border-gray-300 p-2 w-full mr-2 mb-3"
                   placeholder="Column Name"
+                  style={{border: "1px solid gray"}}
                 />
-                <label className="flex items-center mr-2">
-                  <input
-                    type="checkbox"
-                    checked={col.isRequired}
-                    onChange={(e) => handleColumnChange(index, "isRequired", e.target.checked)}
-                  />
-                  <span className="ml-1">Required</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={col.isVisible}
-                    onChange={(e) => handleColumnChange(index, "isVisible", e.target.checked)}
-                  />
-                  <span className="ml-1">Visible</span>
-                </label>
-              </div>
-              <button
+                 <button
                 type="button"
-                onClick={() => handleColumnChange(index, "name", "")}
+                onClick={() => handleRemoveColumn(index)}
                 className="border p-2 bg-red-500 text-white"
               >
                 Remove
               </button>
+                <>
+              <input
+                type="text"
+                name="placeholder"
+                placeholder="Placeholder"
+                value={col.placeholder}
+                onChange={(e) =>
+                  handleColumnChange(index, "placeholder", e.target.value)
+                }
+                className="border border-gray-300 p-2 mt-4 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  width: "100%",
+                }}
+              />
+              <input
+                type="text"
+                name="defaultValue"
+                placeholder="Default Value"
+                value={col.defaultValue}
+                onChange={(e) =>
+                  handleColumnChange(index, "defaultValue", e.target.value)
+                }
+                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  width: "100%",
+                }}
+              />
+              <input
+                type="text"
+                name="helpText"
+                placeholder="Help Text"
+                value={col.helpText}
+                onChange={(e) =>
+                  handleColumnChange(index, "helpText", e.target.value)
+                }
+                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  width: "100%",
+                }}
+              />
+              <input
+                type="number"
+                name="minValue"
+                placeholder="Min Value"
+                value={col.minValue}
+                onChange={(e) =>
+                  handleColumnChange(index, "minValue", e.target.value)
+                }
+                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  width: "100%",
+                }}
+              />
+              <input
+                type="number"
+                name="maxValue"
+                placeholder="Max Value"
+                value={col.maxValue}
+                onChange={(e) =>
+                  handleColumnChange(index, "maxValue", e.target.value)
+                }
+                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  width: "100%",
+                }}
+              />
+              <input
+                type="number"
+                name="order"
+                placeholder="Order"
+                value={col.order}
+                onChange={(e) =>
+                  handleColumnChange(index, "order", e.target.value)
+                }
+                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  width: "100%",
+                }}
+              />
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  name="isVisible"
+                  value={col.isVisible}
+                onChange={(e) =>
+                  handleColumnChange(index, "isVisible", e.target.checked)
+                }
+                  className="mr-2"
+                />
+                <label>Is Visible</label>
+              </div>
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  name="isRequired"
+                  value={col.isRequired}
+                  onChange={(e) =>
+                    handleColumnChange(index, "isRequired", e.target.checked)
+                  }
+                  className="mr-2"
+                />
+                <label>Is Required</label>
+              </div>
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  name="isReadOnly"
+                  value={col.isReadOnly}
+                onChange={(e) =>
+                  handleColumnChange(index, "IsReadOnly", e.target.checked)
+                }
+                  className="mr-2"
+                />
+                <label>Is Read Only</label>
+              </div>  
+       </>
+              </div>
+             
             </div>
           ))}
         </div>
@@ -453,6 +607,7 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
         >
           Add Column
         </button>
+        
         <div className="mt-4 flex justify-end">
           <button
             type="button"

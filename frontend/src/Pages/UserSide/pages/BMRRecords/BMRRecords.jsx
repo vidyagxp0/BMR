@@ -32,7 +32,7 @@ const BMRRecords = () => {
   const [initiatorName, setInitiatorName] = useState(null);
   const navigate = useNavigate();
 
-  const apiUrl = `http://localhost:7000/user/get-a-user/${Id}`;
+  const apiUrl = `https://bmrapi.mydemosoftware.com/user/get-a-user/${Id}`;
   const fetchUserData = async () => {
     try {
       const token = localStorage.getItem("user-token");
@@ -74,7 +74,7 @@ const BMRRecords = () => {
       try {
         const [reviewersResponse, approversResponse] = await Promise.all([
           axios.post(
-            "http://localhost:7000/bmr-form/get-user-roles",
+            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
             { role_id: 3 },
             {
               headers: {
@@ -84,7 +84,7 @@ const BMRRecords = () => {
             }
           ),
           axios.post(
-            "http://localhost:7000/bmr-form/get-user-roles",
+            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
             { role_id: 4 },
             {
               headers: {
@@ -163,25 +163,25 @@ const BMRRecords = () => {
             Initiate BMR Records
           </h2>
         </div>
-        <div className="flex justify-around items-center bg-gradient-to-r from-cyan-400 to-gray-200 mt-2 p-4 rounded-lg shadow-lg">
-          <h2 className="text-lg font-semibold text-white ">
+        <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-[#1a9e66] to-[#75D6A5] mt-2 p-4 rounded-lg shadow-lg">
+          {/* <h2 className="text-lg font-semibold text-white ">
             BMR ID :{" "}
             <span className="text-gray-800"> {selectedBMR.bmr_id}</span>
-          </h2>
+          </h2> */}
           <h2 className="text-lg font-semibold text-white ">
             BMR Name :{" "}
             <span className="text-gray-800"> {selectedBMR.name}</span>
           </h2>
-          <h2 className="text-lg font-semibold text-white ">
+          {/* <h2 className="text-lg font-semibold text-white ">
             Date of Approval :{" "}
             <span className="text-gray-800">{formattedDate || "N/A"}</span>
-          </h2>
+          </h2> */}
           <h2 className="text-lg font-semibold text-white ">
             Status :{" "}
             <span className="text-gray-800 ">{selectedBMR.status}</span>
           </h2>
         </div>
-        <div className="flex justify-start space-x-2 px-4 pb-4">
+        <div className="flex justify-start space-x-2 px-4 pb-4 ">
           {[
             "General Information",
             ...selectedBMR.BMR_Tabs.map((tab) => tab.tab_name),
@@ -282,24 +282,24 @@ const BMRRecords = () => {
                         </div>
                       </h3>
                       <div className="grid grid-cols-2 gap-4">
-  {section.BMR_fields.map((field, idx) => (
-    <div key={idx} className="border border-gray-300 p-2">
-      <InputField
-        label={field.label || "Field Name"}
-        type={field.type || "text"}
-        placeholder={field.placeholder}
-        onChange={(e) =>
-          handleDynamicFieldChange(
-            field.id,
-            e.target.value,
-            activeTab
-          )
-        }
-        className="mb-4 rounded-md p-2"
-      />
-    </div>
-  ))}
-</div>
+                        {section.BMR_fields.map((field, idx) => (
+                          <div key={idx} className="border border-gray-300 p-2">
+                            <InputField
+                              label={field.label || "Field Name"}
+                              type={field.type || "text"}
+                              placeholder={field.placeholder}
+                              onChange={(e) =>
+                                handleDynamicFieldChange(
+                                  field.id,
+                                  e.target.value,
+                                  activeTab
+                                )
+                              }
+                              className="mb-4 rounded-md p-2"
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -328,10 +328,10 @@ const BMRRecords = () => {
 };
 const Button1 = ({ label, active, onClick }) => (
   <button
-    className={`px-4 py-2 my-4 text-gray-600 font-semibold rounded-3xl transition duration-100 ${
+    className={`px-4 py-2 my-4 text-gray-600 font-semibold rounded transition duration-100 ${
       active
-        ? "bg-blue-600 text-white hover:bg-blue-700"
-        : "bg-blue-200 hover:bg-blue-600 hover:text-white"
+        ? "bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#d0f8ec]"
+        : "bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#d0f8ec]"
     }`}
     onClick={onClick}
   >
@@ -350,7 +350,7 @@ const InputField = ({ label, type = "text", placeholder, value, onChange }) => (
       value={value}
       onChange={onChange}
       className="w-full px-3 h-10 p-2 border-2 border-gray-500 rounded shadow-md focus:border-blue-500 transition duration-200"
-      style={{border:"1px solid gray"}}
+      style={{ border: "1px solid gray" }}
     />
   </div>
 );

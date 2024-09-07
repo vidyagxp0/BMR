@@ -13,13 +13,21 @@ function About() {
         <HeaderTop />
       </div>
 
-      <div className="pt-16 px-2 flex flex-col items-center">
+      <div className="pt-14 mt-5 px-2 flex flex-col items-center">
         <div className="relative w-full mb-6">
           <img
             src="Bck Logo.png"
             alt="Background Image"
-            className="w-full object-cover rounded-md shadow-lg"
+            className="w-full object-cover  shadow-lg"
           />
+          <p className="family">
+            At BMR, we streamline batch manufacturing <br />
+            records with precision and innovation,
+            <br />
+            ensuring compliance and efficiency in <br />
+            pharmaceutical production.
+            <br />
+          </p>
         </div>
 
         <div className="text-center max-w-full mb-8 bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-lg shadow-md">
@@ -45,7 +53,7 @@ function About() {
             <h2 className="text-2xl font-extrabold text-red-500 mb-2">
               Our vision
             </h2>
-            <p className="text-3xl font-bold text-navy-blue">
+            <p className="text-3xl font-bold text-blue-800">
               Become the most valued and trusted medicines company in the world.
             </p>
           </div>
@@ -63,7 +71,7 @@ function About() {
             <h2 className="text-2xl font-extrabold text-purple-700 mb-2">
               Our strategy
             </h2>
-            <p className="text-2xl font-bold text-navy-blue">
+            <p className="text-2xl font-bold text-blue-800">
               Deliver high value medicines that alleviate society's greatest
               disease burdens through technology leadership in R&D and novel
               access approaches.
@@ -76,7 +84,7 @@ function About() {
             <h2 className="text-2xl font-extrabold text-orange-600 mb-2">
               Our Purpose
             </h2>
-            <p className="text-2xl font-bold text-navy-blue">
+            <p className="text-2xl font-bold text-blue-800">
               Reimagine medicine to improve and extend people's lives through
               innovation and technology.
             </p>
