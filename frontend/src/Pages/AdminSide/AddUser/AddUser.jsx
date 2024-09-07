@@ -115,7 +115,7 @@ const AddUser = () => {
           name: "",
           email: "",
           password: "",
-          profile_pic: null,
+          profile_pic: "",
           rolesArray: [],
         });
         setErrors({});
@@ -181,6 +181,7 @@ const AddUser = () => {
                 type="file"
                 name="profile_pic"
                 id="profile_pic"
+                value={formData.profile_pic}
                 onChange={handleFileChange}
                 labelClassName="text-blue-500"
               />

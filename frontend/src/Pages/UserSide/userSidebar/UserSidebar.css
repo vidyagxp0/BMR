@@ -5,7 +5,7 @@
 aside {
   width: 300px;
   position: fixed;
-  top: 80px; /* Adjust this value to match the height of the header */
+  top: 109px; /* Adjust this value to match the height of the header */
   left: 0;
   width: 16rem; /* 64 in Tailwind CSS rem units */
   height: calc(100vh - 64px); /* Full height minus the header height */

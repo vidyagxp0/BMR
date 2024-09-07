@@ -328,7 +328,7 @@ const BMRRecords = () => {
 };
 const Button1 = ({ label, active, onClick }) => (
   <button
-    className={`px-4 py-2 my-4 text-gray-600 font-semibold rounded-3xl transition duration-100 ${
+    className={`px-4 py-2 my-4 text-gray-600 font-semibold rounded transition duration-100 ${
       active
         ? "bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#d0f8ec]"
         : "bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#d0f8ec]"

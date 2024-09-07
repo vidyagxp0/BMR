@@ -1,133 +1,142 @@
 import React, { useEffect, useState } from "react";
-import HeaderTop from "../../../Components/Header/HeaderTop";
-import HeaderBottom from "../../../Components/Header/HeaderBottom";
-import { useNavigate } from "react-router-dom";
-import "./Dashboard.css";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import axios from "axios";
 import InitiateModal from "../Modals/InitiateModal";
+import ReactApexChart from "react-apexcharts";
+import "./Dashboard.css";
+import DashboardBottom from "../../../Components/Header/DashboardBottom";
+
+const localizer = momentLocalizer(moment);
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-  // const [eLogSelect, setELogSelect] = useState("All_Records");
-  // const [differentialPressureElogs, setDifferentialPressureElogs] = useState(
-  //   []
-  // );
-  // const [tempratureRecordElogs, setTempratureRecordElogs] = useState([]);
-  // const [areaAndERecordElogs, setAreaAndERecordElogs] = useState([]);
-  // const [equipmentCRecordElogs, setEquipmentCRecordElogs] = useState([]);
-  // const userDetails = JSON.parse(localStorage.getItem("user-details"));
   const [showModal, setShowModal] = useState(false);
   const [approvedBMR, setApprovedBMR] = useState([]);
+  const [chartData, setChartData] = useState([
+    { x: new Date('2023-01-01').getTime(), y: 10 },
+    { x: new Date('2023-02-01').getTime(), y: 25 },
+    { x: new Date('2023-03-01').getTime(), y: 18 },
+    { x: new Date('2023-04-01').getTime(), y: 35 },
+    { x: new Date('2023-05-01').getTime(), y: 30 },
+    { x: new Date('2023-06-01').getTime(), y: 45 },
+    { x: new Date('2023-07-01').getTime(), y: 40 }
+  ]);
+
+  const [events, setEvents] = useState([
+    // Example of a static event
+    {
+      title: "BMR Review",
+      start: new Date('2023-09-08T10:00:00'),
+      end: new Date('2023-09-08T12:00:00'),
+      allDay: false,
+    },
+  ]); // Calendar events (static for now)
+
   useEffect(() => {
     axios
-      .get(
-        "https://bmrapi.mydemosoftware.com/bmr-form/get-approved-bmrs",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-          },
+      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-approved-bmrs", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
-        approvedBMR
-      )
-
+      })
       .then((response) => {
         setApprovedBMR(response.data.message);
+        // setChartData(response.data.chartData); // Uncomment to use dynamic data for chart
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
   }, []);
 
-  // Function to open the modal
   const openModal = () => {
     setShowModal(true);
   };
 
-  // Function to close the modal
   const closeModal = () => {
     setShowModal(false);
   };
 
-  // useEffect(() => {
-  //   const newConfig = {
-  //     method: "get",
-  //     url: "http://https://bmrapi.mydemosoftware.com:1000/differential-pressure/get-all-differential-pressure",
-  //     headers: {
-  //       Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //   };
+  // Handling event creation (when user double-clicks on a date slot)
+  const handleSelect = ({ start, end }) => {
+    const title = window.prompt("Enter the event title");
+    if (title) {
+      setEvents([
+        ...events,
+        {
+          start,
+          end,
+          title,
+        },
+      ]);
+    }
+  };
 
-  //   axios(newConfig)
-  //     .then((response) => {
-  //       const allDifferentialPressureElogs = response.data.message;
-  //       let filteredArray = allDifferentialPressureElogs.filter((elog) => {
-  //         const userId = userDetails.userId;
+  const handleEventDelete = (event) => {
+    const confirmDelete = window.confirm(`Delete the event "${event.title}"?`);
+    if (confirmDelete) {
+      setEvents(events.filter((e) => e !== event)); // Filter out the selected event
+    }
+  };
 
-  //         return (
-  //           userId === elog.reviewer_id ||
-  //           userId === elog.initiator_id ||
-  //           userId === elog.approver_id ||
-  //           hasAccess(4, elog.site_id, 1)
-  //         );
-  //       });
-  //       setDifferentialPressureElogs(filteredArray);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error: ", error);
-  //     });
+  // ApexChart configuration
+  const chartOptions = {
+    series: [
+      {
+        name: "BMR Records",
+        data: chartData,
+      },
+    ],
+    options: {
+      chart: {
+        type: "area",
+        height: 350,
+        zoom: {
+          type: "x",
+          enabled: true,
+          autoScaleYaxis: true,
+        },
+        toolbar: {
+          autoSelected: "zoom",
+        },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      markers: {
+        size: 0,
+      },
+      title: {
+        text: "BMR Records Chart",
+        align: "left",
+      },
+      fill: {
+        type: "gradient",
+        gradient: {
+          shadeIntensity: 1,
+          inverseColors: false,
+          opacityFrom: 0.5,
+          opacityTo: 0,
+          stops: [0, 90, 100],
+        },
+      },
+      xaxis: {
+        type: "datetime",
+      },
+      yaxis: {
+        title: {
+          text: "Record Count",
+        },
+      },
+      tooltip: {
+        shared: false,
+      },
+    },
+  };
 
-  //   const newConfigTemp = {
-  //     method: "get",
-  //     url: "http://https://bmrapi.mydemosoftware.com:1000/temprature-record/get-all-temprature-record",
-  //     headers: {
-  //       Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //   };
-
-  //   axios(newConfigTemp)
-  //     .then((response) => {
-  //       const allTempratureRecordElogs = response.data.message;
-  //       let filteredArray = allTempratureRecordElogs.filter((elog) => {
-  //         const userId = userDetails.userId;
-
-  //         return (
-  //           userId === elog.reviewer_id ||
-  //           userId === elog.initiator_id ||
-  //           userId === elog.approver_id ||
-  //           hasAccess(4, elog.site_id, 4)
-  //         );
-  //       });
-  //       setTempratureRecordElogs(filteredArray);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error: ", error);
-  //     });
-  // }, []);
-
-  // const combinedRecords = [
-  //   ...differentialPressureElogs,
-  //   ...areaAndERecordElogs,
-  //   ...equipmentCRecordElogs,
-  //   ...tempratureRecordElogs,
-  // ];
-
-  // const handleNavigation = (item) => {
-  //   if (item.DifferentialPressureRecords) {
-  //     navigate("/dpr-panel", { state: item });
-  //   } else if (item.process === "Area and equipment") {
-  //     navigate("/area-and-equipment-panel", { state: item });
-  //   } else if (item.TempratureRecords) {
-  //     navigate("/tpr-panel", { state: item });
-  //   } else if (item.process === "Equipment cleaning checklist") {
-  //     navigate("/ecc-panel", { state: item });
-  //   } else {
-  //     // Handle default or fallback navigation if needed
-  //   }
-  // };
   return (
     <div>
+      {/* <DashboardBottom/> */}
       <div className="desktop-input-table-wrapper">
         <div className="input-wrapper">
           <div className="group-input-2">
@@ -150,175 +159,49 @@ const Dashboard = () => {
           <InitiateModal approvedBMR={approvedBMR} onClose={closeModal} />
         )}
 
+        {/* Table */}
         <table className="mb-5">
           <thead>
             <tr>
               <th>S no</th>
-              <th>BMR no</th>
-              <th>Initiator</th>
+              <th>BMR Name</th>
               <th>Date of initiation</th>
-              <th>Short description</th>
+              <th>Division</th>
+              <th>Description</th>
+              <th>Due Date</th>
               <th>Status</th>
-              <th>Site</th>
+              <th>Action</th>
             </tr>
           </thead>
-          <tbody>
-            {/* {eLogSelect === "diffrential_pressure"
-              ? differentialPressureElogs?.map((item, index) => {
-                  return (
-                    <tr key={item.index}>
-                      <td> {index + 1}</td>
-                      <td
-                        style={{
-                          cursor: "pointer",
-                          color: "black",
-                        }}
-                        onClick={() => navigate("/dpr-panel", { state: item })}
-                        onMouseEnter={(e) => {
-                          e.target.style.color = "blue";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.color = "black";
-                        }}
-                      >
-                        {`DP${item.form_id}`}
-                      </td>
-                      <td>{item.initiator_name}</td>
-                      <td>{item.date_of_initiation.split("T")[0]}</td>
-                      <td>{item.description}</td>
-                      <td>{item.status}</td>
-                      <td>
-                        {item.site_id === 1
-                          ? "India"
-                          : item.site_id === 2
-                          ? "Malaysia"
-                          : item.site_id === 3
-                          ? "EMEA"
-                          : "EU"}
-                      </td>
-                    </tr>
-                  );
-                })
-              : null} */}
-
-            {/* {eLogSelect === "area_and_equipment"
-              ? areaAndERecordElogs?.map((item, index) => {
-                  return (
-                    <tr key={item.index}>
-                      <td> {index + 1}</td>
-                      <td onClick={() => navigate("/area-and-equipment-panel")}>
-                        {item.eLogId}
-                      </td>
-                      <td>{item.initiator}</td>
-                      <td>{item.dateOfInitiation}</td>
-                      <td>{item.shortDescription}</td>
-                      <td>{item.status}</td>
-                      <td>{item.process}</td>
-                    </tr>
-                  );
-                })
-              : null} */}
-
-            {/* {eLogSelect === "equipment_cleaning"
-              ? equipmentCRecordElogs?.map((item, index) => {
-                  return (
-                    <tr key={item.index}>
-                      <td> {index + 1}</td>
-                      <td onClick={() => navigate("/ecc-panel")}>
-                        {item.eLogId}
-                      </td>
-                      <td>{item.initiator}</td>
-                      <td>{item.dateOfInitiation}</td>
-                      <td>{item.shortDescription}</td>
-                      <td>{item.status}</td>
-                      <td>{item.process}</td>
-                    </tr>
-                  );
-                })
-              : null} */}
-
-            {/* {eLogSelect === "temperature_records"
-              ? tempratureRecordElogs?.map((item, index) => {
-                  return (
-                    <tr key={item.index}>
-                      <td> {index + 1}</td>
-                      <td
-                        style={{
-                          cursor: "pointer",
-                          color: "black",
-                        }}
-                        onClick={() => navigate("/tpr-panel", { state: item })}
-                        onMouseEnter={(e) => {
-                          e.target.style.color = "blue";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.color = "black";
-                        }}
-                      >
-                        {`TR${item.form_id}`}
-                      </td>
-                      <td>{item.initiator_name}</td>
-                      <td>{item.date_of_initiation.split("T")[0]}</td>
-                      <td>{item.description}</td>
-                      <td>{item.status}</td>
-                      <td>
-                        {item.site_id === 1
-                          ? "India"
-                          : item.site_id === 2
-                          ? "Malaysia"
-                          : item.site_id === 3
-                          ? "EMEA"
-                          : "EU"}
-                      </td>
-                    </tr>
-                  );
-                })
-              : null} */}
-
-            {/* {eLogSelect === "All_Records" &&
-              combinedRecords?.map((item, index) => {
-                return (
-                  <tr key={item.eLogId}>
-                    <td> {index + 1}</td>
-                    <td
-                      style={{
-                        cursor: "pointer",
-                        color: "black",
-                      }}
-                      onClick={() => {
-                        handleNavigation(item);
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.color = "blue";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.color = "black";
-                      }}
-                    >
-                      {item.DifferentialPressureRecords
-                        ? `DP${item.form_id}`
-                        : item.TempratureRecords
-                        ? `TR${item.form_id}`
-                        : null}
-                    </td>
-                    <td>{item.initiator_name}</td>
-                    <td>{item.date_of_initiation.split("T")[0]}</td>
-                    <td>{item.description}</td>
-                    <td>{item.status}</td>
-                    <td>
-                      {item.site_id === 1
-                        ? "India"
-                        : item.site_id === 2
-                        ? "Malaysia"
-                        : item.site_id === 3
-                        ? "EMEA"
-                        : "EU"}
-                    </td>
-                  </tr>
-                );
-              })} */}
-          </tbody>
+          <tbody></tbody>
         </table>
+
+        {/* ApexChart Integration */}
+        <div id="chart">
+          <ReactApexChart
+            options={chartOptions.options}
+            series={chartOptions.series}
+            type="area"
+            height={350}
+          />
+        </div>
+
+        {/* Full-width Calendar */}
+        <div style={{ height: 600, marginTop: 30 }} className="bg-gray-100">
+        <Calendar
+          localizer={localizer}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          selectable
+          style={{ width: "100%" }}
+          onSelectSlot={handleSelect} // Double-click to add event
+          onSelectEvent={handleEventDelete} // Click event to delete
+          defaultView="month"
+          views={["month", "week", "day"]}
+          popup
+        />
+      </div>
       </div>
     </div>
   );
