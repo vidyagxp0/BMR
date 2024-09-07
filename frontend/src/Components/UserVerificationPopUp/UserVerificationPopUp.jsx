@@ -113,6 +113,18 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
               required
             />
           </div>
+          <div className="form-group">
+            <label className="color-label">
+              Comment{" "}
+              
+            </label>
+            <input
+              type="text"
+              value={declaration}
+              onChange={(e) => setDeclaration(e.target.value)}
+              required
+            />
+          </div>
           <div className="popup-buttons">
             <button type="submit" className="btn">
               Submit

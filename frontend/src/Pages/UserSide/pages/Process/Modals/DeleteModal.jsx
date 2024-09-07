@@ -21,22 +21,20 @@ const DeleteModal = ({
   const handleVerificationSubmit = async (verified) => {
     console.log("Verification data:", verified);
     try {
-      const commonConfig = {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-          "Content-Type": "application/json",
-        },
-      };
 
       if (itemType === "tab") {
         const response = await axios.delete(
           `https://bmrapi.mydemosoftware.com/bmr-form/delete-bmr-tab/${id}`,
-          commonConfig,
-          {
+        {    
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+            "Content-Type": "application/json",
+          },
+          data:{
             email: verified.email,
             password: verified.password,
             declaration: verified.declaration,
-          }
+          }}
         );
         const updatedTabs = newTab.filter((tab) => tab.bmr_tab_id !== id);
         setNewTab(updatedTabs);
@@ -44,7 +42,16 @@ const DeleteModal = ({
       } else if (itemType === "section") {
         const response = await axios.delete(
           `https://bmrapi.mydemosoftware.com/bmr-form/delete-bmr-section/${section_id}`,
-          commonConfig
+          {    
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+              "Content-Type": "application/json",
+            },
+            data:{
+              email: verified.email,
+              password: verified.password,
+              declaration: verified.declaration,
+            }}
         );
         const updatedSections = newTab.map((tab) => {
           if (tab.BMR_sections) {
@@ -62,12 +69,15 @@ const DeleteModal = ({
       } else if (itemType === "field") {
         const response = await axios.delete(
           `https://bmrapi.mydemosoftware.com/bmr-form/delete-bmr-field/${bmr_field_id}`,
-          commonConfig,
-          {
+         { headers: {
+          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+          "Content-Type": "application/json",
+        },
+          data:{
             email: verified.email,
             password: verified.password,
             declaration: verified.declaration,
-          }
+          }}
         );
         const updatedSections = newTab.map((tab) => {
           if (tab.BMR_fields) {

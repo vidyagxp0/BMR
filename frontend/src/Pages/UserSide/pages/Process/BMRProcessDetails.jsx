@@ -10,6 +10,11 @@ import { toast, ToastContainer } from "react-toastify";
 import DeleteModal from "./Modals/DeleteModal";
 import "react-toastify/dist/ReactToastify.css";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
+import { FaRegFilePdf } from "react-icons/fa";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import { IoIosCreate } from "react-icons/io";
+import { AiOutlineAudit } from "react-icons/ai";
 
 const BMRProcessDetails = ({ bmrFields }) => {
   const [data, setData] = useState([]);
@@ -739,27 +744,41 @@ const BMRProcessDetails = ({ bmrFields }) => {
         <div className="flex space-x-2">
           {showForm === "default" ? (
             <>
-              <AtmButton
-                label="Audit Trail"
-                onClick={() => {
-                  navigate("/audit-trail", { state: data[0] });
-                }}
-                className="bg-[#1A9E66] hover:bg-[#0a6249] hover:text-white"
-              />
-              <AtmButton
-                label="Generate Report"
-                onClick={() => {
-                  generateReport();
-                }}
-                className="bg-[#1A9E66] hover:bg-[#0a6249] hover:text-white"
-              />
+              <Tooltip title="Audit Trail">
+                <IconButton>
+                  <AiOutlineAudit
+                    size={28}
+                    className="flex justify-center items-center cursor-pointer "
+                    onClick={() => {
+                      navigate("/audit-trail", { state: data[0] });
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Generate PDF">
+                <IconButton>
+                  <FaRegFilePdf
+                    size={28}
+                    className="flex justify-center items-center cursor-pointer "
+                    onClick={() => {
+                      generateReport();
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
+
               {activeFlowTab === "INITIATION" && (
                 <>
-                  <AtmButton
-                    label="Edit Form"
-                    onClick={() => setShowForm("sendForm")}
-                    className="bg-[#1A9E66] hover:bg-[#0a6249] hover:text-white"
-                  />
+                  <Tooltip title="Create Form">
+                    <IconButton>
+                      <IoIosCreate
+                        size={28}
+                        className="flex justify-center items-center cursor-pointer "
+                        onClick={() => setShowForm("sendForm")}
+                      />
+                    </IconButton>
+                  </Tooltip>
                 </>
               )}
             </>
