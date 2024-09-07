@@ -734,7 +734,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
   return (
     <div className="p-4 relative h-full">
-      <header className="bg-blue-100 w-full shadow-lg flex justify-between items-center p-4 mb-4">
+      <header className="bg-green-200 w-full shadow-lg flex justify-between items-center p-4 mb-4">
         <p className="text-lg font-bold">BMR Process Details</p>
         <div className="flex space-x-2">
           {showForm === "default" ? (
@@ -744,21 +744,21 @@ const BMRProcessDetails = ({ bmrFields }) => {
                 onClick={() => {
                   navigate("/audit-trail", { state: data[0] });
                 }}
-                className="bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
+                className="bg-[#1A9E66] hover:bg-[#0a6249] hover:text-white"
               />
               <AtmButton
                 label="Generate Report"
                 onClick={() => {
                   generateReport();
                 }}
-                className="bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
+                className="bg-[#1A9E66] hover:bg-[#0a6249] hover:text-white"
               />
               {activeFlowTab === "INITIATION" && (
                 <>
                   <AtmButton
                     label="Edit Form"
                     onClick={() => setShowForm("sendForm")}
-                    className="bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
+                    className="bg-[#1A9E66] hover:bg-[#0a6249] hover:text-white"
                   />
                 </>
               )}
