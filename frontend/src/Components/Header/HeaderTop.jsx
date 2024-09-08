@@ -10,7 +10,7 @@ import {
   FaHeadset,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaBell } from "react-icons/fa";
 import "./Header.css";
 import "./HeaderTop.css";
 import axios from "axios";
@@ -54,6 +54,7 @@ function HeaderTop() {
             />
           </div>
         </div>
+
         {/* <div className="center ">
           <div className="inputContainer border-2 border-gray-500 w-96">
             <div className="inputInnerLeft">
@@ -134,8 +135,11 @@ function HeaderTop() {
         </div> */}
 
         <div className="right">
-          <div className="notification-icon">
-            <i className="ri-notification-3-fill"></i>
+          <div className="notification-icon  relative">
+            <FaBell className="text-black text-2xl" />
+            <span className="absolute -top-2 left-2  bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
+              2
+            </span>
           </div>
 
           <div className="links-container mr-10">
