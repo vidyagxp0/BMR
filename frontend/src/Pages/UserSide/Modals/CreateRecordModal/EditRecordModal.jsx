@@ -27,6 +27,13 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     reviewers: [],
     approvers: [],
   });
+
+  {
+    formData.name === bmrData?.name
+      ? console.log("Unchanged")
+      : console.log("changed");
+  }
+
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
@@ -158,6 +165,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
     fetchRoles();
   }, []);
+  // const isDisabled={enabled}
 
   useEffect(() => {
     if (bmrData && reviewers.length > 0 && approvers.length > 0) {
@@ -184,6 +192,25 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
       setIsSelectedApprover(selectedApprovers);
     }
   }, [bmrData, reviewers, approvers]);
+
+  const hasChanges = () => {
+    const reviewersChanged = formData.reviewers.some(
+      (reviewer) =>
+        !bmrData.reviewers.some(
+          (original) => original.reviewerId === reviewer.value
+        )
+    );
+    const approversChanged = formData.approvers.some(
+      (approver) =>
+        !bmrData.approvers.some(
+          (original) => original.approverId === approver.value
+        )
+    );
+
+    return (
+      formData.name !== bmrData.name || reviewersChanged || approversChanged
+    );
+  };
 
   const handleEditBmrClick = () => {
     // Close the CreateRecordModal and open the UserVerificationPopUp
@@ -266,6 +293,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
                 fullWidth
                 sx={{ mt: 2 }}
                 onClick={handleEditBmrClick}
+                disabled={!hasChanges()}
               >
                 Update BMR
               </Button>

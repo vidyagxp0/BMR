@@ -150,7 +150,7 @@ const Dashboard = () => {
               ))}
             </select>
           </div>
-          <button className="btn" onClick={openModal}>
+          <button className="btn bg-[#00354E] hover:bg-[#123e53]" onClick={openModal}>
             Initiate
           </button>
         </div>
@@ -163,14 +163,14 @@ const Dashboard = () => {
         <table className="mb-5">
           <thead>
             <tr>
-              <th>S no</th>
-              <th>BMR Name</th>
-              <th>Date of initiation</th>
-              <th>Division</th>
-              <th>Description</th>
-              <th>Due Date</th>
-              <th>Status</th>
-              <th>Action</th>
+              <th className="bg-[#195b7a]">S no</th>
+              <th className="bg-[#195b7a]">BMR Name</th>
+              <th className="bg-[#195b7a]">Date of initiation</th>
+              <th className="bg-[#195b7a]">Division</th>
+              <th className="bg-[#195b7a]">Description</th>
+              <th className="bg-[#195b7a]">Due Date</th>
+              <th className="bg-[#195b7a]">Status</th>
+              <th className="bg-[#195b7a]">Action</th>
             </tr>
           </thead>
           <tbody></tbody>

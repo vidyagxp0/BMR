@@ -1,12 +1,13 @@
 .Header_Top {
   width: 100%;
   height: 80px;
-  background: linear-gradient(135deg, #a3e5c2, #65a282, #7ed8a9, #1ebc7a, #5ccf90, #1d6a4a);
+  /* background: linear-gradient(135deg, #c9ccd5, #818286,#c9ccd5, #b9babc); */
+  background: linear-gradient(135deg, #014d70, #00354E);
   /* background: linear-gradient(135deg, #fbc2eb, #e6a1c5, #d785b2, #c05aa4, #a94191, #8e306f); */
   /* background: linear-gradient(135deg, #ff5e62, #ff9966, #f6f0e3, #f5a623, #f07c1f); */
   /* background: linear-gradient(135deg, #00c6ff, #0072ff, #00aaff, #0059b2, #003a6d); */
   /* background: linear-gradient(135deg, #4facfe, #00f2fe, #00a8e0, #004e92, #002c77); */
-  /* background: linear-gradient(135deg, #dcdcdc, #b0b0b0, #a0a0a0, #8c8c8c, #6e6e6e); */ 
+  /* background: linear-gradient(135deg, #dcdcdc, #b0b0b0, #a0a0a0, #8c8c8c, #6e6e6e); */
   /* background: linear-gradient(135deg, #f0f4f8, #dbe2e8, #c0c7d0, #9ba2b7, #6e7b8b); */
   /* background: linear-gradient(135deg, #f5f5f5, #e0e0e0, #c9c9c9, #a9a9a9, #8e8e8e); */
   /* background: linear-gradient(135deg, #c0c0c0, #a8a8a8, #8c8c8c, #707070, #484848); */
@@ -130,7 +131,7 @@
   opacity: 1;
   transform: translateY(0);
   /* color: #d5fcf1; */
-  color: black;
+  color: white;
   font-weight: 800;
   font-size: 0.8rem;
 }

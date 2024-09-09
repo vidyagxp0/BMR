@@ -61,7 +61,7 @@ function HeaderTop() {
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                fill="#1a9e66"
+                fill="#195b7a"
                 width={"25"}
                 height={"25"}
               >
@@ -136,13 +136,13 @@ function HeaderTop() {
 
         <div className="right">
           <div className="notification-icon  relative">
-            <FaBell className="text-black text-2xl" />
+            <FaBell className="text-white text-2xl" />
             <span className="absolute -top-2 left-2  bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
               2
             </span>
           </div>
 
-          <div className="links-container mr-10">
+          <div className="links-container mr-10 text-white">
             <Link to="/boardOfDirectors" className="link-item mt-8 ">
               <FaPeopleLine size={22} />
               <span className="link-name">Board Members</span>

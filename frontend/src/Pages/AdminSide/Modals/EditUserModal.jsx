@@ -180,6 +180,7 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
               color="primary"
               fullWidth
               sx={{ mt: 2 }}
+              
             >
               Update
             </Button>

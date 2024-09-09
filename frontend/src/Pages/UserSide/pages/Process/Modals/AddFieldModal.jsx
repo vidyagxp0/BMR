@@ -32,7 +32,9 @@ const AddFieldModal = ({
     bmr_tab_id: bmr_tab_id,
     bmr_section_id: bmr_section_id,
   });
-  // console.log(fieldData, "datasaaaa");
+  {
+    fieldData.helpText ? console.log("Hellooooooo") : console.log("Errorrrrrr");
+  }
 
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [showGridColumnConfigModal, setShowGridColumnConfigModal] =

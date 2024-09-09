@@ -34,7 +34,7 @@ function App() {
 function RouteGuard() {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const handlePopState = (event) => {
       if (location.pathname === "/dashboard") {
@@ -52,7 +52,8 @@ function RouteGuard() {
   }, [location, navigate]);
 
   return (
-    <Routes>a
+    <Routes>
+      a
       <Route path="/" element={<Login />} />
       <Route path="" element={<WrapperUser />}>
         <Route
@@ -80,7 +81,6 @@ function RouteGuard() {
         path="/audit-trail"
         element={<ProtectedUserRoute element={<AuditTrail />} />}
       />
-
       <Route path="/admin-login" element={<AdminLogin />} />
       <Route path="" element={<Wrapper />}>
         <Route

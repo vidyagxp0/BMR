@@ -17,7 +17,7 @@ import { IoIosCreate } from "react-icons/io";
 import { AiOutlineAudit } from "react-icons/ai";
 import { DeleteIcon } from "../../../../Components/Icons/Icon";
 
-const BMRProcessDetails = ({ bmrFields }) => {
+const BMRProcessDetails = ({ fieldData }) => {
   const [data, setData] = useState([]);
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
@@ -38,7 +38,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
   const [newFields, setNewFields] = useState({});
   const [newSection, setNewSection] = useState([]);
   const [section, setSection] = useState([]);
-  // console.log(section, "sectionnnnnnnnnnnnnnnnn");
+  console.log(fieldData, "555555555555555555");
   const [fields, setFields] = useState({
     "Initiator Remarks": [
       {
@@ -101,7 +101,13 @@ const BMRProcessDetails = ({ bmrFields }) => {
       },
     ],
   });
-  console.log(fields,"fieldssssssssssssssss")
+  // console.log(fields, "fieldsssssssss");
+
+  // Object.keys(fields).forEach((section) => {
+  //   fields[section].forEach((field) => {
+  //     console.log(field.field_type);
+  //   });
+  // });
 
   const [activeFlowTab, setActiveFlowTab] = useState(flowoTabs[0]);
   const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
@@ -744,8 +750,8 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
   return (
     <div className="p-4 relative h-full">
-      <header className="bg-green-200 w-full shadow-lg flex justify-between items-center p-4 mb-4">
-        <p className="text-lg font-bold">BMR Process Details</p>
+      <header className="bg-[#346c86] w-full shadow-lg flex justify-between items-center p-4 mb-4">
+        <p className="text-lg text-gray-200 font-bold">BMR Process Details</p>
         <div className="flex space-x-2">
           {showForm === "default" ? (
             <>
@@ -753,7 +759,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
                 <IconButton>
                   <AiOutlineAudit
                     size={28}
-                    className="flex justify-center items-center cursor-pointer "
+                    className="flex justify-center text-gray-200  hover:  items-center cursor-pointer "
                     onClick={() => {
                       navigate("/audit-trail", { state: data[0] });
                     }}
@@ -765,7 +771,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
                 <IconButton>
                   <FaRegFilePdf
                     size={28}
-                    className="flex justify-center items-center cursor-pointer "
+                    className="flex justify-center text-gray-200 hover:  items-center cursor-pointer "
                     onClick={() => {
                       generateReport();
                     }}
@@ -779,7 +785,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
                     <IconButton>
                       <IoIosCreate
                         size={28}
-                        className="flex justify-center items-center cursor-pointer "
+                        className="flex justify-center text-gray-200  hover: items-center cursor-pointer "
                         onClick={() => setShowForm("sendForm")}
                       />
                     </IconButton>
@@ -914,7 +920,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
               key={index}
               onClick={() => handleFlowTabClick(tab)}
               className={`py-2 px-4 rounded border-2 border-black ${
-                activeFlowTab === tab ? "bg-[#6beeac]  " : "bg-[#8dccac]  "
+                activeFlowTab === tab ? "bg-[#195b7a] text-white" : "bg-[#3a88b3] text-black "
               }`}
             >
               {tab}
@@ -932,8 +938,8 @@ const BMRProcessDetails = ({ bmrFields }) => {
               onClick={() => handleDefaultTabClick(tab)}
               className={`py-2 px-4 rounded border-2 border-black ${
                 activeDefaultTab === tab
-                  ? "bg-[#6beeac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
-                  : "bg-[#8dccac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
+                  ? "bg-[#103546]  text-[#ffffff]"
+                  : "bg-[#2077a0]  text-[#ffffff]"
               }`}
             >
               {tab}
@@ -1193,7 +1199,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
                       {section.section_name}
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 shadow-xl gap-4 px-5 py-[64px]">
+                  <div className="grid grid-cols-3 shadow-xl gap-4 px-5 py-[64px]">
                     {section.BMR_fields?.map((field, index) => {
                       return (
                         <div
@@ -1201,11 +1207,21 @@ const BMRProcessDetails = ({ bmrFields }) => {
                           onClick={() => handleFieldClick(field)}
                           className="p-4 rounded bg-gray-50 shadow border border-gray-600"
                         >
-                          <label className="text-lg font-extrabold text-gray-900 flex gap-1 mb-2">
+                          <label className="text-base font-bold text-gray-900  flex gap-1 mb-2">
                             {field.label}
-                            <div className="text-red-500">
-                              {field.isMandatory && " *"}
-                            </div>
+                            {field.isMandatory && (
+                              <div className="text-red-500"> *</div>
+                            )}
+                            {field.helpText && (
+                              <Tooltip
+                                title={field.helpText}
+                                placement="right-start"
+                              >
+                                <div className="text-gray-950 cursor-pointer ">
+                                  <span className="text-black ">ⓘ</span>
+                                </div>
+                              </Tooltip>
+                            )}
                           </label>
 
                           {/* Render input fields based on type */}
@@ -1213,19 +1229,6 @@ const BMRProcessDetails = ({ bmrFields }) => {
                           {field.field_type === "text" && (
                             <>
                               <div className="relative">
-                                <div
-                                  className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
-                                  style={{ padding: "5px" }}
-                                >
-                                  <Tooltip
-                                    title="react developer "
-                                    placement="bottom-start"
-                                  >
-                                    <div className="text-gray-50 text-lg">
-                                      i
-                                    </div>
-                                  </Tooltip>
-                                </div>
                                 <input
                                   placeholder={field.placeholder}
                                   style={{
@@ -1243,17 +1246,6 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
                           {field.field_type === "grid" && (
                             <div className="relative">
-                              <div
-                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
-                                style={{ padding: "5px" }}
-                              >
-                                <Tooltip
-                                  title="react developer "
-                                  placement="right-start"
-                                >
-                                  <div className="text-gray-50 text-lg">i</div>
-                                </Tooltip>
-                              </div>
                               <table className="table-auto w-full border border-gray-600 mb-4">
                                 <thead>
                                   <tr>
@@ -1313,17 +1305,6 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
                           {field.field_type === "password" && (
                             <div className="relative">
-                              <div
-                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
-                                style={{ padding: "5px" }}
-                              >
-                                <Tooltip
-                                  title="react developer "
-                                  placement="right-start"
-                                >
-                                  <div className="text-gray-50 text-lg">i</div>
-                                </Tooltip>
-                              </div>
                               <input
                                 placeholder={field.placeholder}
                                 style={{
@@ -1340,17 +1321,6 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
                           {field.field_type === "date" && (
                             <div className="relative">
-                              <div
-                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
-                                style={{ padding: "5px" }}
-                              >
-                                <Tooltip
-                                  title="react developer "
-                                  placement="right-start"
-                                >
-                                  <div className="text-gray-50 text-lg">i</div>
-                                </Tooltip>
-                              </div>
                               <input
                                 placeholder={field.placeholder}
                                 style={{
@@ -1367,17 +1337,6 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
                           {field.field_type === "email" && (
                             <div className="relative">
-                              <div
-                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
-                                style={{ padding: "5px" }}
-                              >
-                                <Tooltip
-                                  title="react developer "
-                                  placement="right-start"
-                                >
-                                  <div className="text-gray-50 text-lg">i</div>
-                                </Tooltip>
-                              </div>
                               <input
                                 placeholder={field.placeholder}
                                 style={{
@@ -1394,17 +1353,6 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
                           {field.field_type === "number" && (
                             <div className="relative">
-                              <div
-                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
-                                style={{ padding: "5px" }}
-                              >
-                                <Tooltip
-                                  title="react developer "
-                                  placement="right-start"
-                                >
-                                  <div className="text-gray-50 text-lg">i</div>
-                                </Tooltip>
-                              </div>
                               <input
                                 placeholder={field.placeholder}
                                 style={{
@@ -1421,17 +1369,6 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
                           {field.field_type === "checkbox" && (
                             <div className="relative">
-                              <div
-                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
-                                style={{ padding: "5px" }}
-                              >
-                                <Tooltip
-                                  title="react developer "
-                                  placement="right-start"
-                                >
-                                  <div className="text-gray-50 text-lg">i</div>
-                                </Tooltip>
-                              </div>
                               <input
                                 placeholder={field.placeholder}
                                 style={{
@@ -1448,17 +1385,6 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
                           {field.field_type === "dropdown" && (
                             <div className="relative">
-                              <div
-                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
-                                style={{ padding: "5px" }}
-                              >
-                                <Tooltip
-                                  title="react developer "
-                                  placement="right-start"
-                                >
-                                  <div className="text-gray-50 text-lg">i</div>
-                                </Tooltip>
-                              </div>
                               <select
                                 className="border border-gray-600 p-2 w-full rounded"
                                 style={{
@@ -1478,17 +1404,6 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
                           {field.field_type === "multi-select" && (
                             <div className="relative">
-                              <div
-                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
-                                style={{ padding: "5px" }}
-                              >
-                                <Tooltip
-                                  title="react developer "
-                                  placement="right-start"
-                                >
-                                  <div className="text-gray-50 text-lg">i</div>
-                                </Tooltip>
-                              </div>
                               <>
                                 <Select
                                   isMulti

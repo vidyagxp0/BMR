@@ -146,7 +146,7 @@ const BMRRecords = () => {
   const formattedDate = new Date(selectedBMR.date_of_initiation)
     .toISOString()
     .split("T")[0];
-    
+
   const handleDynamicFieldChange = (id, value, tab) => {
     setDynamicFields((prevFields) => ({
       ...prevFields,
@@ -164,7 +164,7 @@ const BMRRecords = () => {
             Initiate BMR Records
           </h2>
         </div>
-        <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-[#207ec6] to-[#1672b9] mt-2 p-4 rounded-lg shadow-lg">
+        <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-[#4f839b] to-[#0c384d] mt-2 p-4 rounded-lg shadow-lg">
           {/* <h2 className="text-lg font-semibold text-white ">
             BMR ID :{" "}
             <span className="text-gray-800"> {selectedBMR.bmr_id}</span>
@@ -308,7 +308,6 @@ const BMRRecords = () => {
           )}
         </div>
         <div className="flex justify-end gap-4 items-end p-4 border-t">
-
           <button
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none transition duration-200"
             onClick={() => navigate("/dashboard")}
@@ -322,7 +321,6 @@ const BMRRecords = () => {
           >
             Exit
           </button>
-
         </div>
       </div>
 
@@ -332,10 +330,10 @@ const BMRRecords = () => {
 };
 const Button1 = ({ label, active, onClick }) => (
   <button
-    className={`px-4 py-2 my-4 text-gray-600 font-semibold rounded transition duration-100 ${
+    className={`px-4 py-2 my-4 text-gray-100 font-semibold rounded transition duration-100 ${
       active
-        ? "bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#d0f8ec]"
-        : "bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#d0f8ec]"
+        ? "bg-[#195b7a] hover:bg-[#00354E] hover:text-white"
+        : "bg-[#195b7a] hover:bg-[#00354E] hover:text-white"
     }`}
     onClick={onClick}
   >
