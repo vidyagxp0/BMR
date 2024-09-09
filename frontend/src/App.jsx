@@ -34,14 +34,16 @@ function App() {
 function RouteGuard() {
   const location = useLocation();
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     const handlePopState = (event) => {
       if (location.pathname === "/dashboard") {
-        navigate("/dashboard", { replace: true });
+        // Prevent forward navigation from /dashboard
+        history.pushState(null, "", location.pathname); // Push current state to avoid adding a new entry
       }
     };
 
+    // Add a popstate listener to manage forward navigation
     window.addEventListener("popstate", handlePopState);
 
     return () => {

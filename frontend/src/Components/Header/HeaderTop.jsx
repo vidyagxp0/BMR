@@ -10,7 +10,7 @@ import {
   FaHeadset,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaBell } from "react-icons/fa";
 import "./Header.css";
 import "./HeaderTop.css";
 import axios from "axios";
@@ -54,6 +54,7 @@ function HeaderTop() {
             />
           </div>
         </div>
+
         {/* <div className="center ">
           <div className="inputContainer border-2 border-gray-500 w-96">
             <div className="inputInnerLeft">
@@ -76,7 +77,7 @@ function HeaderTop() {
           {Each({
             of: asideLinks,
             render: (item) => (
-              <div className="sidebar-link" key={item.id}>
+              <div className="sidebar-link mt-8" key={item.id}>
                 {item.hasChild ? (
                   <div
                     className={`link-head ${
@@ -134,31 +135,47 @@ function HeaderTop() {
         </div> */}
 
         <div className="right">
-          <div className="notification-icon">
-            <i className="ri-notification-3-fill"></i>
+          <div className="notification-icon  relative">
+            <FaBell className="text-black text-2xl" />
+            <span className="absolute -top-2 left-2  bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
+              2
+            </span>
           </div>
 
           <div className="links-container mr-10">
-            <Link to="/boardOfDirectors" className="link-item mt-5 ">
+            <Link to="/boardOfDirectors" className="link-item mt-8 ">
               <FaPeopleLine size={22} />
               <span className="link-name">Board Members</span>
             </Link>
-            <Link to="/about" className="link-item mt-5 ">
+            <Link to="/about" className="link-item mt-8 ">
               <FaGlobe size={22} />
               <span className="link-name">About</span>
             </Link>
-            <Link to="/help" className="link-item mt-5 ">
+            <Link to="/help" className="link-item mt-8 ">
               <FaHandsHelping size={22} />
               <span className="link-name">Help</span>
             </Link>
-            <Link to="/helpdesk" className="link-item mt-5 ">
+            <Link to="/helpdesk" className="link-item mt-8 ">
               <FaHeadset size={22} />
               <span className="link-name">Helpdesk Personnel</span>
             </Link>
-            <Link to="/" className="link-item mt-5 " onClick={handleLogout}>
+            <Link to="/" className="link-item mt-8 " onClick={handleLogout}>
               <FaSignOutAlt size={22} />
               <span className="link-name">Logout</span>
             </Link>
+          </div>
+          <div className="flex items-center justify-end">
+            {/* Admin Name */}
+            <div className="mr-4 mt-5 text-white">Admin</div>
+
+            {/* Profile Picture Placeholder */}
+            <div className="rounded-full w-12 h-12 bg-gray-400 flex items-center justify-center">
+              <img
+                className="rounded-full w-full h-full object-cover"
+                src="amit_guru.jpg"
+                alt="Profile"
+              />
+            </div>
           </div>
         </div>
       </div>

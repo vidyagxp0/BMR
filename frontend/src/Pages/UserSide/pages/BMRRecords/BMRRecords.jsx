@@ -146,6 +146,7 @@ const BMRRecords = () => {
   const formattedDate = new Date(selectedBMR.date_of_initiation)
     .toISOString()
     .split("T")[0];
+    
   const handleDynamicFieldChange = (id, value, tab) => {
     setDynamicFields((prevFields) => ({
       ...prevFields,
@@ -163,7 +164,7 @@ const BMRRecords = () => {
             Initiate BMR Records
           </h2>
         </div>
-        <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-[#1a9e66] to-[#75D6A5] mt-2 p-4 rounded-lg shadow-lg">
+        <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-[#207ec6] to-[#1672b9] mt-2 p-4 rounded-lg shadow-lg">
           {/* <h2 className="text-lg font-semibold text-white ">
             BMR ID :{" "}
             <span className="text-gray-800"> {selectedBMR.bmr_id}</span>
@@ -307,18 +308,21 @@ const BMRRecords = () => {
           )}
         </div>
         <div className="flex justify-end gap-4 items-end p-4 border-t">
+
           <button
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none transition duration-200"
             onClick={() => navigate("/dashboard")}
           >
             Save
           </button>
+
           <button
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none transition duration-200"
+            className="px-4 py-2 bg-green-  600 text-white rounded hover:bg-blue-700 focus:outline-none transition duration-200"
             onClick={() => navigate("/dashboard")}
           >
             Exit
           </button>
+
         </div>
       </div>
 

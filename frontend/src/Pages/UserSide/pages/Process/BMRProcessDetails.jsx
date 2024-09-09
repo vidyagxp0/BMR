@@ -15,12 +15,14 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { IoIosCreate } from "react-icons/io";
 import { AiOutlineAudit } from "react-icons/ai";
+import { DeleteIcon } from "../../../../Components/Icons/Icon";
 
 const BMRProcessDetails = ({ bmrFields }) => {
   const [data, setData] = useState([]);
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
+  // console.log(bmrFields, "0000000000000000000000000");
   const [tabs, setTabs] = useState([
     "Initiator Remarks",
     "Reviewer Remarks",
@@ -36,6 +38,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
   const [newFields, setNewFields] = useState({});
   const [newSection, setNewSection] = useState([]);
   const [section, setSection] = useState([]);
+  // console.log(section, "sectionnnnnnnnnnnnnnnnn");
   const [fields, setFields] = useState({
     "Initiator Remarks": [
       {
@@ -98,6 +101,8 @@ const BMRProcessDetails = ({ bmrFields }) => {
       },
     ],
   });
+  console.log(fields,"fieldssssssssssssssss")
+
   const [activeFlowTab, setActiveFlowTab] = useState(flowoTabs[0]);
   const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
   const [activeSendFormTab, setActiveSendFormTab] = useState(null);
@@ -739,7 +744,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
   return (
     <div className="p-4 relative h-full">
-      <header className="bg-blue-100 w-full shadow-lg flex justify-between items-center p-4 mb-4">
+      <header className="bg-green-200 w-full shadow-lg flex justify-between items-center p-4 mb-4">
         <p className="text-lg font-bold">BMR Process Details</p>
         <div className="flex space-x-2">
           {showForm === "default" ? (
@@ -770,13 +775,15 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
               {activeFlowTab === "INITIATION" && (
                 <>
-                
-                 <AtmButton
-                label={newTab.BMR_Tabs?.length > 0 ?"Edit Form":"Create Form"}
-                onClick={() => setShowForm("sendForm")}
-                className="bg-blue-500 hover:bg-blue-600 px-4 py-2"
-              />
-                 
+                  <Tooltip title="Create Form">
+                    <IconButton>
+                      <IoIosCreate
+                        size={28}
+                        className="flex justify-center items-center cursor-pointer "
+                        onClick={() => setShowForm("sendForm")}
+                      />
+                    </IconButton>
+                  </Tooltip>
                 </>
               )}
             </>
@@ -907,9 +914,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
               key={index}
               onClick={() => handleFlowTabClick(tab)}
               className={`py-2 px-4 rounded border-2 border-black ${
-                activeFlowTab === tab
-                  ? "bg-[#6beeac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
-                  : "bg-[#8dccac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
+                activeFlowTab === tab ? "bg-[#6beeac]  " : "bg-[#8dccac]  "
               }`}
             >
               {tab}
@@ -1206,21 +1211,49 @@ const BMRProcessDetails = ({ bmrFields }) => {
                           {/* Render input fields based on type */}
 
                           {field.field_type === "text" && (
-                            <input
-                              placeholder={field.placeholder}
-                              style={{
-                                border: "1px solid gray",
-                                height: "48px",
-                              }}
-                              type="text"
-                              className="border border-gray-600 p-2 w-full rounded"
-                              required={field.isMandatory}
-                              readOnly={field.isReadonly}
-                            />
+                            <>
+                              <div className="relative">
+                                <div
+                                  className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
+                                  style={{ padding: "5px" }}
+                                >
+                                  <Tooltip
+                                    title="react developer "
+                                    placement="bottom-start"
+                                  >
+                                    <div className="text-gray-50 text-lg">
+                                      i
+                                    </div>
+                                  </Tooltip>
+                                </div>
+                                <input
+                                  placeholder={field.placeholder}
+                                  style={{
+                                    border: "1px solid gray",
+                                    height: "48px",
+                                  }}
+                                  type="text"
+                                  className="border border-gray-600 p-2 w-full rounded"
+                                  required={field.isMandatory}
+                                  readOnly={field.isReadonly}
+                                />
+                              </div>
+                            </>
                           )}
 
                           {field.field_type === "grid" && (
-                            <div>
+                            <div className="relative">
+                              <div
+                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
+                                style={{ padding: "5px" }}
+                              >
+                                <Tooltip
+                                  title="react developer "
+                                  placement="right-start"
+                                >
+                                  <div className="text-gray-50 text-lg">i</div>
+                                </Tooltip>
+                              </div>
                               <table className="table-auto w-full border border-gray-600 mb-4">
                                 <thead>
                                   <tr>
@@ -1279,110 +1312,201 @@ const BMRProcessDetails = ({ bmrFields }) => {
                           )}
 
                           {field.field_type === "password" && (
-                            <input
-                              placeholder={field.placeholder}
-                              style={{
-                                border: "1px solid gray",
-                                height: "48px",
-                              }}
-                              type="password"
-                              className="border border-gray-600 text-gray-600 p-2 w-full rounded"
-                              required={field.isMandatory}
-                              readOnly={field.isReadonly}
-                            />
+                            <div className="relative">
+                              <div
+                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
+                                style={{ padding: "5px" }}
+                              >
+                                <Tooltip
+                                  title="react developer "
+                                  placement="right-start"
+                                >
+                                  <div className="text-gray-50 text-lg">i</div>
+                                </Tooltip>
+                              </div>
+                              <input
+                                placeholder={field.placeholder}
+                                style={{
+                                  border: "1px solid gray",
+                                  height: "48px",
+                                }}
+                                type="password"
+                                className="border border-gray-600 text-gray-600 p-2 w-full rounded"
+                                required={field.isMandatory}
+                                readOnly={field.isReadonly}
+                              />
+                            </div>
                           )}
 
                           {field.field_type === "date" && (
-                            <input
-                              placeholder={field.placeholder}
-                              style={{
-                                border: "1px solid gray",
-                                height: "48px",
-                              }}
-                              type="date"
-                              className="border border-gray-600 p-2 w-full rounded"
-                              required={field.isMandatory}
-                              readOnly={field.isReadonly}
-                            />
+                            <div className="relative">
+                              <div
+                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
+                                style={{ padding: "5px" }}
+                              >
+                                <Tooltip
+                                  title="react developer "
+                                  placement="right-start"
+                                >
+                                  <div className="text-gray-50 text-lg">i</div>
+                                </Tooltip>
+                              </div>
+                              <input
+                                placeholder={field.placeholder}
+                                style={{
+                                  border: "1px solid gray",
+                                  height: "48px",
+                                }}
+                                type="date"
+                                className="border border-gray-600 p-2 w-full rounded"
+                                required={field.isMandatory}
+                                readOnly={field.isReadonly}
+                              />
+                            </div>
                           )}
 
                           {field.field_type === "email" && (
-                            <input
-                              placeholder={field.placeholder}
-                              style={{
-                                border: "1px solid gray",
-                                height: "48px",
-                              }}
-                              type="email"
-                              className="border border-gray-600 p-2 w-full rounded"
-                              required={field.isMandatory}
-                              readOnly={field.isReadonly}
-                            />
+                            <div className="relative">
+                              <div
+                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
+                                style={{ padding: "5px" }}
+                              >
+                                <Tooltip
+                                  title="react developer "
+                                  placement="right-start"
+                                >
+                                  <div className="text-gray-50 text-lg">i</div>
+                                </Tooltip>
+                              </div>
+                              <input
+                                placeholder={field.placeholder}
+                                style={{
+                                  border: "1px solid gray",
+                                  height: "48px",
+                                }}
+                                type="email"
+                                className="border border-gray-600 p-2 w-full rounded"
+                                required={field.isMandatory}
+                                readOnly={field.isReadonly}
+                              />
+                            </div>
                           )}
 
                           {field.field_type === "number" && (
-                            <input
-                              placeholder={field.placeholder}
-                              style={{
-                                border: "1px solid gray",
-                                height: "48px",
-                              }}
-                              type="number"
-                              className="border border-gray-600 p-2 w-full rounded"
-                              required={field.isMandatory}
-                              readOnly={field.isReadonly}
-                            />
+                            <div className="relative">
+                              <div
+                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
+                                style={{ padding: "5px" }}
+                              >
+                                <Tooltip
+                                  title="react developer "
+                                  placement="right-start"
+                                >
+                                  <div className="text-gray-50 text-lg">i</div>
+                                </Tooltip>
+                              </div>
+                              <input
+                                placeholder={field.placeholder}
+                                style={{
+                                  border: "1px solid gray",
+                                  height: "48px",
+                                }}
+                                type="number"
+                                className="border border-gray-600 p-2 w-full rounded"
+                                required={field.isMandatory}
+                                readOnly={field.isReadonly}
+                              />
+                            </div>
                           )}
 
                           {field.field_type === "checkbox" && (
-                            <input
-                              placeholder={field.placeholder}
-                              style={{
-                                border: "1px solid gray",
-                                height: "48px",
-                              }}
-                              type="checkbox"
-                              className="border border-gray-600 p-2 rounded"
-                              required={field.isMandatory}
-                              readOnly={field.isReadonly}
-                            />
+                            <div className="relative">
+                              <div
+                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
+                                style={{ padding: "5px" }}
+                              >
+                                <Tooltip
+                                  title="react developer "
+                                  placement="right-start"
+                                >
+                                  <div className="text-gray-50 text-lg">i</div>
+                                </Tooltip>
+                              </div>
+                              <input
+                                placeholder={field.placeholder}
+                                style={{
+                                  border: "1px solid gray",
+                                  height: "48px",
+                                }}
+                                type="checkbox"
+                                className="border border-gray-600 p-2 rounded"
+                                required={field.isMandatory}
+                                readOnly={field.isReadonly}
+                              />
+                            </div>
                           )}
 
                           {field.field_type === "dropdown" && (
-                            <select
-                              className="border border-gray-600 p-2 w-full rounded"
-                              style={{
-                                border: "1px solid gray",
-                                height: "48px",
-                              }}
-                              required={field.isMandatory}
-                            >
-                              {field?.acceptsMultiple?.map((option, idx) => (
-                                <option key={idx} value={option}>
-                                  {option}
-                                </option>
-                              ))}
-                            </select>
+                            <div className="relative">
+                              <div
+                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
+                                style={{ padding: "5px" }}
+                              >
+                                <Tooltip
+                                  title="react developer "
+                                  placement="right-start"
+                                >
+                                  <div className="text-gray-50 text-lg">i</div>
+                                </Tooltip>
+                              </div>
+                              <select
+                                className="border border-gray-600 p-2 w-full rounded"
+                                style={{
+                                  border: "1px solid gray",
+                                  height: "48px",
+                                }}
+                                required={field.isMandatory}
+                              >
+                                {field?.acceptsMultiple?.map((option, idx) => (
+                                  <option key={idx} value={option}>
+                                    {option}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
                           )}
 
                           {field.field_type === "multi-select" && (
-                            <>
-                              <Select
-                                isMulti
-                                options={field?.acceptsMultiple?.map(
-                                  (option) => ({
-                                    value: option,
-                                    label: option,
-                                  })
-                                )}
-                                value={selectedOptions[field.id] || []}
-                                onChange={(options) =>
-                                  handleMultiSelectChange(field.id, options)
-                                }
-                                formatOptionLabel={formatOptionLabel}
-                                className="text-start"
-                              />
-                            </>
+                            <div className="relative">
+                              <div
+                                className="absolute border w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center left-[90%] bottom-16"
+                                style={{ padding: "5px" }}
+                              >
+                                <Tooltip
+                                  title="react developer "
+                                  placement="right-start"
+                                >
+                                  <div className="text-gray-50 text-lg">i</div>
+                                </Tooltip>
+                              </div>
+                              <>
+                                <Select
+                                  isMulti
+                                  options={field?.acceptsMultiple?.map(
+                                    (option) => ({
+                                      value: option,
+                                      label: option,
+                                    })
+                                  )}
+                                  value={selectedOptions[field.id] || []}
+                                  onChange={(options) =>
+                                    handleMultiSelectChange(field.id, options)
+                                  }
+                                  formatOptionLabel={formatOptionLabel}
+                                  className="text-start"
+                                />
+                              </>
+                            </div>
                           )}
                         </div>
                       );
