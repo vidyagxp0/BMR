@@ -22,7 +22,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
-  console.log(bmrFields, "0000000000000000000000000");
+  // console.log(bmrFields, "0000000000000000000000000");
   const [tabs, setTabs] = useState([
     "Initiator Remarks",
     "Reviewer Remarks",
@@ -38,7 +38,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
   const [newFields, setNewFields] = useState({});
   const [newSection, setNewSection] = useState([]);
   const [section, setSection] = useState([]);
-  console.log(section, "sectionnnnnnnnnnnnnnnnn");
+  // console.log(section, "sectionnnnnnnnnnnnnnnnn");
   const [fields, setFields] = useState({
     "Initiator Remarks": [
       {
@@ -101,6 +101,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       },
     ],
   });
+  console.log(fields,"fieldssssssssssssssss")
 
   const [activeFlowTab, setActiveFlowTab] = useState(flowoTabs[0]);
   const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
@@ -1218,7 +1219,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
                                 >
                                   <Tooltip
                                     title="react developer "
-                                    placement="right-start"
+                                    placement="bottom-start"
                                   >
                                     <div className="text-gray-50 text-lg">
                                       i
