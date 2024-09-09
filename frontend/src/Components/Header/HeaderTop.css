@@ -2,7 +2,8 @@
   width: 100%;
   height: 80px;
   /* background: linear-gradient(135deg, #c9ccd5, #818286,#c9ccd5, #b9babc); */
-  background: linear-gradient(135deg, #014d70, #00354E);
+  background: linear-gradient(135deg, #346C86, #346C86);
+  /* background: linear-gradient(135deg, #bdc3c7, #2c3e50); */
   /* background: linear-gradient(135deg, #fbc2eb, #e6a1c5, #d785b2, #c05aa4, #a94191, #8e306f); */
   /* background: linear-gradient(135deg, #ff5e62, #ff9966, #f6f0e3, #f5a623, #f07c1f); */
   /* background: linear-gradient(135deg, #00c6ff, #0072ff, #00aaff, #0059b2, #003a6d); */
@@ -44,9 +45,10 @@
 }
 
 .logo img {
-  height: 60px;
-  width: 150px;
+  height: 65px;
+  width: 183px;
   cursor: pointer;
+  margin-left: 15px;
 }
 
 .center {

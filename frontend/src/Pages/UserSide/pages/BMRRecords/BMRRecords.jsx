@@ -332,8 +332,8 @@ const Button1 = ({ label, active, onClick }) => (
   <button
     className={`px-4 py-2 my-4 text-gray-100 font-semibold rounded transition duration-100 ${
       active
-        ? "bg-[#195b7a] hover:bg-[#00354E] hover:text-white"
-        : "bg-[#195b7a] hover:bg-[#00354E] hover:text-white"
+        ? "bg-[#195b7a] hover:bg-[#346C86] hover:text-white"
+        : "bg-[#195b7a] hover:bg-[#346C86] hover:text-white"
     }`}
     onClick={onClick}
   >

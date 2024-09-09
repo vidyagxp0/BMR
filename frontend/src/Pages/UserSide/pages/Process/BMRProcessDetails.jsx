@@ -759,7 +759,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                 <IconButton>
                   <AiOutlineAudit
                     size={28}
-                    className="flex justify-center text-gray-200  hover:  items-center cursor-pointer "
+                    className="flex justify-center text-gray-50  hover:  items-center cursor-pointer "
                     onClick={() => {
                       navigate("/audit-trail", { state: data[0] });
                     }}
@@ -771,7 +771,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                 <IconButton>
                   <FaRegFilePdf
                     size={28}
-                    className="flex justify-center text-gray-200 hover:  items-center cursor-pointer "
+                    className="flex justify-center text-gray-50 hover:  items-center cursor-pointer "
                     onClick={() => {
                       generateReport();
                     }}
@@ -785,7 +785,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                     <IconButton>
                       <IoIosCreate
                         size={28}
-                        className="flex justify-center text-gray-200  hover: items-center cursor-pointer "
+                        className="flex justify-center text-gray-50  hover: items-center cursor-pointer "
                         onClick={() => setShowForm("sendForm")}
                       />
                     </IconButton>
@@ -920,7 +920,9 @@ const BMRProcessDetails = ({ fieldData }) => {
               key={index}
               onClick={() => handleFlowTabClick(tab)}
               className={`py-2 px-4 rounded border-2 border-black ${
-                activeFlowTab === tab ? "bg-[#195b7a] text-white" : "bg-[#3a88b3] text-black "
+                activeFlowTab === tab
+                  ? "bg-[#195b7a] text-white"
+                  : "bg-[#3a88b3] text-black "
               }`}
             >
               {tab}

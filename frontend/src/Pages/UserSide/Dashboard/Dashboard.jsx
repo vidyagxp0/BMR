@@ -14,21 +14,21 @@ const Dashboard = () => {
   const [showModal, setShowModal] = useState(false);
   const [approvedBMR, setApprovedBMR] = useState([]);
   const [chartData, setChartData] = useState([
-    { x: new Date('2023-01-01').getTime(), y: 10 },
-    { x: new Date('2023-02-01').getTime(), y: 25 },
-    { x: new Date('2023-03-01').getTime(), y: 18 },
-    { x: new Date('2023-04-01').getTime(), y: 35 },
-    { x: new Date('2023-05-01').getTime(), y: 30 },
-    { x: new Date('2023-06-01').getTime(), y: 45 },
-    { x: new Date('2023-07-01').getTime(), y: 40 }
+    { x: new Date("2023-01-01").getTime(), y: 10 },
+    { x: new Date("2023-02-01").getTime(), y: 25 },
+    { x: new Date("2023-03-01").getTime(), y: 18 },
+    { x: new Date("2023-04-01").getTime(), y: 35 },
+    { x: new Date("2023-05-01").getTime(), y: 30 },
+    { x: new Date("2023-06-01").getTime(), y: 45 },
+    { x: new Date("2023-07-01").getTime(), y: 40 },
   ]);
 
   const [events, setEvents] = useState([
     // Example of a static event
     {
       title: "BMR Review",
-      start: new Date('2023-09-08T10:00:00'),
-      end: new Date('2023-09-08T12:00:00'),
+      start: new Date("2023-09-08T10:00:00"),
+      end: new Date("2023-09-08T12:00:00"),
       allDay: false,
     },
   ]); // Calendar events (static for now)
@@ -141,8 +141,8 @@ const Dashboard = () => {
         <div className="input-wrapper">
           <div className="group-input-2">
             <label>BMR</label>
-            <select id="options" name="options" >
-              <option value="" >All Records</option>
+            <select id="options" name="options">
+              <option value="">All Records</option>
               {approvedBMR.map((item, index) => (
                 <option key={index} value={item.id}>
                   {item.name}
@@ -150,7 +150,10 @@ const Dashboard = () => {
               ))}
             </select>
           </div>
-          <button className="btn bg-[#00354E] hover:bg-[#123e53]" onClick={openModal}>
+          <button
+            className="btn bg-[#346C86] hover:bg-[#123e53]"
+            onClick={openModal}
+          >
             Initiate
           </button>
         </div>
@@ -188,20 +191,20 @@ const Dashboard = () => {
 
         {/* Full-width Calendar */}
         <div style={{ height: 600, marginTop: 30 }} className="bg-gray-100">
-        <Calendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          selectable
-          style={{ width: "100%" }}
-          onSelectSlot={handleSelect} // Double-click to add event
-          onSelectEvent={handleEventDelete} // Click event to delete
-          defaultView="month"
-          views={["month", "week", "day"]}
-          popup
-        />
-      </div>
+          <Calendar
+            localizer={localizer}
+            events={events}
+            startAccessor="start"
+            endAccessor="end"
+            selectable
+            style={{ width: "100%" }}
+            onSelectSlot={handleSelect} // Double-click to add event
+            onSelectEvent={handleEventDelete} // Click event to delete
+            defaultView="month"
+            views={["month", "week", "day"]}
+            popup
+          />
+        </div>
       </div>
     </div>
   );

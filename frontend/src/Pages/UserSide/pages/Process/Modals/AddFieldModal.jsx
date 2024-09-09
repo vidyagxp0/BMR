@@ -137,7 +137,7 @@ const AddFieldModal = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-filter backdrop-blur-sm">
+    <div className="fixed inset-0 flex items-center justify-center top-16 bg-opacity-50 backdrop-filter backdrop-blur-sm">
       <div
         className="bg-white p-4 rounded shadow-lg"
         style={{ width: "800px", height: "500px" }}

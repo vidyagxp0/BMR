@@ -135,7 +135,7 @@ const AddSectionModal = ({
     <div>
       <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-filter backdrop-blur-sm">
         <div
-          className="bg-wihte border-2  p-4 rounded shadow-lg"
+          className="bg-wihte border-2 bg-white p-4 rounded shadow-lg"
           style={{ width: "400px" }}
         >
           <h2 className="text-lg font-bold mb-4">
@@ -147,7 +147,7 @@ const AddSectionModal = ({
             placeholder="Section Name"
             value={sectionName}
             onChange={(e) => setSectionName(e.target.value)}
-            className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500"
+            className="border border-gray-300 p-2 w-full mb-4  focus:outline-none focus:border-blue-500"
             style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
           />
           <label htmlFor="">Limit</label>
