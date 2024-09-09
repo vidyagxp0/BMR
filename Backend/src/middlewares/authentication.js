@@ -26,7 +26,7 @@ function checkJwtToken(req, res, next) {
 
 const getFileUrl = (file) => {
   if (file?.filename) {
-    return `https://bmrapi.mydemosoftware.com/profile_pics/${file?.filename}`;
+    return `http://192.168.1.14:7000/profile_pics/${file?.filename}`;
   }
 };
 
