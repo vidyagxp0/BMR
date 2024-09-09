@@ -38,7 +38,7 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
 
   //   try {
   //     const response = await axios.post(
-  //       "https://bmrapi.mydemosoftware.com/user/user-verification",
+  //       "http://192.168.1.14:7000/user/user-verification",
   //       data,
   //       {
   //         headers: { "Content-Type": "application/json" },
@@ -70,7 +70,7 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
   // };
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ email, password, declaration }, handleFlag);
+    onSubmit({ email, password, declaration,comments }, handleFlag);
     setFlag(!false);
   };
 

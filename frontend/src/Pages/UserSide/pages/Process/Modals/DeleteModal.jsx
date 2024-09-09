@@ -24,7 +24,7 @@ const DeleteModal = ({
 
       if (itemType === "tab") {
         const response = await axios.delete(
-          `https://bmrapi.mydemosoftware.com/bmr-form/delete-bmr-tab/${id}`,
+          `http://192.168.1.14:7000/bmr-form/delete-bmr-tab/${id}`,
         {    
           headers: {
             Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -41,7 +41,7 @@ const DeleteModal = ({
         toast.success("Tab deleted successfully!");
       } else if (itemType === "section") {
         const response = await axios.delete(
-          `https://bmrapi.mydemosoftware.com/bmr-form/delete-bmr-section/${section_id}`,
+          `http://192.168.1.14:7000/bmr-form/delete-bmr-section/${section_id}`,
           {    
             headers: {
               Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -68,7 +68,7 @@ const DeleteModal = ({
         toast.success("Field deleted successfully!");
       } else if (itemType === "field") {
         const response = await axios.delete(
-          `https://bmrapi.mydemosoftware.com/bmr-form/delete-bmr-field/${bmr_field_id}`,
+          `http://192.168.1.14:7000/bmr-form/delete-bmr-field/${bmr_field_id}`,
          { headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",

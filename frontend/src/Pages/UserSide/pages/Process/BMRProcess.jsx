@@ -46,7 +46,24 @@ const BMRProcess = () => {
         );
       },
     },
-    { header: "Division", accessor: "division" },
+    {
+      header: "Division",
+      accessor: "division",
+      Cell: ({ row }) => {
+        return (
+          <>
+            {" "}
+            {row.original.division_id === 1
+              ? "India"
+              : row.original.division_id === 2
+              ? "Malasia "
+              : row.original.division_id === 3
+              ? "EU"
+              : "EMEA"}
+          </>
+        );
+      },
+    },
     {
       header: "Date Of Initiation",
       accessor: "date_of_initiation",
@@ -59,7 +76,6 @@ const BMRProcess = () => {
       Cell: ({ row }) => formattedDate(row.original.due_date),
     },
     { header: "Status", accessor: "status" },
-
     {
       header: "Actions",
       accessor: "actions",
@@ -94,7 +110,7 @@ const BMRProcess = () => {
 
   const fetchBMRData = () => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.14:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },

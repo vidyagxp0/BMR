@@ -14,7 +14,7 @@ const modalStyle = {
   transform: "translate(-50%, -50%)",
   width: "90%",
   maxWidth: 600,
-  maxHeight: "70vh", 
+  maxHeight: "70vh",
   bgcolor: "background.paper",
   borderRadius: "8px",
   boxShadow: 24,
@@ -25,7 +25,7 @@ const modalStyle = {
 function CreateRecordModal({ open, onClose }) {
   const [formData, setFormData] = useState({
     name: "",
-    description:"",
+    description: "",
     reviewers: [],
     approvers: [],
     department: "",
@@ -35,13 +35,16 @@ function CreateRecordModal({ open, onClose }) {
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [department, setDepartment] = useState([]);
-  const [division, setDivision] = useState([]);
+  const [division, setDivision] = useState([
+    { value: 1, label: "India" },
+    { value: 2, label: "Malaysia" },
+    { value: 3, label: "EU" },
+    { value: 4, label: "EMEA" },
+  ]);
 
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
   const [isSelectedApprover, setIsSelectedApprover] = useState([]);
-  const [isSelectedDepartment, setIsSelectedDepartmentr] = useState([]);
-  const [isSelectedDivision, setIsSelectedDivision] = useState([]);
-
+  const [isSelectedDivision, setIsSelectedDivision] = useState(null);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   const dispatch = useDispatch();
@@ -53,9 +56,13 @@ function CreateRecordModal({ open, onClose }) {
   const handleVerificationSubmit = (verified) => {
     axios
       .post(
-        "https://bmrapi.mydemosoftware.com/bmr-form/add-bmr",
+        "http://192.168.1.14:7000/bmr-form/add-bmr",
         {
           name: formData.name,
+          description: formData.description,
+          due_date: formData.due_date,
+          division_id:formData.division,
+          department_id:formData.department,
           reviewers: isSelectedReviewer.map((reviewer) => ({
             reviewerId: reviewer.value,
             status: "pending",
@@ -73,6 +80,7 @@ function CreateRecordModal({ open, onClose }) {
           email: verified.email,
           password: verified.password,
           declaration: verified.declaration,
+          comments: verified.comments,
         },
 
         {
@@ -102,7 +110,7 @@ function CreateRecordModal({ open, onClose }) {
   useEffect(() => {
     axios
       .post(
-        "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+        "http://192.168.1.14:7000/bmr-form/get-user-roles",
         { role_id: 3 },
         {
           headers: {
@@ -132,7 +140,7 @@ function CreateRecordModal({ open, onClose }) {
 
     axios
       .post(
-        "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+        "http://192.168.1.14:7000/bmr-form/get-user-roles",
         { role_id: 4 },
         {
           headers: {
@@ -159,7 +167,35 @@ function CreateRecordModal({ open, onClose }) {
       .catch((error) => {
         console.error("Error: ", error);
       });
+
+    axios
+      .get("http://192.168.1.14:7000/user/get-all-user-departments", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        const departmentOptions = [
+          ...response.data.message.map((department) => ({
+            value: department.department_id,
+            label: department.name,
+          })),
+        ];
+        setDepartment(departmentOptions);
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
   }, []);
+  const getTomorrowDate = () => {
+    const today = new Date();
+    today.setDate(today.getDate() + 1); // Add 1 day to the current date
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -169,7 +205,8 @@ function CreateRecordModal({ open, onClose }) {
   };
 
   const handleSelectChange = (selected, field) => {
-    if (selected.some((option) => option.value === "select-all")) {
+    console.log(selected, "<><><><>");
+    if (selected?.some((option) => option.value === "select-all")) {
       const allOptions = field === "reviewers" ? reviewers : approvers;
       const nonSelectAllOptions = allOptions.filter(
         (option) => option.value !== "select-all"
@@ -181,9 +218,11 @@ function CreateRecordModal({ open, onClose }) {
         field === "approvers" ? nonSelectAllOptions : isSelectedApprover
       );
     } else {
-      field === "reviewers"
-        ? setIsSelectedReviewer(selected)
-        : setIsSelectedApprover(selected);
+      if (field === "reviewers") {
+        setIsSelectedReviewer(selected);
+      } else if (field === "approvers") {
+        setIsSelectedApprover(selected);
+      }
     }
   };
 
@@ -197,6 +236,21 @@ function CreateRecordModal({ open, onClose }) {
 
   const handleAddBmrClick = () => {
     setShowVerificationModal(true);
+  };
+
+  const handleDepartmentSelect = (selected) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      department: selected.value, // Update the department value in formData
+    }));
+  };
+
+  // Function to handle division selection
+  const handleDivisionSelect = (selected) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      division: selected.value, // Update the division value in formData
+    }));
   };
 
   return (
@@ -229,10 +283,10 @@ function CreateRecordModal({ open, onClose }) {
               />
               <TextField
                 label="Description"
-                name="name"
+                name="description"
                 fullWidth
                 margin="normal"
-                value={formData.name}
+                value={formData.description}
                 onChange={handleChange}
                 variant="outlined"
                 InputProps={{
@@ -248,6 +302,7 @@ function CreateRecordModal({ open, onClose }) {
               />
 
               <div>
+                {/* Department Dropdown */}
                 <Typography
                   variant="subtitle2"
                   color="textSecondary"
@@ -258,10 +313,10 @@ function CreateRecordModal({ open, onClose }) {
                 <Select
                   name="department"
                   options={department}
-                  value={isSelectedDepartment}
-                  onChange={(selected) =>
-                    handleSelectChange(selected, "department")
-                  }
+                  value={department.find(
+                    (dep) => dep.value === formData.department
+                  )} // Match selected value
+                  onChange={handleDepartmentSelect} // Single-select handling function
                   styles={{
                     control: (provided) => ({
                       ...provided,
@@ -273,8 +328,8 @@ function CreateRecordModal({ open, onClose }) {
                     }),
                   }}
                 />
-              </div>
-              <div>
+
+                {/* Division Dropdown */}
                 <Typography
                   variant="subtitle2"
                   color="textSecondary"
@@ -285,10 +340,10 @@ function CreateRecordModal({ open, onClose }) {
                 <Select
                   name="division"
                   options={division}
-                  value={isSelectedDivision}
-                  onChange={(selected) =>
-                    handleSelectChange(selected, "divisions")
-                  }
+                  value={division.find(
+                    (div) => div.value === formData.division
+                  )} // Match selected value
+                  onChange={handleDivisionSelect} // Single-select handling function
                   styles={{
                     control: (provided) => ({
                       ...provided,
@@ -311,7 +366,7 @@ function CreateRecordModal({ open, onClose }) {
                 </Typography>
                 <TextField
                   // label="Due Date"
-                  name="name"
+                  name="due_date"
                   type="date"
                   fullWidth
                   margin="normal"
@@ -323,10 +378,9 @@ function CreateRecordModal({ open, onClose }) {
                       height: "48px",
                     },
                   }}
-                  InputLabelProps={{
-                    style: {
-                      top: "0",
-                    },
+                  inputProps={{
+                    min: getTomorrowDate(), // Disable past dates
+                    style: { height: "48px" },
                   }}
                 />
               </div>
