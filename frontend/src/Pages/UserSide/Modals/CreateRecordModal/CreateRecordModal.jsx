@@ -23,6 +23,7 @@ const modalStyle = {
 function CreateRecordModal({ open, onClose }) {
   const [formData, setFormData] = useState({
     name: "",
+    description:"",
     reviewers: [],
     approvers: [],
     department: "",
@@ -199,8 +200,8 @@ function CreateRecordModal({ open, onClose }) {
 
   return (
     <>
-     <div className="h-[40%]">
-     <Box open={true} onClose={onClose} sx={{ zIndex: 10 }}>
+     <div className="">
+     <Box open={true} onClose={onClose} sx={{ zIndex: 10, }}>
         <Box sx={modalStyle}>
           <Typography variant="h6" component="h2" align="center" gutterBottom>
             Add BMR
@@ -227,10 +228,10 @@ function CreateRecordModal({ open, onClose }) {
             />
              <TextField
               label="Description"
-              name="name"
+              name="description"
               fullWidth
               margin="normal"
-              value={formData.name}
+              value={formData.description}
               onChange={handleChange}
               variant="outlined"
               InputProps={{
