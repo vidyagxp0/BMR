@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
 import HeaderBottom from "../../../../Components/Header/HeaderBottom";
 import AtmTable from "../../../../AtmComponents/AtmTable";

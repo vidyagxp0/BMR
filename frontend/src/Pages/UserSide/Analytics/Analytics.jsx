@@ -134,7 +134,7 @@ const Analytics = () => {
   };
 
   const pieChart = {
-    series: [44, 55, 41, 17,58, 15,20,35,54],
+    series: [44, 55, 41, 17, 58, 15, 20, 35, 54],
     options: {
       chart: {
         type: "donut",
