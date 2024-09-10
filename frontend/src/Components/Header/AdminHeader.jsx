@@ -19,19 +19,19 @@ const AdminHeader=()=> {
 
   return (
     <>
-      <header className="main-header border border-blue-600 bg-white">
+      <header className="main-header  bg-[#346C86]">
         <div className="inner-grid">
-          <div className="logo">
+          <div className="w-44  ">
             <img src="/headerlogo.png" alt="..." />
           </div>
-          <div className="drop-container">
+          <div className="drop-container ">
             <div className="drop-btn name-btn">
               <div className="profile-img">
                 <img
                   id="avatarButton"
                   type="button"
                   //   onClick={}
-                  className="w-11 h-11 rounded-full cursor-pointer"
+                  className="w-6 h-6 rounded-full  cursor-pointer"
                   src="/amit_guru.jpg"
                   alt="User dropdown"
                 />

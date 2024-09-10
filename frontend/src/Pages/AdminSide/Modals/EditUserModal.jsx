@@ -1,12 +1,13 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import Select from "react-select";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { fetchUsers } from "../../../userSlice";
+import UserVerificationPopUp from "../../../Components/UserVerificationPopUp/UserVerificationPopUp";
 
 const modalStyle = {
   position: "absolute",
@@ -22,6 +23,7 @@ const modalStyle = {
 
 const EditUserModal = ({ user, onClose, setAllUsers }) => {
   const [roles, setRoles] = useState([]);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -29,10 +31,14 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
     rolesArray: [],
     profile_pic: null,
   });
+
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+
   const dispatch = useDispatch();
+
   useEffect(() => {
     axios
-      .get("http://192.168.1.14:7000/user/get-all-roles", {
+      .get("https://bmrapi.mydemosoftware.com/user/get-all-roles", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "application/json",
@@ -66,8 +72,29 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
     }
   }, [user, roles]);
 
+  useEffect(() => {
+    const isDataChanged =
+      user.name !== formData.name ||
+      user.email !== formData.email ||
+      !areRolesSame(user.UserRoles, formData.rolesArray) ||
+      (formData.profile_pic && formData.profile_pic !== user.profile_pic);
+
+    setIsButtonEnabled(isDataChanged);
+  }, [formData, user]);
+
+  const areRolesSame = (userRoles, formRoles) => {
+    if (userRoles.length !== formRoles.length) return false;
+    const userRoleIds = userRoles.map((role) => role.role_id);
+    const formRoleIds = formRoles.map((role) => role.value);
+    return userRoleIds.every((id, index) => id === formRoleIds[index]);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    setShowVerificationModal(true);
+  };
+
+  const updateUser = () => {
     const updatedFormData = {
       ...formData,
       rolesArray: formData.rolesArray.map((option) => option.value),
@@ -76,7 +103,7 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
 
     axios
       .put(
-        `http://192.168.1.14:7000/user/edit-user/${user.user_id}`,
+        `https://bmrapi.mydemosoftware.com/user/edit-user/${user.user_id}`,
         updatedFormData,
         {
           headers: {
@@ -100,9 +127,17 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
       })
       .catch((error) => {
         console.error("API Error: ", error.response.data);
-
         toast.error(error.response.data.message);
       });
+  };
+
+  const closeUserVerifiedModal = () => {
+    setShowVerificationModal(false);
+  };
+
+  const handleVerificationSubmit = () => {
+    updateUser();
+    closeUserVerifiedModal();
   };
 
   const handleChange = (e) => {
@@ -126,7 +161,7 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
   return (
     <>
       <ToastContainer />
-      <Modal open={true} onClose={onClose}>
+      <Box open={true} onClose={onClose}>
         <Box sx={modalStyle}>
           <Typography variant="h6" component="h2">
             Edit User
@@ -179,14 +214,21 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
               variant="contained"
               color="primary"
               fullWidth
+              disabled={!isButtonEnabled}
               sx={{ mt: 2 }}
-              
             >
               Update
             </Button>
           </form>
         </Box>
-      </Modal>
+      </Box>
+
+      {showVerificationModal && (
+        <UserVerificationPopUp
+          onClose={closeUserVerifiedModal}
+          onSubmit={handleVerificationSubmit}
+        />
+      )}
     </>
   );
 };

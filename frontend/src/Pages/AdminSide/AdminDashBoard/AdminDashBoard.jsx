@@ -35,7 +35,7 @@ const AdminDashBoard = () => {
       Cell: ({ row }) => {
         const user = row.original;
         return (
-          <div className="flex space-x-2">
+          <div className="flex space-x-2a">
             <button
               onClick={() => {
                 setSelectedUser(user);
@@ -83,7 +83,7 @@ const AdminDashBoard = () => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.14:7000/user/get-all-users", {
+      .get("https://bmrapi.mydemosoftware.com/user/get-all-users", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
         },

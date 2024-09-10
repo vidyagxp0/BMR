@@ -8,7 +8,7 @@ const Wrapper = () => {
     <div className="flex flex-col h-screen">
       <div className="fixed top-0 left-0 w-full z-50">
         <AdminHeader />
-        <DashboardBottom/>
+        {/* <DashboardBottom/> */}
       </div>
       <div className="flex">
      

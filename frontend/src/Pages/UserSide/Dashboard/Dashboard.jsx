@@ -35,7 +35,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.14:7000/bmr-form/get-approved-bmrs", {
+      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-approved-bmrs", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },

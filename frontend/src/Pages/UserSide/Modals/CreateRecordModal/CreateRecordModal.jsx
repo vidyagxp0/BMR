@@ -56,13 +56,13 @@ function CreateRecordModal({ open, onClose }) {
   const handleVerificationSubmit = (verified) => {
     axios
       .post(
-        "http://192.168.1.14:7000/bmr-form/add-bmr",
+        "https://bmrapi.mydemosoftware.com/bmr-form/add-bmr",
         {
           name: formData.name,
           description: formData.description,
           due_date: formData.due_date,
-          division_id:formData.division,
-          department_id:formData.department,
+          division_id: formData.division,
+          department_id: formData.department,
           reviewers: isSelectedReviewer.map((reviewer) => ({
             reviewerId: reviewer.value,
             status: "pending",
@@ -110,7 +110,7 @@ function CreateRecordModal({ open, onClose }) {
   useEffect(() => {
     axios
       .post(
-        "http://192.168.1.14:7000/bmr-form/get-user-roles",
+        "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
         { role_id: 3 },
         {
           headers: {
@@ -140,7 +140,7 @@ function CreateRecordModal({ open, onClose }) {
 
     axios
       .post(
-        "http://192.168.1.14:7000/bmr-form/get-user-roles",
+        "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
         { role_id: 4 },
         {
           headers: {
@@ -169,7 +169,7 @@ function CreateRecordModal({ open, onClose }) {
       });
 
     axios
-      .get("http://192.168.1.14:7000/user/get-all-user-departments", {
+      .get("https://bmrapi.mydemosoftware.com/user/get-all-user-departments", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",
@@ -192,8 +192,8 @@ function CreateRecordModal({ open, onClose }) {
     const today = new Date();
     today.setDate(today.getDate() + 1); // Add 1 day to the current date
     const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const dd = String(today.getDate()).padStart(2, "0");
     return `${yyyy}-${mm}-${dd}`;
   };
 

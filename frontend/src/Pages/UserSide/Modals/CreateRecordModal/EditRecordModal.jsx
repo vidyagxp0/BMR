@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import "../General.css";
 import axios from "axios";
@@ -10,15 +11,17 @@ import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/
 
 const modalStyle = {
   position: "absolute",
-  top: "50%",
+  top: "55%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "90%",
   maxWidth: 600,
+  height: 500,
   bgcolor: "background.paper",
   borderRadius: "8px",
   boxShadow: 24,
   p: 4,
+  overflowY: "auto",
 };
 
 const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
@@ -29,8 +32,8 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
   const [formData, setFormData] = useState({
     name: bmrData?.name || "",
     description: bmrData?.description || "",
-    reviewers: [],
-    approvers: [],
+    reviewers: bmrData?.reviewers || [],
+    approvers: bmrData?.approvers || [],
     department: bmrData?.department_id || "",
     division: bmrData?.division_id || "",
     due_date: formatDateToInput(bmrData?.due_date) || "",
@@ -49,12 +52,48 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
   const [isSelectedApprover, setIsSelectedApprover] = useState([]);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [department, setDepartment] = useState([]);
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [division, setDivision] = useState([
     { value: 1, label: "India" },
     { value: 2, label: "Malaysia" },
     { value: 3, label: "EU" },
     { value: 4, label: "EMEA" },
   ]);
+
+  useEffect(() => {
+    const isDataChanged =
+      bmrData.name !== formData.name ||
+      bmrData.description !== formData.description ||
+      bmrData.department_id !== formData.department ||
+      bmrData.division_id !== formData.division ||
+      bmrData.due_date !== formData.due_date ||
+      !areReviewersSame(bmrData.reviewers, formData.reviewers) ||
+      !areApproversSame(bmrData.approvers, formData.approvers);
+
+    setIsButtonEnabled(isDataChanged);
+  }, [bmrData, formData]);
+
+  const areReviewersSame = (oldReviewers, newReviewers) => {
+    if (oldReviewers.length !== newReviewers.length) return false;
+    return oldReviewers.every((oldRev) =>
+      newReviewers.some((newRev) => newRev.value === oldRev.reviewerId)
+    );
+  };
+
+  const areApproversSame = (oldApprovers, newApprovers) => {
+    if (oldApprovers.length !== newApprovers.length) return false;
+    return oldApprovers.every((oldApp) =>
+      newApprovers.some((newApp) => newApp.value === oldApp.approverId)
+    );
+  };
+
+  // const handleUpdate = () => {
+  //   if (isButtonEnabled) {
+  //     onClose(formData);
+  //   } else {
+  //     toast.warn("No changes detected");
+  //   }
+  // };
 
   const dispatch = useDispatch();
 
@@ -93,7 +132,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
     axios
       .put(
-        `http://192.168.1.14:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
+        `https://bmrapi.mydemosoftware.com/bmr-form/edit-bmr/${bmrData.bmr_id}`,
         updatedBMRData,
         {
           headers: {
@@ -145,7 +184,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     const fetchRoles = async () => {
       try {
         const reviewerResponse = await axios.post(
-          "http://192.168.1.14:7000/bmr-form/get-user-roles",
+          "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
           {
             role_id: 3,
           },
@@ -163,7 +202,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         setReviewers(addSelectAllOption(reviewerOptions));
 
         const approverResponse = await axios.post(
-          "http://192.168.1.14:7000/bmr-form/get-user-roles",
+          "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
           {
             role_id: 4,
           },
@@ -184,7 +223,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
       }
     };
     axios
-      .get("http://192.168.1.14:7000/user/get-all-user-departments", {
+      .get("https://bmrapi.mydemosoftware.com/user/get-all-user-departments", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",
@@ -237,50 +276,29 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     }
   }, [bmrData, reviewers, approvers]);
 
-  const hasChanges = () => {
-    const reviewersChanged = formData.reviewers.some(
-      (reviewer) =>
-        !bmrData.reviewers.some(
-          (original) => original.reviewerId === reviewer.value
-        )
-    );
-    const approversChanged = formData.approvers.some(
-      (approver) =>
-        !bmrData.approvers.some(
-          (original) => original.approverId === approver.value
-        )
-    );
-
-    return (
-      formData.name !== bmrData.name || reviewersChanged || approversChanged
-    );
-  };
-
   const handleEditBmrClick = () => {
-    // Close the CreateRecordModal and open the UserVerificationPopUp
     setShowVerificationModal(true);
   };
 
   const handleDepartmentSelect = (selected) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      department: selected.value, // Update the department value in formData
+      department: selected.value,
     }));
   };
 
-  // Function to handle division selection
   const handleDivisionSelect = (selected) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      division: selected.value, // Update the division value in formData
+      division: selected.value,
     }));
   };
 
   const getTomorrowDate = () => {
     const today = new Date();
-    today.setDate(today.getDate() + 1); // Add 1 day to the current date
+    today.setDate(today.getDate() + 1);
     const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
     const dd = String(today.getDate()).padStart(2, "0");
     return `${yyyy}-${mm}-${dd}`;
   };
@@ -464,7 +482,9 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
                 fullWidth
                 sx={{ mt: 2 }}
                 onClick={handleEditBmrClick}
-                disabled={!hasChanges()}
+                // onClick={handleUpdate}
+                // disabled={!hasChanges()}
+                disabled={!isButtonEnabled}
               >
                 Update BMR
               </Button>

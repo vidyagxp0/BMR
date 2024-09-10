@@ -29,7 +29,7 @@ const ResetPasswordModal = ({ user, onClose, id, setAllUsers }) => {
       confirm_new_password: confirmNewPassword,
     };
     axios
-      .post("http://192.168.1.14:7000/user/reset-password", data, {
+      .post("https://bmrapi.mydemosoftware.com/user/reset-password", data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
