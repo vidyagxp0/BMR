@@ -3,26 +3,20 @@ import axios from "axios";
 
 // Async Thunks
 export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
-  const response = await axios.get(
-    "https://bmrapi.mydemosoftware.com/user/get-users",
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
-      },
-    }
-  );
+  const response = await axios.get("http://192.168.1.5:7000/user/get-users", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
+    },
+  });
   return response.data;
 });
 
 export const fetchBmr = createAsyncThunk("bmr/fetchBmr", async () => {
-  const response = await axios.get(
-    "https://bmrapi.mydemosoftware.com/bmr-form/get-bmr",
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-      },
-    }
-  );
+  const response = await axios.get("http://192.168.1.5:7000/bmr-form/get-bmr", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+    },
+  });
   return response.data;
 });
 

@@ -132,7 +132,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
     axios
       .put(
-        `https://bmrapi.mydemosoftware.com/bmr-form/edit-bmr/${bmrData.bmr_id}`,
+        `http://192.168.1.5:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
         updatedBMRData,
         {
           headers: {
@@ -184,7 +184,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     const fetchRoles = async () => {
       try {
         const reviewerResponse = await axios.post(
-          "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+          "http://192.168.1.5:7000/bmr-form/get-user-roles",
           {
             role_id: 3,
           },
@@ -202,7 +202,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         setReviewers(addSelectAllOption(reviewerOptions));
 
         const approverResponse = await axios.post(
-          "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+          "http://192.168.1.5:7000/bmr-form/get-user-roles",
           {
             role_id: 4,
           },
@@ -223,24 +223,24 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
       }
     };
     axios
-      .get("https://bmrapi.mydemosoftware.com/user/get-all-user-departments", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        const departmentOptions = [
-          ...response.data.message.map((department) => ({
-            value: department.department_id,
-            label: department.name,
-          })),
-        ];
-        setDepartment(departmentOptions);
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
-      });
+    .get("http://192.168.1.5:7000/user/get-all-user-departments", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => {
+      const departmentOptions = [
+        ...response.data.message.map((department) => ({
+          value: department.department_id,
+          label: department.name,
+        })),
+      ];
+      setDepartment(departmentOptions);
+    })
+    .catch((error) => {
+      console.error("Error: ", error);
+    });
 
     fetchRoles();
   }, []);

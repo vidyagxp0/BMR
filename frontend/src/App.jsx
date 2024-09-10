@@ -23,6 +23,7 @@ import AuditTrail from "./Pages/UserSide/auditTrail/auditTrail";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import BMRForms from "./Pages/UserSide/pages/Process/Modals/BMRForms";
+import Analytics from "./Pages/UserSide/Analytics/Analytics";
 
 function App() {
   return (
@@ -75,6 +76,10 @@ function RouteGuard() {
           path="/bmr_records"
           element={<ProtectedUserRoute element={<BMRRecords />} />}
         />
+        <Route
+        path="/analytics"
+        element={<ProtectedUserRoute element={<Analytics />} />}
+      />
       </Route>
       <Route
         path="/audit-trail"
@@ -96,6 +101,8 @@ function RouteGuard() {
         path="/helpdesk"
         element={<ProtectedUserRoute element={<HelpdeskPersonnel />} />}
       />
+
+
 
       <Route path="/admin-login" element={<AdminLogin />} />
       <Route path="" element={<Wrapper />}>

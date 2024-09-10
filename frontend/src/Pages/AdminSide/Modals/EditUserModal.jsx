@@ -38,7 +38,7 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
 
   useEffect(() => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/user/get-all-roles", {
+      .get("http://192.168.1.5:7000/user/get-all-roles", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "application/json",
@@ -103,7 +103,7 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
 
     axios
       .put(
-        `https://bmrapi.mydemosoftware.com/user/edit-user/${user.user_id}`,
+        `http://192.168.1.5:7000/user/edit-user/${user.user_id}`,
         updatedFormData,
         {
           headers: {

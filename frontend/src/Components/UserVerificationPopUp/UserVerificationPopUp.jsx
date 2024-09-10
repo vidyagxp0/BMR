@@ -4,7 +4,11 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
-const UserVerificationPopUp = ({onClose,onSubmit,onVerificationSuccess,}) => {
+const UserVerificationPopUp = ({
+  onClose,
+  onSubmit,
+  onVerificationSuccess,
+}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [declaration, setDeclaration] = useState("");
@@ -38,7 +42,7 @@ const UserVerificationPopUp = ({onClose,onSubmit,onVerificationSuccess,}) => {
 
   //   try {
   //     const response = await axios.post(
-  //       "https://bmrapi.mydemosoftware.com/user/user-verification",
+  //       "http://192.168.1.5:7000/user/user-verification",
   //       data,
   //       {
   //         headers: { "Content-Type": "application/json" },

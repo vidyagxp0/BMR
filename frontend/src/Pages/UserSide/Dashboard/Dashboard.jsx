@@ -4,9 +4,8 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import axios from "axios";
 import InitiateModal from "../Modals/InitiateModal";
-import ReactApexChart from "react-apexcharts";
+
 import "./Dashboard.css";
-import DashboardBottom from "../../../Components/Header/DashboardBottom";
 
 const localizer = momentLocalizer(moment);
 
@@ -35,7 +34,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-approved-bmrs", {
+      .get("http://192.168.1.5:7000/bmr-form/get-approved-bmrs", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -80,63 +79,10 @@ const Dashboard = () => {
   };
 
   // ApexChart configuration
-  const chartOptions = {
-    series: [
-      {
-        name: "BMR Records",
-        data: chartData,
-      },
-    ],
-    options: {
-      chart: {
-        type: "area",
-        height: 350,
-        zoom: {
-          type: "x",
-          enabled: true,
-          autoScaleYaxis: true,
-        },
-        toolbar: {
-          autoSelected: "zoom",
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      markers: {
-        size: 0,
-      },
-      title: {
-        text: "BMR Records Chart",
-        align: "left",
-      },
-      fill: {
-        type: "gradient",
-        gradient: {
-          shadeIntensity: 1,
-          inverseColors: false,
-          opacityFrom: 0.5,
-          opacityTo: 0,
-          stops: [0, 90, 100],
-        },
-      },
-      xaxis: {
-        type: "datetime",
-      },
-      yaxis: {
-        title: {
-          text: "Record Count",
-        },
-      },
-      tooltip: {
-        shared: false,
-      },
-    },
-  };
+
 
   return (
     <div>
-      {/* <DashboardBottom/> */}
       <div className="desktop-input-table-wrapper">
         {/* <div className="input-wrapper">
           <div className="group-input-2">
@@ -180,14 +126,7 @@ const Dashboard = () => {
         </table> */}
 
         {/* ApexChart Integration */}
-        <div id="chart">
-          <ReactApexChart
-            options={chartOptions.options}
-            series={chartOptions.series}
-            type="area"
-            height={350}
-          />
-        </div>
+       
 
         {/* Full-width Calendar */}
         <div style={{ height: 600, marginTop: 30 }} className="bg-gray-100">
