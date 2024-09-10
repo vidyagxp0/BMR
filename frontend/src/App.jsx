@@ -6,6 +6,7 @@ import Wrapper from "./Pages/Wrapper";
 import AddUser from "./Pages/AdminSide/AddUser/AddUser";
 import UpdateUser from "./Pages/AdminSide/Modals/UpdateUserModal";
 import Login from "./Pages/UserSide/Login/Login";
+import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./Pages/UserSide/Dashboard/Dashboard";
 import ProtectedAdminRoute from "./Pages/ProtectedRoute/ProtectedAdminRoute";
 import ProtectedUserRoute from "./Pages/ProtectedRoute/ProtectedUserRoute";
@@ -21,6 +22,7 @@ import BoardOfDirectors from "./Pages/HeaderComponents/BoardOfDirectors";
 import AuditTrail from "./Pages/UserSide/auditTrail/auditTrail";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import BMRForms from "./Pages/UserSide/pages/Process/Modals/BMRForms";
 
 function App() {
   return (
@@ -38,12 +40,10 @@ function RouteGuard() {
   useEffect(() => {
     const handlePopState = (event) => {
       if (location.pathname === "/dashboard") {
-        // Prevent forward navigation from /dashboard
-        history.pushState(null, "", location.pathname); // Push current state to avoid adding a new entry
+        history.pushState(null, "", location.pathname);
       }
     };
 
-    // Add a popstate listener to manage forward navigation
     window.addEventListener("popstate", handlePopState);
 
     return () => {
@@ -53,7 +53,6 @@ function RouteGuard() {
 
   return (
     <Routes>
-      a
       <Route path="/" element={<Login />} />
       <Route path="" element={<WrapperUser />}>
         <Route
@@ -81,6 +80,23 @@ function RouteGuard() {
         path="/audit-trail"
         element={<ProtectedUserRoute element={<AuditTrail />} />}
       />
+      <Route
+        path="/boardOfDirectors"
+        element={<ProtectedUserRoute element={<BoardOfDirectors />} />}
+      />
+
+      <Route
+        path="/bmr-forms"
+        element={<ProtectedUserRoute element={<BMRForms />} />}
+      />
+
+      <Route path="/help" element={<ProtectedUserRoute element={<Help />} />} />
+
+      <Route
+        path="/helpdesk"
+        element={<ProtectedUserRoute element={<HelpdeskPersonnel />} />}
+      />
+
       <Route path="/admin-login" element={<AdminLogin />} />
       <Route path="" element={<Wrapper />}>
         <Route
@@ -96,10 +112,6 @@ function RouteGuard() {
           element={<ProtectedAdminRoute element={<UpdateUser />} />}
         />
       </Route>
-      <Route path="/boardOfDirectors" element={<BoardOfDirectors />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/help" element={<Help />} />
-      <Route path="/helpdesk" element={<HelpdeskPersonnel />} />
     </Routes>
   );
 }

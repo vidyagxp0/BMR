@@ -138,7 +138,7 @@ const Dashboard = () => {
     <div>
       {/* <DashboardBottom/> */}
       <div className="desktop-input-table-wrapper">
-        <div className="input-wrapper">
+        {/* <div className="input-wrapper">
           <div className="group-input-2">
             <label>BMR</label>
             <select id="options" name="options">
@@ -156,14 +156,14 @@ const Dashboard = () => {
           >
             Initiate
           </button>
-        </div>
+        </div> */}
 
         {showModal && (
           <InitiateModal approvedBMR={approvedBMR} onClose={closeModal} />
         )}
 
         {/* Table */}
-        <table className="mb-5">
+        {/* <table className="mb-5">
           <thead>
             <tr>
               <th className="bg-[#195b7a]">S no</th>
@@ -177,7 +177,7 @@ const Dashboard = () => {
             </tr>
           </thead>
           <tbody></tbody>
-        </table>
+        </table> */}
 
         {/* ApexChart Integration */}
         <div id="chart">
