@@ -3,6 +3,9 @@ import InitiateModal from "../../../Modals/InitiateModal";
 import HeaderTop from "../../../../../Components/Header/HeaderTop";
 import DashboardBottom from "../../../../../Components/Header/DashboardBottom";
 import axios from "axios";
+import { IconButton, Tooltip } from "@mui/material";
+import { AiOutlineAudit } from "react-icons/ai";
+import { Navigate } from "react-router-dom";
 
 const formatDate = (date) => {
   const options = { day: "2-digit", month: "2-digit", year: "numeric" };
@@ -12,6 +15,8 @@ const formatDate = (date) => {
 const BMRForms = () => {
   const [approvedBMR, setApprovedBMR] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
 
   useEffect(() => {
     axios
@@ -36,6 +41,16 @@ const BMRForms = () => {
     setShowModal(false);
   };
 
+  const totalPages = Math.ceil(approvedBMR.length / rowsPerPage);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const currentRows = approvedBMR.slice(startIndex, startIndex + rowsPerPage);
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="fixed top-0 left-0 w-full z-50">
@@ -45,10 +60,10 @@ const BMRForms = () => {
         </div>
       </header>
       <main className="flex flex-col items-center mt-[130px] w-full px-4">
-        <div className="w-full ">
+        <div className="w-full">
           <div className="flex items-center justify-center m-3">
-            <div className=" w-full flex items-center justify-between">
-              <label className="text-gray-700  font-bold">BMR</label>
+            <div className="w-full flex items-center justify-between">
+              <label className="text-gray-700 font-bold">BMR</label>
               <select
                 id="options"
                 name="options"
@@ -93,37 +108,32 @@ const BMRForms = () => {
                 </tr>
               </thead>
               <tbody>
-                {approvedBMR.map((item, index) => {
+                {currentRows.map((item, index) => {
                   const dueDate = new Date(item.due_date);
                   const currentDate = new Date();
 
-                  // Calculate difference in days
                   const timeDiff = dueDate - currentDate;
                   const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
-                  // Define color range: green when far, red when close
                   let color;
-                  if (diffDays > 10) {
-                    // More than 10 days remaining
-                    color = `linear-gradient(to right, #00ff00 100%, #00ff00 100%)`;
-                  } else if (diffDays > 0) {
-                    // Between 1 and 10 days remaining
-                    const percentage = (10 - diffDays) * 10; // Gradient changes from green to red
-                    color = `linear-gradient(to right, #00ff00 ${percentage}%, #ff0000 ${percentage}%)`;
-                  } else {
-                    // Due date has passed
+                  let percentage;
+
+                  if (diffDays > 20) {
                     color = `linear-gradient(to right, #ff0000 100%, #ff0000 100%)`;
+                    percentage = 100;
+                  } else if (diffDays > 0) {
+                    percentage = (10 - diffDays) * 10;
+                    color = `linear-gradient(to right, #ff0000 ${percentage}%, #00ff00 ${percentage}%)`;
+                  } else {
+                    color = `linear-gradient(to right, #00ff00 100%, #00ff00 100%)`;
+                    percentage = 0;
                   }
 
-                  // Calculate the position of the pin based on days remaining
-                  const pinPosition = `calc(${Math.max(
-                    0,
-                    (10 - diffDays) * 10
-                  )}% + 2px)`;
+                  const pinPosition = `${percentage}%`;
 
                   return (
                     <tr key={item.id} className="border-b">
-                      <td className="p-2">{index + 1}</td>
+                      <td className="p-2">{startIndex + index + 1}</td>
                       <td className="p-2">{item.name}</td>
                       <td className="p-2">
                         {formatDate(item.date_of_initiation)}
@@ -142,21 +152,28 @@ const BMRForms = () => {
                             background: color,
                           }}
                         >
-                          <div
-                            className="pin"
-                            style={{
-                              position: "absolute",
-                              width: "8px",
-                              height: "15px",
-                              borderRadius: "15%",
-                              borderBottomLeftRadius: "90%",
-                              borderBottomRightRadius: "90%",
-                              backgroundColor: "lightgray",
-                              border: "2px solid black",
-                              transform: "translate(-50%, -50%)",
-                              left: pinPosition,
-                            }}
-                          ></div>
+                          <Tooltip
+                            title={`${diffDays} Days Remaining`}
+                            placement="top"
+                          >
+                            <IconButton>
+                              <div
+                                className="pin"
+                                style={{
+                                  position: "absolute",
+                                  width: "8px",
+                                  height: "15px",
+                                  borderRadius: "15%",
+                                  borderBottomLeftRadius: "90%",
+                                  borderBottomRightRadius: "90%",
+                                  backgroundColor: "lightgray",
+                                  border: "2px solid black",
+                                  transform: "translate(-50%, -50%)",
+                                  left: pinPosition,
+                                }}
+                              ></div>
+                            </IconButton>
+                          </Tooltip>
                         </div>
                       </td>
                       <td
@@ -182,6 +199,27 @@ const BMRForms = () => {
                 })}
               </tbody>
             </table>
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="flex justify-center my-4">
+            <button
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-l-md"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span className="px-4 py-2 bg-white text-gray-700">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-r-md"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
           </div>
         </div>
       </main>
