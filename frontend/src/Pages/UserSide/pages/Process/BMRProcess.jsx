@@ -27,7 +27,9 @@ const BMRProcess = () => {
       header: "BMR Id",
       accessor: "bmr_id",
       Cell: ({ row }) => {
-        return <span>{`100${row.original.bmr_id}`}</span>;
+        const bmrId = row.original.bmr_id;
+        const formattedBmrId = bmrId < 10 ? `1000${bmrId}` : `100${bmrId}`;
+        return <span>{formattedBmrId}</span>;
       },
     },
     {
@@ -328,6 +330,7 @@ const BMRProcess = () => {
           setData={setData}
         />
       )}
+     
     </div>
   );
 };

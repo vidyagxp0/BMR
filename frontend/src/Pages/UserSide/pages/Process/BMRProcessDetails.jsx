@@ -334,6 +334,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       reviewComment: "editData.reviewComment",
       approverComment: "editData.approverComment",
       declaration: credentials?.declaration,
+      comments : credentials?.comments,
     };
     const config = {
       headers: {

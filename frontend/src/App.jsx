@@ -24,6 +24,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import BMRForms from "./Pages/UserSide/pages/Process/Modals/BMRForms";
 import Analytics from "./Pages/UserSide/Analytics/Analytics";
+import Logs from "./Pages/UserSide/Logs/Logs";
 
 function App() {
   return (
@@ -79,6 +80,10 @@ function RouteGuard() {
         <Route
         path="/analytics"
         element={<ProtectedUserRoute element={<Analytics />} />}
+      />
+       <Route
+        path="/logs"
+        element={<ProtectedUserRoute element={<Logs />} />}
       />
       </Route>
       <Route
