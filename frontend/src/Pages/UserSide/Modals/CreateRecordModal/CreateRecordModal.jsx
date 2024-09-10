@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { addBmr } from "../../../../userSlice";
 import axios from "axios";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
+import { useNavigate } from "react-router-dom";
 
 const modalStyle = {
   position: "absolute",
@@ -48,7 +49,7 @@ function CreateRecordModal({ open, onClose }) {
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const closeUserVerifiedModal = () => {
     setShowVerificationModal(false);
   };
@@ -56,7 +57,7 @@ function CreateRecordModal({ open, onClose }) {
   const handleVerificationSubmit = (verified) => {
     axios
       .post(
-        "http://192.168.1.14:7000/bmr-form/add-bmr",
+        "http://192.168.1.5:7000/bmr-form/add-bmr",
         {
           name: formData.name,
           description: formData.description,
@@ -91,8 +92,12 @@ function CreateRecordModal({ open, onClose }) {
         }
       )
       .then((response) => {
+        console.log(response,"gdgdgdf")
         toast.success(response.data.message || "BMR added successfully!");
         dispatch(addBmr(response.data.bmr));
+        navigate(`/process/processdetails/${response.data.bmr}`, {
+          state: { bmr: response.data.bmr },
+        });
         setFormData({ name: "", reviewers: [], approvers: [] });
         setIsSelectedReviewer([]);
         setIsSelectedApprover([]);
@@ -110,7 +115,7 @@ function CreateRecordModal({ open, onClose }) {
   useEffect(() => {
     axios
       .post(
-        "http://192.168.1.14:7000/bmr-form/get-user-roles",
+        "http://192.168.1.5:7000/bmr-form/get-user-roles",
         { role_id: 3 },
         {
           headers: {
@@ -140,7 +145,7 @@ function CreateRecordModal({ open, onClose }) {
 
     axios
       .post(
-        "http://192.168.1.14:7000/bmr-form/get-user-roles",
+        "http://192.168.1.5:7000/bmr-form/get-user-roles",
         { role_id: 4 },
         {
           headers: {
@@ -169,7 +174,7 @@ function CreateRecordModal({ open, onClose }) {
       });
 
     axios
-      .get("http://192.168.1.14:7000/user/get-all-user-departments", {
+      .get("http://192.168.1.5:7000/user/get-all-user-departments", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",
@@ -301,9 +306,10 @@ function CreateRecordModal({ open, onClose }) {
                 }}
               />
 
-              <div>
+              <div className="flex flex-col gap-3">
                 {/* Department Dropdown */}
-                <Typography
+              <div>
+              <Typography
                   variant="subtitle2"
                   color="textSecondary"
                   gutterBottom
@@ -328,9 +334,11 @@ function CreateRecordModal({ open, onClose }) {
                     }),
                   }}
                 />
+              </div>
 
-                {/* Division Dropdown */}
-                <Typography
+              <div>
+                  {/* Division Dropdown */}
+                  <Typography
                   variant="subtitle2"
                   color="textSecondary"
                   gutterBottom
@@ -356,7 +364,7 @@ function CreateRecordModal({ open, onClose }) {
                   }}
                 />
               </div>
-              <div>
+              </div>
                 <Typography
                   variant="subtitle2"
                   color="textSecondary"
@@ -376,6 +384,7 @@ function CreateRecordModal({ open, onClose }) {
                   InputProps={{
                     style: {
                       height: "48px",
+                    marginTop:"-10px"
                     },
                   }}
                   inputProps={{
@@ -383,7 +392,6 @@ function CreateRecordModal({ open, onClose }) {
                     style: { height: "48px" },
                   }}
                 />
-              </div>
               <div>
                 <Typography
                   variant="subtitle2"

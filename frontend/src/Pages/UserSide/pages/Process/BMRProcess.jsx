@@ -75,6 +75,66 @@ const BMRProcess = () => {
       accessor: "due_date",
       Cell: ({ row }) => formattedDate(row.original.due_date),
     },
+    {
+      header: "Department",
+      accessor: "department",
+      Cell: ({ row }) => {
+        return (
+          <>
+            {" "}
+            {row.original.department_id === 1
+              ? "Coorporate Quality Assurance"
+              : row.original.department_id === 2
+              ? "Quality Assurance Biopharma "
+              : row.original.department_id === 3
+              ? "Central Quality Control"
+              : row.original.department_id === 4
+              ? "Manufacturing"
+              : row.original.department_id === 5
+              ? "Plasma Sourcing Group"
+              : row.original.department_id === 6
+              ? "Central Stores"
+              : row.original.department_id === 7
+              ? "Information Technology Group"
+              : row.original.department_id === 8
+              ? "Molecular Medicine"
+              : row.original.department_id === 9
+              ? "Central Laboratory"
+              : row.original.department_id === 10
+              ? "Tech Team"
+              : row.original.department_id === 11
+              ? "Quality Assurance"
+              : row.original.department_id === 12
+              ? "Quality Management"
+              : row.original.department_id === 13
+              ? "IT Administration"
+              : row.original.department_id === 14
+              ? "Accounting"
+              : row.original.department_id === 15
+              ? "Logistics"
+              : row.original.department_id === 16
+              ? "Senior Management"
+              : row.original.department_id === 17
+              ? "Business Administration"
+              : row.original.department_id === 18
+              ? "Others"
+              : row.original.department_id === 19
+              ? "Quality Control"
+              : row.original.department_id === 20
+              ? "Production"
+              : row.original.department_id === 21
+              ? "Accounting Manager"
+              : row.original.department_id === 22
+              ? "Quality Assurance Director"
+              : row.original.department_id === 23
+              ? "Quality Manager"
+              : row.original.department_id === 24
+              ? "Supervisor"
+              : "Director"}
+          </>
+        );
+      },
+    },
     { header: "Status", accessor: "status" },
     {
       header: "Actions",
@@ -110,7 +170,7 @@ const BMRProcess = () => {
 
   const fetchBMRData = () => {
     axios
-      .get("http://192.168.1.14:7000/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.5:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },

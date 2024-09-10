@@ -101,7 +101,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       },
     ],
   });
-  console.log(fields,"fieldssssssssssssssss")
+  console.log(fields, "fieldssssssssssssssss");
 
   const [activeFlowTab, setActiveFlowTab] = useState(flowoTabs[0]);
   const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
@@ -272,7 +272,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.14:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.5:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -345,7 +345,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.initiatorDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.14:7000/bmr-form/send-BMR-for-review",
+          "http://192.168.1.5:7000/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -362,7 +362,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.14:7000/bmr-form/send-BMR-from-review-to-approval",
+          "http://192.168.1.5:7000/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -379,7 +379,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.14:7000/bmr-form/send-BMR-from-review-to-open",
+          "http://192.168.1.5:7000/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -393,11 +393,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
     } else if (popupAction === "sendFromApprovalToApproved") {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
-        .put(
-          "http://192.168.1.14:7000/bmr-form/approve-BMR",
-          dataObject,
-          config
-        )
+        .put("http://192.168.1.5:7000/bmr-form/approve-BMR", dataObject, config)
         .then(() => {
           toast.success("BMR successfully approved");
           navigate(-1);
@@ -411,7 +407,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.14:7000/bmr-form/send-BMR-from-approval-to-open",
+          "http://192.168.1.5:7000/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -496,7 +492,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
         // Make API request to generate PDF
         const response = await axios({
-          url: "http://192.168.1.14:7000/bmr-form/generate-report",
+          url: "http://192.168.1.5:7000/bmr-form/generate-report",
           method: "POST",
           responseType: "blob",
           headers: {
@@ -775,15 +771,11 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
               {activeFlowTab === "INITIATION" && (
                 <>
-                  <Tooltip title="Create Form">
-                    <IconButton>
-                      <IoIosCreate
-                        size={28}
-                        className="flex justify-center items-center cursor-pointer "
-                        onClick={() => setShowForm("sendForm")}
-                      />
-                    </IconButton>
-                  </Tooltip>
+                  <AtmButton
+                     label={newTab.length === 0 ? "Create Form" : "Edit Form"}
+                    onClick={() => setShowForm("sendForm")}
+                    className="flex justify-center items-center cursor-pointer "
+                  />
                 </>
               )}
             </>

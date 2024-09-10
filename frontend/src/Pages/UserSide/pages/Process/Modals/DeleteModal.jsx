@@ -24,7 +24,7 @@ const DeleteModal = ({
 
       if (itemType === "tab") {
         const response = await axios.delete(
-          `http://192.168.1.14:7000/bmr-form/delete-bmr-tab/${id}`,
+          `http://192.168.1.5:7000/bmr-form/delete-bmr-tab/${id}`,
         {    
           headers: {
             Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -34,6 +34,7 @@ const DeleteModal = ({
             email: verified.email,
             password: verified.password,
             declaration: verified.declaration,
+            comments:verified.comments
           }}
         );
         const updatedTabs = newTab.filter((tab) => tab.bmr_tab_id !== id);
@@ -41,7 +42,7 @@ const DeleteModal = ({
         toast.success("Tab deleted successfully!");
       } else if (itemType === "section") {
         const response = await axios.delete(
-          `http://192.168.1.14:7000/bmr-form/delete-bmr-section/${section_id}`,
+          `http://192.168.1.5:7000/bmr-form/delete-bmr-section/${section_id}`,
           {    
             headers: {
               Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -51,6 +52,7 @@ const DeleteModal = ({
               email: verified.email,
               password: verified.password,
               declaration: verified.declaration,
+              comments:verified.comments,
             }}
         );
         const updatedSections = newTab.map((tab) => {
@@ -68,7 +70,7 @@ const DeleteModal = ({
         toast.success("Field deleted successfully!");
       } else if (itemType === "field") {
         const response = await axios.delete(
-          `http://192.168.1.14:7000/bmr-form/delete-bmr-field/${bmr_field_id}`,
+          `http://192.168.1.5:7000/bmr-form/delete-bmr-field/${bmr_field_id}`,
          { headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",
@@ -77,6 +79,7 @@ const DeleteModal = ({
             email: verified.email,
             password: verified.password,
             declaration: verified.declaration,
+            comments:verified.comments,
           }}
         );
         const updatedSections = newTab.map((tab) => {

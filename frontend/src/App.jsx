@@ -21,6 +21,7 @@ import BoardOfDirectors from "./Pages/HeaderComponents/BoardOfDirectors";
 import AuditTrail from "./Pages/UserSide/auditTrail/auditTrail";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import Analytics from "./Pages/UserSide/Analytics/Analytics";
 
 function App() {
   return (
@@ -75,11 +76,17 @@ function RouteGuard() {
           path="/bmr_records"
           element={<ProtectedUserRoute element={<BMRRecords />} />}
         />
+        <Route
+        path="/analytics"
+        element={<ProtectedUserRoute element={<Analytics />} />}
+      />
       </Route>
       <Route
         path="/audit-trail"
         element={<ProtectedUserRoute element={<AuditTrail />} />}
       />
+
+
 
       <Route path="/admin-login" element={<AdminLogin />} />
       <Route path="" element={<Wrapper />}>

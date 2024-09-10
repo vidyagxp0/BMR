@@ -23,7 +23,7 @@ const AddSectionModal = ({
     if (updateSection === "add-section") {
       try {
         const response = await axios.post(
-          `http://192.168.1.14:7000/bmr-form/add-bmr-section`,
+          `http://192.168.1.5:7000/bmr-form/add-bmr-section`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
@@ -48,7 +48,7 @@ const AddSectionModal = ({
     } else if (updateSection === "edit-section") {
       try {
         const response = await axios.put(
-          `http://192.168.1.14:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          `http://192.168.1.5:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
@@ -57,6 +57,7 @@ const AddSectionModal = ({
             email: verified.email,
             password: verified.password,
             declaration: verified.declaration,
+            comments:verified.comments,
           },
           {
             headers: {
@@ -73,7 +74,7 @@ const AddSectionModal = ({
     } else if (updateSection === "edit-section") {
       try {
         const response = await axios.put(
-          `http://192.168.1.14:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          `http://192.168.1.5:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
@@ -82,6 +83,7 @@ const AddSectionModal = ({
             email: verified.email,
             password: verified.password,
             declaration: verified.declaration,
+            comments:verified.comments,
           },
           {
             headers: {
@@ -98,7 +100,7 @@ const AddSectionModal = ({
     } else if (updateSection === "edit-section") {
       try {
         const response = await axios.put(
-          `http://192.168.1.14:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          `http://192.168.1.5:7000/bmr-form/edit-bmr-section/${bmr_section_id}`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
