@@ -19,7 +19,7 @@ const BMRForms = () => {
   const [approvedBMR, setApprovedBMR] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 6;
+  const rowsPerPage = 7;
 
   useEffect(() => {
     axios
@@ -55,7 +55,7 @@ const BMRForms = () => {
   const currentRows = approvedBMR.slice(startIndex, startIndex + rowsPerPage);
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col p-3">
       <header className="fixed top-0 left-0 w-full z-50">
         <HeaderTop />
         <div >
