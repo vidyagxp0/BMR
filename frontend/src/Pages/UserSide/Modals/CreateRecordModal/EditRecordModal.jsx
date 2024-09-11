@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import "../General.css";
 import axios from "axios";
-import { Modal, Box, Typography, TextField, Button } from "@mui/material";
+import {  Box, Typography, TextField, Button } from "@mui/material";
 import Select from "react-select";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
@@ -38,14 +38,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     division: bmrData?.division_id || "",
     due_date: formatDateToInput(bmrData?.due_date) || "",
   });
-
-  {
-    formData.name === bmrData?.name
-      ? console.log("Unchanged")
-      : console.log("changed");
-  }
-
-  console.log(bmrData.due_date, "<><><>");
+  
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
@@ -87,13 +80,6 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     );
   };
 
-  // const handleUpdate = () => {
-  //   if (isButtonEnabled) {
-  //     onClose(formData);
-  //   } else {
-  //     toast.warn("No changes detected");
-  //   }
-  // };
 
   const dispatch = useDispatch();
 
@@ -420,7 +406,11 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
                 type="date"
                 fullWidth
                 margin="normal"
-                value={formData.due_date}
+                value={
+                  formData.due_date
+                    ? new Date(formData.due_date).toISOString().split("T")[0]
+                    : ""
+                }
                 onChange={(e) =>
                   setFormData({ ...formData, due_date: e.target.value })
                 }
