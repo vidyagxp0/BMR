@@ -58,7 +58,7 @@ const BMRForms = () => {
     <div className="flex flex-col ">
       <header className="fixed top-0 left-0 w-full z-50">
         <HeaderTop />
-        <div className="mt-20">
+        <div >
           <DashboardBottom />
         </div>
       </header>
