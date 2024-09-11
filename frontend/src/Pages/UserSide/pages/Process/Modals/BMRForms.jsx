@@ -20,7 +20,7 @@ const BMRForms = () => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.5:7000/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.21:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -55,7 +55,7 @@ const BMRForms = () => {
     <div className="flex flex-col min-h-screen">
       <header className="fixed top-0 left-0 w-full z-50">
         <HeaderTop />
-        <div className="mt-20">
+        <div >
           <DashboardBottom />
         </div>
       </header>

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import "../General.css";
 import axios from "axios";
-import { Modal, Box, Typography, TextField, Button } from "@mui/material";
+import {  Box, Typography, TextField, Button } from "@mui/material";
 import Select from "react-select";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
@@ -38,14 +38,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     division: bmrData?.division_id || "",
     due_date: formatDateToInput(bmrData?.due_date) || "",
   });
-
-  {
-    formData.name === bmrData?.name
-      ? console.log("Unchanged")
-      : console.log("changed");
-  }
-
-  console.log(bmrData.due_date, "<><><>");
+  
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
@@ -87,13 +80,6 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     );
   };
 
-  // const handleUpdate = () => {
-  //   if (isButtonEnabled) {
-  //     onClose(formData);
-  //   } else {
-  //     toast.warn("No changes detected");
-  //   }
-  // };
 
   const dispatch = useDispatch();
 
@@ -132,7 +118,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
     axios
       .put(
-        `http://192.168.1.5:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
+        `http://192.168.1.21:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
         updatedBMRData,
         {
           headers: {
@@ -184,7 +170,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     const fetchRoles = async () => {
       try {
         const reviewerResponse = await axios.post(
-          "http://192.168.1.5:7000/bmr-form/get-user-roles",
+          "http://192.168.1.21:7000/bmr-form/get-user-roles",
           {
             role_id: 3,
           },
@@ -202,7 +188,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         setReviewers(addSelectAllOption(reviewerOptions));
 
         const approverResponse = await axios.post(
-          "http://192.168.1.5:7000/bmr-form/get-user-roles",
+          "http://192.168.1.21:7000/bmr-form/get-user-roles",
           {
             role_id: 4,
           },
@@ -223,24 +209,24 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
       }
     };
     axios
-    .get("http://192.168.1.5:7000/user/get-all-user-departments", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-        "Content-Type": "application/json",
-      },
-    })
-    .then((response) => {
-      const departmentOptions = [
-        ...response.data.message.map((department) => ({
-          value: department.department_id,
-          label: department.name,
-        })),
-      ];
-      setDepartment(departmentOptions);
-    })
-    .catch((error) => {
-      console.error("Error: ", error);
-    });
+      .get("http://192.168.1.21:7000/user/get-all-user-departments", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        const departmentOptions = [
+          ...response.data.message.map((department) => ({
+            value: department.department_id,
+            label: department.name,
+          })),
+        ];
+        setDepartment(departmentOptions);
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
 
     fetchRoles();
   }, []);
@@ -420,7 +406,11 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
                 type="date"
                 fullWidth
                 margin="normal"
-                value={formData.due_date}
+                value={
+                  formData.due_date
+                    ? new Date(formData.due_date).toISOString().split("T")[0]
+                    : ""
+                }
                 onChange={(e) =>
                   setFormData({ ...formData, due_date: e.target.value })
                 }

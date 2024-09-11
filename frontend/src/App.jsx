@@ -86,6 +86,10 @@ function RouteGuard() {
           path="/logs"
           element={<ProtectedUserRoute element={<Logs />} />}
         />
+        <Route
+        path="/bmr-forms"
+        element={<ProtectedUserRoute element={<BMRForms />} />}
+      />
       </Route>
       <Route
         path="/audit-trail"
@@ -96,10 +100,7 @@ function RouteGuard() {
         element={<ProtectedUserRoute element={<BoardOfDirectors />} />}
       />
 
-      <Route
-        path="/bmr-forms"
-        element={<ProtectedUserRoute element={<BMRForms />} />}
-      />
+      
 
       <Route path="/help" element={<ProtectedUserRoute element={<Help />} />} />
       <Route
