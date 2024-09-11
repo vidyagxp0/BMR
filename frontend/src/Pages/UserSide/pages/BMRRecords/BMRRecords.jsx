@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
-import HeaderTop from "../../../../Components/Header/HeaderTop";
+// import HeaderTop from "../../../../Components/Header/HeaderTop";
 import Select from "react-select";
 import { Button } from "@mui/material";
 import axios from "axios";
@@ -157,7 +157,7 @@ const BMRRecords = () => {
     }));
   };
   return (
-    <div className="w-full h-full flex items-center justify-center mb-4">
+    <div className="w-full h-full flex items-center justify-center ">
       <div className="w-full h-full bg-white shadow-lg rounded-lg  ">
         <div className="flex justify-around items-center bg-gradient-to-r bg-gray-50 mt-2 p-4 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-black ">
@@ -195,7 +195,7 @@ const BMRRecords = () => {
             />
           ))}
         </div>
-        <div className="p-6">
+        <div className="">
           {activeTab === "General Information" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 p-6 text-lg font-semibold text-black rounded-lg ">
               <div className="p-4 border border-gray-300 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95 shadow-lg">
