@@ -34,7 +34,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.5:7000/bmr-form/get-approved-bmrs", {
+      .get("http://192.168.1.21:7000/bmr-form/get-approved-bmrs", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -79,7 +79,6 @@ const Dashboard = () => {
   };
 
   // ApexChart configuration
-
 
   return (
     <div>
@@ -126,7 +125,6 @@ const Dashboard = () => {
         </table> */}
 
         {/* ApexChart Integration */}
-       
 
         {/* Full-width Calendar */}
         <div style={{ height: 600, marginTop: 30 }} className="bg-gray-100">

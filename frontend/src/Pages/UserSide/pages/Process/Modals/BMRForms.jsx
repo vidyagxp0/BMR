@@ -4,6 +4,9 @@ import HeaderTop from "../../../../../Components/Header/HeaderTop";
 import DashboardBottom from "../../../../../Components/Header/DashboardBottom";
 import axios from "axios";
 import { IconButton, Tooltip } from "@mui/material";
+import { IoInformationCircleOutline } from "react-icons/io5";
+import "./BMRForms.css";
+
 import { AiOutlineAudit } from "react-icons/ai";
 import { Navigate } from "react-router-dom";
 
@@ -16,11 +19,11 @@ const BMRForms = () => {
   const [approvedBMR, setApprovedBMR] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10;
+  const rowsPerPage = 6;
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.5:7000/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.21:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -102,7 +105,7 @@ const BMRForms = () => {
                   <th className="bg-[#195b7a] p-2">Description</th>
                   <th className="bg-[#195b7a] p-2">Current Date</th>
                   <th className="bg-[#195b7a] p-2">Due Date</th>
-                  <th className="bg-[#195b7a] p-2">Due Date Indicator</th>
+                  <th className="bg-[#195b7a] p-2">Due Date Progress</th>
                   <th className="bg-[#195b7a] p-2">Status</th>
                   <th className="bg-[#195b7a] p-2">Action</th>
                 </tr>
@@ -125,7 +128,7 @@ const BMRForms = () => {
                     percentage = (10 - diffDays) * 10;
                     color = `linear-gradient(to right, #ff0000 ${percentage}%, #00ff00 ${percentage}%)`;
                   } else {
-                    color = `linear-gradient(to right, #00ff00 100%, #00ff00 100%)`;
+                    color = `linear-gradient(to right, #ff0000 100%, #ff0000 100%)`;
                     percentage = 0;
                   }
 
@@ -142,7 +145,20 @@ const BMRForms = () => {
                       <td className="p-2">{item.description}</td>
                       <td className="p-2">{formatDate(currentDate)}</td>
                       <td className="p-2">{formatDate(item.due_date)}</td>
-                      <td className="p-2">
+                      <td className=" flex items-center justify-between">
+                        <div className="flex items-center">
+                          <Tooltip
+                            title={`${diffDays} Days Remaining`}
+                            placement="top"
+                          >
+                            <IconButton>
+                              <div className="icon-animate shadow-lg bg-gray-50">
+                                <IoInformationCircleOutline />
+                              </div>
+                            </IconButton>
+                          </Tooltip>
+                        </div>
+
                         <div
                           style={{
                             position: "relative",
@@ -151,36 +167,14 @@ const BMRForms = () => {
                             borderRadius: "5px",
                             background: color,
                           }}
-                        >
-                          <Tooltip
-                            title={`${diffDays} Days Remaining`}
-                            placement="top"
-                          >
-                            <IconButton>
-                              <div
-                                className="pin"
-                                style={{
-                                  position: "absolute",
-                                  width: "8px",
-                                  height: "15px",
-                                  borderRadius: "15%",
-                                  borderBottomLeftRadius: "90%",
-                                  borderBottomRightRadius: "90%",
-                                  backgroundColor: "lightgray",
-                                  border: "2px solid black",
-                                  transform: "translate(-50%, -50%)",
-                                  left: pinPosition,
-                                }}
-                              ></div>
-                            </IconButton>
-                          </Tooltip>
-                        </div>
+                        ></div>
                       </td>
+
                       <td
                         className={`p-2 ${
                           item.status === "Active"
-                            ? "text-green-500"
-                            : "text-red-500"
+                            ? "text-gray-950"
+                            : "text-gray-950"
                         }`}
                       >
                         {item.status}
