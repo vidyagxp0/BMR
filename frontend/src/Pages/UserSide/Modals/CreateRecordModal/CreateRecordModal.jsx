@@ -240,6 +240,19 @@ function CreateRecordModal({ open, onClose }) {
   }, [isSelectedReviewer, isSelectedApprover]);
 
   const handleAddBmrClick = () => {
+    if (
+      !formData.name ||
+      !formData.description ||
+      !formData.department ||
+      !formData.division ||
+      !formData.due_date ||
+      isSelectedReviewer.length === 0 ||
+      isSelectedApprover.length === 0
+    ) {
+      toast.error("Please fill all fields to add a new BMR.");
+      return;
+    }
+
     setShowVerificationModal(true);
   };
 
