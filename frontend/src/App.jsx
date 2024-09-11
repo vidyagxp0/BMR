@@ -15,6 +15,7 @@ import BMRProcess from "./Pages/UserSide/pages/Process/BMRProcess";
 import BMRDetails from "./Pages/UserSide/pages/BMRDetails/BMRDetails";
 import BMRProcessDetails from "./Pages/UserSide/pages/Process/BMRProcessDetails";
 import BMRRecords from "./Pages/UserSide/pages/BMRRecords/BMRRecords";
+// import About from "./Pages/HeaderComponents/About";
 import About from "./Pages/HeaderComponents/About";
 import Help from "./Pages/HeaderComponents/Help";
 import HelpdeskPersonnel from "./Pages/HeaderComponents/HelpdeskPersonnel";
@@ -24,7 +25,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import BMRForms from "./Pages/UserSide/pages/Process/Modals/BMRForms";
 import Analytics from "./Pages/UserSide/Analytics/Analytics";
-import Logs from "./Pages/UserSide/Logs/Logs";
+import Logs from "./Pages/UserSide/Logs/Logs.jsx";
 
 function App() {
   return (
@@ -78,13 +79,13 @@ function RouteGuard() {
           element={<ProtectedUserRoute element={<BMRRecords />} />}
         />
         <Route
-        path="/analytics"
-        element={<ProtectedUserRoute element={<Analytics />} />}
-      />
-       <Route
-        path="/logs"
-        element={<ProtectedUserRoute element={<Logs />} />}
-      />
+          path="/analytics"
+          element={<ProtectedUserRoute element={<Analytics />} />}
+        />
+        <Route
+          path="/logs"
+          element={<ProtectedUserRoute element={<Logs />} />}
+        />
       </Route>
       <Route
         path="/audit-trail"
@@ -101,13 +102,15 @@ function RouteGuard() {
       />
 
       <Route path="/help" element={<ProtectedUserRoute element={<Help />} />} />
+      <Route
+        path="/about"
+        element={<ProtectedUserRoute element={<About />} />}
+      />
 
       <Route
         path="/helpdesk"
         element={<ProtectedUserRoute element={<HelpdeskPersonnel />} />}
       />
-
-
 
       <Route path="/admin-login" element={<AdminLogin />} />
       <Route path="" element={<Wrapper />}>
