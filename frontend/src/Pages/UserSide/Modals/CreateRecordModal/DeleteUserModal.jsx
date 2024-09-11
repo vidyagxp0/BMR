@@ -16,12 +16,12 @@ const DeleteUserModal = ({ onClose, id, setData }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
-        data:{
+        data: {
           email: verified.email,
           password: verified.password,
           declaration: verified.declaration,
-          comments:verified.comments,
-        }
+          comments: verified.comments,
+        },
       })
       .then((response) => {
         toast.success("BMR deleted successfully!");

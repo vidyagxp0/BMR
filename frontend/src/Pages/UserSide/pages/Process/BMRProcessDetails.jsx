@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
 import AtmButton from "../../../../AtmComponents/AtmButton";
 import { useNavigate, useParams } from "react-router-dom";
@@ -34,6 +35,7 @@ const BMRProcessDetails = ({ fieldData }) => {
     "UNDER APPROVAL",
     "APPROVED",
   ]);
+
   const [newTab, setNewTab] = useState([]);
   const [newFields, setNewFields] = useState({});
   const [newSection, setNewSection] = useState([]);
@@ -334,7 +336,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       reviewComment: "editData.reviewComment",
       approverComment: "editData.approverComment",
       declaration: credentials?.declaration,
-      comments : credentials?.comments,
+      comments: credentials?.comments,
     };
     const config = {
       headers: {
@@ -394,7 +396,11 @@ const BMRProcessDetails = ({ fieldData }) => {
     } else if (popupAction === "sendFromApprovalToApproved") {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
-        .put("http://192.168.1.21:7000/bmr-form/approve-BMR", dataObject, config)
+        .put(
+          "http://192.168.1.21:7000/bmr-form/approve-BMR",
+          dataObject,
+          config
+        )
         .then(() => {
           toast.success("BMR successfully approved");
           navigate(-1);

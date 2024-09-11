@@ -32,7 +32,7 @@ const AddSectionModal = ({
             email: verified.email,
             password: verified.password,
             declaration: verified.declaration,
-            comments:verified.comments
+            comments: verified.comments,
           },
           {
             headers: {

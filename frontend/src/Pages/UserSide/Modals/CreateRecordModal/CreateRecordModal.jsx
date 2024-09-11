@@ -92,7 +92,7 @@ function CreateRecordModal({ open, onClose }) {
         }
       )
       .then((response) => {
-        console.log(response,"gdgdgdf")
+        console.log(response, "gdgdgdf");
         toast.success(response.data.message || "BMR added successfully!");
         dispatch(addBmr(response.data.bmr));
         navigate(`/process/processdetails/${response.data.bmr}`, {
@@ -308,90 +308,90 @@ function CreateRecordModal({ open, onClose }) {
 
               <div className="flex flex-col gap-3">
                 {/* Department Dropdown */}
-              <div>
-              <Typography
-                  variant="subtitle2"
-                  color="textSecondary"
-                  gutterBottom
-                >
-                  Department
-                </Typography>
-                <Select
-                  name="department"
-                  options={department}
-                  value={department.find(
-                    (dep) => dep.value === formData.department
-                  )} // Match selected value
-                  onChange={handleDepartmentSelect} // Single-select handling function
-                  styles={{
-                    control: (provided) => ({
-                      ...provided,
-                      borderColor: "#d0d0d0",
-                      boxShadow: "none",
-                      "&:hover": {
-                        borderColor: "#a0a0a0",
-                      },
-                    }),
-                  }}
-                />
-              </div>
+                <div>
+                  <Typography
+                    variant="subtitle2"
+                    color="textSecondary"
+                    gutterBottom
+                  >
+                    Department
+                  </Typography>
+                  <Select
+                    name="department"
+                    options={department}
+                    value={department.find(
+                      (dep) => dep.value === formData.department
+                    )} // Match selected value
+                    onChange={handleDepartmentSelect} // Single-select handling function
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        borderColor: "#d0d0d0",
+                        boxShadow: "none",
+                        "&:hover": {
+                          borderColor: "#a0a0a0",
+                        },
+                      }),
+                    }}
+                  />
+                </div>
 
-              <div>
+                <div>
                   {/* Division Dropdown */}
                   <Typography
-                  variant="subtitle2"
-                  color="textSecondary"
-                  gutterBottom
-                >
-                  Division
-                </Typography>
-                <Select
-                  name="division"
-                  options={division}
-                  value={division.find(
-                    (div) => div.value === formData.division
-                  )} // Match selected value
-                  onChange={handleDivisionSelect} // Single-select handling function
-                  styles={{
-                    control: (provided) => ({
-                      ...provided,
-                      borderColor: "#d0d0d0",
-                      boxShadow: "none",
-                      "&:hover": {
-                        borderColor: "#a0a0a0",
-                      },
-                    }),
-                  }}
-                />
+                    variant="subtitle2"
+                    color="textSecondary"
+                    gutterBottom
+                  >
+                    Division
+                  </Typography>
+                  <Select
+                    name="division"
+                    options={division}
+                    value={division.find(
+                      (div) => div.value === formData.division
+                    )} // Match selected value
+                    onChange={handleDivisionSelect} // Single-select handling function
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        borderColor: "#d0d0d0",
+                        boxShadow: "none",
+                        "&:hover": {
+                          borderColor: "#a0a0a0",
+                        },
+                      }),
+                    }}
+                  />
+                </div>
               </div>
-              </div>
-                <Typography
-                  variant="subtitle2"
-                  color="textSecondary"
-                  gutterBottom
-                >
-                  Due Date
-                </Typography>
-                <TextField
-                  // label="Due Date"
-                  name="due_date"
-                  type="date"
-                  fullWidth
-                  margin="normal"
-                  value={formData.due_date}
-                  onChange={handleChange}
-                  variant="outlined"
-                  InputProps={{
-                    style: {
-                      height: "48px",
-                    marginTop:"-10px"
-                    },
-                  }}
-                  inputProps={{
-                    min: getTomorrowDate(), // Disable past dates
-                    style: { height: "48px" },
-                  }}
-                />
+              <Typography
+                variant="subtitle2"
+                color="textSecondary"
+                gutterBottom
+              >
+                Due Date
+              </Typography>
+              <TextField
+                // label="Due Date"
+                name="due_date"
+                type="date"
+                fullWidth
+                margin="normal"
+                value={formData.due_date}
+                onChange={handleChange}
+                variant="outlined"
+                InputProps={{
+                  style: {
+                    height: "48px",
+                    marginTop: "-10px",
+                  },
+                }}
+                inputProps={{
+                  min: getTomorrowDate(), // Disable past dates
+                  style: { height: "48px" },
+                }}
+              />
               <div>
                 <Typography
                   variant="subtitle2"

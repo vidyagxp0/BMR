@@ -80,7 +80,6 @@ const Dashboard = () => {
 
   // ApexChart configuration
 
-
   return (
     <div>
       <div className="desktop-input-table-wrapper">
@@ -126,7 +125,6 @@ const Dashboard = () => {
         </table> */}
 
         {/* ApexChart Integration */}
-       
 
         {/* Full-width Calendar */}
         <div style={{ height: 600, marginTop: 30 }} className="bg-gray-100">

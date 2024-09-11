@@ -12,11 +12,14 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
 });
 
 export const fetchBmr = createAsyncThunk("bmr/fetchBmr", async () => {
-  const response = await axios.get("http://192.168.1.21:7000/bmr-form/get-bmr", {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-    },
-  });
+  const response = await axios.get(
+    "http://192.168.1.21:7000/bmr-form/get-bmr",
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+      },
+    }
+  );
   return response.data;
 });
 
