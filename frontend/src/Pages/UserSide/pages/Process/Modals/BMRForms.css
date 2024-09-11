@@ -1,10 +1,10 @@
 @keyframes pulseAnimation {
   0% {
-    color: #535151; /* Light Red */
+    color: #000000; /* Light Red */
   }
 
   25% {
-    color: #303230; /* Light Green */
+    color: gray; /* Light Green */
   }
   50% {
     color: #3a3a3a; /* Green */
@@ -16,5 +16,5 @@
 
 .icon-animate {
   font-size: 20px;
-  animation: pulseAnimation 5s infinite; /* 5-second cycle for smooth transitions */
+  animation: pulseAnimation 3s infinite; /* 5-second cycle for smooth transitions */
 }

@@ -55,14 +55,14 @@ const BMRForms = () => {
   const currentRows = approvedBMR.slice(startIndex, startIndex + rowsPerPage);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col ">
       <header className="fixed top-0 left-0 w-full z-50">
         <HeaderTop />
         <div className="mt-20">
           <DashboardBottom />
         </div>
       </header>
-      <main className="flex flex-col items-center mt-[130px] w-full px-4">
+      <main className="flex flex-col items-center mt-[30px] w-full ">
         <div className="w-full">
           <div className="flex items-center justify-center m-3">
             <div className="w-full flex items-center justify-between">
@@ -95,7 +95,7 @@ const BMRForms = () => {
 
           {/* Table */}
           <div className="overflow-x-auto">
-            <table className="table-auto w-full border-collapse">
+            <table className="table-auto w-full ">
               <thead>
                 <tr className="text-white text-left">
                   <th className="bg-[#195b7a] p-2">S no</th>
@@ -135,7 +135,7 @@ const BMRForms = () => {
                   const pinPosition = `${percentage}%`;
 
                   return (
-                    <tr key={item.id} className="border-b">
+                    <tr key={item.id} className="">
                       <td className="p-2">{startIndex + index + 1}</td>
                       <td className="p-2">{item.name}</td>
                       <td className="p-2">
@@ -145,29 +145,31 @@ const BMRForms = () => {
                       <td className="p-2">{item.description}</td>
                       <td className="p-2">{formatDate(currentDate)}</td>
                       <td className="p-2">{formatDate(item.due_date)}</td>
-                      <td className=" flex items-center justify-between">
-                        <div className="flex items-center">
-                          <Tooltip
-                            title={`${diffDays} Days Remaining`}
-                            placement="top"
-                          >
-                            <IconButton>
-                              <div className="icon-animate shadow-lg bg-gray-50">
-                                <IoInformationCircleOutline />
-                              </div>
-                            </IconButton>
-                          </Tooltip>
-                        </div>
+                      <td>
+                        <div className=" flex items-center justify-between">
+                          <div className="flex items-center">
+                            <Tooltip
+                              title={`${diffDays} Days Remaining`}
+                              placement="top-start"
+                            >
+                              <IconButton>
+                                <div className="icon-animate ">
+                                  <IoInformationCircleOutline />
+                                </div>
+                              </IconButton>
+                            </Tooltip>
+                          </div>
 
-                        <div
-                          style={{
-                            position: "relative",
-                            width: "100%",
-                            height: "10px",
-                            borderRadius: "5px",
-                            background: color,
-                          }}
-                        ></div>
+                          <div
+                            style={{
+                              position: "relative",
+                              width: "100%",
+                              height: "10px",
+                              borderRadius: "5px",
+                              background: color,
+                            }}
+                          ></div>
+                        </div>
                       </td>
 
                       <td
