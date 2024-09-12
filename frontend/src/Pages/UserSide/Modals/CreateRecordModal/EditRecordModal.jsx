@@ -417,6 +417,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
                 InputProps={{
                   style: {
                     height: "48px",
+                    marginTop: "-9px",
                   },
                 }}
                 inputProps={{

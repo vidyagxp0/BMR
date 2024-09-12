@@ -14,12 +14,12 @@ import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/
 import { FaRegFilePdf } from "react-icons/fa";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import { IoIosCreate } from "react-icons/io";
 import { AiOutlineAudit } from "react-icons/ai";
-import { DeleteIcon } from "../../../../Components/Icons/Icon";
+import {formattedDate} from "../../../../AtmComponents/Helper"
 
 const BMRProcessDetails = ({ fieldData }) => {
   const [data, setData] = useState([]);
+  console.log(data,"datatatat")
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
@@ -40,7 +40,6 @@ const BMRProcessDetails = ({ fieldData }) => {
   const [newFields, setNewFields] = useState({});
   const [newSection, setNewSection] = useState([]);
   const [section, setSection] = useState([]);
-  console.log(fieldData, "555555555555555555");
   const [fields, setFields] = useState({
     "Initiator Remarks": [
       {
@@ -57,7 +56,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       },
       {
         fieldName: "Initiator Comments",
-        field_type: "text",
+        field_type: "text-area",
         options: [],
         isMandatory: true,
       },
@@ -77,7 +76,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       },
       {
         fieldName: "Reviewer Comments",
-        field_type: "text",
+        field_type: "text-area",
         options: [],
         isMandatory: true,
       },
@@ -97,13 +96,12 @@ const BMRProcessDetails = ({ fieldData }) => {
       },
       {
         fieldName: "Approver Comments",
-        field_type: "text",
+        field_type: "text-area",
         options: [],
         isMandatory: true,
       },
     ],
   });
-  console.log(fields, "fieldssssssssssssssss");
 
   const [activeFlowTab, setActiveFlowTab] = useState(flowoTabs[0]);
   const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
@@ -914,7 +912,7 @@ const BMRProcessDetails = ({ fieldData }) => {
               onClick={() => handleFlowTabClick(tab)}
               className={`py-2 px-4 rounded border-2 border-black ${
                 activeFlowTab === tab
-                  ? "bg-[#195b7a] text-white"
+                  ? "bg-[#103546] text-white"
                   : "bg-[#3a88b3] text-black "
               }`}
             >
@@ -976,32 +974,46 @@ const BMRProcessDetails = ({ fieldData }) => {
                       >
                         <label className="text-lg font-extrabold text-gray-700 mb-2">
                           {field.fieldName}
-                          {field.isMandatory && (
-                            <span className="text-red-500"> *</span>
-                          )}
+                          {activeFlowTab === "INITIATION" &&
+                            field.fieldName === "Initiator Comments" && (
+                              <span className="text-red-500"> *</span>
+                            )}
                         </label>
                         {field.field_type === "text" && (
                           <input
                             type="text"
+                            value={data[0]?.Initiator.name}
                             className="border border-gray-600 p-2 w-full rounded"
                             style={{ border: "1px solid gray", height: "30px" }}
-                            required={field.isMandatory}
+                            disabled
                           />
                         )}
                         {field.field_type === "date" && (
                           <input
                             type="date"
+                            value={formattedDate(data[0]?.date_of_initiation)}
                             className="border border-gray-600 p-2 w-full rounded mt-2"
                             style={{ border: "1px solid gray", height: "30px" }}
                             required={field.isMandatory}
+                            readOnly
                           />
                         )}
                         {field.field_type === "text-area" && (
                           <textarea
                             className="border border-gray-600 p-2 w-full rounded mt-2"
-                            value={field.value || ""}
-                            required={field.isMandatory}
-                            readOnly
+                            style={{ border: "1px solid gray" }}
+                            // value={field.value || ""}
+                            required={
+                              activeFlowTab === "INITIATION" &&
+                              field.fieldName === "Initiator Comments" &&
+                              field.isMandatory
+                            }
+                            readOnly={
+                              !(
+                                activeFlowTab === "INITIATION" &&
+                                field.fieldName === "Initiator Comments"
+                              )
+                            }
                           />
                         )}
                       </div>
@@ -1009,7 +1021,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                   </div>
                 </div>
               )}
-            {activeDefaultTab !== "Initiator Remarks" &&
+            {activeDefaultTab === "Reviewer Remarks" &&
               fields[activeDefaultTab]?.map((section, secIndex) => (
                 <div key={secIndex} className="mb-20">
                   <div className="col-span-3 p-4 mt-4 rounded bg-gray-100 mb-5 font-semibold text-gray-700 border border-gray-300">
@@ -1023,9 +1035,10 @@ const BMRProcessDetails = ({ fieldData }) => {
                       >
                         <label className="text-lg font-extrabold text-gray-700 mb-2">
                           {field.fieldName}
-                          {field.isMandatory && (
-                            <span className="text-red-500"> *</span>
-                          )}
+                          {activeFlowTab === "UNDER REVIEW" &&
+                            field.fieldName === "Reviewer Comment" && (
+                              <span className="text-red-500"> *</span>
+                            )}
                         </label>
                         {field.field_type === "text" && (
                           <input
@@ -1033,7 +1046,68 @@ const BMRProcessDetails = ({ fieldData }) => {
                             className="border border-gray-600 p-2 w-full rounded"
                             style={{ border: "1px solid gray", height: "30px" }}
                             value={field.value || ""}
-                            required={field.isMandatory}
+                            disabled
+
+                          />
+                        )}
+                        {field.field_type === "date" && (
+                          <input
+                            type="date"
+                            value={field.value || ""}
+                            className="border border-gray-600 p-2 w-full rounded"
+                            style={{ border: "1px solid gray", height: "30px" }}
+                           readOnly
+                          />
+                        )}
+                       {field.field_type === "text-area" && (
+                          <textarea
+                            className="border border-gray-600 p-2 w-full rounded mt-2"
+                            style={{ border: "1px solid gray" }}
+                            // value={field.value || ""}
+                            required={
+                              activeFlowTab === "UNDER REVIEW" &&
+                              field.fieldName === "Reviewer Comments" &&
+                              field.isMandatory
+                            }
+                            readOnly={
+                              !(
+                                activeFlowTab === "UNDER REVIEW" &&
+                                field.fieldName === "Reviewer Comments"
+                              )
+                            }
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+               {activeDefaultTab === "Approver Remarks" &&
+              fields[activeDefaultTab]?.map((section, secIndex) => (
+                <div key={secIndex} className="mb-20">
+                  <div className="col-span-3 p-4 mt-4 rounded bg-gray-100 mb-5 font-semibold text-gray-700 border border-gray-300">
+                    {section.section}
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {section.fields?.map((field, index) => (
+                      <div
+                        key={index}
+                        className="p-4 flex flex-col bg-white shadow border border-gray-300"
+                      >
+                        <label className="text-lg font-extrabold text-gray-700 mb-2">
+                          {field.fieldName}
+                          {activeFlowTab === "UNDER APPROVAL" &&
+                            field.fieldName === "Approver Comment" && (
+                              <span className="text-red-500"> *</span>
+                            )}
+                        </label>
+                        {field.field_type === "text" && (
+                          <input
+                            type="text"
+                            className="border border-gray-600 p-2 w-full rounded"
+                            style={{ border: "1px solid gray", height: "30px" }}
+                            value={field.value || ""}
+                            disabled
                           />
                         )}
                         {field.field_type === "date" && (
@@ -1041,14 +1115,23 @@ const BMRProcessDetails = ({ fieldData }) => {
                             type="date"
                             className="border border-gray-600 p-2 w-full rounded"
                             style={{ border: "1px solid gray", height: "30px" }}
-                            required={field.isMandatory}
+                            readOnly
                           />
                         )}
                         {field.field_type === "text-area" && (
                           <textarea
                             className="border border-gray-600 p-2 w-full rounded mt-2"
-                            value={field.value || ""}
-                            required={field.isMandatory}
+                            required={
+                              activeFlowTab === "UNDER APPROVAL" &&
+                              field.fieldName === "Approver Comments" &&
+                              field.isMandatory
+                            }
+                            readOnly={
+                              !(
+                                activeFlowTab === "UNDER APPROVAL" &&
+                                field.fieldName === "Approver Comments"
+                              )
+                            }
                           />
                         )}
                       </div>
