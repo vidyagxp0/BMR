@@ -32,11 +32,14 @@ const AddFieldModal = ({
     bmr_tab_id: bmr_tab_id,
     bmr_section_id: bmr_section_id,
   });
+  {
+    fieldData.helpText ? console.log("Hellooooooo") : console.log("Errorrrrrr");
+  }
 
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [showGridColumnConfigModal, setShowGridColumnConfigModal] =
     useState(false);
-  console.log(fieldData.acceptsMultiple.columns, "<><><><><>");
+  // console.log(fieldData.acceptsMultiple.columns, "<><><><><>");
 
   useEffect(() => {
     if (updateField === "edit-field" && existingFieldData) {
@@ -92,14 +95,15 @@ const AddFieldModal = ({
         method: updateField === "add-field" ? "post" : "put",
         url:
           updateField === "add-field"
-            ? "https://bmrapi.mydemosoftware.com/bmr-form/add-bmr-field"
-            : `https://bmrapi.mydemosoftware.com/bmr-form/edit-bmr-field/${bmr_field_id}`,
+            ? "http://192.168.1.34:7000/bmr-form/add-bmr-field"
+            : `http://192.168.1.34:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
         data: {
           bmr_id,
           ...fieldData,
           email: verified.email,
           password: verified.password,
           declaration: verified.declaration,
+          comments: verified.comments,
         },
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -134,7 +138,7 @@ const AddFieldModal = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-filter backdrop-blur-sm">
+    <div className="fixed inset-0 flex items-center justify-center top-16 bg-opacity-50 backdrop-filter backdrop-blur-sm">
       <div
         className="bg-white p-4 rounded shadow-lg"
         style={{ width: "800px", height: "500px" }}
@@ -251,6 +255,7 @@ const AddFieldModal = ({
                   width: "100%",
                 }}
               />
+
               <input
                 type="number"
                 name="minValue"
@@ -441,10 +446,10 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
 
   return (
     <div className="fixed  inset-0 flex items-center justify-center bg-opacity-50 backdrop-filter backdrop-blur-sm">
-      
-  <div
-    className="bg-white p-4 rounded shadow-lg"
-    style={{ width: "600px", maxHeight: "600px", overflowY: "auto" }}>
+      <div
+        className="bg-white p-4 rounded shadow-lg"
+        style={{ width: "600px", maxHeight: "600px", overflowY: "auto" }}
+      >
         <h2 className="text-lg font-bold mb-2">Configure Columns</h2>
         <div>
           {columnConfig?.map((col, index) => (
@@ -458,145 +463,154 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
                   }
                   className="border border-gray-300 p-2 w-full mr-2 mb-3"
                   placeholder="Column Name"
-                  style={{border: "1px solid gray"}}
+                  style={{ border: "1px solid gray" }}
                 />
-                 <button
-                type="button"
-                onClick={() => handleRemoveColumn(index)}
-                className="border p-2 bg-red-500 text-white"
-              >
-                Remove
-              </button>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveColumn(index)}
+                  className="border p-2 bg-red-500 text-white"
+                >
+                  Remove
+                </button>
                 <>
-              <input
-                type="text"
-                name="placeholder"
-                placeholder="Placeholder"
-                value={col.placeholder}
-                onChange={(e) =>
-                  handleColumnChange(index, "placeholder", e.target.value)
-                }
-                className="border border-gray-300 p-2 mt-4 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-                style={{
-                  border: "1px solid #ccc",
-                  padding: "8px",
-                  width: "100%",
-                }}
-              />
-              <input
-                type="text"
-                name="defaultValue"
-                placeholder="Default Value"
-                value={col.defaultValue}
-                onChange={(e) =>
-                  handleColumnChange(index, "defaultValue", e.target.value)
-                }
-                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-                style={{
-                  border: "1px solid #ccc",
-                  padding: "8px",
-                  width: "100%",
-                }}
-              />
-              <input
-                type="text"
-                name="helpText"
-                placeholder="Help Text"
-                value={col.helpText}
-                onChange={(e) =>
-                  handleColumnChange(index, "helpText", e.target.value)
-                }
-                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-                style={{
-                  border: "1px solid #ccc",
-                  padding: "8px",
-                  width: "100%",
-                }}
-              />
-              <input
-                type="number"
-                name="minValue"
-                placeholder="Min Value"
-                value={col.minValue}
-                onChange={(e) =>
-                  handleColumnChange(index, "minValue", e.target.value)
-                }
-                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-                style={{
-                  border: "1px solid #ccc",
-                  padding: "8px",
-                  width: "100%",
-                }}
-              />
-              <input
-                type="number"
-                name="maxValue"
-                placeholder="Max Value"
-                value={col.maxValue}
-                onChange={(e) =>
-                  handleColumnChange(index, "maxValue", e.target.value)
-                }
-                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-                style={{
-                  border: "1px solid #ccc",
-                  padding: "8px",
-                  width: "100%",
-                }}
-              />
-              <input
-                type="number"
-                name="order"
-                placeholder="Order"
-                value={col.order}
-                onChange={(e) =>
-                  handleColumnChange(index, "order", e.target.value)
-                }
-                className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-                style={{
-                  border: "1px solid #ccc",
-                  padding: "8px",
-                  width: "100%",
-                }}
-              />
-              <div className="flex items-center mb-4">
-                <input
-                  type="checkbox"
-                  name="isVisible"
-                  value={col.isVisible}
-                onChange={(e) =>
-                  handleColumnChange(index, "isVisible", e.target.checked)
-                }
-                  className="mr-2"
-                />
-                <label>Is Visible</label>
+                  <input
+                    type="text"
+                    name="placeholder"
+                    placeholder="Placeholder"
+                    value={col.placeholder}
+                    onChange={(e) =>
+                      handleColumnChange(index, "placeholder", e.target.value)
+                    }
+                    className="border border-gray-300 p-2 mt-4 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      width: "100%",
+                    }}
+                  />
+                  <input
+                    type="text"
+                    name="defaultValue"
+                    placeholder="Default Value"
+                    value={col.defaultValue}
+                    onChange={(e) =>
+                      handleColumnChange(index, "defaultValue", e.target.value)
+                    }
+                    className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      width: "100%",
+                    }}
+                  />
+
+                  <input
+                    type="text"
+                    name="helpText"
+                    placeholder="Help Text"
+                    value={col.helpText}
+                    onChange={(e) =>
+                      handleColumnChange(index, "helpText", e.target.value)
+                    }
+                    className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      width: "100%",
+                    }}
+                  />
+
+                  <input
+                    type="number"
+                    name="minValue"
+                    placeholder="Min Value"
+                    value={col.minValue}
+                    onChange={(e) =>
+                      handleColumnChange(index, "minValue", e.target.value)
+                    }
+                    className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      width: "100%",
+                    }}
+                  />
+                  <input
+                    type="number"
+                    name="maxValue"
+                    placeholder="Max Value"
+                    value={col.maxValue}
+                    onChange={(e) =>
+                      handleColumnChange(index, "maxValue", e.target.value)
+                    }
+                    className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      width: "100%",
+                    }}
+                  />
+                  <input
+                    type="number"
+                    name="order"
+                    placeholder="Order"
+                    value={col.order}
+                    onChange={(e) =>
+                      handleColumnChange(index, "order", e.target.value)
+                    }
+                    className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      width: "100%",
+                    }}
+                  />
+                  <div className="flex items-center mb-4">
+                    <input
+                      type="checkbox"
+                      name="isVisible"
+                      value={col.isVisible}
+                      onChange={(e) =>
+                        handleColumnChange(index, "isVisible", e.target.checked)
+                      }
+                      className="mr-2"
+                    />
+                    <label>Is Visible</label>
+                  </div>
+                  <div className="flex items-center mb-4">
+                    <input
+                      type="checkbox"
+                      name="isRequired"
+                      value={col.isRequired}
+                      onChange={(e) =>
+                        handleColumnChange(
+                          index,
+                          "isRequired",
+                          e.target.checked
+                        )
+                      }
+                      className="mr-2"
+                    />
+                    <label>Is Required</label>
+                  </div>
+                  <div className="flex items-center mb-4">
+                    <input
+                      type="checkbox"
+                      name="isReadOnly"
+                      value={col.isReadOnly}
+                      onChange={(e) =>
+                        handleColumnChange(
+                          index,
+                          "IsReadOnly",
+                          e.target.checked
+                        )
+                      }
+                      className="mr-2"
+                    />
+                    <label>Is Read Only</label>
+                  </div>
+                </>
               </div>
-              <div className="flex items-center mb-4">
-                <input
-                  type="checkbox"
-                  name="isRequired"
-                  value={col.isRequired}
-                  onChange={(e) =>
-                    handleColumnChange(index, "isRequired", e.target.checked)
-                  }
-                  className="mr-2"
-                />
-                <label>Is Required</label>
-              </div>
-              <div className="flex items-center mb-4">
-                <input
-                  type="checkbox"
-                  name="isReadOnly"
-                  value={col.isReadOnly}
-                onChange={(e) =>
-                  handleColumnChange(index, "IsReadOnly", e.target.checked)
-                }
-                  className="mr-2"
-                />
-                <label>Is Read Only</label>
-              </div>  
-       </>
-              </div>
-             
             </div>
           ))}
         </div>
@@ -607,7 +621,7 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
         >
           Add Column
         </button>
-        
+
         <div className="mt-4 flex justify-end">
           <button
             type="button"

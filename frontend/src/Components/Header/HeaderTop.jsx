@@ -7,7 +7,7 @@ import {
   FaHeadset,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { FaPeopleLine } from "react-icons/fa6";
+import { FaPeopleLine, FaBell } from "react-icons/fa6";
 import socketIOClient from "socket.io-client";
 import "./Header.css";
 import "./HeaderTop.css";
@@ -71,22 +71,35 @@ function HeaderTop() {
               <FaPeopleLine size={22} />
               <span className="link-name">Board Members</span>
             </Link>
-            <Link to="/about" className="link-item mt-5 ">
+            <Link to="/about" className="link-item mt-8 ">
               <FaGlobe size={22} />
               <span className="link-name">About</span>
             </Link>
-            <Link to="/help" className="link-item mt-5 ">
+            <Link to="/help" className="link-item mt-8 ">
               <FaHandsHelping size={22} />
               <span className="link-name">Help</span>
             </Link>
-            <Link to="/helpdesk" className="link-item mt-5 ">
+            <Link to="/helpdesk" className="link-item mt-8 ">
               <FaHeadset size={22} />
               <span className="link-name">Helpdesk Personnel</span>
             </Link>
-            <Link to="/" className="link-item mt-5 " onClick={handleLogout}>
+            <Link to="/" className="link-item mt-8 " onClick={handleLogout}>
               <FaSignOutAlt size={22} />
               <span className="link-name">Logout</span>
             </Link>
+          </div>
+          <div className="flex items-center justify-end">
+            {/* Admin Name */}
+            <div className="mr-4 mt-5 text-white">Admin</div>
+
+            {/* Profile Picture Placeholder */}
+            <div className="rounded-full w-12 h-12 bg-gray-400 flex items-center justify-center">
+              <img
+                className="rounded-full w-full h-full object-cover"
+                src="amit_guru.jpg"
+                alt="Profile"
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -4,7 +4,11 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
-const UserVerificationPopUp = ({ onClose, onSubmit }) => {
+const UserVerificationPopUp = ({
+  onClose,
+  onSubmit,
+  onVerificationSuccess,
+}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [declaration, setDeclaration] = useState("");
@@ -38,7 +42,7 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
 
   //   try {
   //     const response = await axios.post(
-  //       "https://bmrapi.mydemosoftware.com/user/user-verification",
+  //       "http://192.168.1.34:7000/user/user-verification",
   //       data,
   //       {
   //         headers: { "Content-Type": "application/json" },
@@ -70,12 +74,13 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
   // };
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ email, password, declaration }, handleFlag);
+    onSubmit({ email, password, declaration, comments }, handleFlag);
+
     setFlag(!false);
   };
 
   return (
-    <div className="popup-overlay z-50">
+    <div className="popup-overlay  z-50">
       <div className="popup">
         <h2>E-signature</h2>
         <form onSubmit={handleSubmit}>
@@ -116,10 +121,7 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
             />
           </div>
           <div className="form-group">
-            <label className="color-label">
-              Comment{" "}
-              
-            </label>
+            <label className="color-label">Comment </label>
             <input
               type="text"
               value={comments}

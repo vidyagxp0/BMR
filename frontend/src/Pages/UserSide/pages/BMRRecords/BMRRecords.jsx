@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
-import HeaderTop from "../../../../Components/Header/HeaderTop";
+// import HeaderTop from "../../../../Components/Header/HeaderTop";
 import Select from "react-select";
 import { Button } from "@mui/material";
 import axios from "axios";
@@ -32,7 +32,7 @@ const BMRRecords = () => {
   const [initiatorName, setInitiatorName] = useState(null);
   const navigate = useNavigate();
 
-  const apiUrl = `https://bmrapi.mydemosoftware.com/user/get-a-user/${Id}`;
+  const apiUrl = `http://192.168.1.34:7000/user/get-a-user/${Id}`;
   const fetchUserData = async () => {
     try {
       const token = localStorage.getItem("user-token");
@@ -74,7 +74,7 @@ const BMRRecords = () => {
       try {
         const [reviewersResponse, approversResponse] = await Promise.all([
           axios.post(
-            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
             { role_id: 3 },
             {
               headers: {
@@ -84,7 +84,7 @@ const BMRRecords = () => {
             }
           ),
           axios.post(
-            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
             { role_id: 4 },
             {
               headers: {
@@ -146,6 +146,7 @@ const BMRRecords = () => {
   const formattedDate = new Date(selectedBMR.date_of_initiation)
     .toISOString()
     .split("T")[0];
+
   const handleDynamicFieldChange = (id, value, tab) => {
     setDynamicFields((prevFields) => ({
       ...prevFields,
@@ -156,14 +157,14 @@ const BMRRecords = () => {
     }));
   };
   return (
-    <div className="w-full h-full flex items-center justify-center mb-4">
+    <div className="w-full h-full flex items-center justify-center ">
       <div className="w-full h-full bg-white shadow-lg rounded-lg  ">
         <div className="flex justify-around items-center bg-gradient-to-r bg-gray-50 mt-2 p-4 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-black ">
             Initiate BMR Records
           </h2>
         </div>
-        <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-[#1a9e66] to-[#75D6A5] mt-2 p-4 rounded-lg shadow-lg">
+        <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-[#4f839b] to-[#0c384d] mt-2 p-4 rounded-lg shadow-lg">
           {/* <h2 className="text-lg font-semibold text-white ">
             BMR ID :{" "}
             <span className="text-gray-800"> {selectedBMR.bmr_id}</span>
@@ -194,7 +195,7 @@ const BMRRecords = () => {
             />
           ))}
         </div>
-        <div className="p-6">
+        <div className="">
           {activeTab === "General Information" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 p-6 text-lg font-semibold text-black rounded-lg ">
               <div className="p-4 border border-gray-300 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95 shadow-lg">
@@ -313,8 +314,9 @@ const BMRRecords = () => {
           >
             Save
           </button>
+
           <button
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none transition duration-200"
+            className="px-4 py-2 bg-green-  600 text-white rounded hover:bg-blue-700 focus:outline-none transition duration-200"
             onClick={() => navigate("/dashboard")}
           >
             Exit
@@ -328,10 +330,10 @@ const BMRRecords = () => {
 };
 const Button1 = ({ label, active, onClick }) => (
   <button
-    className={`px-4 py-2 my-4 text-gray-600 font-semibold rounded transition duration-100 ${
+    className={`px-4 py-2 my-4 text-gray-100 font-semibold rounded transition duration-100 ${
       active
-        ? "bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#d0f8ec]"
-        : "bg-[#75D6A5] hover:bg-[#0a6249] hover:text-[#d0f8ec]"
+        ? "bg-[#195b7a] hover:bg-[#346C86] hover:text-white"
+        : "bg-[#195b7a] hover:bg-[#346C86] hover:text-white"
     }`}
     onClick={onClick}
   >

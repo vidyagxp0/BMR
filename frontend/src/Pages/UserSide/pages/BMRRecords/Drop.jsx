@@ -43,7 +43,11 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
       try {
         const [reviewersResponse, approversResponse] = await Promise.all([
           axios.post(
-            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+<<<<<<< Updated upstream
+            "http://192.168.1.49:7000/bmr-form/get-user-roles",
+=======
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
+>>>>>>> Stashed changes
             { role_id: 3 },
             {
               headers: {
@@ -53,7 +57,11 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
             }
           ),
           axios.post(
-            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+<<<<<<< Updated upstream
+            "http://192.168.1.49:7000/bmr-form/get-user-roles",
+=======
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
+>>>>>>> Stashed changes
             { role_id: 4 },
             {
               headers: {

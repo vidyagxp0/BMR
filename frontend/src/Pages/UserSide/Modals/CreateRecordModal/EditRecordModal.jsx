@@ -1,7 +1,8 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import "../General.css";
 import axios from "axios";
-import { Modal, Box, Typography, TextField, Button } from "@mui/material";
+import { Box, Typography, TextField, Button } from "@mui/material";
 import Select from "react-select";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
@@ -10,28 +11,74 @@ import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/
 
 const modalStyle = {
   position: "absolute",
-  top: "50%",
+  top: "55%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "90%",
   maxWidth: 600,
+  height: 500,
   bgcolor: "background.paper",
   borderRadius: "8px",
   boxShadow: 24,
   p: 4,
+  overflowY: "auto",
 };
 
 const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
+  const formatDateToInput = (dateString) => {
+    if (!dateString) return "";
+    return new Date(dateString).toISOString().split("T")[0];
+  };
   const [formData, setFormData] = useState({
     name: bmrData?.name || "",
-    reviewers: [],
-    approvers: [],
+    description: bmrData?.description || "",
+    reviewers: bmrData?.reviewers || [],
+    approvers: bmrData?.approvers || [],
+    department: bmrData?.department_id || "",
+    division: bmrData?.division_id || "",
+    due_date: formatDateToInput(bmrData?.due_date) || "",
   });
+
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
   const [isSelectedApprover, setIsSelectedApprover] = useState([]);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [department, setDepartment] = useState([]);
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+  const [division, setDivision] = useState([
+    { value: 1, label: "India" },
+    { value: 2, label: "Malaysia" },
+    { value: 3, label: "EU" },
+    { value: 4, label: "EMEA" },
+  ]);
+
+  useEffect(() => {
+    const isDataChanged =
+      bmrData.name !== formData.name ||
+      bmrData.description !== formData.description ||
+      bmrData.department_id !== formData.department ||
+      bmrData.division_id !== formData.division ||
+      bmrData.due_date !== formData.due_date ||
+      !areReviewersSame(bmrData.reviewers, formData.reviewers) ||
+      !areApproversSame(bmrData.approvers, formData.approvers);
+
+    setIsButtonEnabled(isDataChanged);
+  }, [bmrData, formData]);
+
+  const areReviewersSame = (oldReviewers, newReviewers) => {
+    if (oldReviewers.length !== newReviewers.length) return false;
+    return oldReviewers.every((oldRev) =>
+      newReviewers.some((newRev) => newRev.value === oldRev.reviewerId)
+    );
+  };
+
+  const areApproversSame = (oldApprovers, newApprovers) => {
+    if (oldApprovers.length !== newApprovers.length) return false;
+    return oldApprovers.every((oldApp) =>
+      newApprovers.some((newApp) => newApp.value === oldApp.approverId)
+    );
+  };
 
   const dispatch = useDispatch();
 
@@ -47,6 +94,10 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
     const updatedBMRData = {
       name: formData.name,
+      description: formData.description,
+      division_id: formData.division,
+      department_id: formData.department,
+      due_date: formData.due_date,
       reviewers: isSelectedReviewer.map((reviewer) => ({
         reviewerId: reviewer.value,
         status: "pending",
@@ -61,11 +112,12 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
       email: e.email,
       password: e.password,
       declaration: e.declaration,
+      comments: e.comments,
     };
 
     axios
       .put(
-        `https://bmrapi.mydemosoftware.com/bmr-form/edit-bmr/${bmrData.bmr_id}`,
+        `http://192.168.1.34:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
         updatedBMRData,
         {
           headers: {
@@ -117,7 +169,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     const fetchRoles = async () => {
       try {
         const reviewerResponse = await axios.post(
-          "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+          "http://192.168.1.34:7000/bmr-form/get-user-roles",
           {
             role_id: 3,
           },
@@ -135,7 +187,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         setReviewers(addSelectAllOption(reviewerOptions));
 
         const approverResponse = await axios.post(
-          "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+          "http://192.168.1.34:7000/bmr-form/get-user-roles",
           {
             role_id: 4,
           },
@@ -155,9 +207,29 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         console.error("Error fetching roles: ", error);
       }
     };
+    axios
+      .get("http://192.168.1.34:7000/user/get-all-user-departments", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        const departmentOptions = [
+          ...response.data.message.map((department) => ({
+            value: department.department_id,
+            label: department.name,
+          })),
+        ];
+        setDepartment(departmentOptions);
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
 
     fetchRoles();
   }, []);
+  // const isDisabled={enabled}
 
   useEffect(() => {
     if (bmrData && reviewers.length > 0 && approvers.length > 0) {
@@ -176,6 +248,10 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
       setFormData({
         name: bmrData.name,
+        description: bmrData.description,
+        department: bmrData.department_id,
+        division: bmrData.division_id,
+        due_date: bmrData.due_date,
         reviewers: selectedReviewers,
         approvers: selectedApprovers,
       });
@@ -186,8 +262,30 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
   }, [bmrData, reviewers, approvers]);
 
   const handleEditBmrClick = () => {
-    // Close the CreateRecordModal and open the UserVerificationPopUp
     setShowVerificationModal(true);
+  };
+
+  const handleDepartmentSelect = (selected) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      department: selected.value,
+    }));
+  };
+
+  const handleDivisionSelect = (selected) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      division: selected.value,
+    }));
+  };
+
+  const getTomorrowDate = () => {
+    const today = new Date();
+    today.setDate(today.getDate() + 1);
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
   };
 
   return (
@@ -219,7 +317,115 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
                 },
               }}
             />
+            <TextField
+              label="Description"
+              name="description"
+              fullWidth
+              margin="normal"
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              variant="outlined"
+              InputProps={{
+                style: {
+                  height: "48px",
+                },
+              }}
+              InputLabelProps={{
+                style: {
+                  top: "0",
+                },
+              }}
+            />
+            <div>
+              {/* Department Dropdown */}
+              <Typography
+                variant="subtitle2"
+                color="textSecondary"
+                gutterBottom
+              >
+                Department
+              </Typography>
+              <Select
+                name="department"
+                options={department}
+                value={department.find(
+                  (dep) => dep.value === formData.department
+                )}
+                onChange={handleDepartmentSelect} // Single-select handling function
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    borderColor: "#d0d0d0",
+                    boxShadow: "none",
+                    "&:hover": {
+                      borderColor: "#a0a0a0",
+                    },
+                  }),
+                }}
+              />
 
+              {/* Division Dropdown */}
+              <Typography
+                variant="subtitle2"
+                color="textSecondary"
+                gutterBottom
+              >
+                Division
+              </Typography>
+              <Select
+                name="division"
+                options={division}
+                value={division.find((div) => div.value === formData.division)} // Match selected value
+                onChange={handleDivisionSelect} // Single-select handling function
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    borderColor: "#d0d0d0",
+                    boxShadow: "none",
+                    "&:hover": {
+                      borderColor: "#a0a0a0",
+                    },
+                  }),
+                }}
+              />
+            </div>
+            <div>
+              <Typography
+                variant="subtitle2"
+                color="textSecondary"
+                gutterBottom
+              >
+                Due Date
+              </Typography>
+              <TextField
+                // label="Due Date"
+                name="due_date"
+                type="date"
+                fullWidth
+                margin="normal"
+                value={
+                  formData.due_date
+                    ? new Date(formData.due_date).toISOString().split("T")[0]
+                    : ""
+                }
+                onChange={(e) =>
+                  setFormData({ ...formData, due_date: e.target.value })
+                }
+                variant="outlined"
+                InputProps={{
+                  style: {
+                    height: "48px",
+                    marginTop: "-9px",
+                  },
+                }}
+                inputProps={{
+                  min: getTomorrowDate(), // Disable past dates
+                  style: { height: "48px" },
+                }}
+              />
+            </div>
             <div>
               <label htmlFor="" className="text-sm text-blue-500">
                 Reviewer
@@ -266,6 +472,9 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
                 fullWidth
                 sx={{ mt: 2 }}
                 onClick={handleEditBmrClick}
+                // onClick={handleUpdate}
+                // disabled={!hasChanges()}
+                disabled={!isButtonEnabled}
               >
                 Update BMR
               </Button>

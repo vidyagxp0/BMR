@@ -4,9 +4,8 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import axios from "axios";
 import InitiateModal from "../Modals/InitiateModal";
-import ReactApexChart from "react-apexcharts";
+
 import "./Dashboard.css";
-import DashboardBottom from "../../../Components/Header/DashboardBottom";
 
 const localizer = momentLocalizer(moment);
 
@@ -14,28 +13,28 @@ const Dashboard = () => {
   const [showModal, setShowModal] = useState(false);
   const [approvedBMR, setApprovedBMR] = useState([]);
   const [chartData, setChartData] = useState([
-    { x: new Date('2023-01-01').getTime(), y: 10 },
-    { x: new Date('2023-02-01').getTime(), y: 25 },
-    { x: new Date('2023-03-01').getTime(), y: 18 },
-    { x: new Date('2023-04-01').getTime(), y: 35 },
-    { x: new Date('2023-05-01').getTime(), y: 30 },
-    { x: new Date('2023-06-01').getTime(), y: 45 },
-    { x: new Date('2023-07-01').getTime(), y: 40 }
+    { x: new Date("2023-01-01").getTime(), y: 10 },
+    { x: new Date("2023-02-01").getTime(), y: 25 },
+    { x: new Date("2023-03-01").getTime(), y: 18 },
+    { x: new Date("2023-04-01").getTime(), y: 35 },
+    { x: new Date("2023-05-01").getTime(), y: 30 },
+    { x: new Date("2023-06-01").getTime(), y: 45 },
+    { x: new Date("2023-07-01").getTime(), y: 40 },
   ]);
 
   const [events, setEvents] = useState([
     // Example of a static event
     {
       title: "BMR Review",
-      start: new Date('2023-09-08T10:00:00'),
-      end: new Date('2023-09-08T12:00:00'),
+      start: new Date("2023-09-08T10:00:00"),
+      end: new Date("2023-09-08T12:00:00"),
       allDay: false,
     },
   ]); // Calendar events (static for now)
 
   useEffect(() => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-approved-bmrs", {
+      .get("http://192.168.1.34:7000/bmr-form/get-approved-bmrs", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -80,69 +79,15 @@ const Dashboard = () => {
   };
 
   // ApexChart configuration
-  const chartOptions = {
-    series: [
-      {
-        name: "BMR Records",
-        data: chartData,
-      },
-    ],
-    options: {
-      chart: {
-        type: "area",
-        height: 350,
-        zoom: {
-          type: "x",
-          enabled: true,
-          autoScaleYaxis: true,
-        },
-        toolbar: {
-          autoSelected: "zoom",
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      markers: {
-        size: 0,
-      },
-      title: {
-        text: "BMR Records Chart",
-        align: "left",
-      },
-      fill: {
-        type: "gradient",
-        gradient: {
-          shadeIntensity: 1,
-          inverseColors: false,
-          opacityFrom: 0.5,
-          opacityTo: 0,
-          stops: [0, 90, 100],
-        },
-      },
-      xaxis: {
-        type: "datetime",
-      },
-      yaxis: {
-        title: {
-          text: "Record Count",
-        },
-      },
-      tooltip: {
-        shared: false,
-      },
-    },
-  };
 
   return (
     <div>
-      {/* <DashboardBottom/> */}
       <div className="desktop-input-table-wrapper">
-        <div className="input-wrapper">
+        {/* <div className="input-wrapper">
           <div className="group-input-2">
             <label>BMR</label>
-            <select id="options" name="options" >
-              <option value="" >All Records</option>
+            <select id="options" name="options">
+              <option value="">All Records</option>
               {approvedBMR.map((item, index) => (
                 <option key={index} value={item.id}>
                   {item.name}
@@ -150,58 +95,53 @@ const Dashboard = () => {
               ))}
             </select>
           </div>
-          <button className="btn" onClick={openModal}>
+          <button
+            className="btn bg-[#346C86] hover:bg-[#123e53]"
+            onClick={openModal}
+          >
             Initiate
           </button>
-        </div>
+        </div> */}
 
         {showModal && (
           <InitiateModal approvedBMR={approvedBMR} onClose={closeModal} />
         )}
 
         {/* Table */}
-        <table className="mb-5">
+        {/* <table className="mb-5">
           <thead>
             <tr>
-              <th>S no</th>
-              <th>BMR Name</th>
-              <th>Date of initiation</th>
-              <th>Division</th>
-              <th>Description</th>
-              <th>Due Date</th>
-              <th>Status</th>
-              <th>Action</th>
+              <th className="bg-[#195b7a]">S no</th>
+              <th className="bg-[#195b7a]">BMR Name</th>
+              <th className="bg-[#195b7a]">Date of initiation</th>
+              <th className="bg-[#195b7a]">Division</th>
+              <th className="bg-[#195b7a]">Description</th>
+              <th className="bg-[#195b7a]">Due Date</th>
+              <th className="bg-[#195b7a]">Status</th>
+              <th className="bg-[#195b7a]">Action</th>
             </tr>
           </thead>
           <tbody></tbody>
-        </table>
+        </table> */}
 
         {/* ApexChart Integration */}
-        <div id="chart">
-          <ReactApexChart
-            options={chartOptions.options}
-            series={chartOptions.series}
-            type="area"
-            height={350}
-          />
-        </div>
 
         {/* Full-width Calendar */}
         <div style={{ height: 600, marginTop: 30 }} className="bg-gray-100">
-        <Calendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          selectable
-          style={{ width: "100%" }}
-          onSelectSlot={handleSelect} // Double-click to add event
-          onSelectEvent={handleEventDelete} // Click event to delete
-          defaultView="month"
-          views={["month", "week", "day"]}
-          popup
-        />
-      </div>
+          <Calendar
+            localizer={localizer}
+            events={events}
+            startAccessor="start"
+            endAccessor="end"
+            selectable
+            style={{ width: "100%" }}
+            onSelectSlot={handleSelect} // Double-click to add event
+            onSelectEvent={handleEventDelete} // Click event to delete
+            defaultView="month"
+            views={["month", "week", "day"]}
+            popup
+          />
+        </div>
       </div>
     </div>
   );

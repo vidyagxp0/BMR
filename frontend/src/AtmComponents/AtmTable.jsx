@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
+const AtmTable = ({ columns = [], data = [], rowsPerPage = 9 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(data.length / rowsPerPage);
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
     <div className="flex flex-col h-full pt-4">
       <div className="flex-grow overflow-x-auto mb-16">
         <table className="min-w-full border-collapse border border-gray-300">
-          <thead className="bg-[#1EBC7A]">
+          <thead className="bg-[#195b7a]">
             <tr>
               <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300">
                 Sr No

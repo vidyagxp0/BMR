@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
 import AtmButton from "../../../../AtmComponents/AtmButton";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,14 +14,16 @@ import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/
 import { FaRegFilePdf } from "react-icons/fa";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import { IoIosCreate } from "react-icons/io";
 import { AiOutlineAudit } from "react-icons/ai";
+import {formattedDate} from "../../../../AtmComponents/Helper"
 
-const BMRProcessDetails = ({ bmrFields }) => {
+const BMRProcessDetails = ({ fieldData }) => {
   const [data, setData] = useState([]);
+  console.log(data,"datatatat")
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
+  // console.log(bmrFields, "0000000000000000000000000");
   const [tabs, setTabs] = useState([
     "Initiator Remarks",
     "Reviewer Remarks",
@@ -32,6 +35,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
     "UNDER APPROVAL",
     "APPROVED",
   ]);
+
   const [newTab, setNewTab] = useState([]);
   const [newFields, setNewFields] = useState({});
   const [newSection, setNewSection] = useState([]);
@@ -52,7 +56,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       },
       {
         fieldName: "Initiator Comments",
-        field_type: "text",
+        field_type: "text-area",
         options: [],
         isMandatory: true,
       },
@@ -72,7 +76,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       },
       {
         fieldName: "Reviewer Comments",
-        field_type: "text",
+        field_type: "text-area",
         options: [],
         isMandatory: true,
       },
@@ -92,12 +96,13 @@ const BMRProcessDetails = ({ bmrFields }) => {
       },
       {
         fieldName: "Approver Comments",
-        field_type: "text",
+        field_type: "text-area",
         options: [],
         isMandatory: true,
       },
     ],
   });
+
   const [activeFlowTab, setActiveFlowTab] = useState(flowoTabs[0]);
   const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
   const [activeSendFormTab, setActiveSendFormTab] = useState(null);
@@ -267,7 +272,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`https://bmrapi.mydemosoftware.com/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.34:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -329,6 +334,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       reviewComment: "editData.reviewComment",
       approverComment: "editData.approverComment",
       declaration: credentials?.declaration,
+      comments: credentials?.comments,
     };
     const config = {
       headers: {
@@ -340,7 +346,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.initiatorDeclaration = credentials?.declaration;
       axios
         .put(
-          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-for-review",
+          "http://192.168.1.34:7000/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -357,7 +363,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-approval",
+          "http://192.168.1.34:7000/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -374,7 +380,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-open",
+          "http://192.168.1.34:7000/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -389,7 +395,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "https://bmrapi.mydemosoftware.com/bmr-form/approve-BMR",
+          "http://192.168.1.34:7000/bmr-form/approve-BMR",
           dataObject,
           config
         )
@@ -406,7 +412,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-approval-to-open",
+          "http://192.168.1.34:7000/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -491,7 +497,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
         // Make API request to generate PDF
         const response = await axios({
-          url: "https://bmrapi.mydemosoftware.com/bmr-form/generate-report",
+          url: "http://192.168.1.34:7000/bmr-form/generate-report",
           method: "POST",
           responseType: "blob",
           headers: {
@@ -739,8 +745,8 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
   return (
     <div className="p-4 relative h-full">
-      <header className="bg-blue-100 w-full shadow-lg flex justify-between items-center p-4 mb-4">
-        <p className="text-lg font-bold">BMR Process Details</p>
+      <header className="bg-[#346c86] w-full shadow-lg flex justify-between items-center p-4 mb-4">
+        <p className="text-lg text-gray-200 font-bold">BMR Process Details</p>
         <div className="flex space-x-2">
           {showForm === "default" ? (
             <>
@@ -748,7 +754,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
                 <IconButton>
                   <AiOutlineAudit
                     size={28}
-                    className="flex justify-center items-center cursor-pointer "
+                    className="flex justify-center text-gray-50  hover:  items-center cursor-pointer "
                     onClick={() => {
                       navigate("/audit-trail", { state: data[0] });
                     }}
@@ -760,7 +766,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
                 <IconButton>
                   <FaRegFilePdf
                     size={28}
-                    className="flex justify-center items-center cursor-pointer "
+                    className="flex justify-center text-gray-50 hover:  items-center cursor-pointer "
                     onClick={() => {
                       generateReport();
                     }}
@@ -770,13 +776,13 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
               {activeFlowTab === "INITIATION" && (
                 <>
-                  <AtmButton
-                    label={
-                      newTab.BMR_Tabs?.length > 0 ? "Edit Form" : "Create Form"
-                    }
-                    onClick={() => setShowForm("sendForm")}
-                    className="bg-blue-500 hover:bg-blue-600 px-4 py-2"
-                  />
+                
+                 <AtmButton
+                label={newTab.BMR_Tabs?.length > 0 ?"Edit Form":"Create Form"}
+                onClick={() => setShowForm("sendForm")}
+                className="bg-blue-500 hover:bg-blue-600 px-4 py-2"
+              />
+                 
                 </>
               )}
             </>
@@ -908,8 +914,8 @@ const BMRProcessDetails = ({ bmrFields }) => {
               onClick={() => handleFlowTabClick(tab)}
               className={`py-2 px-4 rounded border-2 border-black ${
                 activeFlowTab === tab
-                  ? "bg-[#6beeac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
-                  : "bg-[#8dccac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
+                  ? "bg-[#103546] text-white"
+                  : "bg-[#3a88b3] text-black "
               }`}
             >
               {tab}
@@ -927,8 +933,8 @@ const BMRProcessDetails = ({ bmrFields }) => {
               onClick={() => handleDefaultTabClick(tab)}
               className={`py-2 px-4 rounded border-2 border-black ${
                 activeDefaultTab === tab
-                  ? "bg-[#6beeac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
-                  : "bg-[#8dccac] hover:bg-[#0a6249] hover:text-[#4bf6c6]"
+                  ? "bg-[#103546]  text-[#ffffff]"
+                  : "bg-[#2077a0]  text-[#ffffff]"
               }`}
             >
               {tab}
@@ -970,32 +976,46 @@ const BMRProcessDetails = ({ bmrFields }) => {
                       >
                         <label className="text-lg font-extrabold text-gray-700 mb-2">
                           {field.fieldName}
-                          {field.isMandatory && (
-                            <span className="text-red-500"> *</span>
-                          )}
+                          {activeFlowTab === "INITIATION" &&
+                            field.fieldName === "Initiator Comments" && (
+                              <span className="text-red-500"> *</span>
+                            )}
                         </label>
                         {field.field_type === "text" && (
                           <input
                             type="text"
+                            value={data[0]?.Initiator.name}
                             className="border border-gray-600 p-2 w-full rounded"
                             style={{ border: "1px solid gray", height: "30px" }}
-                            required={field.isMandatory}
+                            disabled
                           />
                         )}
                         {field.field_type === "date" && (
                           <input
                             type="date"
+                            value={formattedDate(data[0]?.date_of_initiation)}
                             className="border border-gray-600 p-2 w-full rounded mt-2"
                             style={{ border: "1px solid gray", height: "30px" }}
                             required={field.isMandatory}
+                            readOnly
                           />
                         )}
                         {field.field_type === "text-area" && (
                           <textarea
                             className="border border-gray-600 p-2 w-full rounded mt-2"
-                            value={field.value || ""}
-                            required={field.isMandatory}
-                            readOnly
+                            style={{ border: "1px solid gray" }}
+                            // value={field.value || ""}
+                            required={
+                              activeFlowTab === "INITIATION" &&
+                              field.fieldName === "Initiator Comments" &&
+                              field.isMandatory
+                            }
+                            readOnly={
+                              !(
+                                activeFlowTab === "INITIATION" &&
+                                field.fieldName === "Initiator Comments"
+                              )
+                            }
                           />
                         )}
                       </div>
@@ -1003,7 +1023,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
                   </div>
                 </div>
               )}
-            {activeDefaultTab !== "Initiator Remarks" &&
+            {activeDefaultTab === "Reviewer Remarks" &&
               fields[activeDefaultTab]?.map((section, secIndex) => (
                 <div key={secIndex} className="mb-20">
                   <div className="col-span-3 p-4 mt-4 rounded bg-gray-100 mb-5 font-semibold text-gray-700 border border-gray-300">
@@ -1017,9 +1037,10 @@ const BMRProcessDetails = ({ bmrFields }) => {
                       >
                         <label className="text-lg font-extrabold text-gray-700 mb-2">
                           {field.fieldName}
-                          {field.isMandatory && (
-                            <span className="text-red-500"> *</span>
-                          )}
+                          {activeFlowTab === "UNDER REVIEW" &&
+                            field.fieldName === "Reviewer Comment" && (
+                              <span className="text-red-500"> *</span>
+                            )}
                         </label>
                         {field.field_type === "text" && (
                           <input
@@ -1027,7 +1048,68 @@ const BMRProcessDetails = ({ bmrFields }) => {
                             className="border border-gray-600 p-2 w-full rounded"
                             style={{ border: "1px solid gray", height: "30px" }}
                             value={field.value || ""}
-                            required={field.isMandatory}
+                            disabled
+
+                          />
+                        )}
+                        {field.field_type === "date" && (
+                          <input
+                            type="date"
+                            value={field.value || ""}
+                            className="border border-gray-600 p-2 w-full rounded"
+                            style={{ border: "1px solid gray", height: "30px" }}
+                           readOnly
+                          />
+                        )}
+                       {field.field_type === "text-area" && (
+                          <textarea
+                            className="border border-gray-600 p-2 w-full rounded mt-2"
+                            style={{ border: "1px solid gray" }}
+                            // value={field.value || ""}
+                            required={
+                              activeFlowTab === "UNDER REVIEW" &&
+                              field.fieldName === "Reviewer Comments" &&
+                              field.isMandatory
+                            }
+                            readOnly={
+                              !(
+                                activeFlowTab === "UNDER REVIEW" &&
+                                field.fieldName === "Reviewer Comments"
+                              )
+                            }
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+               {activeDefaultTab === "Approver Remarks" &&
+              fields[activeDefaultTab]?.map((section, secIndex) => (
+                <div key={secIndex} className="mb-20">
+                  <div className="col-span-3 p-4 mt-4 rounded bg-gray-100 mb-5 font-semibold text-gray-700 border border-gray-300">
+                    {section.section}
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {section.fields?.map((field, index) => (
+                      <div
+                        key={index}
+                        className="p-4 flex flex-col bg-white shadow border border-gray-300"
+                      >
+                        <label className="text-lg font-extrabold text-gray-700 mb-2">
+                          {field.fieldName}
+                          {activeFlowTab === "UNDER APPROVAL" &&
+                            field.fieldName === "Approver Comment" && (
+                              <span className="text-red-500"> *</span>
+                            )}
+                        </label>
+                        {field.field_type === "text" && (
+                          <input
+                            type="text"
+                            className="border border-gray-600 p-2 w-full rounded"
+                            style={{ border: "1px solid gray", height: "30px" }}
+                            value={field.value || ""}
+                            disabled
                           />
                         )}
                         {field.field_type === "date" && (
@@ -1035,14 +1117,23 @@ const BMRProcessDetails = ({ bmrFields }) => {
                             type="date"
                             className="border border-gray-600 p-2 w-full rounded"
                             style={{ border: "1px solid gray", height: "30px" }}
-                            required={field.isMandatory}
+                            readOnly
                           />
                         )}
                         {field.field_type === "text-area" && (
                           <textarea
                             className="border border-gray-600 p-2 w-full rounded mt-2"
-                            value={field.value || ""}
-                            required={field.isMandatory}
+                            required={
+                              activeFlowTab === "UNDER APPROVAL" &&
+                              field.fieldName === "Approver Comments" &&
+                              field.isMandatory
+                            }
+                            readOnly={
+                              !(
+                                activeFlowTab === "UNDER APPROVAL" &&
+                                field.fieldName === "Approver Comments"
+                              )
+                            }
                           />
                         )}
                       </div>
@@ -1188,7 +1279,7 @@ const BMRProcessDetails = ({ bmrFields }) => {
                       {section.section_name}
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 shadow-xl gap-4 px-5 py-[64px]">
+                  <div className="grid grid-cols-3 shadow-xl gap-4 px-5 py-[64px]">
                     {section.BMR_fields?.map((field, index) => {
                       return (
                         <div
@@ -1196,31 +1287,45 @@ const BMRProcessDetails = ({ bmrFields }) => {
                           onClick={() => handleFieldClick(field)}
                           className="p-4 rounded bg-gray-50 shadow border border-gray-600"
                         >
-                          <label className="text-lg font-extrabold text-gray-900 flex gap-1 mb-2">
+                          <label className="text-base font-bold text-gray-900  flex gap-1 mb-2">
                             {field.label}
-                            <div className="text-red-500">
-                              {field.isMandatory && " *"}
-                            </div>
+                            {field.isMandatory && (
+                              <div className="text-red-500"> *</div>
+                            )}
+                            {field.helpText && (
+                              <Tooltip
+                                title={field.helpText}
+                                placement="right-start"
+                              >
+                                <div className="text-gray-950 cursor-pointer ">
+                                  <span className="text-black ">ⓘ</span>
+                                </div>
+                              </Tooltip>
+                            )}
                           </label>
 
                           {/* Render input fields based on type */}
 
                           {field.field_type === "text" && (
-                            <input
-                              placeholder={field.placeholder}
-                              style={{
-                                border: "1px solid gray",
-                                height: "48px",
-                              }}
-                              type="text"
-                              className="border border-gray-600 p-2 w-full rounded"
-                              required={field.isMandatory}
-                              readOnly={field.isReadonly}
-                            />
+                            <>
+                              <div className="relative">
+                                <input
+                                  placeholder={field.placeholder}
+                                  style={{
+                                    border: "1px solid gray",
+                                    height: "48px",
+                                  }}
+                                  type="text"
+                                  className="border border-gray-600 p-2 w-full rounded"
+                                  required={field.isMandatory}
+                                  readOnly={field.isReadonly}
+                                />
+                              </div>
+                            </>
                           )}
 
                           {field.field_type === "grid" && (
-                            <div>
+                            <div className="relative">
                               <table className="table-auto w-full border border-gray-600 mb-4">
                                 <thead>
                                   <tr>
@@ -1279,110 +1384,124 @@ const BMRProcessDetails = ({ bmrFields }) => {
                           )}
 
                           {field.field_type === "password" && (
-                            <input
-                              placeholder={field.placeholder}
-                              style={{
-                                border: "1px solid gray",
-                                height: "48px",
-                              }}
-                              type="password"
-                              className="border border-gray-600 text-gray-600 p-2 w-full rounded"
-                              required={field.isMandatory}
-                              readOnly={field.isReadonly}
-                            />
+                            <div className="relative">
+                              <input
+                                placeholder={field.placeholder}
+                                style={{
+                                  border: "1px solid gray",
+                                  height: "48px",
+                                }}
+                                type="password"
+                                className="border border-gray-600 text-gray-600 p-2 w-full rounded"
+                                required={field.isMandatory}
+                                readOnly={field.isReadonly}
+                              />
+                            </div>
                           )}
 
                           {field.field_type === "date" && (
-                            <input
-                              placeholder={field.placeholder}
-                              style={{
-                                border: "1px solid gray",
-                                height: "48px",
-                              }}
-                              type="date"
-                              className="border border-gray-600 p-2 w-full rounded"
-                              required={field.isMandatory}
-                              readOnly={field.isReadonly}
-                            />
+                            <div className="relative">
+                              <input
+                                placeholder={field.placeholder}
+                                style={{
+                                  border: "1px solid gray",
+                                  height: "48px",
+                                }}
+                                type="date"
+                                className="border border-gray-600 p-2 w-full rounded"
+                                required={field.isMandatory}
+                                readOnly={field.isReadonly}
+                              />
+                            </div>
                           )}
 
                           {field.field_type === "email" && (
-                            <input
-                              placeholder={field.placeholder}
-                              style={{
-                                border: "1px solid gray",
-                                height: "48px",
-                              }}
-                              type="email"
-                              className="border border-gray-600 p-2 w-full rounded"
-                              required={field.isMandatory}
-                              readOnly={field.isReadonly}
-                            />
+                            <div className="relative">
+                              <input
+                                placeholder={field.placeholder}
+                                style={{
+                                  border: "1px solid gray",
+                                  height: "48px",
+                                }}
+                                type="email"
+                                className="border border-gray-600 p-2 w-full rounded"
+                                required={field.isMandatory}
+                                readOnly={field.isReadonly}
+                              />
+                            </div>
                           )}
 
                           {field.field_type === "number" && (
-                            <input
-                              placeholder={field.placeholder}
-                              style={{
-                                border: "1px solid gray",
-                                height: "48px",
-                              }}
-                              type="number"
-                              className="border border-gray-600 p-2 w-full rounded"
-                              required={field.isMandatory}
-                              readOnly={field.isReadonly}
-                            />
+                            <div className="relative">
+                              <input
+                                placeholder={field.placeholder}
+                                style={{
+                                  border: "1px solid gray",
+                                  height: "48px",
+                                }}
+                                type="number"
+                                className="border border-gray-600 p-2 w-full rounded"
+                                required={field.isMandatory}
+                                readOnly={field.isReadonly}
+                              />
+                            </div>
                           )}
 
                           {field.field_type === "checkbox" && (
-                            <input
-                              placeholder={field.placeholder}
-                              style={{
-                                border: "1px solid gray",
-                                height: "48px",
-                              }}
-                              type="checkbox"
-                              className="border border-gray-600 p-2 rounded"
-                              required={field.isMandatory}
-                              readOnly={field.isReadonly}
-                            />
+                            <div className="relative">
+                              <input
+                                placeholder={field.placeholder}
+                                style={{
+                                  border: "1px solid gray",
+                                  height: "48px",
+                                }}
+                                type="checkbox"
+                                className="border border-gray-600 p-2 rounded"
+                                required={field.isMandatory}
+                                readOnly={field.isReadonly}
+                              />
+                            </div>
                           )}
 
                           {field.field_type === "dropdown" && (
-                            <select
-                              className="border border-gray-600 p-2 w-full rounded"
-                              style={{
-                                border: "1px solid gray",
-                                height: "48px",
-                              }}
-                              required={field.isMandatory}
-                            >
-                              {field?.acceptsMultiple?.map((option, idx) => (
-                                <option key={idx} value={option}>
-                                  {option}
-                                </option>
-                              ))}
-                            </select>
+                            <div className="relative">
+                              <select
+                                className="border border-gray-600 p-2 w-full rounded"
+                                style={{
+                                  border: "1px solid gray",
+                                  height: "48px",
+                                }}
+                                required={field.isMandatory}
+                              >
+                                {field?.acceptsMultiple?.map((option, idx) => (
+                                  <option key={idx} value={option}>
+                                    {option}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
                           )}
 
                           {field.field_type === "multi-select" && (
-                            <>
-                              <Select
-                                isMulti
-                                options={field?.acceptsMultiple?.map(
-                                  (option) => ({
-                                    value: option,
-                                    label: option,
-                                  })
-                                )}
-                                value={selectedOptions[field.id] || []}
-                                onChange={(options) =>
-                                  handleMultiSelectChange(field.id, options)
-                                }
-                                formatOptionLabel={formatOptionLabel}
-                                className="text-start"
-                              />
-                            </>
+                            <div className="relative">
+                              <>
+                                <Select
+                                  isMulti
+                                  options={field?.acceptsMultiple?.map(
+                                    (option) => ({
+                                      value: option,
+                                      label: option,
+                                    })
+                                  )}
+                                  value={selectedOptions[field.id] || []}
+                                  onChange={(options) =>
+                                    handleMultiSelectChange(field.id, options)
+                                  }
+                                  formatOptionLabel={formatOptionLabel}
+                                  className="text-start"
+                                />
+                              </>
+                            </div>
                           )}
                         </div>
                       );
