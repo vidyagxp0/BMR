@@ -57,7 +57,11 @@ function CreateRecordModal({ open, onClose }) {
   const handleVerificationSubmit = (verified) => {
     axios
       .post(
+<<<<<<< Updated upstream
         "http://192.168.1.49:7000/bmr-form/add-bmr",
+=======
+        "http://192.168.1.34:7000/bmr-form/add-bmr",
+>>>>>>> Stashed changes
         {
           name: formData.name,
           description: formData.description,
@@ -92,10 +96,10 @@ function CreateRecordModal({ open, onClose }) {
         }
       )
       .then((response) => {
-        console.log(response, "gdgdgdf");
+        console.log(response.data.message.split(" ")[3], "gdgdgdf");
         toast.success(response.data.message || "BMR added successfully!");
         dispatch(addBmr(response.data.bmr));
-        navigate(`/process/processdetails/${response.data.bmr}`, {
+        navigate(`/process/processdetails/${response.data.message.split(" ")[3]}`, {
           state: { bmr: response.data.bmr },
         });
         setFormData({ name: "", reviewers: [], approvers: [] });
@@ -115,7 +119,11 @@ function CreateRecordModal({ open, onClose }) {
   useEffect(() => {
     axios
       .post(
+<<<<<<< Updated upstream
         "http://192.168.1.49:7000/bmr-form/get-user-roles",
+=======
+        "http://192.168.1.34:7000/bmr-form/get-user-roles",
+>>>>>>> Stashed changes
         { role_id: 3 },
         {
           headers: {
@@ -145,7 +153,11 @@ function CreateRecordModal({ open, onClose }) {
 
     axios
       .post(
+<<<<<<< Updated upstream
         "http://192.168.1.49:7000/bmr-form/get-user-roles",
+=======
+        "http://192.168.1.34:7000/bmr-form/get-user-roles",
+>>>>>>> Stashed changes
         { role_id: 4 },
         {
           headers: {
@@ -174,7 +186,11 @@ function CreateRecordModal({ open, onClose }) {
       });
 
     axios
+<<<<<<< Updated upstream
       .get("http://192.168.1.49:7000/user/get-all-user-departments", {
+=======
+      .get("http://192.168.1.34:7000/user/get-all-user-departments", {
+>>>>>>> Stashed changes
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",

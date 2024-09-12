@@ -24,7 +24,11 @@ const AddTabModal = ({
     try {
       if (updateTab === "add") {
         await axios.post(
+<<<<<<< Updated upstream
           "http://192.168.1.49:7000/bmr-form/add-bmr-tab",
+=======
+          "http://192.168.1.34:7000/bmr-form/add-bmr-tab",
+>>>>>>> Stashed changes
           {
             bmr_id: bmr_id,
             tab_name: tabName,
@@ -43,7 +47,11 @@ const AddTabModal = ({
         addTab({ tab_name: tabName });
       } else if (updateTab === "edit") {
         await axios.put(
+<<<<<<< Updated upstream
           `http://192.168.1.49:7000/bmr-form/edit-bmr-tab/${bmr_tab_id}`,
+=======
+          `http://192.168.1.34:7000/bmr-form/edit-bmr-tab/${bmr_tab_id}`,
+>>>>>>> Stashed changes
           {
             bmr_id: bmr_id,
             tab_name: tabName,

@@ -42,7 +42,11 @@ const UserVerificationPopUp = ({
 
   //   try {
   //     const response = await axios.post(
+<<<<<<< Updated upstream
   //       "http://192.168.1.49:7000/user/user-verification",
+=======
+  //       "http://192.168.1.34:7000/user/user-verification",
+>>>>>>> Stashed changes
   //       data,
   //       {
   //         headers: { "Content-Type": "application/json" },

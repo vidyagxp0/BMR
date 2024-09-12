@@ -34,7 +34,11 @@ const Dashboard = () => {
 
   useEffect(() => {
     axios
+<<<<<<< Updated upstream
       .get("http://192.168.1.49:7000/bmr-form/get-approved-bmrs", {
+=======
+      .get("http://192.168.1.34:7000/bmr-form/get-approved-bmrs", {
+>>>>>>> Stashed changes
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },

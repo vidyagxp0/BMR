@@ -25,7 +25,11 @@ const Login = () => {
       password: password,
     };
     axios
+<<<<<<< Updated upstream
       .post("http://192.168.1.49:7000/user/user-login", data, {
+=======
+      .post("http://192.168.1.34:7000/user/user-login", data, {
+>>>>>>> Stashed changes
         headers: {
           "Content-Type": "application/json",
         },

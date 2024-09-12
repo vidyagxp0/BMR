@@ -11,7 +11,11 @@ const DeleteUserModal = ({ onClose, id, setData }) => {
   const dispatch = useDispatch();
   const handleVerificationSubmit = (verified) => {
     axios
+<<<<<<< Updated upstream
       .delete(`http://192.168.1.49:7000/bmr-form/delete-bmr/${id}`, {
+=======
+      .delete(`http://192.168.1.34:7000/bmr-form/delete-bmr/${id}`, {
+>>>>>>> Stashed changes
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,

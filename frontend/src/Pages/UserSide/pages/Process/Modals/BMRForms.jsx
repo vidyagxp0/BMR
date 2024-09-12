@@ -7,8 +7,11 @@ import { IconButton, Tooltip } from "@mui/material";
 import { IoInformationCircleOutline } from "react-icons/io5";
 import "./BMRForms.css";
 
+<<<<<<< Updated upstream
 import AtmTable from "../../../../../AtmComponents/AtmTable"; // Adjust the import path according to your file structure
 
+=======
+>>>>>>> Stashed changes
 const formatDate = (date) => {
   const options = { day: "2-digit", month: "2-digit", year: "numeric" };
   return new Date(date).toLocaleDateString("en-GB", options);
@@ -20,7 +23,7 @@ const BMRForms = () => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.21:7000/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.34:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },

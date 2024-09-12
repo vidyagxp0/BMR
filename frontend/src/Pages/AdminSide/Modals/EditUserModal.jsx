@@ -38,7 +38,11 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
 
   useEffect(() => {
     axios
+<<<<<<< Updated upstream
       .get("http://192.168.1.49:7000/user/get-all-roles", {
+=======
+      .get("http://192.168.1.34:7000/user/get-all-roles", {
+>>>>>>> Stashed changes
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "application/json",
@@ -103,7 +107,11 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
 
     axios
       .put(
+<<<<<<< Updated upstream
         `http://192.168.1.49:7000/user/edit-user/${user.user_id}`,
+=======
+        `http://192.168.1.34:7000/user/edit-user/${user.user_id}`,
+>>>>>>> Stashed changes
         updatedFormData,
         {
           headers: {

@@ -9,7 +9,11 @@ const DeleteUserModal = ({ onClose, id, setAllUsers }) => {
   const dispatch = useDispatch();
   const handleDelete = () => {
     axios
+<<<<<<< Updated upstream
       .delete(`http://192.168.1.49:7000/user/delete-user/${id}`, {
+=======
+      .delete(`http://192.168.1.34:7000/user/delete-user/${id}`, {
+>>>>>>> Stashed changes
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,

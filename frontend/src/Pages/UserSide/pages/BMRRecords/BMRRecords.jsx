@@ -32,7 +32,11 @@ const BMRRecords = () => {
   const [initiatorName, setInitiatorName] = useState(null);
   const navigate = useNavigate();
 
+<<<<<<< Updated upstream
   const apiUrl = `http://192.168.1.49:7000/user/get-a-user/${Id}`;
+=======
+  const apiUrl = `http://192.168.1.34:7000/user/get-a-user/${Id}`;
+>>>>>>> Stashed changes
   const fetchUserData = async () => {
     try {
       const token = localStorage.getItem("user-token");
@@ -74,7 +78,11 @@ const BMRRecords = () => {
       try {
         const [reviewersResponse, approversResponse] = await Promise.all([
           axios.post(
+<<<<<<< Updated upstream
             "http://192.168.1.49:7000/bmr-form/get-user-roles",
+=======
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
+>>>>>>> Stashed changes
             { role_id: 3 },
             {
               headers: {
@@ -84,7 +92,11 @@ const BMRRecords = () => {
             }
           ),
           axios.post(
+<<<<<<< Updated upstream
             "http://192.168.1.49:7000/bmr-form/get-user-roles",
+=======
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
+>>>>>>> Stashed changes
             { role_id: 4 },
             {
               headers: {

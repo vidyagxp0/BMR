@@ -21,7 +21,11 @@ const AdminLogin = () => {
       password: password,
     };
     axios
+<<<<<<< Updated upstream
       .post("http://192.168.1.49:7000/user/admin-login", data, {
+=======
+      .post("http://192.168.1.34:7000/user/admin-login", data, {
+>>>>>>> Stashed changes
         headers: {
           "Content-Type": "application/json",
         },
