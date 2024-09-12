@@ -770,13 +770,13 @@ const BMRProcessDetails = ({ bmrFields }) => {
 
               {activeFlowTab === "INITIATION" && (
                 <>
-                
-                 <AtmButton
-                label={newTab.BMR_Tabs?.length > 0 ?"Edit Form":"Create Form"}
-                onClick={() => setShowForm("sendForm")}
-                className="bg-blue-500 hover:bg-blue-600 px-4 py-2"
-              />
-                 
+                  <AtmButton
+                    label={
+                      newTab.BMR_Tabs?.length > 0 ? "Edit Form" : "Create Form"
+                    }
+                    onClick={() => setShowForm("sendForm")}
+                    className="bg-blue-500 hover:bg-blue-600 px-4 py-2"
+                  />
                 </>
               )}
             </>

@@ -1,44 +1,47 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-// import { asideLinks } from "./UserSidebarData";
-import asideLinks from "../../Pages/UserSide/userSidebar/UserSidebarData";
-import { FaPeopleLine } from "react-icons/fa6";
+import { useEffect, useState } from "react";
 import {
-  // FaCog,
+  FaBell,
   FaGlobe,
   FaHandsHelping,
   FaHeadset,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaPeopleLine } from "react-icons/fa6";
+import socketIOClient from "socket.io-client";
 import "./Header.css";
 import "./HeaderTop.css";
-import axios from "axios";
 
 function HeaderTop() {
   const navigate = useNavigate();
-  const [openItems, setOpenItems] = useState({});
-  const [User, setUser] = useState(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    setSocket(socketIOClient("https://bmrapi.mydemosoftware.com/"));
+    return () => {
+      if (socket) socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const userDetails = JSON.parse(localStorage.getItem("user-details"));
+    if (socket && userDetails) {
+      socket.emit("register", userDetails.userId);
+      socket.on("new_notification", () => {
+        setUnreadCount((prev) => prev + 1);
+      });
+      return () => {
+        socket.off("new_notification");
+      };
+    }
+  }, [socket]);
 
   const handleLogout = () => {
     localStorage.removeItem("user-token");
     localStorage.removeItem("admin-token");
+    localStorage.removeItem("user-details");
     navigate("/");
-  };
-
-  const toggleItem = (id) => {
-    setOpenItems((prevState) => ({
-      ...prevState,
-      [id]: !prevState[id],
-    }));
-  };
-
-  const Each = ({ render, of }) => of.map((item, index) => render(item, index));
-
-  const isParentActive = (children) => {
-    // Implement logic to determine if any child link is active
-    // e.g., based on current path or some other condition
-    return children.some((child) => child.link === location.pathname);
   };
 
   return (
@@ -54,91 +57,16 @@ function HeaderTop() {
             />
           </div>
         </div>
-        {/* <div className="center ">
-          <div className="inputContainer border-2 border-gray-500 w-96">
-            <div className="inputInnerLeft">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="#1a9e66"
-                width={"25"}
-                height={"25"}
-              >
-                <path d="M18.031 16.6168L22.3137 20.8995L20.8995 22.3137L16.6168 18.031C15.0769 19.263 13.124 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2C15.968 2 20 6.032 20 11C20 13.124 19.263 15.0769 18.031 16.6168ZM16.0247 15.8748C17.2475 14.6146 18 12.8956 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18C12.8956 18 14.6146 17.2475 15.8748 16.0247L16.0247 15.8748Z"></path>
-              </svg>
-            </div>
-            <input type="search" placeholder="Search..." />
-            <button className="search-button">Search</button>
-          </div>
-        </div> */}
-
-        {/* <div className=" flex items-center justify-center w-72 -ml-10  gap-10">
-          {Each({
-            of: asideLinks,
-            render: (item) => (
-              <div className="sidebar-link" key={item.id}>
-                {item.hasChild ? (
-                  <div
-                    className={`link-head ${
-                      isParentActive(item.child) ? "active-link" : ""
-                    }`}
-                    onClick={() => toggleItem(item.id)}
-                  >
-                    <div>
-                      {item.icon}
-                      <div className="title">{item.title}</div>
-                    </div>
-                    {openItems[item.id] ? <FaChevronUp /> : <FaChevronDown />}
-                  </div>
-                ) : (
-                  <Link
-                    to={item.link}
-                    className={({ isActive }) =>
-                      isActive
-                        ? "link-head active-link"
-                        : "link-head inactive-link"
-                    }
-                  >
-                    <div>
-                      {item.icon}
-                      <div className="title">{item.title}</div>
-                    </div>
-                  </Link>
-                )}
-                {item.hasChild && openItems[item.id] && (
-                  <div className="sidebar-subList">
-                    {item.child
-                      ? Each({
-                          of: item.child,
-                          render: (child) => (
-                            <Link
-                              to={child.link}
-                              className={({ isActive }) =>
-                                isActive
-                                  ? "sidebar-subLink active-subLink"
-                                  : "sidebar-subLink inactive-subLink"
-                              }
-                            >
-                              <span className="flex items-center">
-                                {child.icon}&nbsp;{child.title}
-                              </span>
-                            </Link>
-                          ),
-                        })
-                      : ""}
-                  </div>
-                )}
-              </div>
-            ),
-          })}
-        </div> */}
 
         <div className="right">
-          <div className="notification-icon">
-            <i className="ri-notification-3-fill"></i>
-          </div>
-
           <div className="links-container mr-10">
+            <Link to="/user-notifications" className="link-item mt-5 ">
+              <FaBell size={22} />
+              {unreadCount > 0 && (
+                <span className="unread-badge">{unreadCount}</span>
+              )}
+              <span className="link-name">Notifications</span>
+            </Link>
             <Link to="/boardOfDirectors" className="link-item mt-5 ">
               <FaPeopleLine size={22} />
               <span className="link-name">Board Members</span>

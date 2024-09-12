@@ -21,6 +21,7 @@ import BoardOfDirectors from "./Pages/HeaderComponents/BoardOfDirectors";
 import AuditTrail from "./Pages/UserSide/auditTrail/auditTrail";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import Notifications from "./Pages/UserSide/Notifications/Notifications";
 
 function App() {
   return (
@@ -50,7 +51,7 @@ function RouteGuard() {
   }, [location, navigate]);
 
   return (
-    <Routes>a
+    <Routes>
       <Route path="/" element={<Login />} />
       <Route path="" element={<WrapperUser />}>
         <Route
@@ -73,12 +74,15 @@ function RouteGuard() {
           path="/bmr_records"
           element={<ProtectedUserRoute element={<BMRRecords />} />}
         />
+        <Route
+          path="/user-notifications"
+          element={<ProtectedUserRoute element={<Notifications />} />}
+        />
       </Route>
       <Route
         path="/audit-trail"
         element={<ProtectedUserRoute element={<AuditTrail />} />}
       />
-
       <Route path="/admin-login" element={<AdminLogin />} />
       <Route path="" element={<Wrapper />}>
         <Route
