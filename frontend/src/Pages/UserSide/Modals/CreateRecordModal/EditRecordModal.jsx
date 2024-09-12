@@ -117,11 +117,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
     axios
       .put(
-<<<<<<< Updated upstream
-        `http://192.168.1.49:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
-=======
         `http://192.168.1.34:7000/bmr-form/edit-bmr/${bmrData.bmr_id}`,
->>>>>>> Stashed changes
         updatedBMRData,
         {
           headers: {
@@ -173,11 +169,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     const fetchRoles = async () => {
       try {
         const reviewerResponse = await axios.post(
-<<<<<<< Updated upstream
-          "http://192.168.1.49:7000/bmr-form/get-user-roles",
-=======
           "http://192.168.1.34:7000/bmr-form/get-user-roles",
->>>>>>> Stashed changes
           {
             role_id: 3,
           },
@@ -195,11 +187,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         setReviewers(addSelectAllOption(reviewerOptions));
 
         const approverResponse = await axios.post(
-<<<<<<< Updated upstream
-          "http://192.168.1.49:7000/bmr-form/get-user-roles",
-=======
           "http://192.168.1.34:7000/bmr-form/get-user-roles",
->>>>>>> Stashed changes
           {
             role_id: 4,
           },
@@ -220,11 +208,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
       }
     };
     axios
-<<<<<<< Updated upstream
-      .get("http://192.168.1.49:7000/user/get-all-user-departments", {
-=======
       .get("http://192.168.1.34:7000/user/get-all-user-departments", {
->>>>>>> Stashed changes
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",

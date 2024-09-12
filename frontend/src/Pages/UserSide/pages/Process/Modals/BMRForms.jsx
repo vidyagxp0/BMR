@@ -7,11 +7,8 @@ import { IconButton, Tooltip } from "@mui/material";
 import { IoInformationCircleOutline } from "react-icons/io5";
 import "./BMRForms.css";
 
-<<<<<<< Updated upstream
 import AtmTable from "../../../../../AtmComponents/AtmTable"; // Adjust the import path according to your file structure
 
-=======
->>>>>>> Stashed changes
 const formatDate = (date) => {
   const options = { day: "2-digit", month: "2-digit", year: "numeric" };
   return new Date(date).toLocaleDateString("en-GB", options);

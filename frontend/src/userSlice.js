@@ -3,11 +3,7 @@ import axios from "axios";
 
 // Async Thunks
 export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
-<<<<<<< Updated upstream
-  const response = await axios.get("http://192.168.1.49:7000/user/get-users", {
-=======
   const response = await axios.get("http://192.168.1.34:7000/user/get-users", {
->>>>>>> Stashed changes
     headers: {
       Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
     },
@@ -17,11 +13,7 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
 
 export const fetchBmr = createAsyncThunk("bmr/fetchBmr", async () => {
   const response = await axios.get(
-<<<<<<< Updated upstream
-    "http://192.168.1.49:7000/bmr-form/get-bmr",
-=======
     "http://192.168.1.34:7000/bmr-form/get-bmr",
->>>>>>> Stashed changes
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,

@@ -83,11 +83,7 @@ const AdminDashBoard = () => {
 
   useEffect(() => {
     axios
-<<<<<<< Updated upstream
-      .get("http://192.168.1.49:7000/user/get-all-users", {
-=======
       .get("http://192.168.1.34:7000/user/get-all-users", {
->>>>>>> Stashed changes
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
         },
