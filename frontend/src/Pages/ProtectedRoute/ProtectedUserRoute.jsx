@@ -3,27 +3,27 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 const ProtectedUserRoute = ({ element }) => {
-  const token = localStorage.getItem("user-token");
   const navigate = useNavigate();
   let isAuthenticated = false;
 
   useEffect(() => {
-    const handlePopState = (event) => {
-      if (isAuthenticated && window.location.pathname === "/dashboard") {
-        window.history.pushState(null, null, window.location.pathname);
+    const handleStorageChange = (event) => {
+      if (event.key === "user-token") {
+        isAuthenticated = false; // Assume logout if token changes
+        navigate("/", { replace: true });
       }
     };
 
-    window.addEventListener("popstate", handlePopState);
+    window.addEventListener("storage", handleStorageChange);
 
     return () => {
-      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("storage", handleStorageChange);
     };
-  }, [isAuthenticated]);
+  }, []);
 
-  if (token) {
+  if (localStorage.getItem("user-token")) {
     try {
-      const decodedToken = jwtDecode(token);
+      const decodedToken = jwtDecode(localStorage.getItem("user-token"));
       const currentTime = Date.now() / 1000;
       if (decodedToken.exp > currentTime) {
         isAuthenticated = true;
