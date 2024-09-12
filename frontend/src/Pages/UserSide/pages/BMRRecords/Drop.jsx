@@ -47,7 +47,7 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
             "http://192.168.1.34:7000/bmr-form/get-user-roles",
 =======
 <<<<<<< Updated upstream
-            "http://192.168.1.49:7000/bmr-form/get-user-roles",
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
 =======
             "http://192.168.1.34:7000/bmr-form/get-user-roles",
 >>>>>>> Stashed changes
@@ -65,7 +65,7 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
             "http://192.168.1.34:7000/bmr-form/get-user-roles",
 =======
 <<<<<<< Updated upstream
-            "http://192.168.1.49:7000/bmr-form/get-user-roles",
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
 =======
             "http://192.168.1.34:7000/bmr-form/get-user-roles",
 >>>>>>> Stashed changes

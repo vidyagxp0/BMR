@@ -128,7 +128,7 @@ const BMRProcessDetails = () => {
       .get(`http://192.168.1.34:7000/bmr-form/get-a-bmr/${bmr_id}`, {
 =======
 <<<<<<< Updated upstream
-      .get(`http://192.168.1.49:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.34:7000/bmr-form/get-a-bmr/${bmr_id}`, {
 =======
       .get(`http://192.168.1.34:7000/bmr-form/get-a-bmr/${bmr_id}`, {
 >>>>>>> Stashed changes
