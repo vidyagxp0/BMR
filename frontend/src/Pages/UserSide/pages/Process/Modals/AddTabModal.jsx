@@ -16,6 +16,7 @@ const AddTabModal = ({
     updateTab === "edit" ? existingTabName : ""
   );
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const { bmr_id } = useParams();
   const token = localStorage.getItem("user-token");
@@ -24,7 +25,7 @@ const AddTabModal = ({
     try {
       if (updateTab === "add") {
         await axios.post(
-          "http://192.168.1.49:7000/bmr-form/add-bmr-tab",
+          "http://192.168.1.34:7000/bmr-form/add-bmr-tab",
           {
             bmr_id: bmr_id,
             tab_name: tabName,
@@ -43,7 +44,7 @@ const AddTabModal = ({
         addTab({ tab_name: tabName });
       } else if (updateTab === "edit") {
         await axios.put(
-          `http://192.168.1.49:7000/bmr-form/edit-bmr-tab/${bmr_tab_id}`,
+          `http://192.168.1.34:7000/bmr-form/edit-bmr-tab/${bmr_tab_id}`,
           {
             bmr_id: bmr_id,
             tab_name: tabName,

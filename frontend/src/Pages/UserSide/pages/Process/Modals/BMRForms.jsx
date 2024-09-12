@@ -20,7 +20,7 @@ const BMRForms = () => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.21:7000/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.34:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -29,7 +29,7 @@ const BMRForms = () => {
         setApprovedBMR(response.data.message);
       })
       .catch((error) => {
-        console.error("Error fetching data:", error);
+        console.error("Failed to fetch BMR's:", error);
       });
   }, []);
 

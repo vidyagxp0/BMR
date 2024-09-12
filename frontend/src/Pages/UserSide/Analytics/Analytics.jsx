@@ -154,6 +154,9 @@ const Analytics = () => {
       ],
     },
   };
+
+  
+
   return (
     <div>
       <div id="chart" className="mt-10">
@@ -172,13 +175,13 @@ const Analytics = () => {
           height={350}
         />
       </div>
-      <div id="chart" className="mt-20 w-[500px] ">
-        <ReactApexChart
-          options={pieChart.options}
-          series={pieChart.series}
-          type="donut"
-        />
-      </div>
+        <div id="chart" className="mt-20 w-[500px] ">
+          <ReactApexChart
+            options={pieChart.options}
+            series={pieChart.series}
+            type="donut"
+          />
+        </div>
     </div>
   );
 };
