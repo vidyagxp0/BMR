@@ -776,11 +776,13 @@ const BMRProcessDetails = ({ fieldData }) => {
 
               {activeFlowTab === "INITIATION" && (
                 <>
-                  <AtmButton
-                    label={newTab.length === 0 ? "Create Form" : "Edit Form"}
-                    onClick={() => setShowForm("sendForm")}
-                    className="flex justify-center items-center cursor-pointer "
-                  />
+                
+                 <AtmButton
+                label={newTab.BMR_Tabs?.length > 0 ?"Edit Form":"Create Form"}
+                onClick={() => setShowForm("sendForm")}
+                className="bg-blue-500 hover:bg-blue-600 px-4 py-2"
+              />
+                 
                 </>
               )}
             </>
