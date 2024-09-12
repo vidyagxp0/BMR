@@ -59,14 +59,14 @@ function HeaderTop() {
 
         <div className="right">
           <div className="links-container mr-10">
-            <Link to="/user-notifications" className="link-item mt-5 ">
+            {/* <Link to="/user-notifications" className="link-item mt-8 ">
               <FaBell size={22} />
               {unreadCount > 0 && (
                 <span className="unread-badge">{unreadCount}</span>
               )}
               <span className="link-name">Notifications</span>
-            </Link>
-            <Link to="/boardOfDirectors" className="link-item mt-5 ">
+            </Link> */}
+            <Link to="/boardOfDirectors" className="link-item mt-8 ">
               <FaPeopleLine size={22} />
               <span className="link-name">Board Members</span>
             </Link>

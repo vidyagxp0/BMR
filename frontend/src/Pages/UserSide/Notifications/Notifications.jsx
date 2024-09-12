@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import socketIOClient from "socket.io-client";
 import { formatDistanceToNow } from "date-fns";
+// import { isToday, isThisWeek } from 'date-fns';
 import "./Notifications.css"; // Import CSS file for styling
 
 const Notifications = () => {
