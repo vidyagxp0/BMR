@@ -15,11 +15,11 @@ import { FaRegFilePdf } from "react-icons/fa";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { AiOutlineAudit } from "react-icons/ai";
-import {formattedDate} from "../../../../AtmComponents/Helper"
+import { formattedDate } from "../../../../AtmComponents/Helper";
 
 const BMRProcessDetails = ({ fieldData }) => {
   const [data, setData] = useState([]);
-  console.log(data,"datatatat")
+  console.log(data, "datatatat");
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
@@ -272,7 +272,7 @@ const BMRProcessDetails = ({ fieldData }) => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.34:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.25:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -346,7 +346,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.initiatorDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.34:7000/bmr-form/send-BMR-for-review",
+          "http://192.168.1.25:7000/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -363,7 +363,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.34:7000/bmr-form/send-BMR-from-review-to-approval",
+          "http://192.168.1.25:7000/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -380,7 +380,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.34:7000/bmr-form/send-BMR-from-review-to-open",
+          "http://192.168.1.25:7000/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -395,7 +395,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.34:7000/bmr-form/approve-BMR",
+          "http://192.168.1.25:7000/bmr-form/approve-BMR",
           dataObject,
           config
         )
@@ -412,7 +412,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.34:7000/bmr-form/send-BMR-from-approval-to-open",
+          "http://192.168.1.25:7000/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -497,7 +497,7 @@ const BMRProcessDetails = ({ fieldData }) => {
 
         // Make API request to generate PDF
         const response = await axios({
-          url: "http://192.168.1.34:7000/bmr-form/generate-report",
+          url: "http://192.168.1.25:7000/bmr-form/generate-report",
           method: "POST",
           responseType: "blob",
           headers: {
@@ -776,13 +776,13 @@ const BMRProcessDetails = ({ fieldData }) => {
 
               {activeFlowTab === "INITIATION" && (
                 <>
-                
-                 <AtmButton
-                label={newTab.BMR_Tabs?.length > 0 ?"Edit Form":"Create Form"}
-                onClick={() => setShowForm("sendForm")}
-                className="bg-blue-500 hover:bg-blue-600 px-4 py-2"
-              />
-                 
+                  <AtmButton
+                    label={
+                      newTab.BMR_Tabs?.length > 0 ? "Edit Form" : "Create Form"
+                    }
+                    onClick={() => setShowForm("sendForm")}
+                    className="bg-blue-500 hover:bg-blue-600 px-4 py-2"
+                  />
                 </>
               )}
             </>
@@ -1049,7 +1049,6 @@ const BMRProcessDetails = ({ fieldData }) => {
                             style={{ border: "1px solid gray", height: "30px" }}
                             value={field.value || ""}
                             disabled
-
                           />
                         )}
                         {field.field_type === "date" && (
@@ -1058,10 +1057,10 @@ const BMRProcessDetails = ({ fieldData }) => {
                             value={field.value || ""}
                             className="border border-gray-600 p-2 w-full rounded"
                             style={{ border: "1px solid gray", height: "30px" }}
-                           readOnly
+                            readOnly
                           />
                         )}
-                       {field.field_type === "text-area" && (
+                        {field.field_type === "text-area" && (
                           <textarea
                             className="border border-gray-600 p-2 w-full rounded mt-2"
                             style={{ border: "1px solid gray" }}
@@ -1084,7 +1083,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                   </div>
                 </div>
               ))}
-               {activeDefaultTab === "Approver Remarks" &&
+            {activeDefaultTab === "Approver Remarks" &&
               fields[activeDefaultTab]?.map((section, secIndex) => (
                 <div key={secIndex} className="mb-20">
                   <div className="col-span-3 p-4 mt-4 rounded bg-gray-100 mb-5 font-semibold text-gray-700 border border-gray-300">

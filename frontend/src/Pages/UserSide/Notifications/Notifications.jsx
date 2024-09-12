@@ -11,7 +11,7 @@ const Notifications = () => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    setSocket(socketIOClient("http://192.168.1.34:7000/"));
+    setSocket(socketIOClient("http://192.168.1.25:7000/"));
     return () => {
       if (socket) socket.disconnect();
     };
@@ -35,7 +35,7 @@ const Notifications = () => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.34:7000/bmr-form/get-user-notifications", {
+      .get("http://192.168.1.25:7000/bmr-form/get-user-notifications", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",
@@ -60,7 +60,7 @@ const Notifications = () => {
   const markNotificationsAsRead = (notificationIds) => {
     axios
       .put(
-        "http://192.168.1.34:7000/bmr-form/read-notification",
+        "http://192.168.1.25:7000/bmr-form/read-notification",
         {
           notification_ids: notificationIds,
         },

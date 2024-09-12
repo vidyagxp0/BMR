@@ -26,7 +26,7 @@ const AddUser = () => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.34:7000/user/get-all-roles", {
+      .get("http://192.168.1.25:7000/user/get-all-roles", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "application/json",
@@ -102,7 +102,7 @@ const AddUser = () => {
     });
 
     axios
-      .post("http://192.168.1.34:7000/user/add-user", formDataToSend, {
+      .post("http://192.168.1.25:7000/user/add-user", formDataToSend, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "multipart/form-data",
