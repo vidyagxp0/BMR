@@ -58,7 +58,7 @@ const BMRForms = () => {
     <div className="flex flex-col p-3">
       <header className="fixed top-0 left-0 w-full z-50">
         <HeaderTop />
-        <div >
+        <div>
           <DashboardBottom />
         </div>
       </header>
@@ -121,12 +121,13 @@ const BMRForms = () => {
                   let color;
                   let percentage;
 
-                  if (diffDays > 20) {
-                    color = `linear-gradient(to right, #ff0000 100%, #ff0000 100%)`;
-                    percentage = 100;
-                  } else if (diffDays > 0) {
+                  if (diffDays > 0) {
                     percentage = (10 - diffDays) * 10;
                     color = `linear-gradient(to right, #ff0000 ${percentage}%, #00ff00 ${percentage}%)`;
+                    const message =
+                      diffDays === 1
+                        ? `${diffDays} Day Remaining`
+                        : `${diffDays} Days Remaining`;
                   } else {
                     color = `linear-gradient(to right, #ff0000 100%, #ff0000 100%)`;
                     percentage = 0;
@@ -147,7 +148,18 @@ const BMRForms = () => {
                       <td className="p-2">{formatDate(item.due_date)}</td>
                       <td>
                         <div className=" flex items-center justify-between">
-                          <div className="flex items-center">
+                          {(diffDays < 0 && (
+                            <Tooltip
+                              title="Due date is crossed "
+                              placement="top-start"
+                            >
+                              <IconButton>
+                                <div className="icon-animate ">
+                                  <IoInformationCircleOutline />
+                                </div>
+                              </IconButton>
+                            </Tooltip>
+                          )) || (
                             <Tooltip
                               title={`${diffDays} Days Remaining`}
                               placement="top-start"
@@ -158,7 +170,7 @@ const BMRForms = () => {
                                 </div>
                               </IconButton>
                             </Tooltip>
-                          </div>
+                          )}
 
                           <div
                             style={{
