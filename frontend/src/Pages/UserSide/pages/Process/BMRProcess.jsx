@@ -53,7 +53,7 @@ const BMRProcess = () => {
       Cell: ({ row }) => formattedDate(row.original.due_date),
     },
     { header: "Status", accessor: "status" },
-   
+
     {
       header: "Actions",
       accessor: "actions",
@@ -88,14 +88,15 @@ const BMRProcess = () => {
 
   const fetchBMRData = () => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.21:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
       })
       .then((response) => {
         const sortedData = response.data.message.sort(
-          (a, b) => new Date(b.date_of_initiation) - new Date(a.date_of_initiation)
+          (a, b) =>
+            new Date(b.date_of_initiation) - new Date(a.date_of_initiation)
         );
         setData(sortedData);
       })
@@ -162,40 +163,52 @@ const BMRProcess = () => {
       <HeaderBottom openModal={() => setIsModalOpen(true)} />
 
       {/* Search Input */}
-      <div className="my-4">
-        
-      </div>
+      <div className="my-4"></div>
 
       {/* Tabs for filtering */}
       <div className="tabs flex justify-start border-b">
-      <div className="relative flex items-center mr-5 w-[300px]"> {/* Fixed width container */}
-  <input
-    type="text"
-    placeholder="Search by BMR Name"
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-    className="border p-2 h-10 rounded pl-4 pr-10 w-full focus:outline-none" // Padding for icon space
-    style={{ border: '1px solid black' }}
-  />
-  <AiOutlineSearch className="absolute right-3 text-gray-500" size={20} /> {/* Search Icon after input */}
-</div>
-        {["All", "Under Initiation", "Under Reviewer", "Under Approver", "Approved"].map(
-          (tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`relative px-6 py-2 text-sm font-semibold focus:outline-none transition
-              ${activeTab === tab ? "text-black bg-gray-100 border-b-2 border-black" : "text-gray-500 hover:text-black hover:bg-gray-50"} 
+        <div className="relative flex items-center mr-5 w-[300px]">
+          {" "}
+          {/* Fixed width container */}
+          <input
+            type="text"
+            placeholder="Search by BMR Name"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border p-2 h-10 rounded pl-4 pr-10 w-full focus:outline-none" // Padding for icon space
+            style={{ border: "1px solid black" }}
+          />
+          <AiOutlineSearch
+            className="absolute right-3 text-gray-500"
+            size={20}
+          />{" "}
+          {/* Search Icon after input */}
+        </div>
+        {[
+          "All",
+          "Under Initiation",
+          "Under Reviewer",
+          "Under Approver",
+          "Approved",
+        ].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`relative px-6 py-2 text-sm font-semibold focus:outline-none transition
+              ${
+                activeTab === tab
+                  ? "text-black bg-gray-100 border-b-2 border-black"
+                  : "text-gray-500 hover:text-black hover:bg-gray-50"
+              } 
               rounded-t-lg`}
-              style={{
-                borderBottom: activeTab === tab ? "2px solid blue" : "",
-                backgroundColor: activeTab === tab ? "#f3f4f6" : "", // Light gray for selected tab
-              }}
-            >
-              {tab}
-            </button>
-          )
-        )}
+            style={{
+              borderBottom: activeTab === tab ? "2px solid blue" : "",
+              backgroundColor: activeTab === tab ? "#f3f4f6" : "", // Light gray for selected tab
+            }}
+          >
+            {tab}
+          </button>
+        ))}
       </div>
 
       <div className="table-container">

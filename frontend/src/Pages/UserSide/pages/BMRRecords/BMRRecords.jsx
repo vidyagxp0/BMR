@@ -32,7 +32,7 @@ const BMRRecords = () => {
   const [initiatorName, setInitiatorName] = useState(null);
   const navigate = useNavigate();
 
-  const apiUrl = `https://bmrapi.mydemosoftware.com/user/get-a-user/${Id}`;
+  const apiUrl = `http://192.168.1.21:7000/user/get-a-user/${Id}`;
   const fetchUserData = async () => {
     try {
       const token = localStorage.getItem("user-token");
@@ -74,7 +74,7 @@ const BMRRecords = () => {
       try {
         const [reviewersResponse, approversResponse] = await Promise.all([
           axios.post(
-            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+            "http://192.168.1.21:7000/bmr-form/get-user-roles",
             { role_id: 3 },
             {
               headers: {
@@ -84,7 +84,7 @@ const BMRRecords = () => {
             }
           ),
           axios.post(
-            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+            "http://192.168.1.21:7000/bmr-form/get-user-roles",
             { role_id: 4 },
             {
               headers: {
@@ -146,7 +146,7 @@ const BMRRecords = () => {
   const formattedDate = new Date(selectedBMR.date_of_initiation)
     .toISOString()
     .split("T")[0];
-    
+
   const handleDynamicFieldChange = (id, value, tab) => {
     setDynamicFields((prevFields) => ({
       ...prevFields,
@@ -308,7 +308,6 @@ const BMRRecords = () => {
           )}
         </div>
         <div className="flex justify-end gap-4 items-end p-4 border-t">
-
           <button
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none transition duration-200"
             onClick={() => navigate("/dashboard")}
@@ -322,7 +321,6 @@ const BMRRecords = () => {
           >
             Exit
           </button>
-
         </div>
       </div>
 

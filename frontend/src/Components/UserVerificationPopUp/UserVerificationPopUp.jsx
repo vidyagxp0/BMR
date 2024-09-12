@@ -38,7 +38,7 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
 
   //   try {
   //     const response = await axios.post(
-  //       "https://bmrapi.mydemosoftware.com/user/user-verification",
+  //       "http://192.168.1.21:7000/user/user-verification",
   //       data,
   //       {
   //         headers: { "Content-Type": "application/json" },
@@ -116,10 +116,7 @@ const UserVerificationPopUp = ({ onClose, onSubmit }) => {
             />
           </div>
           <div className="form-group">
-            <label className="color-label">
-              Comment{" "}
-              
-            </label>
+            <label className="color-label">Comment </label>
             <input
               type="text"
               value={comments}
