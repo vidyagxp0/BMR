@@ -1,7 +1,7 @@
 .Header_Bottom {
   width: 100%;
   height: 50px;
-  background-color: rgb(82 82 82 / 7%);
+  /* background-color: rgb(82 82 82 / 7%); */
 }
 
 .Header_Bottom .headerBottomInner {
@@ -22,17 +22,17 @@
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  color: black; 
+  color: black;
 }
 
 .navItem h3 {
   font-size: 15px;
   margin: 0;
-  color: inherit; 
+  color: inherit;
 }
 
 .navItem.active h3 {
-  color: blue;  
+  color: blue;
 }
 
 .navItem i {

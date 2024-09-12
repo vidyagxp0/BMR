@@ -7,8 +7,7 @@ import { IconButton, Tooltip } from "@mui/material";
 import { IoInformationCircleOutline } from "react-icons/io5";
 import "./BMRForms.css";
 
-import { AiOutlineAudit } from "react-icons/ai";
-import { Navigate } from "react-router-dom";
+import AtmTable from "../../../../../AtmComponents/AtmTable"; // Adjust the import path according to your file structure
 
 const formatDate = (date) => {
   const options = { day: "2-digit", month: "2-digit", year: "numeric" };
@@ -18,8 +17,6 @@ const formatDate = (date) => {
 const BMRForms = () => {
   const [approvedBMR, setApprovedBMR] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 7;
 
   useEffect(() => {
     axios
@@ -44,15 +41,99 @@ const BMRForms = () => {
     setShowModal(false);
   };
 
-  const totalPages = Math.ceil(approvedBMR.length / rowsPerPage);
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-    }
-  };
+  // Define columns
+  const columns = [
+    { header: "BMR Name", accessor: "name" },
+    {
+      header: "Date of Initiation",
+      accessor: "date_of_initiation",
+      Cell: ({ row }) => formatDate(row.original.date_of_initiation),
+    },
+    { header: "Division", accessor: "division_id" },
+    { header: "Description", accessor: "description" },
+    {
+      header: "Current Date",
+      accessor: "current_date",
+      Cell: () => formatDate(new Date()),
+    },
+    {
+      header: "Due Date",
+      accessor: "due_date",
+      Cell: ({ row }) => formatDate(row.original.due_date),
+    },
+    {
+      header: "Due Date Progress",
+      accessor: "due_date_progress",
+      Cell: ({ row }) => {
+        const dueDate = new Date(row.original.due_date);
+        const currentDate = new Date();
 
-  const startIndex = (currentPage - 1) * rowsPerPage;
-  const currentRows = approvedBMR.slice(startIndex, startIndex + rowsPerPage);
+        const timeDiff = dueDate - currentDate;
+        const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+        let color;
+        let message;
+
+        if (diffDays > 10) {
+          color = `linear-gradient(to right, #00ff00 ${100}%, #00ff00 ${100}%)`;
+          message = `${diffDays} Days Remaining`;
+        } else if (diffDays > 0) {
+          const percentage = (10 - diffDays) * 10;
+          color = `linear-gradient(to right, #ff0000 ${percentage}%, #00ff00 ${percentage}%)`;
+          message = `${diffDays} Days Remaining`;
+        } else {
+          color = `linear-gradient(to right, #ff0000 100%, #ff0000 100%)`;
+          message = `Overdue (${Math.abs(diffDays)} Days Past Due)`;
+        }
+
+        return (
+          <div className=" flex items-center justify-between">
+            {(diffDays < 0 && (
+              <Tooltip title="Due date is crossed " placement="top-start">
+                <IconButton>
+                  <div className="icon-animate ">
+                    <IoInformationCircleOutline />
+                  </div>
+                </IconButton>
+              </Tooltip>
+            )) || (
+              <Tooltip
+                title={`${diffDays} Days Remaining`}
+                placement="top-start"
+              >
+                <IconButton>
+                  <div className="icon-animate ">
+                    <IoInformationCircleOutline />
+                  </div>
+                </IconButton>
+              </Tooltip>
+            )}
+
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                height: "10px",
+                borderRadius: "5px",
+                background: color,
+              }}
+            ></div>
+          </div>
+        );
+      },
+    },
+    { header: "Status", accessor: "status" },
+    {
+      header: "Action",
+      accessor: "action",
+      Cell: ({ row }) => (
+        <div>
+          <button className="text-blue-500 hover:underline">Edit</button> |
+          <button className="text-red-500 hover:underline ml-2">Delete</button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="flex flex-col p-3">
@@ -70,7 +151,7 @@ const BMRForms = () => {
               <select
                 id="options"
                 name="options"
-                className="border-2 border-gray-400 w-80 shadow-md rounded-lg p-2 focus:p-2 focus:outline-none focus:ring-2 focus:ring-[#346C86]"
+                className="border-2 border-[#B3C1CB] w-80 shadow-md rounded-lg p-2 focus:p-2 focus:outline-none focus:ring-2 focus:ring-[#346C86]"
                 style={{ border: "2px solid gray" }}
               >
                 <option value="">All Records</option>
@@ -93,142 +174,7 @@ const BMRForms = () => {
             <InitiateModal approvedBMR={approvedBMR} onClose={closeModal} />
           )}
 
-          {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="table-auto w-full ">
-              <thead>
-                <tr className="text-white text-left">
-                  <th className="bg-[#195b7a] p-2">S no</th>
-                  <th className="bg-[#195b7a] p-2">BMR Name</th>
-                  <th className="bg-[#195b7a] p-2">Date of initiation</th>
-                  <th className="bg-[#195b7a] p-2">Division</th>
-                  <th className="bg-[#195b7a] p-2">Description</th>
-                  <th className="bg-[#195b7a] p-2">Current Date</th>
-                  <th className="bg-[#195b7a] p-2">Due Date</th>
-                  <th className="bg-[#195b7a] p-2">Due Date Progress</th>
-                  <th className="bg-[#195b7a] p-2">Status</th>
-                  <th className="bg-[#195b7a] p-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentRows.map((item, index) => {
-                  const dueDate = new Date(item.due_date);
-                  const currentDate = new Date();
-
-                  const timeDiff = dueDate - currentDate;
-                  const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-
-                  let color;
-                  let percentage;
-
-                  if (diffDays > 0) {
-                    percentage = (10 - diffDays) * 10;
-                    color = `linear-gradient(to right, #ff0000 ${percentage}%, #00ff00 ${percentage}%)`;
-                    const message =
-                      diffDays === 1
-                        ? `${diffDays} Day Remaining`
-                        : `${diffDays} Days Remaining`;
-                  } else {
-                    color = `linear-gradient(to right, #ff0000 100%, #ff0000 100%)`;
-                    percentage = 0;
-                  }
-
-                  const pinPosition = `${percentage}%`;
-
-                  return (
-                    <tr key={item.id} className="">
-                      <td className="p-2">{startIndex + index + 1}</td>
-                      <td className="p-2">{item.name}</td>
-                      <td className="p-2">
-                        {formatDate(item.date_of_initiation)}
-                      </td>
-                      <td className="p-2">{item.division_id}</td>
-                      <td className="p-2">{item.description}</td>
-                      <td className="p-2">{formatDate(currentDate)}</td>
-                      <td className="p-2">{formatDate(item.due_date)}</td>
-                      <td>
-                        <div className=" flex items-center justify-between">
-                          {(diffDays < 0 && (
-                            <Tooltip
-                              title="Due date is crossed "
-                              placement="top-start"
-                            >
-                              <IconButton>
-                                <div className="icon-animate ">
-                                  <IoInformationCircleOutline />
-                                </div>
-                              </IconButton>
-                            </Tooltip>
-                          )) || (
-                            <Tooltip
-                              title={`${diffDays} Days Remaining`}
-                              placement="top-start"
-                            >
-                              <IconButton>
-                                <div className="icon-animate ">
-                                  <IoInformationCircleOutline />
-                                </div>
-                              </IconButton>
-                            </Tooltip>
-                          )}
-
-                          <div
-                            style={{
-                              position: "relative",
-                              width: "100%",
-                              height: "10px",
-                              borderRadius: "5px",
-                              background: color,
-                            }}
-                          ></div>
-                        </div>
-                      </td>
-
-                      <td
-                        className={`p-2 ${
-                          item.status === "Active"
-                            ? "text-gray-950"
-                            : "text-gray-950"
-                        }`}
-                      >
-                        {item.status}
-                      </td>
-                      <td className="p-2">
-                        <button className="text-blue-500 hover:underline">
-                          Edit
-                        </button>{" "}
-                        |{" "}
-                        <button className="text-red-500 hover:underline ml-2">
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination Controls */}
-          <div className="flex justify-center my-4">
-            <button
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-l-md"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            <span className="px-4 py-2 bg-white text-gray-700">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-r-md"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
+          <AtmTable columns={columns} data={approvedBMR} rowsPerPage={7} />
         </div>
       </main>
     </div>

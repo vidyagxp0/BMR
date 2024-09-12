@@ -32,7 +32,7 @@ const BMRRecords = () => {
   const [initiatorName, setInitiatorName] = useState(null);
   const navigate = useNavigate();
 
-  const apiUrl = `http://192.168.1.21:7000/user/get-a-user/${Id}`;
+  const apiUrl = `http://192.168.1.49:7000/user/get-a-user/${Id}`;
   const fetchUserData = async () => {
     try {
       const token = localStorage.getItem("user-token");
@@ -74,7 +74,7 @@ const BMRRecords = () => {
       try {
         const [reviewersResponse, approversResponse] = await Promise.all([
           axios.post(
-            "http://192.168.1.21:7000/bmr-form/get-user-roles",
+            "http://192.168.1.49:7000/bmr-form/get-user-roles",
             { role_id: 3 },
             {
               headers: {
@@ -84,7 +84,7 @@ const BMRRecords = () => {
             }
           ),
           axios.post(
-            "http://192.168.1.21:7000/bmr-form/get-user-roles",
+            "http://192.168.1.49:7000/bmr-form/get-user-roles",
             { role_id: 4 },
             {
               headers: {
