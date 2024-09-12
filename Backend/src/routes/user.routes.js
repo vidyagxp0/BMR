@@ -65,4 +65,10 @@ router.get(
   UserController.getUserPermissions
 );
 
+router.get(
+  "/get-all-user-departments",
+  Auth.checkJwtToken,
+  UserController.getUserDepartments
+);
+
 module.exports = router;

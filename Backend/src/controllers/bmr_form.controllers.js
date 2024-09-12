@@ -12,6 +12,7 @@ const FormAuditTrail = require("../models/form_audittrail.model");
 const puppeteer = require("puppeteer");
 const path = require("path");
 const fs = require("fs");
+const Notifications = require("../models/notifications.model");
 
 const getUserById = async (user_id) => {
   const user = await User.findOne({ where: { user_id, isActive: true } });
@@ -72,7 +73,8 @@ exports.postBMR = async (req, res) => {
       !due_date ||
       !division_id ||
       !department_id ||
-      !description
+      !description ||
+      !comments
     ) {
       return res.status(400).json({
         error: true,
@@ -163,6 +165,7 @@ exports.postBMR = async (req, res) => {
 
           const mailData = {
             bmrName: bmr.name,
+            user_id: userId,
             initiator: initiatorData.get("name"),
             dateOfInitiation: dateOfInitiation,
             status: "Initiation",
@@ -174,10 +177,10 @@ exports.postBMR = async (req, res) => {
               : { approverName: userData.get("name") }),
           };
 
-          // await Mailer.sendEmail(
-          //   person.role === "reviewer" ? "assignReviewer" : "assignApprover",
-          //   mailData
-          // );
+          await Mailer.sendEmail(
+            person.role === "reviewer" ? "assignReviewer" : "assignApprover",
+            mailData
+          );
         } catch (emailError) {
           // Log the error but don't throw it to ensure transaction commits
           console.error("Failed to send email:", emailError.message);
@@ -191,7 +194,7 @@ exports.postBMR = async (req, res) => {
     // Send success response
     res.status(200).json({
       error: false,
-      message: "BMR Created successfully",
+      message: `BMR with id ${bmr?.bmr_id} Created successfully`,
     });
   } catch (e) {
     await transaction.rollback();
@@ -1646,7 +1649,6 @@ exports.getBMR = (req, res) => {
         where: { isActive: true },
         required: false,
         include: [
-          // Include fields within each tab
           {
             model: BMR_section,
             where: { isActive: true },
@@ -1660,6 +1662,12 @@ exports.getBMR = (req, res) => {
             ],
           },
         ],
+      },
+      {
+        model: User,
+        as: "Initiator",
+        attributes: ["user_id", "name", "email"],
+        required: false,
       },
     ],
   })
@@ -1800,27 +1808,28 @@ exports.SendBMRForReview = async (req, res) => {
     await transaction.commit(); // Commit the transaction
 
     // Send review emails asynchronously
-    // const emailPromises = form.reviewers.map(async (person) => {
-    //   const userData = await getUserById(person.reviewerId);
-    //   const initiatorData = await getUserById(form.initiator);
+    const emailPromises = form.reviewers.map(async (person) => {
+      const userData = await getUserById(person.reviewerId);
+      const initiatorData = await getUserById(form.initiator);
 
-    //   const mailData = {
-    //     bmrName: form.name,
-    //     initiator: initiatorData.name,
-    //     dateOfInitiation: new Date().toISOString().split("T")[0],
-    //     status: "Under Review",
-    //     recipients: userData.email,
-    //     reviewerName: userData.name,
-    //   };
+      const mailData = {
+        bmrName: form.name,
+        user_id: person.reviewerId,
+        initiator: initiatorData.name,
+        dateOfInitiation: new Date().toISOString().split("T")[0],
+        status: "Under Review",
+        recipients: userData.email,
+        reviewerName: userData.name,
+      };
 
-    // //   try {
-    // //     await Mailer.sendEmail("reminderReviewer", mailData);
-    // //   } catch (emailError) {
-    // //     console.error("Failed to send email to reviewer:", emailError.message);
-    // //   }
-    // });
+      try {
+        await Mailer.sendEmail("reminderReviewer", mailData);
+      } catch (emailError) {
+        console.error("Failed to send email to reviewer:", emailError.message);
+      }
+    });
 
-    // await Promise.all(emailPromises);
+    await Promise.all(emailPromises);
 
     res.status(200).json({
       error: false,
@@ -1941,25 +1950,26 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
         .json({ error: true, message: "Initiator not found." });
     }
 
-    // const date = new Date();
-    // const dateOfInitiation = `${String(date.getDate()).padStart(
-    //   2,
-    //   "0"
-    // )}-${String(date.getMonth() + 1).padStart(2, "0")}-${date.getFullYear()}`;
+    const date = new Date();
+    const dateOfInitiation = `${String(date.getDate()).padStart(
+      2,
+      "0"
+    )}-${String(date.getMonth() + 1).padStart(2, "0")}-${date.getFullYear()}`;
 
-    // const mailData = {
-    //   bmrName: form.name,
-    //   initiator: initiator.get("name"),
-    //   dateOfInitiation: dateOfInitiation,
-    //   status: "Under Initiation",
-    //   initiatorName: initiator.get("name"),
-    //   recipients: initiator.get("email"),
-    // };
+    const mailData = {
+      bmrName: form.name,
+      user_id: form.initiator,
+      initiator: initiator.get("name"),
+      dateOfInitiation: dateOfInitiation,
+      status: "Under Initiation",
+      initiatorName: initiator.get("name"),
+      recipients: initiator.get("email"),
+    };
 
-    // // Send email to the initiator asynchronously
-    // Mailer.sendEmail("reminderInitiator", mailData).catch((emailError) => {
-    //   console.error("Failed to send email to initiator:", emailError.message);
-    // });
+    // Send email to the initiator asynchronously
+    Mailer.sendEmail("reminderInitiator", mailData).catch((emailError) => {
+      console.error("Failed to send email to initiator:", emailError.message);
+    });
 
     return res.status(200).json({
       error: false,
@@ -2093,30 +2103,31 @@ exports.SendBMRReviewToApproval = async (req, res) => {
 
       await transaction.commit(); // Commit the transaction
 
-      // // Prepare and send email to approvers asynchronously
-      // const emailPromises = form.approvers.map(async (approver) => {
-      //   const approverData = await getUserById(approver.approverId);
-      //   const initiatorData = await getUserById(form.initiator);
-      //   const mailData = {
-      //     bmrName: form.name,
-      //     dateOfInitiation: dateOfInitiation,
-      //     status: "Under Approval",
-      //     initiator: initiatorData.get("name"),
-      //     approverName: approverData.get("name"),
-      //     recipients: approverData.get("email"),
-      //   };
+      // Prepare and send email to approvers asynchronously
+      const emailPromises = form.approvers.map(async (approver) => {
+        const approverData = await getUserById(approver.approverId);
+        const initiatorData = await getUserById(form.initiator);
+        const mailData = {
+          bmrName: form.name,
+          dateOfInitiation: dateOfInitiation,
+          user_id: form.initiator,
+          status: "Under Approval",
+          initiator: initiatorData.get("name"),
+          approverName: approverData.get("name"),
+          recipients: approverData.get("email"),
+        };
 
-      //   try {
-      //     await Mailer.sendEmail("reminderApprover", mailData);
-      //   } catch (emailError) {
-      //     console.error(
-      //       "Failed to send email to approver:",
-      //       emailError.message
-      //     );
-      //   }
-      // });
+        try {
+          await Mailer.sendEmail("reminderApprover", mailData);
+        } catch (emailError) {
+          console.error(
+            "Failed to send email to approver:",
+            emailError.message
+          );
+        }
+      });
 
-      // await Promise.all(emailPromises);
+      await Promise.all(emailPromises);
     } else {
       // If not all reviewers have reviewed, simply update the reviewers' statuses
       await form.update(updateData, { transaction });
@@ -2269,26 +2280,27 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
         .json({ error: true, message: "Initiator not found." });
     }
 
-    // // Prepare mail data for the initiator
-    // const date = new Date();
-    // const dateOfInitiation = `${String(date.getDate()).padStart(
-    //   2,
-    //   "0"
-    // )}-${String(date.getMonth() + 1).padStart(2, "0")}-${date.getFullYear()}`;
+    // Prepare mail data for the initiator
+    const date = new Date();
+    const dateOfInitiation = `${String(date.getDate()).padStart(
+      2,
+      "0"
+    )}-${String(date.getMonth() + 1).padStart(2, "0")}-${date.getFullYear()}`;
 
-    // const mailData = {
-    //   bmrName: form.name,
-    //   initiator: initiator.get("name"),
-    //   dateOfInitiation: dateOfInitiation,
-    //   status: "Under Initiation",
-    //   initiatorName: initiator.get("name"),
-    //   recipients: initiator.get("email"),
-    // };
+    const mailData = {
+      bmrName: form.name,
+      user_id: form.initiator,
+      initiator: initiator.get("name"),
+      dateOfInitiation: dateOfInitiation,
+      status: "Under Initiation",
+      initiatorName: initiator.get("name"),
+      recipients: initiator.get("email"),
+    };
 
-    // // Send email to the initiator asynchronously
-    // Mailer.sendEmail("reminderInitiator", mailData).catch((emailError) => {
-    //   console.error("Failed to send email to initiator:", emailError.message);
-    // });
+    // Send email to the initiator asynchronously
+    Mailer.sendEmail("reminderInitiator", mailData).catch((emailError) => {
+      console.error("Failed to send email to initiator:", emailError.message);
+    });
 
     return res.status(200).json({
       error: false,
@@ -2636,6 +2648,53 @@ exports.getBMRformAuditTrail = async (req, res) => {
     return res.status(500).json({
       error: true,
       message: `Error retrieving audit trail: ${error.message}`,
+    });
+  }
+};
+
+exports.getUserNotifications = async (req, res) => {
+  try {
+    const userId = req.user.userId; // Ensure you have authentication and validation in place
+    const notifications = await Notifications.findAll({
+      where: {
+        user_id: userId,
+      },
+      order: [["createdAt", "DESC"]],
+    });
+    res.json(notifications);
+  } catch (error) {
+    res.status(500).send({
+      message: "Error retrieving notifications",
+      error: error.message,
+    });
+  }
+};
+
+exports.readAUserNotification = async (req, res) => {
+  try {
+    const notificationIds = req.body.notification_ids; // Assuming notification_ids is an array
+
+    // Create an update statement using Sequelize's `in` operator
+    const updateResult = await Notifications.update(
+      { isRead: true },
+      {
+        where: {
+          notification_id: {
+            [Op.in]: notificationIds,
+          },
+        },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      res.send({ message: "Notifications marked as read" });
+    } else {
+      res.send({ message: "No notifications found to update" });
+    }
+  } catch (error) {
+    res.status(500).send({
+      message: "Error marking notifications as read",
+      error: error.message,
     });
   }
 };

@@ -17,22 +17,44 @@ const Department = sequelize.define("Department", {
   },
 });
 
-// Department.addHook("afterSync", async () => {
-//     try {
-//       const processesCount = await User.count();
-//       const salt = await bcrypt.genSalt(10);
-//       const hashpass = await bcrypt.hash("Amit@121", salt);
-//       if (processesCount === 0) {
-//         await User.bulkCreate([
-//           { name: "Admin", email: "admin@vidyagxp.com", password: hashpass },
-//         ]);
-//         console.log("Admin User created");
-//       } else {
-//         console.log("Admin User already exist");
-//       }
-//     } catch (error) {
-//       console.error("Error creating Admin User:", error);
-//     }
-//   });
+Department.addHook("afterSync", async () => {
+  try {
+    const processesCount = await Department.count();
+    if (processesCount === 0) {
+      await Department.bulkCreate([
+        { name: "Coorporate Quality Assurance" },
+        { name: "Quality Assurance Biopharma" },
+        { name: "Central Quality Control" },
+        { name: "Manufacturing" },
+        { name: "Plasma Sourcing Group" },
+        { name: "Central Stores" },
+        { name: "Information Technology Group" },
+        { name: "Molecular Medicine" },
+        { name: "Central Laboratory" },
+        { name: "Tech Team" },
+        { name: "Quality Assurance" },
+        { name: "Quality Management" },
+        { name: "IT Administration" },
+        { name: "Accounting" },
+        { name: "Logistics" },
+        { name: "Senior Management" },
+        { name: "Business Administration" },
+        { name: "Others" },
+        { name: "Quality Control" },
+        { name: "Production" },
+        { name: "Accounting Manager" },
+        { name: "Quality Assurance Director" },
+        { name: "Quality Manager" },
+        { name: "Supervisor" },
+        { name: "Director" },
+      ]);
+      console.log("Divisons created");
+    } else {
+      console.log("Divisions already exists");
+    }
+  } catch (error) {
+    console.error("Error inserting divisions:", error);
+  }
+});
 
 module.exports = Department;

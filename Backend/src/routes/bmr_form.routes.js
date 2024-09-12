@@ -139,4 +139,21 @@ router.get(
   BmrController.getBMRformAuditTrail
 );
 
+router.get(
+  "/get-user-notifications",
+  Auth.checkJwtToken,
+  BmrController.getUserNotifications
+);
+
+router.get(
+  "/get-user-notifications",
+  Auth.checkJwtToken,
+  BmrController.getUserNotifications
+);
+router.put(
+  "/read-notification",
+  Auth.checkJwtToken,
+  BmrController.readAUserNotification
+);
+
 module.exports = router;

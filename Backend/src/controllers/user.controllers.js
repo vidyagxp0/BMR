@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const { sequelize } = require("../config/db");
 const jwt = require("jsonwebtoken");
 const { getFileUrl } = require("../middlewares/authentication");
+const Department = require("../models/department.model");
 
 exports.Adminlogin = async (req, res) => {
   const { email, password } = req.body;
@@ -164,7 +165,7 @@ exports.Userlogin = async (req, res) => {
   try {
     const data = await User.findOne({
       where: { email: email.toLowerCase(), isActive: true },
-    });
+    });    
 
     if (!data) {
       return res
@@ -202,7 +203,7 @@ exports.Userlogin = async (req, res) => {
 //   if (!email || !password) {
 //     return res
 //       .status(400)
-//       .json({ error: true, message: "Email and password are required" }); 
+//       .json({ error: true, message: "Email and password are required" });
 //   }
 
 //   try {
@@ -446,6 +447,26 @@ exports.getUserPermissions = (req, res) => {
       res.status(400).json({
         error: true,
         message: error.message,
+      });
+    });
+};
+
+exports.getUserDepartments = (req, res) => {
+  Department.findAll({
+    where: {
+      isActive: true,
+    },
+  })
+    .then((result) => {
+      res.status(200).json({
+        error: false,
+        message: result,
+      });
+    })
+    .catch((e) => {
+      res.json({
+        error: true,
+        message: "Error getting User Departments" + e,
       });
     });
 };

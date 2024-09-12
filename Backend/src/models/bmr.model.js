@@ -2,6 +2,7 @@ const { sequelize } = require("../config/db");
 const { DataTypes, Sequelize } = require("sequelize");
 const Department = require("./department.model");
 const Division = require("./division.model");
+const User = require("./user.model");
 
 const BMR = sequelize.define("BMR", {
   bmr_id: {
@@ -21,6 +22,10 @@ const BMR = sequelize.define("BMR", {
   },
   initiator: {
     type: DataTypes.INTEGER,
+    references: {
+      model: User,
+      key: "user_id",
+    },
   },
   reviewers: {
     type: DataTypes.JSON,
@@ -45,8 +50,8 @@ const BMR = sequelize.define("BMR", {
     },
   },
   description: {
-    type :DataTypes.STRING,
-    allowNull: false
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   division_id: {
     type: DataTypes.INTEGER,
@@ -69,5 +74,7 @@ BMR.belongsTo(Department, { foreignKey: "department_id" });
 Department.hasMany(BMR, { foreignKey: "department_id" });
 BMR.belongsTo(Division, { foreignKey: "division_id" });
 Division.hasMany(BMR, { foreignKey: "division_id" });
+BMR.belongsTo(User, { as: "Initiator", foreignKey: "initiator" });
+User.hasMany(BMR, { as: "InitiatedBMRs", foreignKey: "initiator" });
 
 module.exports = BMR;
