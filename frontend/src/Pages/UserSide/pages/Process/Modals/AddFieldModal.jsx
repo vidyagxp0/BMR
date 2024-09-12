@@ -95,13 +95,8 @@ const AddFieldModal = ({
         method: updateField === "add-field" ? "post" : "put",
         url:
           updateField === "add-field"
-<<<<<<< Updated upstream
-            ? "http://192.168.1.49:7000/bmr-form/add-bmr-field"
-            : `http://192.168.1.49:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
-=======
             ? "http://192.168.1.34:7000/bmr-form/add-bmr-field"
             : `http://192.168.1.34:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
->>>>>>> Stashed changes
         data: {
           bmr_id,
           ...fieldData,
