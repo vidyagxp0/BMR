@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const AtmTable = ({ columns = [], data = [], rowsPerPage = 5 }) => {
+const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(data.length / rowsPerPage);
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 5 }) => {
             {paginatedData.map((row, rowIndex) => (
               <tr
                 key={rowIndex}
-                className={rowIndex % 2 === 0 ? "bg-white" : "bg-green-400"}
+                className={rowIndex % 2 === 0 ? "bg-white" : "bg-blue-400"}
               >
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-gray-300">
                   {(currentPage - 1) * rowsPerPage + rowIndex + 1}
