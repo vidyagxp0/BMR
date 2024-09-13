@@ -26,7 +26,7 @@ import { useLocation } from "react-router-dom";
 import Notifications from "./Pages/UserSide/Notifications/Notifications";
 import BMRForms from "./Pages/UserSide/pages/Process/Modals/BMRForms";
 import Analytics from "./Pages/UserSide/Analytics/Analytics";
-import Logs from "./Pages/UserSide/Logs/Logs.jsx";
+import Logs from "./Pages/UserSide/Logs/Logs";
 
 function App() {
   return (

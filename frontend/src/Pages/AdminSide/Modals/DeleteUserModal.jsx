@@ -9,7 +9,7 @@ const DeleteUserModal = ({ onClose, id, setAllUsers }) => {
   const dispatch = useDispatch();
   const handleDelete = () => {
     axios
-      .delete(`http://192.168.1.34:7000/user/delete-user/${id}`, {
+      .delete(`http://localhost:7000/user/delete-user/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,

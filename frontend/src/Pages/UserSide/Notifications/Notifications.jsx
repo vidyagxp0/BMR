@@ -10,7 +10,7 @@ const Notifications = () => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    setSocket(socketIOClient("https://bmrapi.mydemosoftware.com/"));
+    setSocket(socketIOClient("http://localhost:7000/"));
     return () => {
       if (socket) socket.disconnect();
     };
@@ -34,7 +34,7 @@ const Notifications = () => {
 
   useEffect(() => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-user-notifications", {
+      .get("http://localhost:7000/bmr-form/get-user-notifications", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",
@@ -59,7 +59,7 @@ const Notifications = () => {
   const markNotificationsAsRead = (notificationIds) => {
     axios
       .put(
-        "https://bmrapi.mydemosoftware.com/bmr-form/read-notification",
+        "http://localhost:7000/bmr-form/read-notification",
         {
           notification_ids: notificationIds,
         },
