@@ -57,7 +57,7 @@ function CreateRecordModal({ open, onClose }) {
   const handleVerificationSubmit = (verified) => {
     axios
       .post(
-        "http://192.168.1.21:7000/bmr-form/add-bmr",
+        "https://bmrapi.mydemosoftware.com/bmr-form/add-bmr",
         {
           name: formData.name,
           description: formData.description,
@@ -115,7 +115,7 @@ function CreateRecordModal({ open, onClose }) {
   useEffect(() => {
     axios
       .post(
-        "http://192.168.1.21:7000/bmr-form/get-user-roles",
+        "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
         { role_id: 3 },
         {
           headers: {
@@ -145,7 +145,7 @@ function CreateRecordModal({ open, onClose }) {
 
     axios
       .post(
-        "http://192.168.1.21:7000/bmr-form/get-user-roles",
+        "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
         { role_id: 4 },
         {
           headers: {
@@ -174,7 +174,7 @@ function CreateRecordModal({ open, onClose }) {
       });
 
     axios
-      .get("http://192.168.1.21:7000/user/get-all-user-departments", {
+      .get("https://bmrapi.mydemosoftware.com/user/get-all-user-departments", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",

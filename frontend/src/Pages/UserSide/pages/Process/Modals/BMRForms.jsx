@@ -23,7 +23,7 @@ const BMRForms = () => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.21:7000/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.34:7000/bmr-form/get-approved-bmrs", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },

@@ -19,11 +19,25 @@ function HeaderTop() {
   const navigate = useNavigate();
   const [openItems, setOpenItems] = useState({});
   const [User, setUser] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("user-token");
     localStorage.removeItem("admin-token");
     navigate("/");
+  };
+
+  const handleCloseModal = () => {
+    setShowLogoutModal(false);
+  };
+
+  const confirmLogout = () => {
+    handleLogout();
+    handleCloseModal();
   };
 
   const toggleItem = (id) => {
@@ -42,7 +56,7 @@ function HeaderTop() {
   };
 
   return (
-    <div id="Header_Top" className="Header_Top ">
+    <div id="Header_Top" className="Header_Top">
       <div className="header_inner">
         <div className="left">
           <div className="logo">
@@ -55,7 +69,7 @@ function HeaderTop() {
           </div>
         </div>
 
-        {/* <div className="center ">
+        {/* <div className="center">
           <div className="inputContainer border-2 border-gray-500 w-96">
             <div className="inputInnerLeft">
               <svg
@@ -135,34 +149,34 @@ function HeaderTop() {
         </div> */}
 
         <div className="right">
-          <div className="notification-icon  relative">
+          <div className="notification-icon relative">
             <FaBell className="text-white text-2xl" />
-            <span className="absolute -top-2 left-2  bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
+            <span className="absolute -top-2 left-2 bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
               2
             </span>
           </div>
 
           <div className="links-container mr-10 text-white">
-            <Link to="/boardOfDirectors" className="link-item mt-8 ">
+            <Link to="/boardOfDirectors" className="link-item mt-8">
               <FaPeopleLine size={22} />
               <span className="link-name">Board Members</span>
             </Link>
-            <Link to="/about" className="link-item mt-8 ">
+            <Link to="/about" className="link-item mt-8">
               <FaGlobe size={22} />
               <span className="link-name">About</span>
             </Link>
-            <Link to="/help" className="link-item mt-8 ">
+            <Link to="/help" className="link-item mt-8">
               <FaHandsHelping size={22} />
               <span className="link-name">Help</span>
             </Link>
-            <Link to="/helpdesk" className="link-item mt-8 ">
+            <Link to="/helpdesk" className="link-item mt-8">
               <FaHeadset size={22} />
               <span className="link-name">Helpdesk Personnel</span>
             </Link>
-            <Link to="/" className="link-item mt-8 " onClick={handleLogout}>
+            <button className="link-item mt-8" onClick={handleLogoutClick}>
               <FaSignOutAlt size={22} />
               <span className="link-name">Logout</span>
-            </Link>
+            </button>
           </div>
           <div className="flex items-center justify-end">
             {/* Admin Name */}
@@ -179,6 +193,32 @@ function HeaderTop() {
           </div>
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+            <h3 className="text-lg font-semibold mb-4">Confirm Logout</h3>
+            <p className="text-sm text-gray-600 mb-6">
+              Are you sure you want to logout?
+            </p>
+            <div className="flex justify-end space-x-2">
+              <button
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                onClick={confirmLogout}
+              >
+                Yes, Logout
+              </button>
+              <button
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                onClick={handleCloseModal}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

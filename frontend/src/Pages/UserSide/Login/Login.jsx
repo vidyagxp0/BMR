@@ -25,7 +25,7 @@ const Login = () => {
       password: password,
     };
     axios
-      .post("http://192.168.1.21:7000/user/user-login", data, {
+      .post("https://bmrapi.mydemosoftware.com/user/user-login", data, {
         headers: {
           "Content-Type": "application/json",
         },
