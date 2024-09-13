@@ -43,7 +43,8 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
       try {
         const [reviewersResponse, approversResponse] = await Promise.all([
           axios.post(
-            "http://192.168.1.34:7000:7000/bmr-form/get-user-roles",
+
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
             { role_id: 3 },
             {
               headers: {
@@ -53,7 +54,7 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
             }
           ),
           axios.post(
-            "http://192.168.1.34:7000:7000/bmr-form/get-user-roles",
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
             { role_id: 4 },
             {
               headers: {
