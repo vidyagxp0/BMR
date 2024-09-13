@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
+  FaBell,
   FaGlobe,
   FaHandsHelping,
   FaHeadset,
@@ -17,7 +18,7 @@ function HeaderTop() {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    setSocket(socketIOClient("http://192.168.1.34:7000/"));
+    setSocket(socketIOClient("http://192.168.1.34:7000:7000/"));
     return () => {
       if (socket) socket.disconnect();
     };
@@ -61,24 +62,20 @@ function HeaderTop() {
           <div className="links-container mr-10">
             <Link
               to="/user-notifications"
-              className="flex items-center mt-8  space-x-1"
+              className="link-item  mt-8  "
             >
-              <div className="relative">
-                <FaBell className="text-white text-2xl" />{" "}
-                <span className="link-name">Notifications</span>
-                {/* Increased size to 32x32 pixels */}
+              <div className="relative ">
+                <FaBell className="text-white ml-6 mt-1 text-2xl" />{" "}
                 {unreadCount > 0 && (
                   <span className="absolute -top-2 left-2 bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
                     {unreadCount}
                   </span>
                 )}
-                
+                <span className="link-name ">Notifications</span>
               </div>
-
-              
             </Link>
 
-            <Link to="/boardOfDirectors" className="link-item mt-5 ">
+            <Link to="/boardOfDirectors" className="link-item mt-8 ">
               <FaPeopleLine className="text-white text-2xl" />
               <span className="link-name">Board Members</span>
             </Link>
