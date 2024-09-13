@@ -18,10 +18,10 @@ function HeaderBottom({ openModal }) {
           ) ? ( */}
           <div className="headerBottomRgt">
             <div
-              className="themeBtn bg-[#195b7a] hover:bg-[#0a6249]  mt-3 font-bold"
+              className="themeBtn bg-[#195b7a] py-4 hover:bg-[#0a6249]  mt-3 font-bold"
               onClick={openModal}
             >
-              Create BMR
+              Design BMR
             </div>
           </div>
           {/* ) : null} */}
