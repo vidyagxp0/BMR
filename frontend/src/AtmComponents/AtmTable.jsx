@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const AtmTable = ({ columns = [], data = [], rowsPerPage = 9 }) => {
+const AtmTable = ({ columns = [], data = [], rowsPerPage = 5 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(data.length / rowsPerPage);
   const navigate = useNavigate();

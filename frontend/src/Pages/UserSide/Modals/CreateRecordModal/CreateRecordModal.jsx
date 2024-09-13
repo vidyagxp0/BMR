@@ -95,9 +95,12 @@ function CreateRecordModal({ open, onClose }) {
         console.log(response.data.message.split(" ")[3], "gdgdgdf");
         toast.success(response.data.message || "BMR added successfully!");
         dispatch(addBmr(response.data.bmr));
-        navigate(`/process/processdetails/${response.data.message.split(" ")[3]}`, {
-          state: { bmr: response.data.bmr },
-        });
+        navigate(
+          `/process/processdetails/${response.data.message.split(" ")[3]}`,
+          {
+            state: { bmr: response.data.bmr },
+          }
+        );
         setFormData({ name: "", reviewers: [], approvers: [] });
         setIsSelectedReviewer([]);
         setIsSelectedApprover([]);
@@ -296,6 +299,7 @@ function CreateRecordModal({ open, onClose }) {
                 InputLabelProps={{
                   style: {
                     top: "0",
+                    padding:'2px'
                   },
                 }}
               />
@@ -310,6 +314,7 @@ function CreateRecordModal({ open, onClose }) {
                 InputProps={{
                   style: {
                     height: "48px",
+                    
                   },
                 }}
                 InputLabelProps={{

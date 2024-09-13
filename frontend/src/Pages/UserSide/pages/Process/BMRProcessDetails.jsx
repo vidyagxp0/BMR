@@ -15,11 +15,11 @@ import { FaRegFilePdf } from "react-icons/fa";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { AiOutlineAudit } from "react-icons/ai";
-import {formattedDate} from "../../../../AtmComponents/Helper"
+import { formattedDate } from "../../../../AtmComponents/Helper";
 
 const BMRProcessDetails = ({ fieldData }) => {
   const [data, setData] = useState([]);
-  console.log(data,"datatatat")
+  console.log(data, "datatatat");
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
@@ -985,7 +985,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                         key={index}
                         className="p-4 flex flex-col bg-white rounded-2xl shadow-lg border border-gray-300 mb-4"
                       >
-                        <label className="text-lg font-extrabold text-gray-700 mb-2">
+                        <label className="text-lg font-extrabold text-gray-700 mb-2 ">
                           {field.fieldName}
                           {activeFlowTab === "INITIATION" &&
                             field.fieldName === "Initiator Comments" && (
@@ -1060,7 +1060,6 @@ const BMRProcessDetails = ({ fieldData }) => {
                             style={{ border: "1px solid gray", height: "30px" }}
                             value={field.value || ""}
                             disabled
-
                           />
                         )}
                         {field.field_type === "date" && (
@@ -1095,7 +1094,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                   </div>
                 </div>
               ))}
-               {activeDefaultTab === "Approver Remarks" &&
+            {activeDefaultTab === "Approver Remarks" &&
               fields[activeDefaultTab]?.map((section, secIndex) => (
                 <div key={secIndex} className="mb-20">
                   <div className="col-span-3 p-4 mt-4 rounded bg-gray-100 mb-5 font-semibold text-gray-700 border border-gray-300">
