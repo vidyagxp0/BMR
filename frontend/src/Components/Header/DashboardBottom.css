@@ -13,8 +13,11 @@
 
 .Header_Bottom .headerBottomLft {
   display: flex;
+  /* border: 2px solid red; */
   align-items: center;
-  gap: 20px;
+  width: 50px;
+  gap: 30px;
+  /* margin-left: 235px; */
 }
 
 .navItem {

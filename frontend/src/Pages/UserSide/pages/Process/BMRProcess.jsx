@@ -64,7 +64,7 @@ const BMRProcess = () => {
             {row.original.division_id === 1
               ? "India"
               : row.original.division_id === 2
-              ? "Malasia "
+              ? "Malaysia "
               : row.original.division_id === 3
               ? "EU"
               : "EMEA"}
@@ -326,14 +326,14 @@ const BMRProcess = () => {
       <HeaderBottom openModal={() => setIsModalOpen(true)} />
       {/* Search Input */}
       <div className=" flex items-center justify-center w-full mb-2">
-        <div className="relative flex items-center mr-5 w-[350px] rounded">
+        <div className="relative flex items-center mr-5 w-[350px] rounded ">
           {/* Fixed width container */}
           <input
             type="text"
             placeholder="Search by BMR Name"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border p-2  h-10 rounded pl-4 pr-10 w-full focus:outline-none" // Padding for icon space
+            className="border p-2  h-10 rounded pl-4 pr-10 w-full focus:p-3 focus:outline-none" // Padding for icon space
             style={{ border: "1px solid black" }}
           />
           <AiOutlineSearch
@@ -344,7 +344,7 @@ const BMRProcess = () => {
         {/* Search Icon after input */}
       </div>
 
-      <div className="tabs flex justify-around border-b">
+      <div className="tabs flex justify-stretch gap-16 border-b">
         {[
           "All",
           "Under Initiation",
