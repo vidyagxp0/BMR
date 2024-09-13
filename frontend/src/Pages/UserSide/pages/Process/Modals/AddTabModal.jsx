@@ -16,6 +16,7 @@ const AddTabModal = ({
     updateTab === "edit" ? existingTabName : ""
   );
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const { bmr_id } = useParams();
   const token = localStorage.getItem("user-token");

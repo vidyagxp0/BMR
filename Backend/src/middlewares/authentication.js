@@ -26,7 +26,7 @@ function checkJwtToken(req, res, next) {
 
 const getFileUrl = (file) => {
   if (file?.filename) {
-    return `http://192.168.1.34:7000/profile_pics/${file?.filename}`;
+    return `https://localhost:7000/profile_pics/${file?.filename}`;
   }
 };
 

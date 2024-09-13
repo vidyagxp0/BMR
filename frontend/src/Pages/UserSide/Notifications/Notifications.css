@@ -1,0 +1,16 @@
+.notification-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 50px;
+}
+
+.notification-message {
+    flex: 1;
+    /* Allows the message to take up the remaining space */
+}
+
+.notification-time {
+    white-space: nowrap;
+    /* Ensures the time does not wrap */
+}

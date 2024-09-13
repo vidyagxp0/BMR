@@ -12,6 +12,7 @@ const FormAuditTrail = require("../models/form_audittrail.model");
 const puppeteer = require("puppeteer");
 const path = require("path");
 const fs = require("fs");
+const Notifications = require("../models/notifications.model");
 
 const getUserById = async (user_id) => {
   const user = await User.findOne({ where: { user_id, isActive: true } });
@@ -19,7 +20,18 @@ const getUserById = async (user_id) => {
 };
 
 exports.postBMR = async (req, res) => {
-  const { name, reviewers, approvers, password, declaration } = req.body;
+  const {
+    name,
+    description,
+    division_id,
+    department_id,
+    due_date,
+    reviewers,
+    approvers,
+    password,
+    declaration,
+    comments,
+  } = req.body;
 
   const transaction = await sequelize.transaction(); // Start a transaction
 
@@ -57,7 +69,12 @@ exports.postBMR = async (req, res) => {
       !Array.isArray(reviewers) ||
       !Array.isArray(approvers) ||
       reviewers.length === 0 ||
-      approvers.length === 0
+      approvers.length === 0 ||
+      !due_date ||
+      !division_id ||
+      !department_id ||
+      !description ||
+      !comments
     ) {
       return res.status(400).json({
         error: true,
@@ -86,6 +103,10 @@ exports.postBMR = async (req, res) => {
         name: name,
         reviewers: reviewers,
         approvers: approvers,
+        description: description,
+        division_id: division_id,
+        department_id: department_id,
+        due_date: due_date,
         initiator: req.user.userId,
         stage: 1,
         status: "Under Initiation",
@@ -104,6 +125,7 @@ exports.postBMR = async (req, res) => {
           previous_status: "Not Applicable",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "BMR Created",
         },
         { transaction }
@@ -143,6 +165,7 @@ exports.postBMR = async (req, res) => {
 
           const mailData = {
             bmrName: bmr.name,
+            user_id: userId,
             initiator: initiatorData.get("name"),
             dateOfInitiation: dateOfInitiation,
             status: "Initiation",
@@ -154,10 +177,10 @@ exports.postBMR = async (req, res) => {
               : { approverName: userData.get("name") }),
           };
 
-          // await Mailer.sendEmail(
-          //   person.role === "reviewer" ? "assignReviewer" : "assignApprover",
-          //   mailData
-          // );
+          await Mailer.sendEmail(
+            person.role === "reviewer" ? "assignReviewer" : "assignApprover",
+            mailData
+          );
         } catch (emailError) {
           // Log the error but don't throw it to ensure transaction commits
           console.error("Failed to send email:", emailError.message);
@@ -171,7 +194,7 @@ exports.postBMR = async (req, res) => {
     // Send success response
     res.status(200).json({
       error: false,
-      message: "BMR Created successfully",
+      message: `BMR with id ${bmr?.bmr_id} Created successfully`,
     });
   } catch (e) {
     await transaction.rollback();
@@ -183,7 +206,7 @@ exports.postBMR = async (req, res) => {
 };
 
 exports.postBMRTab = async (req, res) => {
-  const { bmr_id, tab_name, password, declaration } = req.body;
+  const { bmr_id, tab_name, password, declaration, comments } = req.body;
 
   // Validate password and declaration
   if (!password || !declaration) {
@@ -262,6 +285,7 @@ exports.postBMRTab = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Tab Added",
         },
         { transaction }
@@ -291,8 +315,15 @@ exports.postBMRTab = async (req, res) => {
 };
 
 exports.postBMRSection = async (req, res) => {
-  const { bmr_id, bmr_tab_id, section_name, limit, password, declaration } =
-    req.body;
+  const {
+    bmr_id,
+    bmr_tab_id,
+    section_name,
+    limit,
+    password,
+    declaration,
+    comments,
+  } = req.body;
 
   // Validate password and declaration
   if (!password || !declaration) {
@@ -375,6 +406,7 @@ exports.postBMRSection = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Section Added",
         },
         { transaction }
@@ -423,6 +455,7 @@ exports.postBMRField = async (req, res) => {
     acceptsMultiple, // This will now potentially hold either options or grid definitions
     password,
     declaration,
+    comments,
   } = req.body;
 
   // Validate password and declaration
@@ -456,13 +489,7 @@ exports.postBMRField = async (req, res) => {
     }
 
     // Check for required fields
-    if (
-      !bmr_id ||
-      !bmr_tab_id ||
-      !bmr_section_id ||
-      !label ||
-      isRequired === undefined
-    ) {
+    if (!bmr_id || !bmr_tab_id || !bmr_section_id || !label || !field_type) {
       await transaction.rollback();
       return res.status(400).json({
         error: true,
@@ -553,6 +580,7 @@ exports.postBMRField = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Field Added",
         },
         { transaction }
@@ -584,7 +612,18 @@ exports.postBMRField = async (req, res) => {
 
 exports.editBMR = async (req, res) => {
   const bmr_id = req.params.id;
-  const { name, reviewers, approvers, password, declaration } = req.body;
+  const {
+    name,
+    due_date,
+    department_id,
+    division_id,
+    description,
+    reviewers,
+    approvers,
+    password,
+    declaration,
+    comments,
+  } = req.body;
 
   // Validate password and declaration
   if (!password || !declaration) {
@@ -666,6 +705,10 @@ exports.editBMR = async (req, res) => {
         name: name,
         reviewers: reviewers,
         approvers: approvers,
+        description: description,
+        division_id: division_id,
+        department_id: department_id,
+        due_date: due_date,
       },
       { where: { bmr_id: bmr_id }, transaction }
     );
@@ -681,6 +724,7 @@ exports.editBMR = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "BMR Updated",
         },
         { transaction }
@@ -712,7 +756,7 @@ exports.editBMR = async (req, res) => {
 
 exports.editBMRTab = async (req, res) => {
   const bmr_tab_id = req.params.id;
-  const { bmr_id, tab_name, password, declaration } = req.body;
+  const { bmr_id, tab_name, password, declaration, comments } = req.body;
 
   const transaction = await sequelize.transaction(); // Start a transaction
 
@@ -800,6 +844,7 @@ exports.editBMRTab = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Tab Updated",
         },
         { transaction }
@@ -831,8 +876,15 @@ exports.editBMRTab = async (req, res) => {
 
 exports.editBMRSection = async (req, res) => {
   const bmr_section_id = req.params.id;
-  const { bmr_id, section_name, bmr_tab_id, limit, password, declaration } =
-    req.body;
+  const {
+    bmr_id,
+    section_name,
+    bmr_tab_id,
+    limit,
+    password,
+    declaration,
+    comments,
+  } = req.body;
 
   // Validate password and declaration
   if (!password || !declaration) {
@@ -934,6 +986,7 @@ exports.editBMRSection = async (req, res) => {
           previous_status: "Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Section Updated",
         },
         { transaction }
@@ -983,6 +1036,7 @@ exports.editBMRField = async (req, res) => {
     acceptsMultiple,
     password,
     declaration,
+    comments,
   } = req.body;
 
   // Validate password and declaration
@@ -1104,15 +1158,27 @@ exports.editBMRField = async (req, res) => {
 
     // Log audit trail synchronously to ensure consistency within the transaction
     try {
+      const previousField = await BMR_field.findOne({
+        where: {
+          bmr_id: bmr_id,
+          bmr_tab_id: bmr_tab_id,
+          bmr_section_id: bmr_section_id,
+          bmr_field_id: bmr_field_id,
+          isActive: true,
+        },
+        transaction,
+      });
+
       await FormAuditTrail.create(
         {
           bmr_id: bmr_id,
           changed_by: req.user.userId,
-          previous_value: JSON.stringify(existingField.label),
+          previous_value: JSON.stringify(previousField?.label),
           new_value: JSON.stringify(label),
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Field Updated",
         },
         { transaction }
@@ -1143,7 +1209,7 @@ exports.editBMRField = async (req, res) => {
 
 exports.deleteBMR = async (req, res) => {
   const bmrId = req.params.id;
-  const { password, declaration } = req.body;
+  const { password, declaration, comments } = req.body;
 
   // Validate password and declaration before starting the transaction
   if (!password || !declaration) {
@@ -1209,6 +1275,7 @@ exports.deleteBMR = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "BMR Deleted",
         },
         { transaction }
@@ -1239,7 +1306,7 @@ exports.deleteBMR = async (req, res) => {
 
 exports.deleteBMRTab = async (req, res) => {
   const bmrTabId = req.params.id;
-  const { password, declaration } = req.body;
+  const { password, declaration, comments } = req.body;
 
   // Validate password and declaration before starting the transaction
   if (!password || !declaration) {
@@ -1305,6 +1372,7 @@ exports.deleteBMRTab = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Tab Deleted",
         },
         { transaction }
@@ -1335,7 +1403,7 @@ exports.deleteBMRTab = async (req, res) => {
 
 exports.deleteBMRSection = async (req, res) => {
   const bmrSectionId = req.params.id;
-  const { password, declaration } = req.body;
+  const { password, declaration, comments } = req.body;
 
   // Validate password and declaration before starting the transaction
   if (!password || !declaration) {
@@ -1401,6 +1469,7 @@ exports.deleteBMRSection = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Section Deleted",
         },
         { transaction }
@@ -1431,7 +1500,7 @@ exports.deleteBMRSection = async (req, res) => {
 
 exports.deleteBMRField = async (req, res) => {
   const bmrFieldId = req.params.id;
-  const { password, declaration } = req.body;
+  const { password, declaration, comments } = req.body;
 
   // Validate password and declaration before starting the transaction
   if (!password || !declaration) {
@@ -1497,6 +1566,7 @@ exports.deleteBMRField = async (req, res) => {
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Field Deleted",
         },
         { transaction }
@@ -1579,7 +1649,6 @@ exports.getBMR = (req, res) => {
         where: { isActive: true },
         required: false,
         include: [
-          // Include fields within each tab
           {
             model: BMR_section,
             where: { isActive: true },
@@ -1593,6 +1662,12 @@ exports.getBMR = (req, res) => {
             ],
           },
         ],
+      },
+      {
+        model: User,
+        as: "Initiator",
+        attributes: ["user_id", "name", "email"],
+        required: false,
       },
     ],
   })
@@ -1654,7 +1729,8 @@ exports.getApprovedBMRs = async (req, res) => {
 };
 
 exports.SendBMRForReview = async (req, res) => {
-  const { bmr_id, email, password, initiatorComment, declaration } = req.body;
+  const { bmr_id, email, password, initiatorComment, declaration, comments } =
+    req.body;
 
   // Validate required fields
   if (!bmr_id) {
@@ -1723,6 +1799,7 @@ exports.SendBMRForReview = async (req, res) => {
         previous_status: "Under Initiation",
         new_status: "Under Review",
         declaration: declaration,
+        comments: comments,
         action: "Send for Review",
       },
       { transaction }
@@ -1731,27 +1808,28 @@ exports.SendBMRForReview = async (req, res) => {
     await transaction.commit(); // Commit the transaction
 
     // Send review emails asynchronously
-    // const emailPromises = form.reviewers.map(async (person) => {
-    //   const userData = await getUserById(person.reviewerId);
-    //   const initiatorData = await getUserById(form.initiator);
+    const emailPromises = form.reviewers.map(async (person) => {
+      const userData = await getUserById(person.reviewerId);
+      const initiatorData = await getUserById(form.initiator);
 
-    //   const mailData = {
-    //     bmrName: form.name,
-    //     initiator: initiatorData.name,
-    //     dateOfInitiation: new Date().toISOString().split("T")[0],
-    //     status: "Under Review",
-    //     recipients: userData.email,
-    //     reviewerName: userData.name,
-    //   };
+      const mailData = {
+        bmrName: form.name,
+        user_id: person.reviewerId,
+        initiator: initiatorData.name,
+        dateOfInitiation: new Date().toISOString().split("T")[0],
+        status: "Under Review",
+        recipients: userData.email,
+        reviewerName: userData.name,
+      };
 
-    // //   try {
-    // //     await Mailer.sendEmail("reminderReviewer", mailData);
-    // //   } catch (emailError) {
-    // //     console.error("Failed to send email to reviewer:", emailError.message);
-    // //   }
-    // });
+      try {
+        await Mailer.sendEmail("reminderReviewer", mailData);
+      } catch (emailError) {
+        console.error("Failed to send email to reviewer:", emailError.message);
+      }
+    });
 
-    // await Promise.all(emailPromises);
+    await Promise.all(emailPromises);
 
     res.status(200).json({
       error: false,
@@ -1770,7 +1848,7 @@ exports.SendBMRForReview = async (req, res) => {
 };
 
 exports.SendBMRfromReviewToOpen = async (req, res) => {
-  const { bmr_id, email, password, declaration } = req.body;
+  const { bmr_id, email, password, declaration, comments } = req.body;
 
   // Validate required fields
   if (!bmr_id) {
@@ -1847,6 +1925,7 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
           previous_status: "Under Review",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Send from Review to Open",
         },
         { transaction }
@@ -1871,25 +1950,26 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
         .json({ error: true, message: "Initiator not found." });
     }
 
-    // const date = new Date();
-    // const dateOfInitiation = `${String(date.getDate()).padStart(
-    //   2,
-    //   "0"
-    // )}-${String(date.getMonth() + 1).padStart(2, "0")}-${date.getFullYear()}`;
+    const date = new Date();
+    const dateOfInitiation = `${String(date.getDate()).padStart(
+      2,
+      "0"
+    )}-${String(date.getMonth() + 1).padStart(2, "0")}-${date.getFullYear()}`;
 
-    // const mailData = {
-    //   bmrName: form.name,
-    //   initiator: initiator.get("name"),
-    //   dateOfInitiation: dateOfInitiation,
-    //   status: "Under Initiation",
-    //   initiatorName: initiator.get("name"),
-    //   recipients: initiator.get("email"),
-    // };
+    const mailData = {
+      bmrName: form.name,
+      user_id: form.initiator,
+      initiator: initiator.get("name"),
+      dateOfInitiation: dateOfInitiation,
+      status: "Under Initiation",
+      initiatorName: initiator.get("name"),
+      recipients: initiator.get("email"),
+    };
 
-    // // Send email to the initiator asynchronously
-    // Mailer.sendEmail("reminderInitiator", mailData).catch((emailError) => {
-    //   console.error("Failed to send email to initiator:", emailError.message);
-    // });
+    // Send email to the initiator asynchronously
+    Mailer.sendEmail("reminderInitiator", mailData).catch((emailError) => {
+      console.error("Failed to send email to initiator:", emailError.message);
+    });
 
     return res.status(200).json({
       error: false,
@@ -1908,7 +1988,7 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
 };
 
 exports.SendBMRReviewToApproval = async (req, res) => {
-  const { bmr_id, reviewComment, password, declaration } = req.body;
+  const { bmr_id, reviewComment, password, declaration, comments } = req.body;
 
   // Validate required fields
   if (!password || !declaration) {
@@ -2015,6 +2095,7 @@ exports.SendBMRReviewToApproval = async (req, res) => {
           previous_status: "Under Review",
           new_status: "Under Approval",
           declaration: declaration,
+          comments: comments,
           action: "Send from Review to Approval",
         },
         { transaction }
@@ -2022,30 +2103,31 @@ exports.SendBMRReviewToApproval = async (req, res) => {
 
       await transaction.commit(); // Commit the transaction
 
-      // // Prepare and send email to approvers asynchronously
-      // const emailPromises = form.approvers.map(async (approver) => {
-      //   const approverData = await getUserById(approver.approverId);
-      //   const initiatorData = await getUserById(form.initiator);
-      //   const mailData = {
-      //     bmrName: form.name,
-      //     dateOfInitiation: dateOfInitiation,
-      //     status: "Under Approval",
-      //     initiator: initiatorData.get("name"),
-      //     approverName: approverData.get("name"),
-      //     recipients: approverData.get("email"),
-      //   };
+      // Prepare and send email to approvers asynchronously
+      const emailPromises = form.approvers.map(async (approver) => {
+        const approverData = await getUserById(approver.approverId);
+        const initiatorData = await getUserById(form.initiator);
+        const mailData = {
+          bmrName: form.name,
+          dateOfInitiation: dateOfInitiation,
+          user_id: form.initiator,
+          status: "Under Approval",
+          initiator: initiatorData.get("name"),
+          approverName: approverData.get("name"),
+          recipients: approverData.get("email"),
+        };
 
-      //   try {
-      //     await Mailer.sendEmail("reminderApprover", mailData);
-      //   } catch (emailError) {
-      //     console.error(
-      //       "Failed to send email to approver:",
-      //       emailError.message
-      //     );
-      //   }
-      // });
+        try {
+          await Mailer.sendEmail("reminderApprover", mailData);
+        } catch (emailError) {
+          console.error(
+            "Failed to send email to approver:",
+            emailError.message
+          );
+        }
+      });
 
-      // await Promise.all(emailPromises);
+      await Promise.all(emailPromises);
     } else {
       // If not all reviewers have reviewed, simply update the reviewers' statuses
       await form.update(updateData, { transaction });
@@ -2060,6 +2142,7 @@ exports.SendBMRReviewToApproval = async (req, res) => {
           previous_status: "Under Review",
           new_status: "Under Review",
           declaration: declaration,
+          comments: comments,
           action: "Send from Review to Approval",
         },
         { transaction }
@@ -2087,7 +2170,7 @@ exports.SendBMRReviewToApproval = async (req, res) => {
 };
 
 exports.SendBMRfromApprovalToOpen = async (req, res) => {
-  const { bmr_id, email, password, declaration } = req.body;
+  const { bmr_id, email, password, declaration, comments } = req.body;
 
   // Validate required fields
   if (!bmr_id) {
@@ -2172,6 +2255,7 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
           previous_status: "Under Approval",
           new_status: "Under Initiation",
           declaration: declaration,
+          comments: comments,
           action: "Send from Approval to Open",
         },
         { transaction }
@@ -2196,26 +2280,27 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
         .json({ error: true, message: "Initiator not found." });
     }
 
-    // // Prepare mail data for the initiator
-    // const date = new Date();
-    // const dateOfInitiation = `${String(date.getDate()).padStart(
-    //   2,
-    //   "0"
-    // )}-${String(date.getMonth() + 1).padStart(2, "0")}-${date.getFullYear()}`;
+    // Prepare mail data for the initiator
+    const date = new Date();
+    const dateOfInitiation = `${String(date.getDate()).padStart(
+      2,
+      "0"
+    )}-${String(date.getMonth() + 1).padStart(2, "0")}-${date.getFullYear()}`;
 
-    // const mailData = {
-    //   bmrName: form.name,
-    //   initiator: initiator.get("name"),
-    //   dateOfInitiation: dateOfInitiation,
-    //   status: "Under Initiation",
-    //   initiatorName: initiator.get("name"),
-    //   recipients: initiator.get("email"),
-    // };
+    const mailData = {
+      bmrName: form.name,
+      user_id: form.initiator,
+      initiator: initiator.get("name"),
+      dateOfInitiation: dateOfInitiation,
+      status: "Under Initiation",
+      initiatorName: initiator.get("name"),
+      recipients: initiator.get("email"),
+    };
 
-    // // Send email to the initiator asynchronously
-    // Mailer.sendEmail("reminderInitiator", mailData).catch((emailError) => {
-    //   console.error("Failed to send email to initiator:", emailError.message);
-    // });
+    // Send email to the initiator asynchronously
+    Mailer.sendEmail("reminderInitiator", mailData).catch((emailError) => {
+      console.error("Failed to send email to initiator:", emailError.message);
+    });
 
     return res.status(200).json({
       error: false,
@@ -2234,7 +2319,7 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
 };
 
 exports.ApproveBMR = async (req, res) => {
-  const { bmr_id, approvalComment, password, declaration } = req.body;
+  const { bmr_id, approvalComment, password, declaration, comments } = req.body;
 
   // Validate required fields
   if (!password || !declaration) {
@@ -2333,6 +2418,7 @@ exports.ApproveBMR = async (req, res) => {
         previous_status: "Under Approval",
         new_status: allApproved ? "Approved" : "Under Approval",
         declaration: declaration,
+        comments: comments,
         action: "Approve BMR form",
       },
       { transaction }
@@ -2562,6 +2648,53 @@ exports.getBMRformAuditTrail = async (req, res) => {
     return res.status(500).json({
       error: true,
       message: `Error retrieving audit trail: ${error.message}`,
+    });
+  }
+};
+
+exports.getUserNotifications = async (req, res) => {
+  try {
+    const userId = req.user.userId; // Ensure you have authentication and validation in place
+    const notifications = await Notifications.findAll({
+      where: {
+        user_id: userId,
+      },
+      order: [["createdAt", "DESC"]],
+    });
+    res.json(notifications);
+  } catch (error) {
+    res.status(500).send({
+      message: "Error retrieving notifications",
+      error: error.message,
+    });
+  }
+};
+
+exports.readAUserNotification = async (req, res) => {
+  try {
+    const notificationIds = req.body.notification_ids; // Assuming notification_ids is an array
+
+    // Create an update statement using Sequelize's `in` operator
+    const updateResult = await Notifications.update(
+      { isRead: true },
+      {
+        where: {
+          notification_id: {
+            [Op.in]: notificationIds,
+          },
+        },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      res.send({ message: "Notifications marked as read" });
+    } else {
+      res.send({ message: "No notifications found to update" });
+    }
+  } catch (error) {
+    res.status(500).send({
+      message: "Error marking notifications as read",
+      error: error.message,
     });
   }
 };

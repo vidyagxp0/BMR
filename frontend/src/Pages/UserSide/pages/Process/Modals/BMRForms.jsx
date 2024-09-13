@@ -29,7 +29,7 @@ const BMRForms = () => {
         setApprovedBMR(response.data.message);
       })
       .catch((error) => {
-        console.error("Error fetching data:", error);
+        console.error("Failed to fetch BMR's:", error);
       });
   }, []);
 

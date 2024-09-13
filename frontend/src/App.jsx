@@ -23,6 +23,7 @@ import BoardOfDirectors from "./Pages/HeaderComponents/BoardOfDirectors";
 import AuditTrail from "./Pages/UserSide/auditTrail/auditTrail";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import Notifications from "./Pages/UserSide/Notifications/Notifications";
 import BMRForms from "./Pages/UserSide/pages/Process/Modals/BMRForms";
 import Analytics from "./Pages/UserSide/Analytics/Analytics";
 import Logs from "./Pages/UserSide/Logs/Logs.jsx";
@@ -77,6 +78,10 @@ function RouteGuard() {
         <Route
           path="/bmr_records"
           element={<ProtectedUserRoute element={<BMRRecords />} />}
+        />
+        <Route
+          path="/user-notifications"
+          element={<ProtectedUserRoute element={<Notifications />} />}
         />
         <Route
           path="/analytics"

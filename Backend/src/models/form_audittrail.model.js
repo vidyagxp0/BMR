@@ -45,6 +45,10 @@ const FormAuditTrail = sequelize.define("FormAuditTrail", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  comments: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   action: {
     type: DataTypes.STRING,
     allowNull: false,

@@ -1,10 +1,12 @@
 const nodemailer = require("nodemailer");
+const Notifications = require("../models/notifications.model");
+const { getIo } = require("../socket");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "quality@vidyagxp.com",
-    pass: "iwhh mwod abrj ilbs",
+    user: "info@vidyagxp.com",
+    pass: "rigi cdgu mwuf wnmh",
   },
 });
 
@@ -184,19 +186,51 @@ const createEmailTemplate = (type, data) => {
 };
 
 exports.sendEmail = (type, data) => {
-  const { subject, html } = createEmailTemplate(type, data);
+  try {
+    const { subject, html } = createEmailTemplate(type, data);
 
-  const mailOptions = {
-    from: "quality@vidyagxp.com",
-    to: data.recipients, // Multiple recipients can be separated by commas
-    subject: subject,
-    html: html,
-  };
+    const mailOptions = {
+      from: "info@vidyagxp.com",
+      to: data.recipients,
+      subject: subject,
+      html: html,
+    };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return console.log("Error while sending mail", error);
+    let date = new Date();
+
+    try {
+      getIo().to(data.user_id.toString()).emit("new_notification", {
+        title: type,
+        message: subject,
+        data: data,
+        createdAt: date,
+      });
+    } catch (emitError) {
+      console.error(
+        `Error emitting 'new_notification' to user ${data.user_id}`,
+        emitError
+      );
     }
-    console.log("Email sent: %s", info.messageId);
-  });
+
+    transporter.sendMail(mailOptions, async (error, info) => {
+      if (error) {
+        console.error("Error while sending mail", error);
+        return;
+      }
+      console.log(`Email sent: ${info.response}`);
+      try {
+        await Notifications.create({
+          user_id: data.user_id,
+          title: type,
+          message: subject,
+          data: data,
+        });
+        console.log(`Notification created for user ID ${data.user_id}`);
+      } catch (dbError) {
+        console.error("Error creating notification in the database", dbError);
+      }
+    });
+  } catch (e) {
+    console.error("Unexpected error occurred while sending email", e);
+  }
 };

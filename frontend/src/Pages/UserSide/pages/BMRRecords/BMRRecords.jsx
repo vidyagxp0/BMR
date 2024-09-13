@@ -65,6 +65,7 @@ const BMRRecords = () => {
       "General Information": initialFields,
     }));
   }, [selectedBMR]);
+  console.log(selectedBMR, "211111111111");
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
