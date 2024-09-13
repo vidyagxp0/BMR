@@ -23,7 +23,6 @@ const BMRProcessDetails = ({ fieldData }) => {
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
-  // console.log(bmrFields, "0000000000000000000000000");
   const [tabs, setTabs] = useState([
     "Initiator Remarks",
     "Reviewer Remarks",
@@ -272,7 +271,7 @@ const BMRProcessDetails = ({ fieldData }) => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://localhost:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.34:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -346,7 +345,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.initiatorDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://localhost:7000/bmr-form/send-BMR-for-review",
+          "http://192.168.1.34:7000/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -363,7 +362,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://localhost:7000/bmr-form/send-BMR-from-review-to-approval",
+          "http://192.168.1.34:7000/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -380,7 +379,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://localhost:7000/bmr-form/send-BMR-from-review-to-open",
+          "http://192.168.1.34:7000/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -395,7 +394,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://localhost:7000/bmr-form/approve-BMR",
+          "http://192.168.1.34:7000/bmr-form/approve-BMR",
           dataObject,
           config
         )
@@ -412,7 +411,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://localhost:7000/bmr-form/send-BMR-from-approval-to-open",
+          "http://192.168.1.34:7000/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -497,7 +496,7 @@ const BMRProcessDetails = ({ fieldData }) => {
 
         // Make API request to generate PDF
         const response = await axios({
-          url: "http://localhost:7000/bmr-form/generate-report",
+          url: "http://192.168.1.34:7000/bmr-form/generate-report",
           method: "POST",
           responseType: "blob",
           headers: {
@@ -743,7 +742,18 @@ const BMRProcessDetails = ({ fieldData }) => {
     populateReviewerFields();
   }, [data]);
 
-  
+  const formattedDateForInput = (dateString) => {
+    if (dateString === "NA" || !dateString) {
+      return "";  // Return an empty string if the date is not available
+    }
+    
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+  };
   return (
     <div className="p-4 relative h-full">
       <header className="bg-[#346c86] w-full shadow-lg flex justify-between items-center p-4 mb-4">
@@ -781,7 +791,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                  <AtmButton
                 label={newTab.BMR_Tabs?.length > 0 ?"Edit Form":"Create Form"}
                 onClick={() => setShowForm("sendForm")}
-                className="bg-blue-500 hover:bg-blue-600 px-4 py-2"
+                className="bg-[#193948] hover:bg-[#122f3d] px-4 py-2"
               />
                  
                 </>
@@ -913,7 +923,7 @@ const BMRProcessDetails = ({ fieldData }) => {
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleFlowTabClick(tab)}
-              className={`py-2 px-4 rounded border-2 border-black ${
+              className={`py-2 px-4 rounded border-2 border-black text-white ${
                 activeFlowTab === tab
                   ? "bg-[#103546] text-white"
                   : "bg-[#3a88b3] text-black "
@@ -994,7 +1004,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                         {field.field_type === "date" && (
                           <input
                             type="date"
-                            value={formattedDate(data[0]?.date_of_initiation)}
+                            value={formattedDateForInput(data[0]?.date_of_initiation)}
                             className="border border-gray-600 p-2 w-full rounded mt-2"
                             style={{ border: "1px solid gray", height: "30px" }}
                             required={field.isMandatory}
@@ -1054,14 +1064,14 @@ const BMRProcessDetails = ({ fieldData }) => {
                           />
                         )}
                         {field.field_type === "date" && (
-                          <input
-                            type="date"
-                            value={field.value || ""}
-                            className="border border-gray-600 p-2 w-full rounded"
-                            style={{ border: "1px solid gray", height: "30px" }}
-                           readOnly
-                          />
-                        )}
+  <input
+    type="date"
+    value={formattedDateForInput(data[0]?.reviewers?.map((date)=>date?.date_of_review))}
+    className="border border-gray-600 p-2 w-full rounded"
+    style={{ border: "1px solid gray", height: "30px" }}
+    readOnly
+  />
+)}
                        {field.field_type === "text-area" && (
                           <textarea
                             className="border border-gray-600 p-2 w-full rounded mt-2"
@@ -1116,6 +1126,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                         {field.field_type === "date" && (
                           <input
                             type="date"
+                            value={formattedDateForInput(data[0]?.approvers?.map((date)=>date?.date_of_approval))}
                             className="border border-gray-600 p-2 w-full rounded"
                             style={{ border: "1px solid gray", height: "30px" }}
                             readOnly
