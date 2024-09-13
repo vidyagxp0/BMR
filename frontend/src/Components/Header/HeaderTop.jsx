@@ -17,7 +17,7 @@ function HeaderTop() {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    setSocket(socketIOClient("http://192.168.1.25:7000/"));
+    setSocket(socketIOClient("http://192.168.1.34:7000/"));
     return () => {
       if (socket) socket.disconnect();
     };
@@ -60,30 +60,30 @@ function HeaderTop() {
         <div className="right">
           <div className="links-container mr-10">
             <Link to="/user-notifications" className="link-item mt-8 ">
-              <FaBell size={22} />
+              <FaBell className="text-white text-xl" />
               {unreadCount > 0 && (
                 <span className="unread-badge">{unreadCount}</span>
               )}
               <span className="link-name">Notifications</span>
             </Link>
             <Link to="/boardOfDirectors" className="link-item mt-8 ">
-              <FaPeopleLine size={22} />
+              <FaPeopleLine className="text-white text-xl" />
               <span className="link-name">Board Members</span>
             </Link>
             <Link to="/about" className="link-item mt-8 ">
-              <FaGlobe size={22} />
+              <FaGlobe className="text-white text-xl" />
               <span className="link-name">About</span>
             </Link>
             <Link to="/help" className="link-item mt-8 ">
-              <FaHandsHelping size={22} />
+              <FaHandsHelping className="text-white text-xl" />
               <span className="link-name">Help</span>
             </Link>
             <Link to="/helpdesk" className="link-item mt-8 ">
-              <FaHeadset size={22} />
+              <FaHeadset className="text-white text-xl" />
               <span className="link-name">Helpdesk Personnel</span>
             </Link>
             <Link to="/" className="link-item mt-8 " onClick={handleLogout}>
-              <FaSignOutAlt size={22} />
+              <FaSignOutAlt className="text-white text-xl" />
               <span className="link-name">Logout</span>
             </Link>
           </div>

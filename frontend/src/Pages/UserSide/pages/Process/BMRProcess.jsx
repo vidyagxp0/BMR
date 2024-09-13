@@ -14,12 +14,17 @@ import "react-toastify/dist/ReactToastify.css";
 
 const BMRProcess = () => {
   const [data, setData] = useState([]);
+  // console.log(data, "000000000000000000");
   const [activeTab, setActiveTab] = useState("All");
-  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [showDeleteUser, setShowDeleteUser] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedDivision, setSelectedDivision] = useState(0);
+  const [selectedDepartment, setSelectedDepartment] = useState(0);
+  console.log(setSelectedDivision, "55555555555");
+  console.log(setSelectedDepartment, "111111111111f");
   const navigate = useNavigate();
 
   const columns = [
@@ -173,7 +178,7 @@ const BMRProcess = () => {
 
   const fetchBMRData = () => {
     axios
-      .get("http://192.168.1.25:7000/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.34:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -195,7 +200,68 @@ const BMRProcess = () => {
     fetchBMRData();
   }, []);
 
-  // Filter data based on active tab and search query
+  const [selectedFilter, setSelectedFilter] = useState("");
+
+  const handleFilterChange = (e) => {
+    setSelectedFilter(e.target.value);
+    setSelectedDivision(""); // Reset division when changing filter
+    setSelectedDepartment(""); // Reset department when changing filter
+  };
+  const handleDivisionChange = (e) => {
+    setSelectedDivision(parseInt(e.target.value));
+  };
+
+  const handleDepartmentChange = (e) => {
+    setSelectedDepartment(parseInt(e.target.value));
+  };
+
+  const getSecondDropdownOptions = () => {
+    if (selectedFilter === "division") {
+      return (
+        <>
+          <option value="">Select Division</option>
+          <option value={1}>India</option>
+          <option value={2}>Malaysia</option>
+          <option value={3}>EU</option>
+          <option value={4}>EMEA</option>
+        </>
+      );
+    } else if (selectedFilter === "department") {
+      return (
+        <>
+          <option value="">Select Department</option>
+          <option value={1}>Corporate Quality Assurance</option>
+          <option value={2}>Quality Assurance Biopharma</option>
+          <option value={3}>Central Quality Control</option>
+          <option value={4}>Manufacturing</option>
+          <option value={5}>Plasma Sourcing Group</option>
+          <option value={6}>Central Stores</option>
+          <option value={7}>Information Technology Group</option>
+          <option value={8}>Molecular Medicine</option>
+          <option value={9}>Central Laboratory</option>
+          <option value={10}>Tech Team</option>
+          <option value={11}>Quality Assurance</option>
+          <option value={12}>Quality Management</option>
+          <option value={13}>IT Administration</option>
+          <option value={14}>Accounting</option>
+          <option value={15}>Logistics</option>
+          <option value={16}>Senior Management</option>
+          <option value={17}>Business Administration</option>
+          <option value={18}>Others</option>
+          <option value={19}>Quality Control</option>
+          <option value={20}>Production</option>
+          <option value={21}>Accounting Manager</option>
+          <option value={22}>Quality Assurance Director</option>
+          <option value={23}>Quality Manager</option>
+          <option value={24}>Supervisor</option>
+          <option value={25}>Director</option>
+        </>
+      );
+    } else {
+      return <option value="">Please select a filter first</option>;
+    }
+  };
+
   const filteredData = data
     .filter((item) => {
       switch (activeTab) {
@@ -209,12 +275,24 @@ const BMRProcess = () => {
           return item.status === "Approved";
         case "All":
         default:
-          return true; // Show all data
+          return true;
       }
+    })
+    .filter((item) => {
+      if (selectedDivision) {
+        return item.division_id === selectedDivision;
+      }
+      return true;
+    })
+    .filter((item) => {
+      if (selectedDepartment) {
+        return item.department_id === selectedDepartment;
+      }
+      return true;
     })
     .filter((item) =>
       item.name.toLowerCase().includes(searchQuery.toLowerCase())
-    ); // Filter by search query
+    );
 
   const handleAddBMR = (
     name,
@@ -246,29 +324,27 @@ const BMRProcess = () => {
     <div>
       <ToastContainer />
       <HeaderBottom openModal={() => setIsModalOpen(true)} />
-
       {/* Search Input */}
-      <div className="my-4"></div>
-
-      {/* Tabs for filtering */}
-      <div className="tabs flex justify-start border-b">
-        <div className="relative flex items-center mr-5 w-[300px]">
-          {" "}
+      <div className=" flex items-center justify-center w-full mb-2">
+        <div className="relative flex items-center mr-5 w-[350px] rounded">
           {/* Fixed width container */}
           <input
             type="text"
             placeholder="Search by BMR Name"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border p-2 h-10 rounded pl-4 pr-10 w-full focus:outline-none" // Padding for icon space
+            className="border p-2  h-10 rounded pl-4 pr-10 w-full focus:outline-none" // Padding for icon space
             style={{ border: "1px solid black" }}
           />
           <AiOutlineSearch
             className="absolute right-3 text-gray-500"
             size={20}
           />{" "}
-          {/* Search Icon after input */}
         </div>
+        {/* Search Icon after input */}
+      </div>
+
+      <div className="tabs flex justify-around border-b">
         {[
           "All",
           "Under Initiation",
@@ -279,27 +355,57 @@ const BMRProcess = () => {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`relative px-6 py-2 text-sm font-semibold focus:outline-none transition
+            className={`relative  px-3 py-2 text-sm font-semibold focus:outline-none transition
               ${
                 activeTab === tab
-                  ? "text-black bg-gray-100 border-b-2 border-black"
-                  : "text-gray-500 hover:text-black hover:bg-gray-50"
+                  ? "text-black bg-blue-50 border-b-2 border-black"
+                  : "text-gray-500 hover:text-black hover:bg-blue-100"
               } 
               rounded-t-lg`}
             style={{
               borderBottom: activeTab === tab ? "2px solid blue" : "",
-              backgroundColor: activeTab === tab ? "#f3f4f6" : "", // Light gray for selected tab
+              backgroundColor: activeTab === tab ? "#f3f4f6" : "",
             }}
           >
             {tab}
           </button>
         ))}
+
+        {/* First Dropdown - Select Filter */}
+        <select
+          name="Select Filter"
+          value={selectedFilter}
+          onChange={handleFilterChange}
+          className="text-gray-500 hover:text-black hover:bg-blue-100 text-sm  hover:rounded-t-lg font-semibold"
+        >
+          <option value="">Select Filter</option>
+          <option value="division">Division</option>
+          <option value="department">Department</option>
+        </select>
+
+        {/* Second Dropdown - Options based on selected filter */}
+
+        <select
+        
+          value={
+            selectedFilter === "division"
+              ? selectedDivision
+              : selectedDepartment
+          }
+          onChange={
+            selectedFilter === "division"
+              ? handleDivisionChange
+              : handleDepartmentChange
+          }
+          className="text-gray-500 hover:text-black hover:bg-blue-100 hover:rounded-t-lg text-sm font-semibold"
+        >
+          {getSecondDropdownOptions()}  
+        </select>
       </div>
 
       <div className="table-container">
         <AtmTable columns={columns} data={filteredData} />
       </div>
-
       {isModalOpen && (
         <CreateRecordModal
           onClose={() => {
@@ -309,7 +415,6 @@ const BMRProcess = () => {
           addBMR={handleAddBMR}
         />
       )}
-
       {isEditModalOpen && (
         <EditRecordModal
           onClose={() => {
@@ -321,7 +426,6 @@ const BMRProcess = () => {
           bmr_tab_id={selectedUser?.bmr_tab_id}
         />
       )}
-
       {showDeleteUser && (
         <DeleteUserModal
           user={selectedUser}

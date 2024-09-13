@@ -44,12 +44,12 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
         const [reviewersResponse, approversResponse] = await Promise.all([
           axios.post(
 <<<<<<< HEAD
-            "http://192.168.1.25:7000/bmr-form/get-user-roles",
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
 =======
 <<<<<<< Updated upstream
-            "http://192.168.1.25:7000/bmr-form/get-user-roles",
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
 =======
-            "http://192.168.1.25:7000/bmr-form/get-user-roles",
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
 >>>>>>> Stashed changes
 >>>>>>> 6dd1ebb97e986a9f29e2b3331dd6b1a83b32e7f5
             { role_id: 3 },
@@ -62,12 +62,12 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
           ),
           axios.post(
 <<<<<<< HEAD
-            "http://192.168.1.25:7000/bmr-form/get-user-roles",
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
 =======
 <<<<<<< Updated upstream
-            "http://192.168.1.25:7000/bmr-form/get-user-roles",
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
 =======
-            "http://192.168.1.25:7000/bmr-form/get-user-roles",
+            "http://192.168.1.34:7000/bmr-form/get-user-roles",
 >>>>>>> Stashed changes
 >>>>>>> 6dd1ebb97e986a9f29e2b3331dd6b1a83b32e7f5
             { role_id: 4 },
