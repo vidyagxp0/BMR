@@ -58,58 +58,73 @@ function HeaderTop() {
           </div>
         </div>
 
-        <div className="right flex items-center justify-between">
-  {/* Links Container */}
-  <div className="links-container mr-10">
-    <Link to="/user-notifications" className="link-item mt-5 flex items-center space-x-2 relative">
-      <FaBell className="text-white text-2xl" />
-      <span className="link-name text-white">Notifications</span>
-      {unreadCount > 0 && (
-        <span className="absolute -top-2 left-6 bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
-          {unreadCount}
-        </span>
-      )}
-    </Link>
+        <div className="right flex items-center ">
+          {/* Links Container */}
+          <div className="links-container mr-10">
+            <Link to="/user-notifications" className="link-item mt-8">
+              <FaBell className="text-white text-2xl" />
+              <span className="link-name text-white">Notifications</span>
+              {unreadCount > 0 && (
+                <span className="absolute -top-2 left-6 bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
+                  {unreadCount}
+                </span>
+              )}
+            </Link>
 
-    <Link to="/boardOfDirectors" className="link-item mt-5 flex items-center space-x-2">
-      <FaPeopleLine className="text-white text-2xl" />
-      <span className="link-name text-white">Board Members</span>
-    </Link>
+            <Link
+              to="/boardOfDirectors"
+              className="link-item mt-5 flex items-center space-x-2"
+            >
+              <FaPeopleLine className="text-white text-2xl mt-3" />
+              <span className="link-name text-white">Board Members</span>
+            </Link>
 
-    <Link to="/about" className="link-item mt-8 flex items-center space-x-2">
-      <FaGlobe className="text-white text-2xl" />
-      <span className="link-name text-white">About</span>
-    </Link>
+            <Link
+              to="/about"
+              className="link-item mt-8 flex items-center space-x-2"
+            >
+              <FaGlobe className="text-white text-2xl" />
+              <span className="link-name text-white">About</span>
+            </Link>
 
-    <Link to="/help" className="link-item mt-8 flex items-center space-x-2">
-      <FaHandsHelping className="text-white text-2xl" />
-      <span className="link-name text-white">Help</span>
-    </Link>
+            <Link
+              to="/help"
+              className="link-item mt-8 flex items-center space-x-2"
+            >
+              <FaHandsHelping className="text-white text-2xl" />
+              <span className="link-name text-white">Help</span>
+            </Link>
 
-    <Link to="/helpdesk" className="link-item mt-8 flex items-center space-x-2">
-      <FaHeadset className="text-white text-2xl" />
-      <span className="link-name text-white">Helpdesk Personnel</span>
-    </Link>
+            <Link
+              to="/helpdesk"
+              className="link-item mt-8 flex items-center space-x-2"
+            >
+              <FaHeadset className="text-white text-2xl" />
+              <span className="link-name text-white">Helpdesk Personnel</span>
+            </Link>
 
-    <Link to="/" className="link-item mt-8 flex items-center space-x-2" onClick={handleLogout}>
-      <FaSignOutAlt className="text-white text-2xl" />
-      <span className="link-name text-white">Logout</span>
-    </Link>
-  </div>
+            <Link
+              to="/"
+              className="link-item mt-8 flex items-center space-x-2"
+              onClick={handleLogout}
+            >
+              <FaSignOutAlt className="text-white text-2xl" />
+              <span className="link-name text-white">Logout</span>
+            </Link>
+          </div>
 
-  {/* Admin Section */}
-  <div className="flex items-center">
-    <div className="mr-4 mt-5 text-white">Admin</div>
-    <div className="rounded-full w-12 h-12 bg-gray-400 flex items-center justify-center overflow-hidden">
-      <img
-        className="rounded-full w-full h-full object-cover"
-        src="amit_guru.jpg"
-        alt="Profile"
-      />
-    </div>
-  </div>
-</div>
-
+          {/* Admin Section */}
+          <div className="flex items-center">
+            <div className="mr-4 mt-5 text-white">Admin</div>
+            <div className="rounded-full w-12 h-12 bg-gray-400 flex items-center justify-center overflow-hidden">
+              <img
+                className="rounded-full w-full h-full object-cover"
+                src="amit_guru.jpg"
+                alt="Profile"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

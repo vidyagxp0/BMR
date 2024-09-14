@@ -4,8 +4,10 @@ import HeaderTop from "../../../../../Components/Header/HeaderTop";
 import DashboardBottom from "../../../../../Components/Header/DashboardBottom";
 import axios from "axios";
 import { IconButton, Tooltip } from "@mui/material";
+// import BMRDetailsModal from "./BMRDetailsModal";
 import { IoInformationCircleOutline } from "react-icons/io5";
 import "./BMRForms.css";
+import { useNavigate } from "react-router-dom";
 
 import AtmTable from "../../../../../AtmComponents/AtmTable"; // Adjust the import path according to your file structure
 
@@ -17,6 +19,13 @@ const formatDate = (date) => {
 const BMRForms = () => {
   const [approvedBMR, setApprovedBMR] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedBMRData, setSelectedBMRData] = useState(null);
+  const navigate = useNavigate();
+
+  const openBMRDetailsPage = (bmrId) => {
+    navigate(`/bmr-details/${bmrId}`);
+  };
 
   useEffect(() => {
     axios
@@ -41,9 +50,28 @@ const BMRForms = () => {
     setShowModal(false);
   };
 
-  // Define columns
+  const openDetailsModal = (bmrData) => {
+    setSelectedBMRData(bmrData);
+    setShowDetailsModal(true);
+  };
+
+  const closeDetailsModal = () => {
+    setShowDetailsModal(false);
+  };
+
   const columns = [
-    { header: "BMR Name", accessor: "name" },
+    {
+      header: "BMR Name",
+      accessor: "name",
+      Cell: ({ row }) => (
+        <button
+          onClick={() => openBMRDetailsPage(row.original.id)}
+          className="hover:text-blue-500"
+        >
+          {row.original.name}
+        </button>
+      ),
+    },
     {
       header: "Date of Initiation",
       accessor: "date_of_initiation",
@@ -68,7 +96,7 @@ const BMRForms = () => {
         const dueDate = new Date(row.original.due_date);
         const currentDate = new Date();
 
-        const timeDiff = dueDate - currentDate; 
+        const timeDiff = dueDate - currentDate;
         const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
         let color;
@@ -123,16 +151,16 @@ const BMRForms = () => {
       },
     },
     { header: "Status", accessor: "status" },
-    {
-      header: "Action",
-      accessor: "action",
-      Cell: ({ row }) => (
-        <div>
-          <button className="text-blue-500 hover:underline">Edit</button> |
-          <button className="text-red-500 hover:underline ml-2">Delete</button>
-        </div>
-      ),
-    },
+    // {
+    //   header: "Action",
+    //   accessor: "action",
+    //   Cell: ({ row }) => (
+    //     <div>
+    //       <button className="text-blue-500 hover:underline">Edit</button> |
+    //       <button className="text-red-500 hover:underline ml-2">Delete</button>
+    //     </div>
+    //   ),
+    // },
   ];
 
   return (

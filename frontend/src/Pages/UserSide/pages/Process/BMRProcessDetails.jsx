@@ -19,7 +19,7 @@ import { formattedDate } from "../../../../AtmComponents/Helper";
 
 const BMRProcessDetails = ({ fieldData }) => {
   const [data, setData] = useState([]);
-  console.log(data, "datatatat");
+  // console.log(data, "datatatat");
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
