@@ -64,17 +64,18 @@ const HealthLogin = () => {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600"
-      style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://media.licdn.com/dms/image/D4E12AQH2Cvxk8R5zsA/article-cover_image-shrink_600_2000/0/1666529530825?e=2147483647&v=beta&t=wcgOIbUQLV3zz5Ad3qpTqUNpgh0AMKn2d6PVR2e2-5c')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
+    // <div
+    //   className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600"
+    //   style={{
+    //     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://media.licdn.com/dms/image/D4E12AQH2Cvxk8R5zsA/article-cover_image-shrink_600_2000/0/1666529530825?e=2147483647&v=beta&t=wcgOIbUQLV3zz5Ad3qpTqUNpgh0AMKn2d6PVR2e2-5c')`,
+    //     backgroundSize: "cover",
+    //     backgroundPosition: "center",
+    //     backgroundRepeat: "no-repeat",
+    //   }}
+    // >
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#000428] to-[#A6FFCB]">
       <div
-        className="bg-gray-200 md p-8 rounded-xl shadow-2xl w-full max-w-md"
+        className="bg-gray-100 md p-8 rounded-xl shadow-2xl w-full max-w-md"
         style={{ backdropFilter: "blur(10px)" }}
       >
         <div className="text-center mb-8">
@@ -91,7 +92,7 @@ const HealthLogin = () => {
         {/* <BoxModal> */}
         <form
           onSubmit={handleLogin}
-          className="space-y-6 p-6 bg-gray-50 rounded-lg shadow-xl"
+          className="space-y-6 p-6 bg-gray-50 rounded-lg "
         >
           {/* Username Input */}
           <div className="relative">
@@ -152,7 +153,7 @@ const HealthLogin = () => {
           <p className="text-sm text-gray-600">{healthTip}</p>
         </div>
 
-        <div className="mt-6 text-center">
+        {/* <div className="mt-6 text-center">
           <a href="#" className="text-blue-500 hover:underline">
             Forgot password?
           </a>
@@ -162,7 +163,7 @@ const HealthLogin = () => {
               Register here
             </a>
           </p>
-        </div>
+        </div> */}
       </div>
       <ToastContainer />
     </div>
