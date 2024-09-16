@@ -42,7 +42,7 @@ const UserVerificationPopUp = ({
 
   //   try {
   //     const response = await axios.post(
-  //       "http://192.168.1.34:7000/user/user-verification",
+  //       "http://192.168.1.26:7000/user/user-verification",
   //       data,
   //       {
   //         headers: { "Content-Type": "application/json" },
