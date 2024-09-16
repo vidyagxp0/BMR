@@ -71,14 +71,8 @@
 .themeBtn:hover {
   background: radial-gradient(
     circle,
-    #7979c2, #394274 
-    /* violet,
-    indigo,
-    brown,
-    green,
-    yellow,
-    orange,
-    red */
+    #5c5ca2, #394274 
+   
   );
   color: white; /* Text color on hover */
 }

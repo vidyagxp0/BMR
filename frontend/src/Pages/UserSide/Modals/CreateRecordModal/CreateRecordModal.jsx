@@ -299,7 +299,7 @@ function CreateRecordModal({ open, onClose }) {
                 InputLabelProps={{
                   style: {
                     top: "0",
-                    padding:'2px'
+                    padding: "2px",
                   },
                 }}
               />
@@ -314,7 +314,6 @@ function CreateRecordModal({ open, onClose }) {
                 InputProps={{
                   style: {
                     height: "48px",
-                    
                   },
                 }}
                 InputLabelProps={{

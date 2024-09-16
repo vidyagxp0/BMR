@@ -1,7 +1,7 @@
+// userSlice.js
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Async Thunks
 export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
   const response = await axios.get("http://192.168.1.26:7000/user/get-users", {
     headers: {
@@ -23,12 +23,13 @@ export const fetchBmr = createAsyncThunk("bmr/fetchBmr", async () => {
   return response.data;
 });
 
-// Slice
 const userSlice = createSlice({
   name: "users",
   initialState: {
     users: [],
     bmrList: [],
+    formData: {},
+    selectedBMR: {},
   },
   reducers: {
     setUsers(state, action) {
@@ -51,7 +52,6 @@ const userSlice = createSlice({
       );
       if (index !== -1) {
         state.users[index] = { ...state.users[index], ...action.payload };
-        console.log("Updated user:", state.users[index]);
       }
     },
     updateBmr(state, action) {
@@ -60,13 +60,18 @@ const userSlice = createSlice({
       );
       if (index !== -1) {
         state.bmrList[index] = { ...state.bmrList[index], ...action.payload };
-        console.log("Updated BMR:", state.bmrList[index]);
       }
     },
     deleteUser(state, action) {
       state.users = state.users.filter(
         (user) => user.user_id !== action.payload
       );
+    },
+    setFormData(state, action) {
+      state.formData = action.payload;
+    },
+    setSelectedBMR(state, action) {
+      state.selectedBMR = action.payload;
     },
   },
 });
@@ -79,5 +84,7 @@ export const {
   addBmr,
   updateBmr,
   deleteBmr,
+  setFormData,
+  setSelectedBMR,
 } = userSlice.actions;
 export default userSlice.reducer;

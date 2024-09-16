@@ -119,6 +119,7 @@ const BMRProcessDetails = ({ fieldData }) => {
   const [deleteItemType, setDeleteItemType] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState({});
   const { bmr_id } = useParams();
+  console.log(bmr_id,"idddddddddd")
   const navigate = useNavigate();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
@@ -204,6 +205,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       .then((response) => {
         const bmrData = response.data.message;
         setData(bmrData);
+        console.log(bmrData,",mmmmmmmmmmmmmmmmmmmmmmm")
         setNewTab(bmrData[0]?.BMR_Tabs || []);
         const sections = bmrData[0]?.BMR_Sections || [];
         const sectionsByTab = sections.reduce((acc, section) => {

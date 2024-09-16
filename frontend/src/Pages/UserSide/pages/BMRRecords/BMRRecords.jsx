@@ -2,19 +2,51 @@
 import React, { useState, useEffect } from "react";
 // import HeaderTop from "../../../../Components/Header/HeaderTop";
 import Select from "react-select";
-import { Button } from "@mui/material";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import BMRProcessDetails from "../Process/BMRProcessDetails";
+import { toast } from "react-toastify";
+import BMRForms from "../Process/Modals/BMRForms";
+import { useDispatch } from "react-redux";
+import { setFormData, setSelectedBMR } from "../../../../../src/userSlice";
 const BMRRecords = () => {
   const location = useLocation();
-  const selectedBMR = location.state?.selectedBMR;
+  // const dispatch = useDispatch();
+  // const selectedBMR = location.state?.selectedBMR;
+  // console.log(selectedBMR, "++++++++++++++++++");
 
-  // Rest of your state and logic
   const [activeTab, setActiveTab] = useState("General Information");
   const [dateOfInitiation, setDateOfInitiation] = useState(
     new Date().toISOString().split("T")[0]
   );
+
+  const dispatch = useDispatch();
+  const [selectedBMR, setSelectedBMRState] = useState(
+    location.state?.selectedBMR || {}
+  );
+  console.log(selectedBMR.name, "ppppppppp");
+
+  const [formData, setFormDataState] = useState({
+    initiatorName: null,
+    dateOfInitiation: new Date().toISOString().split("T")[0],
+    selectedReviewers: [],
+    selectedApprovers: [],
+    dynamicFields: {
+      "General Information": {},
+      ...selectedBMR.BMR_Tabs.reduce((acc, tab) => {
+        acc[tab.tab_name] = {};
+        return acc;
+      }, {}),
+    },
+  });
+
+  useEffect(() => {
+    dispatch(setFormData(formData));
+    dispatch(setSelectedBMR(selectedBMR));
+  }, [dispatch, formData, selectedBMR]);
+  dispatch(setFormData(formData));
+
+  // console.log(formData, ":dataaaaaaaaaa");
+
   const [dynamicFields, setDynamicFields] = useState({
     "General Information": {},
     ...selectedBMR.BMR_Tabs.reduce((acc, tab) => {
@@ -27,29 +59,37 @@ const BMRRecords = () => {
   const [approvers, setApprovers] = useState([]);
   const [selectedReviewers, setSelectedReviewers] = useState([]);
   const [selectedApprovers, setSelectedApprovers] = useState([]);
-  const Id = selectedBMR.initiator;
-  const initiatorId = selectedBMR.initiator;
+  // const { Id } = useParams();
+  const bmr_id = selectedBMR.bmr_id;
+  // console.log(bmr_id,"pppppppppppppppp")
   const [initiatorName, setInitiatorName] = useState(null);
+  // console.log(initiatorName,'pppppppppppppppp')
   const navigate = useNavigate();
 
-  const apiUrl = `http://192.168.1.26:7000/user/get-a-user/${Id}`;
-  const fetchUserData = async () => {
-    try {
-      const token = localStorage.getItem("user-token");
-      const response = await axios.get(apiUrl, {
+  const fetchBMRData = () => {
+    axios
+      .get(`http://192.168.1.26:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
+      })
+      .then((response) => {
+        const bmrData = response.data.message[0];
+        setInitiatorName(bmrData.Initiator.name);
+
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          initiatorName: bmrData.Initiator.name,
+        }));
+      })
+      .catch(() => {
+        toast.error("Error Fetching BMR");
       });
-      setInitiatorName(response.data.response.name);
-      console.log(response.data.response.name, "++++++++++++++++++");
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
   };
+
   useEffect(() => {
-    fetchUserData();
-  }, [Id]);
+    fetchBMRData();
+  }, [bmr_id]);
 
   useEffect(() => {
     const initialFields = {};
@@ -65,7 +105,6 @@ const BMRRecords = () => {
       "General Information": initialFields,
     }));
   }, [selectedBMR]);
-  console.log(selectedBMR, "211111111111");
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -130,54 +169,62 @@ const BMRRecords = () => {
     fetchUserRoles();
   }, []);
   const handleSelectChange = (selected, field) => {
-    if (selected.some((option) => option.value === "select-all")) {
-      const allOptions = field === "reviewers" ? reviewers : approvers;
-      const nonSelectAllOptions = allOptions.filter(
-        (option) => option.value !== "select-all"
-      );
-      field === "reviewers"
-        ? setSelectedReviewers(nonSelectAllOptions)
-        : setSelectedApprovers(nonSelectAllOptions);
-    } else {
-      field === "reviewers"
-        ? setSelectedReviewers(selected)
-        : setSelectedApprovers(selected);
-    }
+    const updatedValues = selected.some(
+      (option) => option.value === "select-all"
+    )
+      ? field === "reviewers"
+        ? reviewers.filter((option) => option.value !== "select-all")
+        : approvers.filter((option) => option.value !== "select-all")
+      : selected;
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [field === "reviewers" ? "selectedReviewers" : "selectedApprovers"]:
+        updatedValues,
+    }));
   };
+
   const formattedDate = new Date(selectedBMR.date_of_initiation)
     .toISOString()
     .split("T")[0];
 
   const handleDynamicFieldChange = (id, value, tab) => {
-    setDynamicFields((prevFields) => ({
-      ...prevFields,
-      [tab]: {
-        ...prevFields[tab],
-        [id]: value,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      dynamicFields: {
+        ...prevFormData.dynamicFields,
+        [tab]: {
+          ...prevFormData.dynamicFields[tab],
+          [id]: value,
+        },
       },
     }));
   };
+
+  const handleSave = () => {
+    console.log("Form Data to Save:", formData, selectedBMR);
+    dispatch({
+      type: "ACTION_TYPE",
+      payload: formData,
+      selectedBMR,
+    });
+    navigate("/bmr-forms");
+  };
+
   return (
     <div className="w-full h-full flex items-center justify-center ">
       <div className="w-full h-full bg-white shadow-lg rounded-lg  ">
-        <div className="flex justify-around items-center bg-gradient-to-r bg-gray-50 mt-2 p-4 rounded-lg shadow-lg">
+        <div className="flex justify-around items-center  bg-gradient-to-r bg-gray-50 mt-3 p-4 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-black ">
             Initiate BMR Records
           </h2>
         </div>
         <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-[#4f839b] to-[#0c384d] mt-2 p-4 rounded-lg shadow-lg">
-          {/* <h2 className="text-lg font-semibold text-white ">
-            BMR ID :{" "}
-            <span className="text-gray-800"> {selectedBMR.bmr_id}</span>
-          </h2> */}
           <h2 className="text-lg font-semibold text-white ">
             BMR Name :{" "}
             <span className="text-gray-800"> {selectedBMR.name}</span>
           </h2>
-          {/* <h2 className="text-lg font-semibold text-white ">
-            Date of Approval :{" "}
-            <span className="text-gray-800">{formattedDate || "N/A"}</span>
-          </h2> */}
+
           <h2 className="text-lg font-semibold text-white ">
             Status :{" "}
             <span className="text-gray-800 ">{selectedBMR.status}</span>
@@ -222,7 +269,7 @@ const BMRRecords = () => {
                 <Select
                   isMulti
                   options={reviewers}
-                  value={selectedReviewers}
+                  value={selectedReviewers.label}
                   onChange={(selected) =>
                     handleSelectChange(selected, "reviewers")
                   }
@@ -245,7 +292,7 @@ const BMRRecords = () => {
                 <Select
                   isMulti
                   options={approvers}
-                  value={selectedApprovers}
+                  value={selectedApprovers.label}
                   onChange={(selected) =>
                     handleSelectChange(selected, "approvers")
                   }
@@ -268,7 +315,7 @@ const BMRRecords = () => {
               activeTab === tab.tab_name && (
                 <div
                   key={tab.tab_name}
-                  className="grid grid-cols-1 w-full p-6 text-lg font-semibold text-black rounded-lg "
+                  className="grid grid-cols-2 w-full p-2 text-lg font-semibold text-black rounded-lg "
                 >
                   {tab.BMR_sections.map((section, index) => (
                     <div
@@ -311,7 +358,7 @@ const BMRRecords = () => {
         <div className="flex justify-end gap-4 items-end p-4 border-t">
           <button
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none transition duration-200"
-            onClick={() => navigate("/dashboard")}
+            onClick={handleSave}
           >
             Save
           </button>
@@ -357,4 +404,5 @@ const InputField = ({ label, type = "text", placeholder, value, onChange }) => (
     />
   </div>
 );
+
 export default BMRRecords;

@@ -23,7 +23,6 @@ const BMRProcess = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedDivision, setSelectedDivision] = useState(0);
   const [selectedDepartment, setSelectedDepartment] = useState(0);
-
   const navigate = useNavigate();
 
   const columns = [

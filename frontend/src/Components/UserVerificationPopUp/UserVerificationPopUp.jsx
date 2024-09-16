@@ -93,7 +93,7 @@ const UserVerificationPopUp = ({
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              style={{border: '1px solid gray' , height:"40px"}}
+              style={{ border: "1px solid gray", height: "40px" }}
               required
             />
           </div>
@@ -106,7 +106,7 @@ const UserVerificationPopUp = ({
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={{border: '1px solid gray' , height:"40px"}}
+              style={{ border: "1px solid gray", height: "40px" }}
               required
             />
           </div>
@@ -119,7 +119,7 @@ const UserVerificationPopUp = ({
               type="text"
               value={declaration}
               onChange={(e) => setDeclaration(e.target.value)}
-              style={{border: '1px solid gray' , height:"40px"}}
+              style={{ border: "1px solid gray", height: "40px" }}
               required
             />
           </div>
@@ -129,7 +129,7 @@ const UserVerificationPopUp = ({
               type="text"
               value={comments}
               onChange={(e) => setComments(e.target.value)}
-              style={{border: '1px solid gray' , height:"40px"}}
+              style={{ border: "1px solid gray", height: "40px" }}
               required
             />
           </div>

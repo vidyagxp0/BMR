@@ -95,6 +95,10 @@ function RouteGuard() {
           path="/bmr-forms"
           element={<ProtectedUserRoute element={<BMRForms />} />}
         />
+        <Route
+          path="/bmr-details/:bmr_id" // Route to handle BMR details
+          element={<ProtectedUserRoute element={<BMRDetails />} />} // Render the BMRDetails component
+        />
       </Route>
       <Route
         path="/audit-trail"
