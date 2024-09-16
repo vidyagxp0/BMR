@@ -83,7 +83,7 @@ const BMRForms = ({ Data }) => {
         formData.dateOfInitiation || selectedBMR.date_of_initiation || "N/A",
     },
     {
-      Header: "Division",
+      header: "Division",
       accessor: "division",
       Cell: ({ row }) => {
         return (
