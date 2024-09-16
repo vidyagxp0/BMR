@@ -17,7 +17,7 @@ function AuditTrail() {
 
       try {
         const response = await axios.get(
-          `http://192.168.1.34:7000/bmr-form/get-bmr-form-audit-trail/${location.state?.bmr_id}`,
+          `http://192.168.1.26:7000/bmr-form/get-bmr-form-audit-trail/${location.state?.bmr_id}`,
           {
             headers: myHeaders,
           }
@@ -34,7 +34,7 @@ function AuditTrail() {
 
       //     try {
       //       const response = await axios.get(
-      //         `http://http://192.168.1.34:7000:1000/temprature-record/get-audit-trail-for-elog/${location.state?.formId}`,
+      //         `http://http://192.168.1.26:7000:1000/temprature-record/get-audit-trail-for-elog/${location.state?.formId}`,
       //         {
       //           headers: myHeaders,
       //         }

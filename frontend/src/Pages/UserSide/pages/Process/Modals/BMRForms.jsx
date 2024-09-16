@@ -10,26 +10,31 @@ import "./BMRForms.css";
 import { useNavigate } from "react-router-dom";
 
 import AtmTable from "../../../../../AtmComponents/AtmTable"; // Adjust the import path according to your file structure
+import { useSelector } from "react-redux";
 
 const formatDate = (date) => {
   const options = { day: "2-digit", month: "2-digit", year: "numeric" };
   return new Date(date).toLocaleDateString("en-GB", options);
 };
 
-const BMRForms = () => {
+const BMRForms = ({ Data }) => {
   const [approvedBMR, setApprovedBMR] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedBMRData, setSelectedBMRData] = useState(null);
   const navigate = useNavigate();
-
+  const data = useSelector((state) => state.users);
+  // console.log(data, "reduxdata");
   const openBMRDetailsPage = (bmrId) => {
     navigate(`/bmr-details/${bmrId}`);
   };
 
+  const formData = useSelector((state) => state.users.formData);
+  const selectedBMR = useSelector((state) => state.users.selectedBMR);
+
   useEffect(() => {
     axios
-      .get("http://192.168.1.34:7000/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.26:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -54,6 +59,12 @@ const BMRForms = () => {
     setSelectedBMRData(bmrData);
     setShowDetailsModal(true);
   };
+  const divisionMap = {
+    1: "India",
+    2: "Malaysia",
+    3: "EU",
+    default: "EMEA",
+  };
 
   const closeDetailsModal = () => {
     setShowDetailsModal(false);
@@ -63,22 +74,28 @@ const BMRForms = () => {
     {
       header: "BMR Name",
       accessor: "name",
-      Cell: ({ row }) => (
-        <button
-          onClick={() => openBMRDetailsPage(row.original.id)}
-          className="hover:text-blue-500"
-        >
-          {row.original.name}
-        </button>
-      ),
+      cell: () => selectedBMR.name || formData.name || "N/A",
     },
     {
       header: "Date of Initiation",
       accessor: "date_of_initiation",
-      Cell: ({ row }) => formatDate(row.original.date_of_initiation),
+      cell: () =>
+        formData.dateOfInitiation || selectedBMR.date_of_initiation || "N/A",
     },
-    { header: "Division", accessor: "division_id" },
-    { header: "Description", accessor: "description" },
+    {
+      Header: "Division",
+      accessor: "division",
+      Cell: ({ row }) => {
+        return (
+          <>{divisionMap[selectedBMR.division_id] || divisionMap.default}</>
+        );
+      },
+    },
+    {
+      header: "Description",
+      accessor: "description",
+      cell: () => selectedBMR.description || "N/A",
+    },
     {
       header: "Current Date",
       accessor: "current_date",
@@ -87,7 +104,7 @@ const BMRForms = () => {
     {
       header: "Due Date",
       accessor: "due_date",
-      Cell: ({ row }) => formatDate(row.original.due_date),
+      cell: () => formatDate(selectedBMR.due_date || "N/A"),
     },
     {
       header: "Due Date Progress",
@@ -150,17 +167,6 @@ const BMRForms = () => {
         );
       },
     },
-    { header: "Status", accessor: "status" },
-    // {
-    //   header: "Action",
-    //   accessor: "action",
-    //   Cell: ({ row }) => (
-    //     <div>
-    //       <button className="text-blue-500 hover:underline">Edit</button> |
-    //       <button className="text-red-500 hover:underline ml-2">Delete</button>
-    //     </div>
-    //   ),
-    // },
   ];
 
   return (
@@ -189,6 +195,11 @@ const BMRForms = () => {
                   </option>
                 ))}
               </select>
+              <div>
+                {" "}
+                {/* <pre>FormData: {JSON.stringify(formData, null, 2)}</pre>---- */}
+                {/* <pre>Selected BMR: {JSON.stringify(selectedBMR, null, 2)}</pre> */}
+              </div>
               <button
                 className="btn bg-[#346C86] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#123e53]"
                 onClick={openModal}
