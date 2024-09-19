@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
-// import HeaderTop from "../../../../Components/Header/HeaderTop";
 import Select from "react-select";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -10,9 +9,6 @@ import { useDispatch } from "react-redux";
 import { setFormData, setSelectedBMR } from "../../../../../src/userSlice";
 const BMRRecords = () => {
   const location = useLocation();
-  // const dispatch = useDispatch();
-  // const selectedBMR = location.state?.selectedBMR;
-
   const [activeTab, setActiveTab] = useState("General Information");
   const [dateOfInitiation, setDateOfInitiation] = useState(
     new Date().toISOString().split("T")[0]
@@ -21,6 +17,10 @@ const BMRRecords = () => {
   const dispatch = useDispatch();
   const [selectedBMR, setSelectedBMRState] = useState(
     location.state?.selectedBMR || {}
+  );
+  console.log(
+    selectedBMR.BMR_Tabs[0].BMR_sections[0].BMR_fields[0].acceptsMultiple,
+    "acceptsMultiple"
   );
 
   const [formData, setFormDataState] = useState({
@@ -36,7 +36,6 @@ const BMRRecords = () => {
       }, {}),
     },
   });
-
   useEffect(() => {
     dispatch(setFormData(formData));
     dispatch(setSelectedBMR(selectedBMR));
@@ -79,7 +78,6 @@ const BMRRecords = () => {
         toast.error("Error Fetching BMR");
       });
   };
-
   useEffect(() => {
     fetchBMRData();
   }, [bmr_id]);
@@ -177,10 +175,9 @@ const BMRRecords = () => {
     }));
   };
 
-  const formattedDate = new Date(selectedBMR.date_of_initiation)
-    .toISOString()
-    .split("T")[0];
-
+  // const formattedDate = new Date(selectedBMR.date_of_initiation)
+  //   .toISOString()
+  //   .split("T")[0];
   const handleDynamicFieldChange = (id, value, tab) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -325,10 +322,11 @@ const BMRRecords = () => {
                       </h3>
                       <div className="grid grid-cols-2 gap-4">
                         {section.BMR_fields.map((field, idx) => (
+                          // console.log(section.BMR_fields,)
                           <div key={idx} className="border border-gray-300 p-2">
                             <InputField
                               label={field.label || "Field Name"}
-                              type={field.type || "text"}
+                              type={field.field_type || "text"}
                               placeholder={field.placeholder}
                               onChange={(e) =>
                                 handleDynamicFieldChange(
