@@ -19,7 +19,6 @@ const DeleteModal = ({
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   const handleVerificationSubmit = async (verified) => {
-    console.log("Verification data:", verified);
     try {
       if (itemType === "tab") {
         const response = await axios.delete(

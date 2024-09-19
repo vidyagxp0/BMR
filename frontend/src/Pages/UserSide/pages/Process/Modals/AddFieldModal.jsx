@@ -32,9 +32,15 @@ const AddFieldModal = ({
     bmr_tab_id: bmr_tab_id,
     bmr_section_id: bmr_section_id,
   });
-  {
-    fieldData.helpText ? console.log("Hellooooooo") : console.log("Errorrrrrr");
-  }
+
+  const [gridData, setGridData] = useState({
+    field_type: "select",
+    label: "",
+    helpText: "",
+    acceptsMultiple: { columns: [], rows: [] },
+    bmr_tab_id: bmr_tab_id,
+    bmr_section_id: bmr_section_id,
+  });
 
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [showGridColumnConfigModal, setShowGridColumnConfigModal] =
@@ -49,9 +55,14 @@ const AddFieldModal = ({
         selectedValues: existingFieldData.selectedValues || [],
         acceptsMultiple: existingFieldData.acceptsMultiple || {
           columns: [],
-          rows: [],
         }, // Ensure proper structure when editing
       }));
+      setGridData((prevData)=>({
+        ...prevData,
+        ...existingFieldData,
+        acceptsMultiple: existingFieldData.acceptsMultiple || {
+          columns: [],
+      }}))
     }
   }, [existingFieldData, updateField]);
 
@@ -64,12 +75,20 @@ const AddFieldModal = ({
       ...prevData,
       acceptsMultiple: { ...prevData.acceptsMultiple, columns },
     }));
+    setGridData((prevData)=>({
+      ...prevData,
+      acceptsMultiple: { ...prevData.acceptsMultiple, columns },
+    }))
     setShowGridColumnConfigModal(false);
   };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFieldData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+    setGridData((prevData) => ({
       ...prevData,
       [name]: type === "checkbox" ? checked : value,
     }));
@@ -87,24 +106,41 @@ const AddFieldModal = ({
       ...prevData,
       selectedValues: selectedOptions,
     }));
+    setGridData((prevData) => ({
+      ...prevData,
+      selectedValues: selectedOptions,
+    }));
   };
 
   const handleVerificationSubmit = async (verified) => {
     try {
-      const response = await axios({
-        method: updateField === "add-field" ? "post" : "put",
-        url:
-          updateField === "add-field"
-            ? "http://192.168.1.39:7000/bmr-form/add-bmr-field"
-            : `http://192.168.1.39:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
-        data: {
+      let data = {}
+      if(fieldData.field_type==="grid"){
+        data = {
+          bmr_id,
+          ...gridData,
+          email: verified.email,
+          password: verified.password,
+          declaration: verified.declaration,
+          comments: verified.comments,
+        }
+      }else{
+         data = {
           bmr_id,
           ...fieldData,
           email: verified.email,
           password: verified.password,
           declaration: verified.declaration,
           comments: verified.comments,
-        },
+        }
+      }
+      const response = await axios({
+        method: updateField === "add-field" ? "post" : "put",
+        url:
+          updateField === "add-field"
+            ? "http://192.168.1.7:7000/bmr-form/add-bmr-field"
+            : `http://192.168.1.7:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
+        data,
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",
@@ -124,10 +160,18 @@ const AddFieldModal = ({
       ...prevData,
       acceptsMultiple: newOptions,
     }));
+    setGridData((prevData) => ({
+      ...prevData,
+      acceptsMultiple: newOptions,
+    }));
   };
 
   const handleAddOption = () => {
     setFieldData((prevData) => ({
+      ...prevData,
+      acceptsMultiple: [...prevData.acceptsMultiple, ""],
+    }));
+    setGridData((prevData) => ({
       ...prevData,
       acceptsMultiple: [...prevData.acceptsMultiple, ""],
     }));
@@ -169,12 +213,11 @@ const AddFieldModal = ({
             <option value="password">Password</option>
             <option value="email">Email</option>
             <option value="date">Date</option>
-            <option value="date-time">Date&Time</option>
+            <option value="time">Time</option>
             <option value="grid">Grid</option>
             <option value="number">Number</option>
             <option value="checkbox">Checkbox</option>
             <option value="dropdown">Dropdown</option>
-            <option value="grid">Grid</option>
             <option value="multi-select">Multi Select</option>
           </select>
           {fieldData.field_type === "grid" && (
@@ -182,11 +225,11 @@ const AddFieldModal = ({
               <h3 className="text-sm font-medium text-gray-700 mb-2">
                 Grid Columns
               </h3>
-              {fieldData?.acceptsMultiple?.columns?.length > 0 ? (
+              {gridData?.acceptsMultiple?.columns?.length > 0 ? (
                 <table className="w-full border border-gray-300">
                   <thead>
                     <tr>
-                      {fieldData.acceptsMultiple.columns.map((col, idx) => (
+                      {gridData.acceptsMultiple.columns.map((col, idx) => (
                         <th key={idx} className="border border-gray-300 p-2">
                           {col.name}
                         </th>
@@ -194,18 +237,7 @@ const AddFieldModal = ({
                     </tr>
                   </thead>
                   <tbody>
-                    {fieldData?.acceptsMultiple?.rows?.map((_, rowIdx) => (
-                      <tr key={rowIdx}>
-                        {fieldData?.acceptsMultiple?.columns.map(
-                          (_, colIdx) => (
-                            <td
-                              key={colIdx}
-                              className="border border-gray-300 p-2"
-                            ></td>
-                          )
-                        )}
-                      </tr>
-                    ))}
+                    
                   </tbody>
                 </table>
               ) : (
@@ -565,50 +597,7 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
                       width: "100%",
                     }}
                   />
-                  <div className="flex items-center mb-4">
-                    <input
-                      type="checkbox"
-                      name="isVisible"
-                      value={col.isVisible}
-                      onChange={(e) =>
-                        handleColumnChange(index, "isVisible", e.target.checked)
-                      }
-                      className="mr-2"
-                    />
-                    <label>Is Visible</label>
-                  </div>
-                  <div className="flex items-center mb-4">
-                    <input
-                      type="checkbox"
-                      name="isRequired"
-                      value={col.isRequired}
-                      onChange={(e) =>
-                        handleColumnChange(
-                          index,
-                          "isRequired",
-                          e.target.checked
-                        )
-                      }
-                      className="mr-2"
-                    />
-                    <label>Is Required</label>
-                  </div>
-                  <div className="flex items-center mb-4">
-                    <input
-                      type="checkbox"
-                      name="isReadOnly"
-                      value={col.isReadOnly}
-                      onChange={(e) =>
-                        handleColumnChange(
-                          index,
-                          "IsReadOnly",
-                          e.target.checked
-                        )
-                      }
-                      className="mr-2"
-                    />
-                    <label>Is Read Only</label>
-                  </div>
+                 
                 </>
               </div>
             </div>
