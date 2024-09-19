@@ -185,7 +185,7 @@ const BMRProcessDetails = ({ fieldData }) => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.39:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.25:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -260,7 +260,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.initiatorDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.39:7000/bmr-form/send-BMR-for-review",
+          "http://192.168.1.25:7000/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -277,7 +277,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.39:7000/bmr-form/send-BMR-from-review-to-approval",
+          "http://192.168.1.25:7000/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -294,7 +294,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.39:7000/bmr-form/send-BMR-from-review-to-open",
+          "http://192.168.1.25:7000/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -309,7 +309,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.39:7000/bmr-form/approve-BMR",
+          "http://192.168.1.25:7000/bmr-form/approve-BMR",
           dataObject,
           config
         )
@@ -326,7 +326,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.39:7000/bmr-form/send-BMR-from-approval-to-open",
+          "http://192.168.1.25:7000/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -411,7 +411,7 @@ const BMRProcessDetails = ({ fieldData }) => {
 
         // Make API request to generate PDF
         const response = await axios({
-          url: "http://192.168.1.39:7000/bmr-form/generate-report",
+          url: "http://192.168.1.25:7000/bmr-form/generate-report",
           method: "POST",
           responseType: "blob",
           headers: {

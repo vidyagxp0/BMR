@@ -34,7 +34,7 @@ const BMRForms = ({ Data }) => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.39:7000/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.25:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -74,6 +74,15 @@ const BMRForms = ({ Data }) => {
     setShowDetailsModal(false);
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  };
+
   const columns = [
     {
       header: "BMR Name",
@@ -84,7 +93,9 @@ const BMRForms = ({ Data }) => {
       header: "Date of Initiation",
       accessor: "date_of_initiation",
       cell: () =>
-        formData.dateOfInitiation || selectedBMR.date_of_initiation || "N/A",
+        formatDate(bmr.dateOFInitiation) ||
+        formatDate(selectedBMR.date_of_initiation) ||
+        "N/A",
     },
     {
       header: "Division",

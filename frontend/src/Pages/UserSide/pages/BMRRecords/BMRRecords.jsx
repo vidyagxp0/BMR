@@ -18,7 +18,10 @@ const BMRRecords = () => {
   const [selectedBMR, setSelectedBMRState] = useState(
     location.state?.selectedBMR || {}
   );
-  console.log(selectedBMR, "selectedbmrrrrrrrrrrrrrrr");
+  console.log(
+    selectedBMR.BMR_Tabs[0].BMR_sections[0].BMR_fields[0].acceptsMultiple,
+    "acceptsMultiple"
+  );
 
   const [formData, setFormDataState] = useState({
     initiatorName: null,
@@ -57,7 +60,7 @@ const BMRRecords = () => {
 
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.39:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.25:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -102,7 +105,7 @@ const BMRRecords = () => {
       try {
         const [reviewersResponse, approversResponse] = await Promise.all([
           axios.post(
-            "http://192.168.1.39:7000/bmr-form/get-user-roles",
+            "http://192.168.1.25:7000/bmr-form/get-user-roles",
             { role_id: 3 },
             {
               headers: {
@@ -112,7 +115,7 @@ const BMRRecords = () => {
             }
           ),
           axios.post(
-            "http://192.168.1.39:7000/bmr-form/get-user-roles",
+            "http://192.168.1.25:7000/bmr-form/get-user-roles",
             { role_id: 4 },
             {
               headers: {
@@ -319,6 +322,7 @@ const BMRRecords = () => {
                       </h3>
                       <div className="grid grid-cols-2 gap-4">
                         {section.BMR_fields.map((field, idx) => (
+                          // console.log(section.BMR_fields,)
                           <div key={idx} className="border border-gray-300 p-2">
                             <InputField
                               label={field.label || "Field Name"}
