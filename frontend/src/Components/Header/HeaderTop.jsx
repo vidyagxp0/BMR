@@ -18,7 +18,7 @@ function HeaderTop() {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    setSocket(socketIOClient("http://192.168.1.7:7000/"));
+    setSocket(socketIOClient("https://bmrapi.mydemosoftware.com/"));
     return () => {
       if (socket) socket.disconnect();
     };

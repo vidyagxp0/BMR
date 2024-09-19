@@ -184,7 +184,7 @@ const BMRProcessDetails = ({ fieldData }) => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.7:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`https://bmrapi.mydemosoftware.com/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -258,7 +258,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.initiatorDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.7:7000/bmr-form/send-BMR-for-review",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -275,7 +275,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.7:7000/bmr-form/send-BMR-from-review-to-approval",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -292,7 +292,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.7:7000/bmr-form/send-BMR-from-review-to-open",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -306,7 +306,11 @@ const BMRProcessDetails = ({ fieldData }) => {
     } else if (popupAction === "sendFromApprovalToApproved") {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
-        .put("http://192.168.1.7:7000/bmr-form/approve-BMR", dataObject, config)
+        .put(
+          "https://bmrapi.mydemosoftware.com/bmr-form/approve-BMR",
+          dataObject,
+          config
+        )
         .then(() => {
           toast.success("BMR successfully approved");
           navigate(-1);
@@ -320,7 +324,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.7:7000/bmr-form/send-BMR-from-approval-to-open",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -405,7 +409,7 @@ const BMRProcessDetails = ({ fieldData }) => {
 
         // Make API request to generate PDF
         const response = await axios({
-          url: "http://192.168.1.7:7000/bmr-form/generate-report",
+          url: "https://bmrapi.mydemosoftware.com/bmr-form/generate-report",
           method: "POST",
           responseType: "blob",
           headers: {
@@ -1077,7 +1081,7 @@ const BMRProcessDetails = ({ fieldData }) => {
               data[0]?.initiator === userDetails.userId && (
                 <AtmButton
                   label={"Send For Review"}
-                  className="bg-blue-500 hover:bg-blue-700 p-2"
+                  className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2"
                   onClick={() => {
                     setIsPopupOpen(true);
                     setPopupAction("sendFromOpenToReview"); // Set the action when opening the popup
@@ -1114,7 +1118,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                 <>
                   <AtmButton
                     label={"Send For Approval"}
-                    className="bg-blue-500 hover:bg-blue-700 p-2"
+                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2"
                     onClick={() => {
                       setIsPopupOpen(true);
                       setPopupAction("sendFromReviewToApproval"); // Set the action when opening the popup
@@ -1122,7 +1126,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                   />
                   <AtmButton
                     label={"Open BMR"}
-                    className="bg-blue-500 hover:bg-blue-700 p-2"
+                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2"
                     onClick={() => {
                       setIsPopupOpen(true);
                       setPopupAction("sendFromReviewToOpen"); // Set the action when opening the popup
@@ -1160,7 +1164,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                 <>
                   <AtmButton
                     label={"Approve BMR"}
-                    className="bg-blue-500 hover:bg-blue-700 p-2"
+                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2"
                     onClick={() => {
                       setIsPopupOpen(true);
                       setPopupAction("sendFromApprovalToApproved"); // Set the action when opening the popup
@@ -1168,7 +1172,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                   />
                   <AtmButton
                     label={"Open BMR"}
-                    className="bg-blue-500 hover:bg-blue-700 p-2"
+                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2"
                     onClick={() => {
                       setIsPopupOpen(true);
                       setPopupAction("sendFromApprovalToOpen"); // Set the action when opening the popup
@@ -1209,13 +1213,17 @@ const BMRProcessDetails = ({ fieldData }) => {
                       {section.section_name}
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 shadow-xl gap-4 px-5 py-[64px]">
+                  <div className="grid grid-cols-4 shadow-xl gap-4 px-5 py-[64px]">
                     {section.BMR_fields?.map((field, index) => {
                       return (
                         <div
                           key={index}
                           onClick={() => handleFieldClick(field)}
-                          className="p-4 rounded bg-gray-50 shadow border border-gray-600"
+                          className={`p-4 rounded bg-gray-50 border border-gray-300 ${
+                            field.field_type === "grid"
+                              ? "col-span-12"
+                              : "col-span-2"
+                          }`}
                         >
                           <label className="text-base font-bold text-gray-900  flex gap-1 mb-2">
                             {field.label}
@@ -1309,12 +1317,6 @@ const BMRProcessDetails = ({ fieldData }) => {
                                   </tbody>
                                 </table>
                               )}
-                              <button
-                                onClick={() => handleAddRow(activeDefaultTab)}
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
-                              >
-                                Add Row
-                              </button>
                             </div>
                           )}
 

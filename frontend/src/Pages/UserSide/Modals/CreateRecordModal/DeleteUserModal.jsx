@@ -11,7 +11,7 @@ const DeleteUserModal = ({ onClose, id, setData }) => {
   const dispatch = useDispatch();
   const handleVerificationSubmit = (verified) => {
     axios
-      .delete(`http://192.168.1.7:7000/bmr-form/delete-bmr/${id}`, {
+      .delete(`https://bmrapi.mydemosoftware.com/bmr-form/delete-bmr/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,

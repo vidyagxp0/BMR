@@ -50,7 +50,7 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
             {paginatedData.map((row, rowIndex) => (
               <tr
                 key={rowIndex}
-                className={rowIndex % 2 === 0 ? "bg-white" : "bg-blue-400"}
+                className={rowIndex % 2 === 0 ? "bg-white" : "bg-blue-500"}
               >
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-gray-300">
                   {(currentPage - 1) * rowsPerPage + rowIndex + 1}

@@ -138,8 +138,8 @@ const AddFieldModal = ({
         method: updateField === "add-field" ? "post" : "put",
         url:
           updateField === "add-field"
-            ? "http://192.168.1.7:7000/bmr-form/add-bmr-field"
-            : `http://192.168.1.7:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
+            ? "https://bmrapi.mydemosoftware.com/bmr-form/add-bmr-field"
+            : `https://bmrapi.mydemosoftware.com/bmr-form/edit-bmr-field/${bmr_field_id}`,
         data,
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -520,6 +520,24 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
                       width: "100%",
                     }}
                   />
+                   <select
+            name="field_type"
+            value={col.field_type}
+            onChange={(e)=>handleColumnChange(index, "field_type" , e.target.value)}
+            className="border p-2 w-full mb-4"
+            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
+            placeholder="Field Type"
+          >
+            <option value="select">Select Field Type</option>
+            <option value="text">Text</option>
+            <option value="password">Password</option>
+            <option value="email">Email</option>
+            <option value="date">Date</option>
+            <option value="time">Time</option>
+            <option value="number">Number</option>
+            <option value="checkbox">Checkbox</option>
+            <option value="radio">Radio</option>
+          </select>
                   <input
                     type="text"
                     name="defaultValue"
@@ -574,21 +592,6 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
                     value={col.maxValue}
                     onChange={(e) =>
                       handleColumnChange(index, "maxValue", e.target.value)
-                    }
-                    className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
-                    style={{
-                      border: "1px solid #ccc",
-                      padding: "8px",
-                      width: "100%",
-                    }}
-                  />
-                  <input
-                    type="number"
-                    name="order"
-                    placeholder="Order"
-                    value={col.order}
-                    onChange={(e) =>
-                      handleColumnChange(index, "order", e.target.value)
                     }
                     className="border border-gray-300 p-2 w-full mb-4 focus:outline-none focus:border-blue-500 h-[48px]"
                     style={{
