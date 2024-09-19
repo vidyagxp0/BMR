@@ -1427,11 +1427,11 @@ const BMRProcessDetails = ({ fieldData }) => {
                                 }}
                                 required={field.isMandatory}
                               >
-                                {field?.acceptsMultiple?.map((option, idx) => (
+                                {/* {field?.acceptsMultiple?.map((option, idx) => (
                                   <option key={idx} value={option}>
                                     {option}
                                   </option>
-                                ))}
+                                ))} */}
                               </select>
                             </div>
                           )}

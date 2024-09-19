@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import BMRForms from "../Process/Modals/BMRForms";
 import { useDispatch } from "react-redux";
 import { setFormData, setSelectedBMR } from "../../../../../src/userSlice";
+import { Tooltip } from "@mui/material";
 const BMRRecords = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("General Information");
@@ -18,13 +19,18 @@ const BMRRecords = () => {
   const [selectedBMR, setSelectedBMRState] = useState(
     location.state?.selectedBMR || {}
   );
-  console.log(
-    selectedBMR.BMR_Tabs[0].BMR_sections[0].BMR_fields[0].field_type,
-    "acceptsMultiple"
-  );
-  const fieldType =
-    selectedBMR.BMR_Tabs[0].BMR_sections[0].BMR_fields[0].field_type;
-  console.log(fieldType, "[][]][][][][][][][][");
+
+  const fieldTypes = [];
+  selectedBMR.BMR_Tabs[0].BMR_sections[0].BMR_fields.forEach((field) => {
+    fieldTypes.push(field.field_type);
+  });
+  console.log(selectedBMR, "[][]][][][][][][][][]");
+
+  const helpText = [];
+  selectedBMR.BMR_Tabs[0].BMR_sections[0].BMR_fields.forEach((field) => {
+    helpText.push(field.helpText);
+  });
+  // console.log(helpText, "><><><><><><><><><");
 
   const [formData, setFormDataState] = useState({
     initiatorName: null,
@@ -195,7 +201,7 @@ const BMRRecords = () => {
   };
 
   const handleSave = () => {
-    console.log("Form Data to Save:", formData, selectedBMR);
+    console.log("Saved Form Data:", formData, selectedBMR);
     dispatch({
       type: "ACTION_TYPE",
       payload: formData,
@@ -325,12 +331,13 @@ const BMRRecords = () => {
                       </h3>
                       <div className="grid grid-cols-2 gap-4">
                         {section.BMR_fields.map((field, idx) => (
-                          // console.log(section.BMR_fields,)
                           <div key={idx} className="border border-gray-300 p-2">
                             <InputField
                               label={field.label || "Field Name"}
                               type={field.field_type || "text"}
                               placeholder={field.placeholder}
+                              value={field.value}
+                              helpText={field.helpText}
                               onChange={(e) =>
                                 handleDynamicFieldChange(
                                   field.id,
@@ -382,11 +389,19 @@ const Button1 = ({ label, active, onClick }) => (
     {label}
   </button>
 );
-const InputField = ({ label, type = "text", placeholder, value, onChange }) => (
+
+const InputField = ({label,type = "text",placeholder,value,onChange,helpText}) => (
   <div>
-    <label className="block text-gray-700 font-bold p-2 mb-2">
+    <label className=" text-gray-700 font-bold p-2 mb-2 flex items-center">
       {label}
       {type === "text" && <span className="text-red-600">*</span>}
+      {helpText && (
+        <Tooltip title={helpText} placement="right-start">
+          <div className="text-gray-950 cursor-pointer ml-2">
+            <span className="text-black">ⓘ</span>
+          </div>
+        </Tooltip>
+      )}
     </label>
     <input
       type={type}
