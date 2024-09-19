@@ -391,6 +391,7 @@ const Button1 = ({ label, active, onClick }) => (
 );
 
 const InputField = ({label,type = "text",placeholder,value,onChange,helpText}) => (
+  
   <div>
     <label className=" text-gray-700 font-bold p-2 mb-2 flex items-center">
       {label}
