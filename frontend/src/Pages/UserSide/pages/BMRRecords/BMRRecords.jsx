@@ -19,9 +19,12 @@ const BMRRecords = () => {
     location.state?.selectedBMR || {}
   );
   console.log(
-    selectedBMR.BMR_Tabs[0].BMR_sections[0].BMR_fields[0].acceptsMultiple,
+    selectedBMR.BMR_Tabs[0].BMR_sections[0].BMR_fields[0].field_type,
     "acceptsMultiple"
   );
+  const fieldType =
+    selectedBMR.BMR_Tabs[0].BMR_sections[0].BMR_fields[0].field_type;
+  console.log(fieldType, "[][]][][][][][][][][");
 
   const [formData, setFormDataState] = useState({
     initiatorName: null,
@@ -60,7 +63,7 @@ const BMRRecords = () => {
 
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.25:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`https://bmrapi.mydemosoftware.com/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -105,7 +108,7 @@ const BMRRecords = () => {
       try {
         const [reviewersResponse, approversResponse] = await Promise.all([
           axios.post(
-            "http://192.168.1.25:7000/bmr-form/get-user-roles",
+            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
             { role_id: 3 },
             {
               headers: {
@@ -115,7 +118,7 @@ const BMRRecords = () => {
             }
           ),
           axios.post(
-            "http://192.168.1.25:7000/bmr-form/get-user-roles",
+            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
             { role_id: 4 },
             {
               headers: {

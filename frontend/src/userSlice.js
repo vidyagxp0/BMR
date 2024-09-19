@@ -3,17 +3,20 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
-  const response = await axios.get("http://192.168.1.25:7000/user/get-users", {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
-    },
-  });
+  const response = await axios.get(
+    "https://bmrapi.mydemosoftware.com/user/get-users",
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
+      },
+    }
+  );
   return response.data;
 });
 
 export const fetchBmr = createAsyncThunk("bmr/fetchBmr", async () => {
   const response = await axios.get(
-    "http://192.168.1.25:7000/bmr-form/get-bmr",
+    "https://bmrapi.mydemosoftware.com/bmr-form/get-bmr",
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,

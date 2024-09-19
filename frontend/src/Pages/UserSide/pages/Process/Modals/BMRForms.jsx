@@ -9,15 +9,18 @@ import { IoInformationCircleOutline } from "react-icons/io5";
 import "./BMRForms.css";
 import { useNavigate } from "react-router-dom";
 
-import AtmTable from "../../../../../AtmComponents/AtmTable"; // Adjust the import path according to your file structure
+import AtmTable from "../../../../../AtmComponents/AtmTable";
 import { useSelector } from "react-redux";
 
-const formatDate = (date) => {
-  const options = { day: "2-digit", month: "2-digit", year: "numeric" };
-  return new Date(date).toLocaleDateString("en-GB", options);
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
 };
 
-const BMRForms = ({ Data }) => {
+const BMRForms = () => {
   const [approvedBMR, setApprovedBMR] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -30,11 +33,19 @@ const BMRForms = ({ Data }) => {
 
   const formData = useSelector((state) => state.users.formData);
   const selectedBMR = useSelector((state) => state.users.selectedBMR);
-  // console.log(selectedBMR,"popopo")
+
+  const dateOfInitiation = formatDate(selectedBMR.date_of_initiation);
+  // console.log(dateOfInitiation, "doi");
+
+  const dueDate = formatDate(selectedBMR.due_date);
+  // console.log(dueDate, "dueDate");
+
+  // const divisionn = selectedBMR.division_id
+  // console.log(divisionn,"division");
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.25:7000/bmr-form/get-all-bmr", {
+      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -74,29 +85,13 @@ const BMRForms = ({ Data }) => {
     setShowDetailsModal(false);
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-
-    return `${day}-${month}-${year}`;
-  };
-
   const columns = [
     {
       header: "BMR Name",
       accessor: "name",
       cell: () => selectedBMR.name || formData.name || "N/A",
     },
-    {
-      header: "Date of Initiation",
-      accessor: "date_of_initiation",
-      cell: () =>
-        formatDate(bmr.dateOFInitiation) ||
-        formatDate(selectedBMR.date_of_initiation) ||
-        "N/A",
-    },
+
     {
       header: "Division",
       accessor: "division",
@@ -112,6 +107,15 @@ const BMRForms = ({ Data }) => {
       cell: () => selectedBMR.description || "N/A",
     },
     {
+      header: "Date of Initiation",
+      accessor: "date_of_initiation",
+      cell: () => {
+        const date =
+          formData.dateOfInitiation || selectedBMR.date_of_initiation;
+        return date ? formatDate(date) : "N/A";
+      },
+    },
+    {
       header: "Current Date",
       accessor: "current_date",
       Cell: () => formatDate(new Date()),
@@ -119,7 +123,10 @@ const BMRForms = ({ Data }) => {
     {
       header: "Due Date",
       accessor: "due_date",
-      cell: () => formatDate(selectedBMR.due_date || "N/A"),
+      cell: () => {
+        const dueDate = selectedBMR.due_date;
+        return dueDate ? formatDate(dueDate) : "N/A";
+      },
     },
     {
       header: "Due Date Progress",
@@ -127,7 +134,6 @@ const BMRForms = ({ Data }) => {
       Cell: ({ row }) => {
         const dueDate = new Date(row.original.due_date);
         const currentDate = new Date();
-
         const timeDiff = dueDate - currentDate;
         const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
@@ -147,11 +153,11 @@ const BMRForms = ({ Data }) => {
         }
 
         return (
-          <div className=" flex items-center justify-between">
+          <div className="flex items-center justify-between">
             {(diffDays < 0 && (
-              <Tooltip title="Due date is crossed " placement="top-start">
+              <Tooltip title="Due date is crossed" placement="top-start">
                 <IconButton>
-                  <div className="icon-animate ">
+                  <div className="icon-animate">
                     <IoInformationCircleOutline />
                   </div>
                 </IconButton>
@@ -162,7 +168,7 @@ const BMRForms = ({ Data }) => {
                 placement="top-start"
               >
                 <IconButton>
-                  <div className="icon-animate ">
+                  <div className="icon-animate">
                     <IoInformationCircleOutline />
                   </div>
                 </IconButton>

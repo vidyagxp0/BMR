@@ -43,7 +43,7 @@ const HealthLogin = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://192.168.1.25:7000/user/user-login",
+        "https://bmrapi.mydemosoftware.com/user/user-login",
         {
           email: credentials.username,
           password: credentials.password,
