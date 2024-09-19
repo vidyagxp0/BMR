@@ -57,16 +57,12 @@ const BMR_field = sequelize.define("BMR_field", {
   maxValue: {
     type: DataTypes.INTEGER,
   },
-  order: {
-    type: DataTypes.INTEGER,
-  },
   isVisible: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
   isRequired: {
     type: DataTypes.BOOLEAN,
-    allowNull: false,
   },
   isReadOnly: {
     type: DataTypes.BOOLEAN,
