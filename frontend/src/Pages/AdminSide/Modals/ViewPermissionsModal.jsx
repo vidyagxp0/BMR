@@ -6,7 +6,7 @@ const ViewPermissionsModal = ({ user, onClose, id }) => {
 
   useEffect(() => {
     axios
-      .get(`http://192.168.1.26:7000/user/get-user-permissions/${id}`, {
+      .get(`http://192.168.1.7:7000/user/get-user-permissions/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "application/json",

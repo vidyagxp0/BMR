@@ -12,7 +12,6 @@ const BMRRecords = () => {
   const location = useLocation();
   // const dispatch = useDispatch();
   // const selectedBMR = location.state?.selectedBMR;
-  // console.log(selectedBMR, "++++++++++++++++++");
 
   const [activeTab, setActiveTab] = useState("General Information");
   const [dateOfInitiation, setDateOfInitiation] = useState(
@@ -23,7 +22,6 @@ const BMRRecords = () => {
   const [selectedBMR, setSelectedBMRState] = useState(
     location.state?.selectedBMR || {}
   );
-  console.log(selectedBMR.name, "ppppppppp");
 
   const [formData, setFormDataState] = useState({
     initiatorName: null,
@@ -45,8 +43,6 @@ const BMRRecords = () => {
   }, [dispatch, formData, selectedBMR]);
   dispatch(setFormData(formData));
 
-  // console.log(formData, ":dataaaaaaaaaa");
-
   const [dynamicFields, setDynamicFields] = useState({
     "General Information": {},
     ...selectedBMR.BMR_Tabs.reduce((acc, tab) => {
@@ -59,16 +55,13 @@ const BMRRecords = () => {
   const [approvers, setApprovers] = useState([]);
   const [selectedReviewers, setSelectedReviewers] = useState([]);
   const [selectedApprovers, setSelectedApprovers] = useState([]);
-  // const { Id } = useParams();
   const bmr_id = selectedBMR.bmr_id;
-  // console.log(bmr_id,"pppppppppppppppp")
   const [initiatorName, setInitiatorName] = useState(null);
-  // console.log(initiatorName,'pppppppppppppppp')
   const navigate = useNavigate();
 
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.26:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.7:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -114,7 +107,7 @@ const BMRRecords = () => {
       try {
         const [reviewersResponse, approversResponse] = await Promise.all([
           axios.post(
-            "http://192.168.1.26:7000/bmr-form/get-user-roles",
+            "http://192.168.1.7:7000/bmr-form/get-user-roles",
             { role_id: 3 },
             {
               headers: {
@@ -124,7 +117,7 @@ const BMRRecords = () => {
             }
           ),
           axios.post(
-            "http://192.168.1.26:7000/bmr-form/get-user-roles",
+            "http://192.168.1.7:7000/bmr-form/get-user-roles",
             { role_id: 4 },
             {
               headers: {

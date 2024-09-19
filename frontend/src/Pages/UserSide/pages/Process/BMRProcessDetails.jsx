@@ -119,7 +119,6 @@ const BMRProcessDetails = ({ fieldData }) => {
   const [deleteItemType, setDeleteItemType] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState({});
   const { bmr_id } = useParams();
-  console.log(bmr_id,"idddddddddd")
   const navigate = useNavigate();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
@@ -127,60 +126,48 @@ const BMRProcessDetails = ({ fieldData }) => {
   const handleAddRow = (tabName) => {
     setFields((prevFields) => {
       const updatedFields = { ...prevFields };
-  
-      // Find the field with field_type "grid"
+
       const field = updatedFields[tabName].find(
         (fld) => fld.field_type === "grid"
       );
-  
-      console.log('Current Fields:', updatedFields); // Log the current fields
-  
+
       if (field) {
-        // Ensure gridData is initialized as an array if it's not already
         if (!Array.isArray(field.gridData)) {
           field.gridData = [];
         }
-  
-        // Create a new row based on the columns
+
         const newRow = field.acceptsMultiple.columns.reduce((acc, column) => {
-          acc[column.name] = ""; // Add an empty string as the default value for each column
+          acc[column.name] = "";
           return acc;
         }, {});
-  
-        console.log('New Row to Add:', newRow); // Log the new row being added
+
+        console.log("New Row to Add:", newRow);
         field.gridData.push(newRow);
-        console.log('Updated Grid Data:', field.gridData); // Log the updated grid data
       }
-  
-      // Return the updated fields
-      console.log('Updated Fields After Adding Row:', updatedFields); // Log the fields after the row is added
-      return updatedFields;
-    });
-  };
-  
-  const handleGridChange = (tabName, rowIndex, columnName, value) => {
-    setFields((prevFields) => {
-      const updatedFields = { ...prevFields };
-  
-      // Find the field with field_type "grid"
-      const field = updatedFields[tabName].find(
-        (fld) => fld.field_type === "grid"
-      );
-  
-      if (field) {
-        // Update the specific cell value in the grid data
-        console.log(
-          `Changing value of row ${rowIndex}, column ${columnName} to:`,
-          value
-        ); // Log the change being made
-        field.gridData[rowIndex][columnName] = value;
-        console.log('Updated Grid Data After Change:', field.gridData); // Log the updated grid data after change
-      }
-  
       return updatedFields;
     });
   };
 
+  const handleGridChange = (tabName, rowIndex, columnName, value) => {
+    setFields((prevFields) => {
+      const updatedFields = { ...prevFields };
+
+      const field = updatedFields[tabName].find(
+        (fld) => fld.field_type === "grid"
+      );
+
+      if (field) {
+        console.log(
+          `Changing value of row ${rowIndex}, column ${columnName} to:`,
+          value
+        );
+        field.gridData[rowIndex][columnName] = value;
+        console.log("Updated Grid Data After Change:", field.gridData);
+      }
+
+      return updatedFields;
+    });
+  };
 
   const userDetails = JSON.parse(localStorage.getItem("user-details"));
   const handlePopupClose = () => {
@@ -197,7 +184,7 @@ const BMRProcessDetails = ({ fieldData }) => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.26:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.7:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -205,7 +192,6 @@ const BMRProcessDetails = ({ fieldData }) => {
       .then((response) => {
         const bmrData = response.data.message;
         setData(bmrData);
-        console.log(bmrData,",mmmmmmmmmmmmmmmmmmmmmmm")
         setNewTab(bmrData[0]?.BMR_Tabs || []);
         const sections = bmrData[0]?.BMR_Sections || [];
         const sectionsByTab = sections.reduce((acc, section) => {
@@ -272,7 +258,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.initiatorDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.26:7000/bmr-form/send-BMR-for-review",
+          "http://192.168.1.7:7000/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -289,7 +275,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.26:7000/bmr-form/send-BMR-from-review-to-approval",
+          "http://192.168.1.7:7000/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -306,7 +292,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.26:7000/bmr-form/send-BMR-from-review-to-open",
+          "http://192.168.1.7:7000/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -320,11 +306,7 @@ const BMRProcessDetails = ({ fieldData }) => {
     } else if (popupAction === "sendFromApprovalToApproved") {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
-        .put(
-          "http://192.168.1.26:7000/bmr-form/approve-BMR",
-          dataObject,
-          config
-        )
+        .put("http://192.168.1.7:7000/bmr-form/approve-BMR", dataObject, config)
         .then(() => {
           toast.success("BMR successfully approved");
           navigate(-1);
@@ -338,7 +320,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.26:7000/bmr-form/send-BMR-from-approval-to-open",
+          "http://192.168.1.7:7000/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -423,7 +405,7 @@ const BMRProcessDetails = ({ fieldData }) => {
 
         // Make API request to generate PDF
         const response = await axios({
-          url: "http://192.168.1.26:7000/bmr-form/generate-report",
+          url: "http://192.168.1.7:7000/bmr-form/generate-report",
           method: "POST",
           responseType: "blob",
           headers: {
@@ -1272,53 +1254,58 @@ const BMRProcessDetails = ({ fieldData }) => {
 
                           {field.field_type === "grid" && (
                             <div className="relative">
-                              {JSON.parse(field?.acceptsMultiple)?.columns?.length > 0 && (
+                              {JSON.parse(field?.acceptsMultiple)?.columns
+                                ?.length > 0 && (
                                 <table className="table-auto w-full border border-gray-600 mb-4">
-
                                   <thead>
                                     <tr>
-                                      {JSON.parse(field?.acceptsMultiple)?.columns?.map(
-                                        (column, idx) => {
-                                          return (
-                                            <th
-                                              key={idx}
-                                              className="border border-gray-600 p-2"
-                                            >
-                                              {column?.name || "No Name"}
-                                            </th>
-                                          );
-                                        }
-                                      )}
+                                      {JSON.parse(
+                                        field?.acceptsMultiple
+                                      )?.columns?.map((column, idx) => {
+                                        return (
+                                          <th
+                                            key={idx}
+                                            className="border border-gray-600 p-2"
+                                          >
+                                            {column?.name || "No Name"}
+                                          </th>
+                                        );
+                                      })}
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {field?.gridData?.map((row, rowIndex) => (
-                                      <tr key={rowIndex}>
-                                        {field?.acceptsMultiple?.columns?.map(
-                                          (column, colIdx) => (
-                                            <td
-                                              key={colIdx}
-                                              className="border border-gray-600 p-2"
-                                            >
-                                              <input
-                                                type="text"
-                                                placeholder={column.placeholder}
-                                                value={row[column.name] || ""}
-                                                onChange={(e) =>
-                                                  handleGridChange(
-                                                    activeDefaultTab,
-                                                    rowIndex,
-                                                    column.name,
-                                                    e.target.value
-                                                  )
-                                                }
-                                                className="border border-gray-600 p-2 w-full rounded"
-                                              />
-                                            </td>
-                                          )
-                                        )}
-                                      </tr>
-                                    ))}
+                                    {field?.gridData?.map((row, rowIndex) => {
+                                      console.log("row", row);
+                                      return (
+                                        <tr key={rowIndex}>
+                                          {field?.acceptsMultiple?.columns?.map(
+                                            (column, colIdx) => (
+                                              <td
+                                                key={colIdx}
+                                                className="border border-gray-600 p-2"
+                                              >
+                                                <input
+                                                  type="text"
+                                                  placeholder={
+                                                    column.placeholder
+                                                  }
+                                                  value={row[column.name] || ""}
+                                                  onChange={(e) =>
+                                                    handleGridChange(
+                                                      activeDefaultTab,
+                                                      rowIndex,
+                                                      column.name,
+                                                      e.target.value
+                                                    )
+                                                  }
+                                                  className="border border-gray-600 p-2 w-full rounded"
+                                                />
+                                              </td>
+                                            )
+                                          )}
+                                        </tr>
+                                      );
+                                    })}
                                   </tbody>
                                 </table>
                               )}
