@@ -24,23 +24,27 @@ const BMRForms = ({ Data }) => {
   const [selectedBMRData, setSelectedBMRData] = useState(null);
   const navigate = useNavigate();
   const data = useSelector((state) => state.users);
-  // console.log(data, "reduxdata");
   const openBMRDetailsPage = (bmrId) => {
     navigate(`/bmr-details/${bmrId}`);
   };
 
   const formData = useSelector((state) => state.users.formData);
   const selectedBMR = useSelector((state) => state.users.selectedBMR);
+  // console.log(selectedBMR,"popopo")
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.26:7000/bmr-form/get-all-bmr", {
+      .get("http://192.168.1.39:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
       })
       .then((response) => {
-        setApprovedBMR(response.data.message);
+        const approvedItems = response.data.message.filter(
+          (item) => item.status === "Approved"
+        );
+        setApprovedBMR(approvedItems);
+        // console.log(approvedItems, "kkkkkkkkk");
       })
       .catch((error) => {
         console.error("Failed to fetch BMR's:", error);
@@ -55,10 +59,10 @@ const BMRForms = ({ Data }) => {
     setShowModal(false);
   };
 
-  const openDetailsModal = (bmrData) => {
-    setSelectedBMRData(bmrData);
-    setShowDetailsModal(true);
-  };
+  // const openDetailsModal = (bmrData) => {
+  //   setSelectedBMRData(bmrData);
+  //   setShowDetailsModal(true);
+  // };
   const divisionMap = {
     1: "India",
     2: "Malaysia",
@@ -169,6 +173,16 @@ const BMRForms = ({ Data }) => {
     },
   ];
 
+  const [filter, setFilter] = useState("");
+
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
+  };
+
+  const filteredBMR = approvedBMR.filter((item) =>
+    filter === "" ? true : item.name.toLowerCase() === filter.toLowerCase()
+  );
+
   return (
     <div className="flex flex-col p-3">
       <header className="fixed top-0 left-0 w-full z-50">
@@ -187,10 +201,12 @@ const BMRForms = ({ Data }) => {
                 name="options"
                 className="border-2 border-[#B3C1CB] w-80 shadow-md rounded-lg p-2 focus:p-2 focus:outline-none focus:ring-2 focus:ring-[#346C86]"
                 style={{ border: "2px solid gray" }}
+                value={filter}
+                onChange={handleFilterChange}
               >
                 <option value="">All Records</option>
                 {approvedBMR.map((item, index) => (
-                  <option key={index} value={item.id}>
+                  <option key={index} value={item.name}>
                     {item.name}
                   </option>
                 ))}
@@ -213,7 +229,7 @@ const BMRForms = ({ Data }) => {
             <InitiateModal approvedBMR={approvedBMR} onClose={closeModal} />
           )}
 
-          <AtmTable columns={columns} data={approvedBMR} rowsPerPage={7} />
+          <AtmTable columns={columns} data={filteredBMR} rowsPerPage={7} />
         </div>
       </main>
     </div>

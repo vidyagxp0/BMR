@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
-// import HeaderTop from "../../../../Components/Header/HeaderTop";
 import Select from "react-select";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -10,10 +9,6 @@ import { useDispatch } from "react-redux";
 import { setFormData, setSelectedBMR } from "../../../../../src/userSlice";
 const BMRRecords = () => {
   const location = useLocation();
-  // const dispatch = useDispatch();
-  // const selectedBMR = location.state?.selectedBMR;
-  // console.log(selectedBMR, "++++++++++++++++++");
-
   const [activeTab, setActiveTab] = useState("General Information");
   const [dateOfInitiation, setDateOfInitiation] = useState(
     new Date().toISOString().split("T")[0]
@@ -23,7 +18,7 @@ const BMRRecords = () => {
   const [selectedBMR, setSelectedBMRState] = useState(
     location.state?.selectedBMR || {}
   );
-  console.log(selectedBMR.name, "ppppppppp");
+  console.log(selectedBMR, "selectedbmrrrrrrrrrrrrrrr");
 
   const [formData, setFormDataState] = useState({
     initiatorName: null,
@@ -38,14 +33,11 @@ const BMRRecords = () => {
       }, {}),
     },
   });
-
   useEffect(() => {
     dispatch(setFormData(formData));
     dispatch(setSelectedBMR(selectedBMR));
   }, [dispatch, formData, selectedBMR]);
   dispatch(setFormData(formData));
-
-  // console.log(formData, ":dataaaaaaaaaa");
 
   const [dynamicFields, setDynamicFields] = useState({
     "General Information": {},
@@ -59,16 +51,13 @@ const BMRRecords = () => {
   const [approvers, setApprovers] = useState([]);
   const [selectedReviewers, setSelectedReviewers] = useState([]);
   const [selectedApprovers, setSelectedApprovers] = useState([]);
-  // const { Id } = useParams();
   const bmr_id = selectedBMR.bmr_id;
-  // console.log(bmr_id,"pppppppppppppppp")
   const [initiatorName, setInitiatorName] = useState(null);
-  // console.log(initiatorName,'pppppppppppppppp')
   const navigate = useNavigate();
 
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.26:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`http://192.168.1.39:7000/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -86,7 +75,6 @@ const BMRRecords = () => {
         toast.error("Error Fetching BMR");
       });
   };
-
   useEffect(() => {
     fetchBMRData();
   }, [bmr_id]);
@@ -114,7 +102,7 @@ const BMRRecords = () => {
       try {
         const [reviewersResponse, approversResponse] = await Promise.all([
           axios.post(
-            "http://192.168.1.26:7000/bmr-form/get-user-roles",
+            "http://192.168.1.39:7000/bmr-form/get-user-roles",
             { role_id: 3 },
             {
               headers: {
@@ -124,7 +112,7 @@ const BMRRecords = () => {
             }
           ),
           axios.post(
-            "http://192.168.1.26:7000/bmr-form/get-user-roles",
+            "http://192.168.1.39:7000/bmr-form/get-user-roles",
             { role_id: 4 },
             {
               headers: {
@@ -184,10 +172,9 @@ const BMRRecords = () => {
     }));
   };
 
-  const formattedDate = new Date(selectedBMR.date_of_initiation)
-    .toISOString()
-    .split("T")[0];
-
+  // const formattedDate = new Date(selectedBMR.date_of_initiation)
+  //   .toISOString()
+  //   .split("T")[0];
   const handleDynamicFieldChange = (id, value, tab) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -335,7 +322,7 @@ const BMRRecords = () => {
                           <div key={idx} className="border border-gray-300 p-2">
                             <InputField
                               label={field.label || "Field Name"}
-                              type={field.type || "text"}
+                              type={field.field_type || "text"}
                               placeholder={field.placeholder}
                               onChange={(e) =>
                                 handleDynamicFieldChange(
