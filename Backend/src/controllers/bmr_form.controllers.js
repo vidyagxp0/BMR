@@ -448,7 +448,6 @@ exports.postBMRField = async (req, res) => {
     helpText,
     minValue,
     maxValue,
-    order,
     isVisible,
     isRequired,
     isReadOnly,
@@ -560,7 +559,6 @@ exports.postBMRField = async (req, res) => {
         helpText: helpText,
         minValue: minValue,
         maxValue: maxValue,
-        order: order,
         isVisible: isVisible,
         isRequired: isRequired,
         isReadOnly: isReadOnly,
@@ -1029,7 +1027,6 @@ exports.editBMRField = async (req, res) => {
     helpText,
     minValue,
     maxValue,
-    order,
     isVisible,
     isRequired,
     isReadOnly,
@@ -1147,7 +1144,6 @@ exports.editBMRField = async (req, res) => {
         helpText: helpText,
         minValue: minValue,
         maxValue: maxValue,
-        order: order,
         isVisible: isVisible,
         isRequired: isRequired,
         isReadOnly: isReadOnly,
@@ -1902,6 +1898,7 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
       ...reviewer,
       status: "pending",
       comment: null,
+      date_of_review: "NA",
     }));
 
     // Update the form details
@@ -2040,7 +2037,12 @@ exports.SendBMRReviewToApproval = async (req, res) => {
           alreadyReviewed = true;
           return reviewer;
         } else {
-          return { ...reviewer, status: "reviewed", comment: reviewComment };
+          return {
+            ...reviewer,
+            status: "reviewed",
+            comment: reviewComment,
+            date_of_review: new Date(),
+          };
         }
       }
       return reviewer;
@@ -2225,6 +2227,7 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
       ...reviewer,
       status: "pending",
       comment: null, // Optionally reset the comment
+      date_of_approval: "NA",
     }));
 
     const updatedApprovers = form.approvers.map((approver) => ({
@@ -2372,7 +2375,12 @@ exports.ApproveBMR = async (req, res) => {
           alreadyApproved = true;
           return approver; // Return existing approver details if already approved
         } else {
-          return { ...approver, status: "approved", comment: approvalComment }; // Update approval details
+          return {
+            ...approver,
+            status: "approved",
+            comment: approvalComment,
+            date_of_approval: new Date(),
+          }; // Update approval details
         }
       }
       return approver;
@@ -2672,9 +2680,7 @@ exports.getUserNotifications = async (req, res) => {
 
 exports.readAUserNotification = async (req, res) => {
   try {
-    const notificationIds = req.body.notification_ids; // Assuming notification_ids is an array
-
-    // Create an update statement using Sequelize's `in` operator
+    const notificationIds = req.body.notification_ids;
     const updateResult = await Notifications.update(
       { isRead: true },
       {
@@ -2682,6 +2688,7 @@ exports.readAUserNotification = async (req, res) => {
           notification_id: {
             [Op.in]: notificationIds,
           },
+          isRead: false,
         },
       }
     );
@@ -2689,7 +2696,7 @@ exports.readAUserNotification = async (req, res) => {
     if (updateResult[0] > 0) {
       res.send({ message: "Notifications marked as read" });
     } else {
-      res.send({ message: "No notifications found to update" });
+      res.send({ message: "No unread notifications found to update" });
     }
   } catch (error) {
     res.status(500).send({

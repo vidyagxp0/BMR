@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
 import HeaderBottom from "../../../../Components/Header/HeaderBottom";
 import AtmTable from "../../../../AtmComponents/AtmTable";
@@ -22,7 +23,15 @@ const BMRProcess = () => {
   const navigate = useNavigate();
 
   const columns = [
-    { header: "BMR Id", accessor: "bmr_id" },
+    {
+      header: "BMR Id",
+      accessor: "bmr_id",
+      Cell: ({ row }) => {
+        const bmrId = row.original.bmr_id;
+        const formattedBmrId = bmrId < 10 ? `1000${bmrId}` : `100${bmrId}`;
+        return <span>{formattedBmrId}</span>;
+      },
+    },
     {
       header: "BMR Name",
       accessor: "name",
@@ -40,7 +49,24 @@ const BMRProcess = () => {
         );
       },
     },
-    { header: "Division", accessor: "division" },
+    {
+      header: "Division",
+      accessor: "division",
+      Cell: ({ row }) => {
+        return (
+          <>
+            {" "}
+            {row.original.division_id === 1
+              ? "India"
+              : row.original.division_id === 2
+              ? "Malasia "
+              : row.original.division_id === 3
+              ? "EU"
+              : "EMEA"}
+          </>
+        );
+      },
+    },
     {
       header: "Date Of Initiation",
       accessor: "date_of_initiation",
@@ -52,8 +78,67 @@ const BMRProcess = () => {
       accessor: "due_date",
       Cell: ({ row }) => formattedDate(row.original.due_date),
     },
+    {
+      header: "Department",
+      accessor: "department",
+      Cell: ({ row }) => {
+        return (
+          <>
+            {" "}
+            {row.original.department_id === 1
+              ? "Coorporate Quality Assurance"
+              : row.original.department_id === 2
+              ? "Quality Assurance Biopharma "
+              : row.original.department_id === 3
+              ? "Central Quality Control"
+              : row.original.department_id === 4
+              ? "Manufacturing"
+              : row.original.department_id === 5
+              ? "Plasma Sourcing Group"
+              : row.original.department_id === 6
+              ? "Central Stores"
+              : row.original.department_id === 7
+              ? "Information Technology Group"
+              : row.original.department_id === 8
+              ? "Molecular Medicine"
+              : row.original.department_id === 9
+              ? "Central Laboratory"
+              : row.original.department_id === 10
+              ? "Tech Team"
+              : row.original.department_id === 11
+              ? "Quality Assurance"
+              : row.original.department_id === 12
+              ? "Quality Management"
+              : row.original.department_id === 13
+              ? "IT Administration"
+              : row.original.department_id === 14
+              ? "Accounting"
+              : row.original.department_id === 15
+              ? "Logistics"
+              : row.original.department_id === 16
+              ? "Senior Management"
+              : row.original.department_id === 17
+              ? "Business Administration"
+              : row.original.department_id === 18
+              ? "Others"
+              : row.original.department_id === 19
+              ? "Quality Control"
+              : row.original.department_id === 20
+              ? "Production"
+              : row.original.department_id === 21
+              ? "Accounting Manager"
+              : row.original.department_id === 22
+              ? "Quality Assurance Director"
+              : row.original.department_id === 23
+              ? "Quality Manager"
+              : row.original.department_id === 24
+              ? "Supervisor"
+              : "Director"}
+          </>
+        );
+      },
+    },
     { header: "Status", accessor: "status" },
-   
     {
       header: "Actions",
       accessor: "actions",
@@ -88,14 +173,15 @@ const BMRProcess = () => {
 
   const fetchBMRData = () => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-all-bmr", {
+      .get("http://localhost:7000/bmr-form/get-all-bmr", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
       })
       .then((response) => {
         const sortedData = response.data.message.sort(
-          (a, b) => new Date(b.date_of_initiation) - new Date(a.date_of_initiation)
+          (a, b) =>
+            new Date(b.date_of_initiation) - new Date(a.date_of_initiation)
         );
         setData(sortedData);
       })
@@ -162,40 +248,52 @@ const BMRProcess = () => {
       <HeaderBottom openModal={() => setIsModalOpen(true)} />
 
       {/* Search Input */}
-      <div className="my-4">
-        
-      </div>
+      <div className="my-4"></div>
 
       {/* Tabs for filtering */}
       <div className="tabs flex justify-start border-b">
-      <div className="relative flex items-center mr-5 w-[300px]"> {/* Fixed width container */}
-  <input
-    type="text"
-    placeholder="Search by BMR Name"
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-    className="border p-2 h-10 rounded pl-4 pr-10 w-full focus:outline-none" // Padding for icon space
-    style={{ border: '1px solid black' }}
-  />
-  <AiOutlineSearch className="absolute right-3 text-gray-500" size={20} /> {/* Search Icon after input */}
-</div>
-        {["All", "Under Initiation", "Under Reviewer", "Under Approver", "Approved"].map(
-          (tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`relative px-6 py-2 text-sm font-semibold focus:outline-none transition
-              ${activeTab === tab ? "text-black bg-gray-100 border-b-2 border-black" : "text-gray-500 hover:text-black hover:bg-gray-50"} 
+        <div className="relative flex items-center mr-5 w-[300px]">
+          {" "}
+          {/* Fixed width container */}
+          <input
+            type="text"
+            placeholder="Search by BMR Name"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border p-2 h-10 rounded pl-4 pr-10 w-full focus:outline-none" // Padding for icon space
+            style={{ border: "1px solid black" }}
+          />
+          <AiOutlineSearch
+            className="absolute right-3 text-gray-500"
+            size={20}
+          />{" "}
+          {/* Search Icon after input */}
+        </div>
+        {[
+          "All",
+          "Under Initiation",
+          "Under Reviewer",
+          "Under Approver",
+          "Approved",
+        ].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`relative px-6 py-2 text-sm font-semibold focus:outline-none transition
+              ${
+                activeTab === tab
+                  ? "text-black bg-gray-100 border-b-2 border-black"
+                  : "text-gray-500 hover:text-black hover:bg-gray-50"
+              } 
               rounded-t-lg`}
-              style={{
-                borderBottom: activeTab === tab ? "2px solid blue" : "",
-                backgroundColor: activeTab === tab ? "#f3f4f6" : "", // Light gray for selected tab
-              }}
-            >
-              {tab}
-            </button>
-          )
-        )}
+            style={{
+              borderBottom: activeTab === tab ? "2px solid blue" : "",
+              backgroundColor: activeTab === tab ? "#f3f4f6" : "", // Light gray for selected tab
+            }}
+          >
+            {tab}
+          </button>
+        ))}
       </div>
 
       <div className="table-container">

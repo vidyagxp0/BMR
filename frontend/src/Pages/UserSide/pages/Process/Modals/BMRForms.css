@@ -1,0 +1,20 @@
+@keyframes pulseAnimation {
+  0% {
+    color: #000000;
+  }
+
+  25% {
+    color: gray; 
+  }
+  50% {
+    color: #3a3a3a; 
+  }
+  100% {
+    color: #000000;
+  }
+}
+
+.icon-animate {
+  font-size: 15px;
+  animation: pulseAnimation 3s infinite; 
+}

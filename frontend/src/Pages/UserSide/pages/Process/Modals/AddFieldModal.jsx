@@ -32,7 +32,9 @@ const AddFieldModal = ({
     bmr_tab_id: bmr_tab_id,
     bmr_section_id: bmr_section_id,
   });
-  // console.log(fieldData, "datasaaaa");
+  {
+    fieldData.helpText ? console.log("Hellooooooo") : console.log("Errorrrrrr");
+  }
 
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [showGridColumnConfigModal, setShowGridColumnConfigModal] =
@@ -93,14 +95,15 @@ const AddFieldModal = ({
         method: updateField === "add-field" ? "post" : "put",
         url:
           updateField === "add-field"
-            ? "https://bmrapi.mydemosoftware.com/bmr-form/add-bmr-field"
-            : `https://bmrapi.mydemosoftware.com/bmr-form/edit-bmr-field/${bmr_field_id}`,
+            ? "http://localhost:7000/bmr-form/add-bmr-field"
+            : `http://localhost:7000/bmr-form/edit-bmr-field/${bmr_field_id}`,
         data: {
           bmr_id,
           ...fieldData,
           email: verified.email,
           password: verified.password,
           declaration: verified.declaration,
+          comments: verified.comments,
         },
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -135,7 +138,7 @@ const AddFieldModal = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-filter backdrop-blur-sm">
+    <div className="fixed inset-0 flex items-center justify-center top-16 bg-opacity-50 backdrop-filter backdrop-blur-sm">
       <div
         className="bg-white p-4 rounded shadow-lg"
         style={{ width: "800px", height: "500px" }}

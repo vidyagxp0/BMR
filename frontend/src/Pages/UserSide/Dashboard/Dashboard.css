@@ -29,12 +29,12 @@
   color: #fff;
   border-radius: 10px;
   font-size: 15px;
-  background-color: #1a9e66;
+  background-color: #0c394e;
 }
 
 .btn:hover {
-  background: #0a6249;
-  color: #4bf6c6;
+  background: #346c86;
+  color: #fff;
 }
 
 .table-wrapper {

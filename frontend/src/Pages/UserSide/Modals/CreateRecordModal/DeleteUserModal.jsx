@@ -1,18 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { deleteBmr, fetchBmr } from "../../../../userSlice";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
 
 const DeleteUserModal = ({ onClose, id, setData }) => {
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
   const dispatch = useDispatch();
-  const handleDelete = () => {
+  const handleVerificationSubmit = (verified) => {
     axios
-      .delete(`https://bmrapi.mydemosoftware.com/bmr-form/delete-bmr/${id}`, {
+      .delete(`http://localhost:7000/bmr-form/delete-bmr/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+        },
+        data: {
+          email: verified.email,
+          password: verified.password,
+          declaration: verified.declaration,
+          comments: verified.comments,
         },
       })
       .then((response) => {
@@ -30,6 +38,13 @@ const DeleteUserModal = ({ onClose, id, setData }) => {
         toast.error("Failed to delete user");
         console.error(error);
       });
+  };
+  const handleDelete = () => {
+    setShowVerificationModal(true);
+  };
+
+  const handleVerificationClose = () => {
+    setShowVerificationModal(false);
   };
 
   return (
@@ -55,6 +70,12 @@ const DeleteUserModal = ({ onClose, id, setData }) => {
         </div>
       </div>
       <ToastContainer />
+      {showVerificationModal && (
+        <UserVerificationPopUp
+          onClose={handleVerificationClose}
+          onSubmit={handleVerificationSubmit}
+        />
+      )}
     </div>
   );
 };

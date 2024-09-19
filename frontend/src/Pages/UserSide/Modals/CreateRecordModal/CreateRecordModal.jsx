@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { addBmr } from "../../../../userSlice";
 import axios from "axios";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
+import { useNavigate } from "react-router-dom";
 
 const modalStyle = {
   position: "absolute",
@@ -14,7 +15,7 @@ const modalStyle = {
   transform: "translate(-50%, -50%)",
   width: "90%",
   maxWidth: 600,
-  maxHeight: "70vh", 
+  maxHeight: "70vh",
   bgcolor: "background.paper",
   borderRadius: "8px",
   boxShadow: 24,
@@ -25,6 +26,7 @@ const modalStyle = {
 function CreateRecordModal({ open, onClose }) {
   const [formData, setFormData] = useState({
     name: "",
+    description: "",
     reviewers: [],
     approvers: [],
     department: "",
@@ -34,17 +36,20 @@ function CreateRecordModal({ open, onClose }) {
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [department, setDepartment] = useState([]);
-  const [division, setDivision] = useState([]);
+  const [division, setDivision] = useState([
+    { value: 1, label: "India" },
+    { value: 2, label: "Malaysia" },
+    { value: 3, label: "EU" },
+    { value: 4, label: "EMEA" },
+  ]);
 
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
   const [isSelectedApprover, setIsSelectedApprover] = useState([]);
-  const [isSelectedDepartment, setIsSelectedDepartmentr] = useState([]);
-  const [isSelectedDivision, setIsSelectedDivision] = useState([]);
-
+  const [isSelectedDivision, setIsSelectedDivision] = useState(null);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const closeUserVerifiedModal = () => {
     setShowVerificationModal(false);
   };
@@ -52,9 +57,13 @@ function CreateRecordModal({ open, onClose }) {
   const handleVerificationSubmit = (verified) => {
     axios
       .post(
-        "https://bmrapi.mydemosoftware.com/bmr-form/add-bmr",
+        "http://localhost:7000/bmr-form/add-bmr",
         {
           name: formData.name,
+          description: formData.description,
+          due_date: formData.due_date,
+          division_id: formData.division,
+          department_id: formData.department,
           reviewers: isSelectedReviewer.map((reviewer) => ({
             reviewerId: reviewer.value,
             status: "pending",
@@ -72,6 +81,7 @@ function CreateRecordModal({ open, onClose }) {
           email: verified.email,
           password: verified.password,
           declaration: verified.declaration,
+          comments: verified.comments,
         },
 
         {
@@ -82,8 +92,12 @@ function CreateRecordModal({ open, onClose }) {
         }
       )
       .then((response) => {
+        console.log(response.data.message.split(" ")[3], "gdgdgdf");
         toast.success(response.data.message || "BMR added successfully!");
         dispatch(addBmr(response.data.bmr));
+        navigate(`/process/processdetails/${response.data.message.split(" ")[3]}`, {
+          state: { bmr: response.data.bmr },
+        });
         setFormData({ name: "", reviewers: [], approvers: [] });
         setIsSelectedReviewer([]);
         setIsSelectedApprover([]);
@@ -101,7 +115,7 @@ function CreateRecordModal({ open, onClose }) {
   useEffect(() => {
     axios
       .post(
-        "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+        "http://localhost:7000/bmr-form/get-user-roles",
         { role_id: 3 },
         {
           headers: {
@@ -131,7 +145,7 @@ function CreateRecordModal({ open, onClose }) {
 
     axios
       .post(
-        "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+        "http://localhost:7000/bmr-form/get-user-roles",
         { role_id: 4 },
         {
           headers: {
@@ -158,7 +172,35 @@ function CreateRecordModal({ open, onClose }) {
       .catch((error) => {
         console.error("Error: ", error);
       });
+
+    axios
+      .get("http://localhost:7000/user/get-all-user-departments", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        const departmentOptions = [
+          ...response.data.message.map((department) => ({
+            value: department.department_id,
+            label: department.name,
+          })),
+        ];
+        setDepartment(departmentOptions);
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
   }, []);
+  const getTomorrowDate = () => {
+    const today = new Date();
+    today.setDate(today.getDate() + 1); // Add 1 day to the current date
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const dd = String(today.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -168,7 +210,8 @@ function CreateRecordModal({ open, onClose }) {
   };
 
   const handleSelectChange = (selected, field) => {
-    if (selected.some((option) => option.value === "select-all")) {
+    console.log(selected, "<><><><>");
+    if (selected?.some((option) => option.value === "select-all")) {
       const allOptions = field === "reviewers" ? reviewers : approvers;
       const nonSelectAllOptions = allOptions.filter(
         (option) => option.value !== "select-all"
@@ -180,9 +223,11 @@ function CreateRecordModal({ open, onClose }) {
         field === "approvers" ? nonSelectAllOptions : isSelectedApprover
       );
     } else {
-      field === "reviewers"
-        ? setIsSelectedReviewer(selected)
-        : setIsSelectedApprover(selected);
+      if (field === "reviewers") {
+        setIsSelectedReviewer(selected);
+      } else if (field === "approvers") {
+        setIsSelectedApprover(selected);
+      }
     }
   };
 
@@ -195,7 +240,35 @@ function CreateRecordModal({ open, onClose }) {
   }, [isSelectedReviewer, isSelectedApprover]);
 
   const handleAddBmrClick = () => {
+    if (
+      !formData.name ||
+      !formData.description ||
+      !formData.department ||
+      !formData.division ||
+      !formData.due_date ||
+      isSelectedReviewer.length === 0 ||
+      isSelectedApprover.length === 0
+    ) {
+      toast.error("Please fill all fields to add a new BMR.");
+      return;
+    }
+
     setShowVerificationModal(true);
+  };
+
+  const handleDepartmentSelect = (selected) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      department: selected.value, // Update the department value in formData
+    }));
+  };
+
+  // Function to handle division selection
+  const handleDivisionSelect = (selected) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      division: selected.value, // Update the division value in formData
+    }));
   };
 
   return (
@@ -204,7 +277,7 @@ function CreateRecordModal({ open, onClose }) {
         <Box open={true} onClose={onClose} sx={{ zIndex: 10 }}>
           <Box sx={modalStyle}>
             <Typography variant="h6" component="h2" align="center" gutterBottom>
-              Add BMR
+              BMR Editor
             </Typography>
             <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
               <TextField
@@ -228,10 +301,10 @@ function CreateRecordModal({ open, onClose }) {
               />
               <TextField
                 label="Description"
-                name="name"
+                name="description"
                 fullWidth
                 margin="normal"
-                value={formData.name}
+                value={formData.description}
                 onChange={handleChange}
                 variant="outlined"
                 InputProps={{
@@ -246,89 +319,92 @@ function CreateRecordModal({ open, onClose }) {
                 }}
               />
 
-              <div>
-                <Typography
-                  variant="subtitle2"
-                  color="textSecondary"
-                  gutterBottom
-                >
-                  Department
-                </Typography>
-                <Select
-                  name="department"
-                  options={department}
-                  value={isSelectedDepartment}
-                  onChange={(selected) =>
-                    handleSelectChange(selected, "department")
-                  }
-                  styles={{
-                    control: (provided) => ({
-                      ...provided,
-                      borderColor: "#d0d0d0",
-                      boxShadow: "none",
-                      "&:hover": {
-                        borderColor: "#a0a0a0",
-                      },
-                    }),
-                  }}
-                />
+              <div className="flex flex-col gap-3">
+                {/* Department Dropdown */}
+                <div>
+                  <Typography
+                    variant="subtitle2"
+                    color="textSecondary"
+                    gutterBottom
+                  >
+                    Department
+                  </Typography>
+                  <Select
+                    name="department"
+                    options={department}
+                    value={department.find(
+                      (dep) => dep.value === formData.department
+                    )} // Match selected value
+                    onChange={handleDepartmentSelect} // Single-select handling function
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        borderColor: "#d0d0d0",
+                        boxShadow: "none",
+                        "&:hover": {
+                          borderColor: "#a0a0a0",
+                        },
+                      }),
+                    }}
+                  />
+                </div>
+
+                <div>
+                  {/* Division Dropdown */}
+                  <Typography
+                    variant="subtitle2"
+                    color="textSecondary"
+                    gutterBottom
+                  >
+                    Division
+                  </Typography>
+                  <Select
+                    name="division"
+                    options={division}
+                    value={division.find(
+                      (div) => div.value === formData.division
+                    )} // Match selected value
+                    onChange={handleDivisionSelect} // Single-select handling function
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        borderColor: "#d0d0d0",
+                        boxShadow: "none",
+                        "&:hover": {
+                          borderColor: "#a0a0a0",
+                        },
+                      }),
+                    }}
+                  />
+                </div>
               </div>
-              <div>
-                <Typography
-                  variant="subtitle2"
-                  color="textSecondary"
-                  gutterBottom
-                >
-                  Division
-                </Typography>
-                <Select
-                  name="division"
-                  options={division}
-                  value={isSelectedDivision}
-                  onChange={(selected) =>
-                    handleSelectChange(selected, "divisions")
-                  }
-                  styles={{
-                    control: (provided) => ({
-                      ...provided,
-                      borderColor: "#d0d0d0",
-                      boxShadow: "none",
-                      "&:hover": {
-                        borderColor: "#a0a0a0",
-                      },
-                    }),
-                  }}
-                />
-              </div>
-              <div>
-                <Typography
-                  variant="subtitle2"
-                  color="textSecondary"
-                  gutterBottom
-                >
-                  Due Date
-                </Typography>
-                <TextField
-                  // label="Due Date"
-                  name="name"
-                  type="date"
-                  fullWidth
-                  margin="normal"
-                  value={formData.due_date}
-                  onChange={handleChange}
-                  variant="outlined"
-                  InputProps={{
-                    style: {
-                      height: "48px",
-                    },
-                  }}
-                  InputLabelProps={{
-                    style: {
-                      top: "0",
-                    },
-                  }}
-                />
-              </div>
+              <Typography
+                variant="subtitle2"
+                color="textSecondary"
+                gutterBottom
+              >
+                Due Date
+              </Typography>
+              <TextField
+                // label="Due Date"
+                name="due_date"
+                type="date"
+                fullWidth
+                margin="normal"
+                value={formData.due_date}
+                onChange={handleChange}
+                variant="outlined"
+                InputProps={{
+                  style: {
+                    height: "48px",
+                    marginTop: "-10px",
+                  },
+                }}
+                inputProps={{
+                  min: getTomorrowDate(), // Disable past dates
+                  style: { height: "48px" },
+                }}
+              />
               <div>
                 <Typography
                   variant="subtitle2"

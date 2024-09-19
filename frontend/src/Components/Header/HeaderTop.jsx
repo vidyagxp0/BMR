@@ -18,7 +18,7 @@ function HeaderTop() {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    setSocket(socketIOClient("https://bmrapi.mydemosoftware.com/"));
+    setSocket(socketIOClient("http://localhost:7000/"));
     return () => {
       if (socket) socket.disconnect();
     };
@@ -60,31 +60,43 @@ function HeaderTop() {
 
         <div className="right">
           <div className="links-container mr-10">
-            <Link to="/user-notifications" className="link-item mt-5 ">
-              <FaBell size={22} />
-              {unreadCount > 0 && (
-                <span className="unread-badge">{unreadCount}</span>
-              )}
-              <span className="link-name">Notifications</span>
+            <Link
+              to="/user-notifications"
+              className="flex items-center mt-8  space-x-1"
+            >
+              <div className="relative">
+                <FaBell className="text-white text-2xl" />{" "}
+                <span className="link-name">Notifications</span>
+                {/* Increased size to 32x32 pixels */}
+                {unreadCount > 0 && (
+                  <span className="absolute -top-2 left-2 bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
+                    {unreadCount}
+                  </span>
+                )}
+                
+              </div>
+
+              
             </Link>
+
             <Link to="/boardOfDirectors" className="link-item mt-5 ">
-              <FaPeopleLine size={22} />
+              <FaPeopleLine className="text-white text-2xl" />
               <span className="link-name">Board Members</span>
             </Link>
             <Link to="/about" className="link-item mt-8 ">
-              <FaGlobe size={22} />
+              <FaGlobe className="text-white text-2xl" />
               <span className="link-name">About</span>
             </Link>
             <Link to="/help" className="link-item mt-8 ">
-              <FaHandsHelping size={22} />
+              <FaHandsHelping className="text-white text-2xl" />
               <span className="link-name">Help</span>
             </Link>
             <Link to="/helpdesk" className="link-item mt-8 ">
-              <FaHeadset size={22} />
+              <FaHeadset className="text-white text-2xl" />
               <span className="link-name">Helpdesk Personnel</span>
             </Link>
             <Link to="/" className="link-item mt-8 " onClick={handleLogout}>
-              <FaSignOutAlt size={22} />
+              <FaSignOutAlt className="text-white text-2xl" />
               <span className="link-name">Logout</span>
             </Link>
           </div>

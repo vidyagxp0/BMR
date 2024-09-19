@@ -1,9 +1,9 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
-import UserSidebar from './UserSide/userSidebar/UserSidebar';
-import HeaderTop from '../Components/Header/HeaderTop';
-import DashboardBottom from '../Components/Header/DashboardBottom';
-import AdminHeader from '../Components/Header/AdminHeader';
+import React from "react";
+import { Outlet } from "react-router-dom";
+import UserSidebar from "./UserSide/userSidebar/UserSidebar";
+import HeaderTop from "../Components/Header/HeaderTop";
+import DashboardBottom from "../Components/Header/DashboardBottom";
+import AdminHeader from "../Components/Header/AdminHeader";
 
 const WrapperUser = () => {
   return (
@@ -20,14 +20,13 @@ const WrapperUser = () => {
       <main className="flex flex-grow mt-[7rem] lg:mt-[7rem]">
         {/* Sidebar */}
         <div className="mt-10">
-        <div className="fixed left-0 top-10   w-64 h-full z-40 hidden lg:block">
-          <UserSidebar />
+          <div className="fixed left-0 top-10   w-64 h-full z-40 hidden lg:block">
+            <UserSidebar />
+          </div>
         </div>
-        </div>
-      
 
         {/* Outlet */}
-        <section className="flex-grow ml-0 lg:ml-64 bg-[#e5faef] p-4 overflow-auto">
+        <section className="flex-grow ml-0 lg:ml-64 bg-white p-4 overflow-auto">
           <Outlet />
         </section>
       </main>

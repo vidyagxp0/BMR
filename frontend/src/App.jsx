@@ -6,6 +6,7 @@ import Wrapper from "./Pages/Wrapper";
 import AddUser from "./Pages/AdminSide/AddUser/AddUser";
 import UpdateUser from "./Pages/AdminSide/Modals/UpdateUserModal";
 import Login from "./Pages/UserSide/Login/Login";
+import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./Pages/UserSide/Dashboard/Dashboard";
 import ProtectedAdminRoute from "./Pages/ProtectedRoute/ProtectedAdminRoute";
 import ProtectedUserRoute from "./Pages/ProtectedRoute/ProtectedUserRoute";
@@ -14,6 +15,7 @@ import BMRProcess from "./Pages/UserSide/pages/Process/BMRProcess";
 import BMRDetails from "./Pages/UserSide/pages/BMRDetails/BMRDetails";
 import BMRProcessDetails from "./Pages/UserSide/pages/Process/BMRProcessDetails";
 import BMRRecords from "./Pages/UserSide/pages/BMRRecords/BMRRecords";
+// import About from "./Pages/HeaderComponents/About";
 import About from "./Pages/HeaderComponents/About";
 import Help from "./Pages/HeaderComponents/Help";
 import HelpdeskPersonnel from "./Pages/HeaderComponents/HelpdeskPersonnel";
@@ -22,6 +24,9 @@ import AuditTrail from "./Pages/UserSide/auditTrail/auditTrail";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Notifications from "./Pages/UserSide/Notifications/Notifications";
+import BMRForms from "./Pages/UserSide/pages/Process/Modals/BMRForms";
+import Analytics from "./Pages/UserSide/Analytics/Analytics";
+import Logs from "./Pages/UserSide/Logs/Logs";
 
 function App() {
   return (
@@ -35,16 +40,14 @@ function App() {
 function RouteGuard() {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const handlePopState = (event) => {
       if (location.pathname === "/dashboard") {
-        // Prevent forward navigation from /dashboard
-        history.pushState(null, "", location.pathname); // Push current state to avoid adding a new entry
+        history.pushState(null, "", location.pathname);
       }
     };
 
-    // Add a popstate listener to manage forward navigation
     window.addEventListener("popstate", handlePopState);
 
     return () => {
@@ -80,11 +83,38 @@ function RouteGuard() {
           path="/user-notifications"
           element={<ProtectedUserRoute element={<Notifications />} />}
         />
+        <Route
+          path="/analytics"
+          element={<ProtectedUserRoute element={<Analytics />} />}
+        />
+        <Route
+          path="/logs"
+          element={<ProtectedUserRoute element={<Logs />} />}
+        />
+        <Route
+          path="/bmr-forms"
+          element={<ProtectedUserRoute element={<BMRForms />} />}
+        />
       </Route>
       <Route
         path="/audit-trail"
         element={<ProtectedUserRoute element={<AuditTrail />} />}
       />
+      <Route
+        path="/boardOfDirectors"
+        element={<ProtectedUserRoute element={<BoardOfDirectors />} />}
+      />
+      <Route path="/help" element={<ProtectedUserRoute element={<Help />} />} />
+      <Route
+        path="/about"
+        element={<ProtectedUserRoute element={<About />} />}
+      />
+
+      <Route
+        path="/helpdesk"
+        element={<ProtectedUserRoute element={<HelpdeskPersonnel />} />}
+      />
+
       <Route path="/admin-login" element={<AdminLogin />} />
       <Route path="" element={<Wrapper />}>
         <Route
@@ -100,10 +130,6 @@ function RouteGuard() {
           element={<ProtectedAdminRoute element={<UpdateUser />} />}
         />
       </Route>
-      <Route path="/boardOfDirectors" element={<BoardOfDirectors />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/help" element={<Help />} />
-      <Route path="/helpdesk" element={<HelpdeskPersonnel />} />
     </Routes>
   );
 }
