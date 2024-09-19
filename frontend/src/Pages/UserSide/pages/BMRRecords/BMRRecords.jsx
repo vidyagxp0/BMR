@@ -30,7 +30,7 @@ const BMRRecords = () => {
   selectedBMR.BMR_Tabs[0].BMR_sections[0].BMR_fields.forEach((field) => {
     helpText.push(field.helpText);
   });
-  // console.log(helpText, "><><><><><><><><><");
+  console.log(helpText, "><><><><><><><><><");
 
   const [formData, setFormDataState] = useState({
     initiatorName: null,
@@ -390,7 +390,14 @@ const Button1 = ({ label, active, onClick }) => (
   </button>
 );
 
-const InputField = ({label,type = "text",placeholder,value,onChange,helpText}) => (
+const InputField = ({
+  label,
+  type = "text",
+  placeholder,
+  value,
+  onChange,
+  helpText,
+}) => (
   <div>
     <label className=" text-gray-700 font-bold p-2 mb-2 flex items-center">
       {label}
