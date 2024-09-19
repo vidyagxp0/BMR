@@ -26,7 +26,9 @@ import { useLocation } from "react-router-dom";
 import Notifications from "./Pages/UserSide/Notifications/Notifications";
 import BMRForms from "./Pages/UserSide/pages/Process/Modals/BMRForms";
 import Analytics from "./Pages/UserSide/Analytics/Analytics";
-import Logs from "./Pages/UserSide/Logs/Logs";
+import PrintControl from "./Pages/AdminSide/PrintControl/PrintControl";
+import AddPrintControl from "./Pages/AdminSide/PrintControl/AddPrintControl/AddPrintControl";
+// import Logs from "./Pages/UserSide/Logs/Logs";
 
 function App() {
   return (
@@ -87,10 +89,10 @@ function RouteGuard() {
           path="/analytics"
           element={<ProtectedUserRoute element={<Analytics />} />}
         />
-        <Route
+        {/* <Route
           path="/logs"
           element={<ProtectedUserRoute element={<Logs />} />}
-        />
+        /> */}
         <Route
           path="/bmr-forms"
           element={<ProtectedUserRoute element={<BMRForms />} />}
@@ -124,6 +126,14 @@ function RouteGuard() {
         <Route
           path="/admin-dashboard"
           element={<ProtectedAdminRoute element={<AdminDashBoard />} />}
+        />
+        <Route
+          path="/admin-print-control"
+          element={<ProtectedAdminRoute element={<PrintControl />} />}
+        />
+        <Route
+          path="/add-print-control"
+          element={<ProtectedAdminRoute element={<AddPrintControl />} />}
         />
         <Route
           path="/admin-add-user"
