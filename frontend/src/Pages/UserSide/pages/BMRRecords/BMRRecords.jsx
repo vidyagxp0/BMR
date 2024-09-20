@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import BMRForms from "../Process/Modals/BMRForms";
 import { useDispatch } from "react-redux";
 import { setFormData, setSelectedBMR } from "../../../../../src/userSlice";
-import {BASE_URL} from "../../../../config.json"
+import { BASE_URL } from "../../../../config.json";
 import { Tooltip } from "@mui/material";
 
 const BMRRecords = () => {
@@ -32,6 +32,29 @@ const BMRRecords = () => {
     helpText.push(field.helpText);
   });
 
+  // Check if BMR_Tabs and its first element exists
+  if (selectedBMR?.BMR_Tabs && selectedBMR.BMR_Tabs.length > 0) {
+    const firstTab = selectedBMR.BMR_Tabs[0];
+
+    // Check if BMR_sections and its first element exists
+    if (firstTab?.BMR_sections && firstTab.BMR_sections.length > 0) {
+      const firstSection = firstTab.BMR_sections[0];
+
+      // Check if BMR_fields exists
+      if (firstSection?.BMR_fields && firstSection.BMR_fields.length > 0) {
+        firstSection.BMR_fields.forEach((field) => {
+          fieldTypes.push(field.field_type);
+          helpText.push(field.helpText);
+        });
+      } else {
+        console.log("No fields are present in the first section.");
+      }
+    } else {
+      console.log("No sections are present in the first tab.");
+    }
+  } else {
+    console.log("Tabs are not present here.");
+  }
   const [formData, setFormDataState] = useState({
     initiatorName: null,
     dateOfInitiation: new Date().toISOString().split("T")[0],
@@ -261,8 +284,8 @@ const BMRRecords = () => {
                   onChange={(e) => setDateOfInitiation(e.target.value)}
                 />
               </div>
-              <div className="p-4 border border-gray-300 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95 shadow-lg">
-                <label className="block text-gray-700 font-bold p-2 mb-2">
+              <div className="p-4 border border-gray-300 rounded-lg  bg-gradient-to-r from-gray-50 to-gray-100 opacity-95 shadow-lg">
+                <label className="block text-gray-700 font-bold p-2  mb-2">
                   Reviewers
                 </label>
                 <Select
@@ -365,7 +388,7 @@ const BMRRecords = () => {
           </button>
 
           <button
-            className="px-4 py-2 bg-green-  600 text-white rounded hover:bg-blue-700 focus:outline-none transition duration-200"
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none transition duration-200"
             onClick={() => navigate("/dashboard")}
           >
             Exit
