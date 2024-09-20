@@ -26,7 +26,7 @@ const WrapperUser = () => {
         </div>
 
         {/* Outlet */}
-        <section className="flex-grow ml-0 lg:ml-64 bg-[#e5faef] p-4 overflow-auto">
+        <section className="flex-grow ml-0 lg:ml-64 bg-[#ffffff] p-4 overflow-auto">
           <Outlet />
         </section>
       </main>

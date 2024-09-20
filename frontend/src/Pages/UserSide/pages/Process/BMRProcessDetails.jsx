@@ -274,7 +274,7 @@ const BMRProcessDetails = ({ fieldData }) => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`http://192.168.1.26:7000/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`https://bmrapi.mydemosoftware.com/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -348,7 +348,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.initiatorDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.26:7000/bmr-form/send-BMR-for-review",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-for-review",
           dataObject,
           config
         )
@@ -365,7 +365,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.26:7000/bmr-form/send-BMR-from-review-to-approval",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-approval",
           dataObject,
           config
         )
@@ -382,7 +382,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.26:7000/bmr-form/send-BMR-from-review-to-open",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-open",
           dataObject,
           config
         )
@@ -397,7 +397,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.26:7000/bmr-form/approve-BMR",
+          "https://bmrapi.mydemosoftware.com/bmr-form/approve-BMR",
           dataObject,
           config
         )
@@ -414,7 +414,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "http://192.168.1.26:7000/bmr-form/send-BMR-from-approval-to-open",
+          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-approval-to-open",
           dataObject,
           config
         )
@@ -499,7 +499,7 @@ const BMRProcessDetails = ({ fieldData }) => {
 
         // Make API request to generate PDF
         const response = await axios({
-          url: "http://192.168.1.26:7000/bmr-form/generate-report",
+          url: "https://bmrapi.mydemosoftware.com/bmr-form/generate-report",
           method: "POST",
           responseType: "blob",
           headers: {
@@ -747,7 +747,7 @@ const BMRProcessDetails = ({ fieldData }) => {
 
   return (
     <div className="p-4 relative h-full">
-      <header className="bg-[#346c86] w-full shadow-lg flex justify-between items-center p-4 mb-4">
+      <header className="bg-[#2a323e] w-full shadow-lg flex justify-between items-center p-4 mb-4">
         <p className="text-lg text-gray-200 font-bold">BMR Process Details</p>
         <div className="flex space-x-2">
           {showForm === "default" ? (
@@ -914,8 +914,8 @@ const BMRProcessDetails = ({ fieldData }) => {
               onClick={() => handleFlowTabClick(tab)}
               className={`py-2 px-4 rounded border-2 border-black ${
                 activeFlowTab === tab
-                  ? "bg-[#195b7a] text-white"
-                  : "bg-[#3a88b3] text-black "
+                  ? "bg-[#2a323e] text-white"
+                  : "bg-[#2a323e] text-white "
               }`}
             >
               {tab}
@@ -933,8 +933,8 @@ const BMRProcessDetails = ({ fieldData }) => {
               onClick={() => handleDefaultTabClick(tab)}
               className={`py-2 px-4 rounded border-2 border-black ${
                 activeDefaultTab === tab
-                  ? "bg-[#103546]  text-[#ffffff]"
-                  : "bg-[#2077a0]  text-[#ffffff]"
+                  ? "bg-[#2a323e]  text-[#ffffff]"
+                  : "bg-[#2a323e]  text-[#ffffff]"
               }`}
             >
               {tab}

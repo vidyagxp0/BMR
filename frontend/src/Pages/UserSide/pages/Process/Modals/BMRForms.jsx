@@ -3,12 +3,7 @@ import InitiateModal from "../../../Modals/InitiateModal";
 import HeaderTop from "../../../../../Components/Header/HeaderTop";
 import DashboardBottom from "../../../../../Components/Header/DashboardBottom";
 import axios from "axios";
-import { IconButton, Tooltip } from "@mui/material";
-import { IoInformationCircleOutline } from "react-icons/io5";
 import "./BMRForms.css";
-
-import { AiOutlineAudit } from "react-icons/ai";
-import { Navigate } from "react-router-dom";
 
 const formatDate = (date) => {
   const options = { day: "2-digit", month: "2-digit", year: "numeric" };
@@ -23,7 +18,7 @@ const BMRForms = () => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.26:7000/bmr-form/get-approved-bmrs", {
+      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-approved-bmrs", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -54,6 +49,18 @@ const BMRForms = () => {
   const startIndex = (currentPage - 1) * rowsPerPage;
   const currentRows = approvedBMR.slice(startIndex, startIndex + rowsPerPage);
 
+  const calculateProgress = (dueDate) => {
+    const currentDate = new Date();
+    const endDate = new Date(dueDate);
+
+    const totalDuration = endDate.getTime() - currentDate.getTime();
+    const daysRemaining = Math.ceil(totalDuration / (1000 * 60 * 60 * 24));
+
+    const overdueProgress = Math.max(0, Math.min(100, (10 - daysRemaining) * 10));
+    const onTimeProgress = 100 - overdueProgress; // The remaining progress that's on time
+    return { overdueProgress, onTimeProgress, isOverdue: daysRemaining < 0 };
+  };
+
   return (
     <div className="flex flex-col p-3">
       <header className="fixed top-0 left-0 w-full z-50">
@@ -70,8 +77,7 @@ const BMRForms = () => {
               <select
                 id="options"
                 name="options"
-                className="border-2 border-gray-400 w-80 shadow-md rounded-lg p-2 focus:p-2 focus:outline-none focus:ring-2 focus:ring-[#346C86]"
-                style={{ border: "2px solid gray" }}
+                className="border-2 border-gray-400 w-80 shadow-md rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#346C86]"
               >
                 <option value="">All Records</option>
                 {approvedBMR.map((item, index) => (
@@ -81,7 +87,7 @@ const BMRForms = () => {
                 ))}
               </select>
               <button
-                className="btn bg-[#346C86] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#123e53]"
+                className="btn bg-[#2a323e] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#123e53] transition-all"
                 onClick={openModal}
               >
                 Initiate
@@ -98,109 +104,98 @@ const BMRForms = () => {
             <table className="table-auto w-full ">
               <thead>
                 <tr className="text-white text-left">
-                  <th className="bg-[#195b7a] p-2">S no</th>
-                  <th className="bg-[#195b7a] p-2">BMR Name</th>
-                  <th className="bg-[#195b7a] p-2">Date of initiation</th>
-                  <th className="bg-[#195b7a] p-2">Division</th>
-                  <th className="bg-[#195b7a] p-2">Description</th>
-                  <th className="bg-[#195b7a] p-2">Current Date</th>
-                  <th className="bg-[#195b7a] p-2">Due Date</th>
-                  <th className="bg-[#195b7a] p-2">Due Date Progress</th>
-                  <th className="bg-[#195b7a] p-2">Status</th>
-                  <th className="bg-[#195b7a] p-2">Action</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#2a323e]">
+                    S no
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#2a323e]">
+                    BMR Name
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#2a323e]">
+                    Date of initiation
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#2a323e]">
+                    Division
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#2a323e]">
+                    Description
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#2a323e]">
+                    Current Date
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#2a323e]">
+                    Due Date
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#2a323e]">
+                    Due Date Progress
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#2a323e]">
+                    Status
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#2a323e]">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {currentRows.map((item, index) => {
-                  const dueDate = new Date(item.due_date);
-                  const currentDate = new Date();
-
-                  const timeDiff = dueDate - currentDate;
-                  const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-
-                  let color;
-                  let percentage;
-
-                  if (diffDays > 0) {
-                    percentage = (10 - diffDays) * 10;
-                    color = `linear-gradient(to right, #ff0000 ${percentage}%, #00ff00 ${percentage}%)`;
-                    const message =
-                      diffDays === 1
-                        ? `${diffDays} Day Remaining`
-                        : `${diffDays} Days Remaining`;
-                  } else {
-                    color = `linear-gradient(to right, #ff0000 100%, #ff0000 100%)`;
-                    percentage = 0;
-                  }
-
-                  const pinPosition = `${percentage}%`;
+                {currentRows.map((item, rowIndex) => {
+                  const { overdueProgress, onTimeProgress } = calculateProgress(item.due_date);
 
                   return (
-                    <tr key={item.id} className="">
-                      <td className="p-2">{startIndex + index + 1}</td>
-                      <td className="p-2">{item.name}</td>
-                      <td className="p-2">
-                        {formatDate(item.date_of_initiation)}
+                    <tr
+                      key={item.id}
+                      style={{
+                        backgroundColor:
+                          rowIndex % 2 === 0 ? "#fafbfc" : "#cad2de", // Softer Gray for even rows, Softer Blue for odd rows
+                      }}
+                      className="border-b border-gray-300"
+                    >
+                      <td className="px-4 py-2 whitespace-nowrap text-sm border-r border-gray-300">
+                        {startIndex + rowIndex + 1}
                       </td>
-                      <td className="p-2">{item.division_id}</td>
-                      <td className="p-2">{item.description}</td>
-                      <td className="p-2">{formatDate(currentDate)}</td>
-                      <td className="p-2">{formatDate(item.due_date)}</td>
-                      <td>
-                        <div className=" flex items-center justify-between">
-                          {(diffDays < 0 && (
-                            <Tooltip
-                              title="Due date is crossed "
-                              placement="top-start"
-                            >
-                              <IconButton>
-                                <div className="icon-animate ">
-                                  <IoInformationCircleOutline />
-                                </div>
-                              </IconButton>
-                            </Tooltip>
-                          )) || (
-                            <Tooltip
-                              title={`${diffDays} Days Remaining`}
-                              placement="top-start"
-                            >
-                              <IconButton>
-                                <div className="icon-animate ">
-                                  <IoInformationCircleOutline />
-                                </div>
-                              </IconButton>
-                            </Tooltip>
-                          )}
-
+                      <td className="px-4 py-2 whitespace-nowrap text-sm">{item.name}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm">{formatDate(item.date_of_initiation)}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm">{item.division_id}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm">{item.description}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm">{formatDate(new Date())}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm">{formatDate(item.due_date)}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm">
+                        <div className="w-full h-4 bg-gray-300 rounded-lg overflow-hidden">
                           <div
+                            className="h-full bg-[#4caf50]" // Green portion for on-time progress
                             style={{
-                              position: "relative",
-                              width: "100%",
-                              height: "10px",
-                              borderRadius: "5px",
-                              background: color,
+                              width: `${onTimeProgress}%`,
+                              float: "left",
+                              transition: "width 0.5s ease-in-out",
                             }}
-                          ></div>
+                          />
+                          <div
+                            className="h-full bg-[#ff2828]" // Red portion for overdue progress
+                            style={{
+                              width: `${overdueProgress}%`,
+                              float: "left",
+                              transition: "width 0.5s ease-in-out",
+                            }}
+                          />
                         </div>
                       </td>
-
-                      <td
-                        className={`p-2 ${
-                          item.status === "Active"
-                            ? "text-gray-950"
-                            : "text-gray-950"
-                        }`}
-                      >
-                        {item.status}
-                      </td>
-                      <td className="p-2">
-                        <button className="text-blue-500 hover:underline">
-                          Edit
-                        </button>{" "}
-                        |{" "}
-                        <button className="text-red-500 hover:underline ml-2">
-                          Delete
-                        </button>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm">{item.status}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm">
+                        <div className="flex justify-between space-x-2">
+                          {/* Delete button */}
+                          <button
+                            className="px-4 py-2 text-xs font-semibold rounded-lg bg-[#db3636] text-white hover:bg-[#ff2828] transition duration-300 ease-in-out shadow-lg"
+                            onClick={() => handleDelete(item.id)}
+                          >
+                            Delete
+                          </button>
+                          {/* Edit button */}
+                          <button
+                            className="px-4 py-2 text-xs font-semibold rounded-lg bg-[#4caf50] text-white hover:bg-[#66bb6a] transition duration-300 ease-in-out shadow-lg"
+                            onClick={() => handleEdit(item.id)}
+                          >
+                            Edit
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -208,23 +203,20 @@ const BMRForms = () => {
               </tbody>
             </table>
           </div>
-
-          {/* Pagination Controls */}
-          <div className="flex justify-center my-4">
+          {/* Pagination */}
+          <div className="flex justify-center mt-4 space-x-2">
             <button
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-l-md"
-              onClick={() => handlePageChange(currentPage - 1)}
+              className="px-3 py-1 text-sm font-semibold text-gray-700 border rounded-lg shadow-md hover:bg-gray-200 transition-all"
               disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
             >
-              Previous
+              Prev
             </button>
-            <span className="px-4 py-2 bg-white text-gray-700">
-              Page {currentPage} of {totalPages}
-            </span>
+            <span className="text-gray-700 font-semibold text-sm">{`${currentPage} of ${totalPages}`}</span>
             <button
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-r-md"
-              onClick={() => handlePageChange(currentPage + 1)}
+              className="px-3 py-1 text-sm font-semibold text-gray-700 border rounded-lg shadow-md hover:bg-gray-200 transition-all"
               disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(currentPage + 1)}
             >
               Next
             </button>

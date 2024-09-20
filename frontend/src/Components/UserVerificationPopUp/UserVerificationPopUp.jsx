@@ -42,7 +42,7 @@ const UserVerificationPopUp = ({
 
   //   try {
   //     const response = await axios.post(
-  //       "http://192.168.1.26:7000/user/user-verification",
+  //       "https://bmrapi.mydemosoftware.com/user/user-verification",
   //       data,
   //       {
   //         headers: { "Content-Type": "application/json" },

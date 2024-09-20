@@ -18,7 +18,7 @@ function HeaderBottom({ openModal }) {
           ) ? ( */}
           <div className="headerBottomRgt">
             <div
-              className="themeBtn bg-[#195b7a] hover:bg-[#0a6249]  mt-3 font-bold"
+              className="btn bg-[#2a323e] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#123e53]"
               onClick={openModal}
             >
               Create BMR
