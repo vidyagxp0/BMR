@@ -11,6 +11,7 @@ import { FaPeopleLine } from "react-icons/fa6";
 import socketIOClient from "socket.io-client";
 import "./Header.css";
 import "./HeaderTop.css";
+import {BASE_URL} from "../../config.json"
 
 function HeaderTop() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ function HeaderTop() {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    setSocket(socketIOClient("https://bmrapi.mydemosoftware.com/"));
+    setSocket(socketIOClient(`${BASE_URL}/`));
     return () => {
       if (socket) socket.disconnect();
     };

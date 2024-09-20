@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/config.json");
 const UserRole = require("../models/userRole.model");
 const e = require("express");
+import {BASE_URL} from "../../../frontend/src/config.json"
 
 function checkJwtToken(req, res, next) {
   const token = req.headers.authorization?.split(" ")[1];
@@ -26,7 +27,7 @@ function checkJwtToken(req, res, next) {
 
 const getFileUrl = (file) => {
   if (file?.filename) {
-    return `https://bmrapi.mydemosoftware.com/profile_pics/${file?.filename}`;
+    return `${BASE_URL}/profile_pics/${file?.filename}`;
   }
 };
 

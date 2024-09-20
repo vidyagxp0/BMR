@@ -7,7 +7,9 @@ import { toast } from "react-toastify";
 import BMRForms from "../Process/Modals/BMRForms";
 import { useDispatch } from "react-redux";
 import { setFormData, setSelectedBMR } from "../../../../../src/userSlice";
+import {BASE_URL} from "../../../../config.json"
 import { Tooltip } from "@mui/material";
+
 const BMRRecords = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("General Information");
@@ -69,7 +71,7 @@ const BMRRecords = () => {
 
   const fetchBMRData = () => {
     axios
-      .get(`https://bmrapi.mydemosoftware.com/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`${BASE_URL}/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -114,7 +116,7 @@ const BMRRecords = () => {
       try {
         const [reviewersResponse, approversResponse] = await Promise.all([
           axios.post(
-            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+            `${BASE_URL}/bmr-form/get-user-roles`,
             { role_id: 3 },
             {
               headers: {
@@ -124,7 +126,7 @@ const BMRRecords = () => {
             }
           ),
           axios.post(
-            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+            `${BASE_URL}/bmr-form/get-user-roles`,
             { role_id: 4 },
             {
               headers: {

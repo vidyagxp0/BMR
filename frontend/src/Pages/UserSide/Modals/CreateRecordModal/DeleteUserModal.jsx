@@ -5,13 +5,14 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
+import {BASE_URL} from "../../../../config.json"
 
 const DeleteUserModal = ({ onClose, id, setData }) => {
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const dispatch = useDispatch();
   const handleVerificationSubmit = (verified) => {
     axios
-      .delete(`https://bmrapi.mydemosoftware.com/bmr-form/delete-bmr/${id}`, {
+      .delete(`${BASE_URL}/bmr-form/delete-bmr/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,

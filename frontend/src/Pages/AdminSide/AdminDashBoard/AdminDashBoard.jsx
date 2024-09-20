@@ -12,6 +12,7 @@ import { ToastContainer, toast } from "react-toastify";
 import UpdateUser from "../Modals/UpdateUserModal";
 import "react-toastify/dist/ReactToastify.css";
 import ResetPasswordModal from "../Modals/ResetPasswordModal";
+import {BASE_URL} from "../../../config.json"
 
 const AdminDashBoard = () => {
   const navigate = useNavigate();
@@ -83,7 +84,7 @@ const AdminDashBoard = () => {
 
   useEffect(() => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/user/get-all-users", {
+      .get(`${BASE_URL}/user/get-all-users`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
         },

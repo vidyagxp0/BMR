@@ -9,6 +9,8 @@ import Select from "react-select";
 import { toast, ToastContainer } from "react-toastify";
 import DeleteModal from "./Modals/DeleteModal";
 import "react-toastify/dist/ReactToastify.css";
+import {BASE_URL} from "../../../../config.json"
+
 const BMRProcessDetails = () => {
   const [data, setData] = useState([]);
   console.log(data, "data");
@@ -124,7 +126,8 @@ const BMRProcessDetails = () => {
 
   const fetchBMRData = () => {
     axios
-      .get(`https://bmrapi.mydemosoftware.com/bmr-form/get-a-bmr/${bmr_id}`, {
+
+      .get(`${BASE_URL}/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },

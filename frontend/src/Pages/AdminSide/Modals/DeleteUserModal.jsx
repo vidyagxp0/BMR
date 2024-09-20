@@ -4,12 +4,12 @@ import { deleteUser, fetchUsers } from "../../../userSlice";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import {BASE_URL} from "../../../config.json"
 const DeleteUserModal = ({ onClose, id, setAllUsers }) => {
   const dispatch = useDispatch();
   const handleDelete = () => {
     axios
-      .delete(`https://bmrapi.mydemosoftware.com/user/delete-user/${id}`, {
+      .delete(`${BASE_URL}/user/delete-user/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
