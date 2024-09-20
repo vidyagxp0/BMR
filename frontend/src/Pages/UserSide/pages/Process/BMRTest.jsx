@@ -124,7 +124,6 @@ const BMRProcessDetails = () => {
 
   const fetchBMRData = () => {
     axios
-
       .get(`https://bmrapi.mydemosoftware.com/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,

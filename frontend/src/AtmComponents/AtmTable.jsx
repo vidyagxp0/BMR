@@ -31,50 +31,60 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
     <div className="flex flex-col h-full pt-4">
       <div className="flex-grow overflow-x-auto mb-16">
         <table className="min-w-full border-collapse border border-gray-300">
-          <thead className="bg-[#195b7a]">
+          <thead>
             <tr>
-              <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300">
+              <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#2a323e]">
                 Sr No
               </th>
               {columns.map((column, index) => (
                 <th
                   key={index}
-                  className="px-4 py-2 text-lef text-xs font-medium text-white uppercase tracking-wider border border-gray-300"
+                  className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#2a323e]"
                 >
                   {column.header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white">
+
+          <tbody>
             {paginatedData.map((row, rowIndex) => (
-              <tr
-                key={rowIndex}
-                className={rowIndex % 2 === 0 ? "bg-white" : "bg-blue-500"}
+            <tr
+            key={rowIndex}
+            style={{
+              backgroundColor: rowIndex % 2 === 0 ? "#fafbfc" : "#cad2de", // Softer Gray for even rows, Softer Blue for odd rows
+            }}
+            className="border-b border-gray-300"
+          >
+            <td
+              className={`px-4 py-2 whitespace-nowrap text-sm ${
+                rowIndex % 2 === 0 ? "text-[#000000]" : "text-[#000000]" // Dark text on Softer Gray, Light text on Softer Blue
+              } border-r border-gray-300`}
+            >
+              {(currentPage - 1) * rowsPerPage + rowIndex + 1}
+            </td>
+            {columns.map((column, colIndex) => (
+              <td
+                key={colIndex}
+                className={`px-4 py-2 whitespace-nowrap text-sm ${
+                  rowIndex % 2 === 0 ? "text-[#000000]" : "text-[#090808]" // Adjust text color for readability
+                }`}
+                onClick={
+                  column.header === "BMR NAME"
+                    ? () => handleBMRClick(row)
+                    : null
+                }
+                style={{
+                  cursor: column.header === "BMR NAME" ? "pointer" : "default",
+                }}
               >
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-gray-300">
-                  {(currentPage - 1) * rowsPerPage + rowIndex + 1}
-                </td>
-                {columns.map((column, colIndex) => (
-                  <td
-                    key={colIndex}
-                    className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-gray-300"
-                    onClick={
-                      column.header === "BMR NAME"
-                        ? () => handleBMRClick(row)
-                        : null
-                    }
-                    style={{
-                      cursor:
-                        column.header === "BMR Name" ? "pointer" : "default",
-                    }}
-                  >
-                    {column.Cell
-                      ? column.Cell({ row: { original: row } })
-                      : row[column.accessor]}
-                  </td>
-                ))}
-              </tr>
+                {column.Cell
+                  ? column.Cell({ row: { original: row } })
+                  : row[column.accessor]}
+              </td>
+            ))}
+          </tr>
+          
             ))}
           </tbody>
         </table>
