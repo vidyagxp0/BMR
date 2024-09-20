@@ -63,12 +63,15 @@ const Notifications = () => {
 
   useEffect(() => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-user-notifications", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-          "Content-Type": "application/json",
-        },
-      })
+      .get(
+        "https://bmrapi.mydemosoftware.com/bmr-form/get-user-notifications",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
       .then((response) => {
         const notificationsWithTime = response.data.map((notif) => ({
           ...notif,
