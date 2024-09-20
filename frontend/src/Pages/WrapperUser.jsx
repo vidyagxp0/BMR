@@ -16,6 +16,7 @@ const WrapperUser = () => {
         </div>
       </header>
 
+
       {/* Main Content */}
       <main className="flex flex-grow mt-[7rem] lg:mt-[7rem]">
         {/* Sidebar */}
@@ -26,7 +27,7 @@ const WrapperUser = () => {
         </div>
 
         {/* Outlet */}
-        <section className="flex-grow ml-0 lg:ml-64 bg-[#ffffff] p-4 overflow-auto">
+        <section className="flex-grow ml-0 lg:ml-64  bg-gradient-to-r from-[#fcfcfc] to-[#f0f0f0] p-4 overflow-auto">
           <Outlet />
         </section>
       </main>

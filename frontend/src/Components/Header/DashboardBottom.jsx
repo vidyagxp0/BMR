@@ -15,10 +15,10 @@ function DashboardBottom() {
   };
 
   return (
-    <div className="Header_Bottom bg-white">
+    <div className="Header_Bottom bg-white ">
       {loading && <div className="loader"></div>}
-      <div className="headerBottomInner">
-        <div className="headerBottomLft">
+      <div className="headerBottomInner ">
+        <div className="headerBottomLft ">
           <div className="navItem" onClick={() => handleClick("/dashboard")}>
             <i className="ri-home-3-fill"></i>
             <h3>Dashboard</h3>

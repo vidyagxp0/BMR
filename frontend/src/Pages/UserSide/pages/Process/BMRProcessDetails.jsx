@@ -16,7 +16,8 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { AiOutlineAudit } from "react-icons/ai";
 import { formattedDate } from "../../../../AtmComponents/Helper";
-import {BASE_URL} from "../../../../config.json"
+import { BASE_URL } from "../../../../config.json";
+
 const BMRProcessDetails = ({ fieldData }) => {
   const [data, setData] = useState([]);
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
@@ -250,11 +251,7 @@ const BMRProcessDetails = ({ fieldData }) => {
     if (popupAction === "sendFromOpenToReview") {
       dataObject.initiatorDeclaration = credentials?.declaration;
       axios
-        .put(
-          `${BASE_URL}/bmr-form/send-BMR-for-review`,
-          dataObject,
-          config
-        )
+        .put(`${BASE_URL}/bmr-form/send-BMR-for-review`, dataObject, config)
         .then(() => {
           toast.success("BMR successfully sent for review");
           navigate(-1);
@@ -299,11 +296,7 @@ const BMRProcessDetails = ({ fieldData }) => {
     } else if (popupAction === "sendFromApprovalToApproved") {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
-        .put(
-          `${BASE_URL}/bmr-form/approve-BMR`,
-          dataObject,
-          config
-        )
+        .put(`${BASE_URL}/bmr-form/approve-BMR`, dataObject, config)
         .then(() => {
           toast.success("BMR successfully approved");
           navigate(-1);
@@ -661,7 +654,7 @@ const BMRProcessDetails = ({ fieldData }) => {
     return `${year}-${month}-${day}`;
   };
   return (
-    <div className="p-4 relative h-full">
+    <div className=" p-2 relative top-5 h-[55%] ">
       <header className="bg-[#2a323e] w-full shadow-lg flex justify-between items-center p-4 mb-4">
         <p className="text-lg text-gray-200 font-bold">BMR Process Details</p>
         <div className="flex space-x-2">
@@ -671,7 +664,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                 <IconButton>
                   <AiOutlineAudit
                     size={28}
-                    className="flex justify-center text-gray-50  hover:  items-center cursor-pointer "
+                    className="flex justify-center text-gray-50 items-center cursor-pointer "
                     onClick={() => {
                       navigate("/audit-trail", { state: data[0] });
                     }}
@@ -832,7 +825,7 @@ const BMRProcessDetails = ({ fieldData }) => {
               className={`py-2 px-4 rounded border-2 border-black text-white ${
                 activeFlowTab === tab
                   ? "bg-[#2a323e] text-white"
-                  : "bg-[#2a323e] text-white "
+                  : "bg-[#777778] text-white "
               }`}
             >
               {tab}
@@ -851,7 +844,7 @@ const BMRProcessDetails = ({ fieldData }) => {
               className={`py-2 px-4 rounded border-2 border-black ${
                 activeDefaultTab === tab
                   ? "bg-[#2a323e]  text-[#ffffff]"
-                  : "bg-[#2a323e]  text-[#ffffff]"
+                  : "bg-[#777778]  text-[#ffffff]"
               }`}
             >
               {tab}
@@ -880,50 +873,52 @@ const BMRProcessDetails = ({ fieldData }) => {
       )}
 
       {showForm === "default" && (
-        <div className="relative h-screen ">
-          <div className="overflow-auto border border-gray-500 p-6 mb-16">
+        <div className="relative m-2">
+          <div className="p-3">
             {activeDefaultTab === "Initiator Remarks" &&
               fields["Initiator Remarks"]?.length > 0 && (
                 <div className="mb-20">
-                  <div className="grid grid-cols-2 gap-4  ">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
                     {fields["Initiator Remarks"].map((field, index) => (
                       <div
                         key={index}
-                        className="p-4 flex flex-col bg-white rounded-2xl shadow-lg border border-gray-300 mb-4"
+                        className="p-6 flex flex-col bg-white border border-gray-100 shadow-md rounded-lg  mb-4"
                       >
-                        <label className="text-lg font-extrabold text-gray-700 mb-2 ">
+                        <label className="text-lg font-semibold text-gray-800 mb-2">
                           {field.fieldName}
                           {activeFlowTab === "INITIATION" &&
                             field.fieldName === "Initiator Comments" && (
-                              <span className="text-red-500"> *</span>
+                              <span className="text-red-500">*</span>
                             )}
                         </label>
+
                         {field.field_type === "text" && (
                           <input
                             type="text"
                             value={data[0]?.Initiator.name}
-                            className="border border-gray-600 p-2 w-full rounded"
-                            style={{ border: "1px solid gray", height: "30px" }}
+                            className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 "
+                            style={{
+                              height: "40px",
+                            }}
                             disabled
                           />
                         )}
+
                         {field.field_type === "date" && (
                           <input
                             type="date"
                             value={formattedDateForInput(
                               data[0]?.date_of_initiation
                             )}
-                            className="border border-gray-600 p-2 w-full rounded mt-2"
-                            style={{ border: "1px solid gray", height: "30px" }}
+                            className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400 "
                             required={field.isMandatory}
                             readOnly
                           />
                         )}
+
                         {field.field_type === "text-area" && (
                           <textarea
-                            className="border border-gray-600 p-2 w-full rounded mt-2"
-                            style={{ border: "1px solid gray" }}
-                            // value={field.value || ""}
+                            className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400 "
                             required={
                               activeFlowTab === "INITIATION" &&
                               field.fieldName === "Initiator Comments" &&
@@ -935,6 +930,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                                 field.fieldName === "Initiator Comments"
                               )
                             }
+                            rows={4}
                           />
                         )}
                       </div>
@@ -942,11 +938,12 @@ const BMRProcessDetails = ({ fieldData }) => {
                   </div>
                 </div>
               )}
+
             {activeDefaultTab === "Reviewer Remarks" &&
               fields[activeDefaultTab]?.map((section, secIndex) => {
                 return (
                   <div key={secIndex} className="mb-20">
-                    <div className="col-span-3 p-4 mt-4 rounded bg-gray-100 mb-5 font-semibold text-gray-700 border border-gray-300">
+                    <div className="p-6 flex flex-col bg-white border border-gray-200 shadow-md rounded-lg  mb-4">
                       {section.section}
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -954,9 +951,9 @@ const BMRProcessDetails = ({ fieldData }) => {
                         return (
                           <div
                             key={index}
-                            className="p-4 flex flex-col bg-white shadow border border-gray-300"
+                            className="p-6 flex flex-col bg-white shadow  border border-gray-200 rounded"
                           >
-                            <label className="text-lg font-extrabold text-gray-700 mb-2">
+                            <label className="text-lg font-semibold text-gray-800 mb-2">
                               {field.fieldName}
                               {activeFlowTab === "UNDER REVIEW" &&
                                 field.fieldName === "Reviewer Comment" && (
@@ -966,9 +963,9 @@ const BMRProcessDetails = ({ fieldData }) => {
                             {field.field_type === "text" && (
                               <input
                                 type="text"
-                                className="border border-gray-600 p-2 w-full rounded"
+                                className=" p-3 w-full bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 "
                                 style={{
-                                  border: "1px solid gray",
+                                  // border: "1px solid #D1D5DB",
                                   height: "30px",
                                 }}
                                 value={field.value || ""}
@@ -983,9 +980,9 @@ const BMRProcessDetails = ({ fieldData }) => {
                                     (date) => date?.date_of_review
                                   )
                                 )}
-                                className="border border-gray-600 p-2 w-full rounded"
+                                className=" p-2 w-full bg-gray-100  rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
                                 style={{
-                                  border: "1px solid gray",
+                                  // border: "1px solid #D1D5DB",
                                   height: "30px",
                                 }}
                                 readOnly
@@ -993,9 +990,8 @@ const BMRProcessDetails = ({ fieldData }) => {
                             )}
                             {field.field_type === "text-area" && (
                               <textarea
-                                className="border border-gray-600 p-2 w-full rounded mt-2"
-                                style={{ border: "1px solid gray" }}
-                                // value={field.value || ""}
+                                className="border border-gray-300 p-2 w-full rounded mt-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                style={{ border: "1px solid #D1D5DB" }}
                                 required={
                                   activeFlowTab === "UNDER REVIEW" &&
                                   field.fieldName === "Reviewer Comment" &&
@@ -1016,17 +1012,18 @@ const BMRProcessDetails = ({ fieldData }) => {
                   </div>
                 );
               })}
+
             {activeDefaultTab === "Approver Remarks" &&
               fields[activeDefaultTab]?.map((section, secIndex) => (
                 <div key={secIndex} className="mb-20">
-                  <div className="col-span-3 p-4 mt-4 rounded bg-gray-100 mb-5 font-semibold text-gray-700 border border-gray-300">
+                  <div className="p-6 flex flex-col bg-white border border-gray-200 shadow-md rounded-lg  mb-4">
                     {section.section}
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     {section.fields?.map((field, index) => (
                       <div
                         key={index}
-                        className="p-4 flex flex-col bg-white shadow border border-gray-300"
+                        className="p-6 flex flex-col bg-white shadow  border border-gray-200 rounded"
                       >
                         <label className="text-lg font-extrabold text-gray-700 mb-2">
                           {field.fieldName}
@@ -1038,8 +1035,11 @@ const BMRProcessDetails = ({ fieldData }) => {
                         {field.field_type === "text" && (
                           <input
                             type="text"
-                            className="border border-gray-600 p-2 w-full rounded"
-                            style={{ border: "1px solid gray", height: "30px" }}
+                            className="border border-gray-300 p-2 w-full bg-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                            style={{
+                              // border: "1px solid #D1D5DB",
+                              height: "30px",
+                            }}
                             value={field.value || ""}
                             disabled
                           />
@@ -1052,14 +1052,17 @@ const BMRProcessDetails = ({ fieldData }) => {
                                 (date) => date?.date_of_approval
                               )
                             )}
-                            className="border border-gray-600 p-2 w-full rounded"
-                            style={{ border: "1px solid gray", height: "30px" }}
+                            className="border border-gray-300 bg-gray-100  p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                            style={{
+                              // border: "1px solid #D1D5DB",
+                              height: "30px",
+                            }}
                             readOnly
                           />
                         )}
                         {field.field_type === "text-area" && (
                           <textarea
-                            className="border border-gray-600 p-2 w-full rounded mt-2"
+                            className="border border-gray-300 p-2 w-full rounded mt-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
                             required={
                               activeFlowTab === "UNDER APPROVAL" &&
                               field.fieldName === "Approver Comment" &&
@@ -1079,6 +1082,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                 </div>
               ))}
           </div>
+
           <div className="fixed bottom-0 left-0 w-full bg-white border-gray-300 p-4 flex justify-end gap-5">
             {data[0]?.stage === 1 &&
               data[0]?.initiator === userDetails.userId && (
