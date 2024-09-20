@@ -31,7 +31,7 @@ const AdminHeader = () => {
           <div className="w-44">
             <img src="/headerlogo.png" alt="Logo" />
           </div>
-          <div className="relative">
+          {/* <div className="relative">
             <div className="flex items-center cursor-pointer">
               <img
                 className="w-10 h-10 rounded-full"
@@ -69,7 +69,7 @@ const AdminHeader = () => {
                 </div>
               </Link>
             </div>
-          </div>
+          </div> */}
         </div>
       </header>
 
