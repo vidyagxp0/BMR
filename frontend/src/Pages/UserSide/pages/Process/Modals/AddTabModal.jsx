@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import AtmButton from "../../../../../AtmComponents/AtmButton";
 import UserVerificationPopUp from "../../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
-
+import {BASE_URL} from "../../../../../config.json"
 const AddTabModal = ({
   closeModal,
   addTab,
@@ -25,7 +25,7 @@ const AddTabModal = ({
     try {
       if (updateTab === "add") {
         await axios.post(
-          "https://bmrapi.mydemosoftware.com/bmr-form/add-bmr-tab",
+          `${BASE_URL}/bmr-form/add-bmr-tab`,
           {
             bmr_id: bmr_id,
             tab_name: tabName,
@@ -44,7 +44,7 @@ const AddTabModal = ({
         addTab({ tab_name: tabName });
       } else if (updateTab === "edit") {
         await axios.put(
-          `https://bmrapi.mydemosoftware.com/bmr-form/edit-bmr-tab/${bmr_tab_id}`,
+          `${BASE_URL}/bmr-form/edit-bmr-tab/${bmr_tab_id}`,
           {
             bmr_id: bmr_id,
             tab_name: tabName,

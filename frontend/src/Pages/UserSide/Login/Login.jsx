@@ -12,6 +12,7 @@ import {
   FaHeartbeat,
   FaNotesMedical,
 } from "react-icons/fa";
+import {BASE_URL} from "../../../config.json"
 
 const HealthLogin = () => {
   const [credentials, setCredentials] = useState({
@@ -43,7 +44,7 @@ const HealthLogin = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://bmrapi.mydemosoftware.com/user/user-login",
+        `${BASE_URL}/user/user-login`,
         {
           email: credentials.username,
           password: credentials.password,

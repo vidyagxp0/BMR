@@ -3,6 +3,7 @@ import { Modal, Box, Typography, TextField } from "@mui/material";
 import AtmButton from "../../../AtmComponents/AtmButton";
 import axios from "axios";
 import { toast } from "react-toastify";
+import {BASE_URL} from "../../../config.json"
 
 const modalStyle = {
   position: "absolute",
@@ -29,7 +30,7 @@ const ResetPasswordModal = ({ user, onClose, id, setAllUsers }) => {
       confirm_new_password: confirmNewPassword,
     };
     axios
-      .post("https://bmrapi.mydemosoftware.com/user/reset-password", data, {
+      .post(`${BASE_URL}/user/reset-password`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,

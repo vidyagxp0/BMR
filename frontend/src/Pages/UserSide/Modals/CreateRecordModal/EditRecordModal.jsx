@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { updateBmr } from "../../../../userSlice";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
-
+import {BASE_URL} from "../../../../config.json"
 const modalStyle = {
   position: "absolute",
   top: "55%",
@@ -102,12 +102,16 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         reviewerId: reviewer.value,
         status: "pending",
         comment: null,
+        reviewer: reviewer.label,
+        date_of_review: reviewer.date_of_review || "NA",
       })),
 
       approvers: isSelectedApprover.map((approver) => ({
         approverId: approver.value,
         status: "pending",
         comment: null,
+        approver: approver.label,
+        date_of_approval: approver.date_of_approval || "NA",
       })),
       email: e.email,
       password: e.password,
@@ -117,7 +121,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
 
     axios
       .put(
-        `https://bmrapi.mydemosoftware.com/bmr-form/edit-bmr/${bmrData.bmr_id}`,
+        `${BASE_URL}/bmr-form/edit-bmr/${bmrData.bmr_id}`,
         updatedBMRData,
         {
           headers: {
@@ -169,7 +173,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
     const fetchRoles = async () => {
       try {
         const reviewerResponse = await axios.post(
-          "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+          `${BASE_URL}/bmr-form/get-user-roles`,
           {
             role_id: 3,
           },
@@ -187,7 +191,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
         setReviewers(addSelectAllOption(reviewerOptions));
 
         const approverResponse = await axios.post(
-          "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+          `${BASE_URL}/bmr-form/get-user-roles`,
           {
             role_id: 4,
           },
@@ -208,7 +212,7 @@ const EditRecordModal = ({ onClose, bmrData, fetchBMRData }) => {
       }
     };
     axios
-      .get("https://bmrapi.mydemosoftware.com/user/get-all-user-departments", {
+      .get(`${BASE_URL}/user/get-all-user-departments`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",

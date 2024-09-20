@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { fetchUsers } from "../../../userSlice";
 import UserVerificationPopUp from "../../../Components/UserVerificationPopUp/UserVerificationPopUp";
+import {BASE_URL} from "../../../config.json"
 
 const modalStyle = {
   position: "absolute",
@@ -38,7 +39,7 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
 
   useEffect(() => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/user/get-all-roles", {
+      .get(`${BASE_URL}/user/get-all-roles`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "application/json",
@@ -103,7 +104,7 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
 
     axios
       .put(
-        `https://bmrapi.mydemosoftware.com/user/edit-user/${user.user_id}`,
+        `${BASE_URL}/user/edit-user/${user.user_id}`,
         updatedFormData,
         {
           headers: {

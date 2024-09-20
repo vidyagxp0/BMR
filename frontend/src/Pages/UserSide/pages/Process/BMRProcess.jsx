@@ -11,6 +11,7 @@ import { formattedDate } from "../../../../AtmComponents/Helper";
 import { toast, ToastContainer } from "react-toastify";
 import { AiOutlineSearch } from "react-icons/ai";
 import "react-toastify/dist/ReactToastify.css";
+import {BASE_URL} from "../../../../config.json"
 
 const BMRProcess = () => {
   const [data, setData] = useState([]);
@@ -176,7 +177,7 @@ const BMRProcess = () => {
 
   const fetchBMRData = () => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-all-bmr", {
+      .get(`${BASE_URL}/bmr-form/get-all-bmr`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },

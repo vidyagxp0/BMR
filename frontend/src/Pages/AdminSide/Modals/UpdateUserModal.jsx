@@ -8,6 +8,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import {BASE_URL} from "../../../config.json"
 
 const UpdateUser = () => {
   const dispatch = useDispatch();
@@ -26,7 +27,7 @@ const UpdateUser = () => {
 
   useEffect(() => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/user/get-all-roles", {
+      .get(`${BASE_URL}/user/get-all-roles`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "application/json",
@@ -92,7 +93,7 @@ const UpdateUser = () => {
     });
 
     axios
-      .post("https://bmrapi.mydemosoftware.com/user/add-user", formDataToSend, {
+      .post(`${BASE_URL}/user/add-user`, formDataToSend, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "multipart/form-data",

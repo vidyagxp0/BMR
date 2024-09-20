@@ -16,7 +16,7 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { AiOutlineAudit } from "react-icons/ai";
 import { formattedDate } from "../../../../AtmComponents/Helper";
-
+import {BASE_URL} from "../../../../config.json"
 const BMRProcessDetails = ({ fieldData }) => {
   const [data, setData] = useState([]);
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
@@ -119,7 +119,6 @@ const BMRProcessDetails = ({ fieldData }) => {
   const [deleteItemType, setDeleteItemType] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState({});
   const { bmr_id } = useParams();
-  console.log(bmr_id, "idddddddddd");
   const navigate = useNavigate();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
@@ -141,8 +140,6 @@ const BMRProcessDetails = ({ fieldData }) => {
           acc[column.name] = "";
           return acc;
         }, {});
-
-        console.log("New Row to Add:", newRow);
         field.gridData.push(newRow);
       }
       return updatedFields;
@@ -158,12 +155,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       );
 
       if (field) {
-        console.log(
-          `Changing value of row ${rowIndex}, column ${columnName} to:`,
-          value
-        );
         field.gridData[rowIndex][columnName] = value;
-        console.log("Updated Grid Data After Change:", field.gridData);
       }
 
       return updatedFields;
@@ -185,15 +177,14 @@ const BMRProcessDetails = ({ fieldData }) => {
   const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
-      .get(`https://bmrapi.mydemosoftware.com/bmr-form/get-a-bmr/${bmr_id}`, {
+      .get(`${BASE_URL}/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
       })
       .then((response) => {
-        const bmrData = response.data.message;
+        const bmrData = response.data?.message;
         setData(bmrData);
-        console.log(bmrData, ",mmmmmmmmmmmmmmmmmmmmmmm");
         setNewTab(bmrData[0]?.BMR_Tabs || []);
         const sections = bmrData[0]?.BMR_Sections || [];
         const sectionsByTab = sections.reduce((acc, section) => {
@@ -260,7 +251,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.initiatorDeclaration = credentials?.declaration;
       axios
         .put(
-          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-for-review",
+          `${BASE_URL}/bmr-form/send-BMR-for-review`,
           dataObject,
           config
         )
@@ -277,7 +268,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-approval",
+          `${BASE_URL}/bmr-form/send-BMR-from-review-to-approval`,
           dataObject,
           config
         )
@@ -294,7 +285,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.reviewerDeclaration = credentials?.declaration;
       axios
         .put(
-          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-review-to-open",
+          `${BASE_URL}/bmr-form/send-BMR-from-review-to-open`,
           dataObject,
           config
         )
@@ -309,7 +300,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "https://bmrapi.mydemosoftware.com/bmr-form/approve-BMR",
+          `${BASE_URL}/bmr-form/approve-BMR`,
           dataObject,
           config
         )
@@ -326,7 +317,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       dataObject.approverDeclaration = credentials?.declaration;
       axios
         .put(
-          "https://bmrapi.mydemosoftware.com/bmr-form/send-BMR-from-approval-to-open",
+          `${BASE_URL}/bmr-form/send-BMR-from-approval-to-open`,
           dataObject,
           config
         )
@@ -411,7 +402,7 @@ const BMRProcessDetails = ({ fieldData }) => {
 
         // Make API request to generate PDF
         const response = await axios({
-          url: "https://bmrapi.mydemosoftware.com/bmr-form/generate-report",
+          url: `${BASE_URL}/bmr-form/generate-report`,
           method: "POST",
           responseType: "blob",
           headers: {
@@ -952,69 +943,79 @@ const BMRProcessDetails = ({ fieldData }) => {
                 </div>
               )}
             {activeDefaultTab === "Reviewer Remarks" &&
-              fields[activeDefaultTab]?.map((section, secIndex) => (
-                <div key={secIndex} className="mb-20">
-                  <div className="col-span-3 p-4 mt-4 rounded bg-gray-100 mb-5 font-semibold text-gray-700 border border-gray-300">
-                    {section.section}
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    {section.fields?.map((field, index) => (
-                      <div
-                        key={index}
-                        className="p-4 flex flex-col bg-white shadow border border-gray-300"
-                      >
-                        <label className="text-lg font-extrabold text-gray-700 mb-2">
-                          {field.fieldName}
-                          {activeFlowTab === "UNDER REVIEW" &&
-                            field.fieldName === "Reviewer Comment" && (
-                              <span className="text-red-500"> *</span>
+              fields[activeDefaultTab]?.map((section, secIndex) => {
+                return (
+                  <div key={secIndex} className="mb-20">
+                    <div className="col-span-3 p-4 mt-4 rounded bg-gray-100 mb-5 font-semibold text-gray-700 border border-gray-300">
+                      {section.section}
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      {section.fields?.map((field, index) => {
+                        return (
+                          <div
+                            key={index}
+                            className="p-4 flex flex-col bg-white shadow border border-gray-300"
+                          >
+                            <label className="text-lg font-extrabold text-gray-700 mb-2">
+                              {field.fieldName}
+                              {activeFlowTab === "UNDER REVIEW" &&
+                                field.fieldName === "Reviewer Comment" && (
+                                  <span className="text-red-500"> *</span>
+                                )}
+                            </label>
+                            {field.field_type === "text" && (
+                              <input
+                                type="text"
+                                className="border border-gray-600 p-2 w-full rounded"
+                                style={{
+                                  border: "1px solid gray",
+                                  height: "30px",
+                                }}
+                                value={field.value || ""}
+                                disabled
+                              />
                             )}
-                        </label>
-                        {field.field_type === "text" && (
-                          <input
-                            type="text"
-                            className="border border-gray-600 p-2 w-full rounded"
-                            style={{ border: "1px solid gray", height: "30px" }}
-                            value={field.value || ""}
-                            disabled
-                          />
-                        )}
-                        {field.field_type === "date" && (
-                          <input
-                            type="date"
-                            value={formattedDateForInput(
-                              data[0]?.reviewers?.map(
-                                (date) => date?.date_of_review
-                              )
+                            {field.field_type === "date" && (
+                              <input
+                                type="date"
+                                value={formattedDateForInput(
+                                  data[0]?.reviewers?.map(
+                                    (date) => date?.date_of_review
+                                  )
+                                )}
+                                className="border border-gray-600 p-2 w-full rounded"
+                                style={{
+                                  border: "1px solid gray",
+                                  height: "30px",
+                                }}
+                                readOnly
+                              />
                             )}
-                            className="border border-gray-600 p-2 w-full rounded"
-                            style={{ border: "1px solid gray", height: "30px" }}
-                            readOnly
-                          />
-                        )}
-                        {field.field_type === "text-area" && (
-                          <textarea
-                            className="border border-gray-600 p-2 w-full rounded mt-2"
-                            style={{ border: "1px solid gray" }}
-                            // value={field.value || ""}
-                            required={
-                              activeFlowTab === "UNDER REVIEW" &&
-                              field.fieldName === "Reviewer Comments" &&
-                              field.isMandatory
-                            }
-                            readOnly={
-                              !(
-                                activeFlowTab === "UNDER REVIEW" &&
-                                field.fieldName === "Reviewer Comments"
-                              )
-                            }
-                          />
-                        )}
-                      </div>
-                    ))}
+                            {field.field_type === "text-area" && (
+                              <textarea
+                                className="border border-gray-600 p-2 w-full rounded mt-2"
+                                style={{ border: "1px solid gray" }}
+                                // value={field.value || ""}
+                                required={
+                                  activeFlowTab === "UNDER REVIEW" &&
+                                  field.fieldName === "Reviewer Comment" &&
+                                  field.isMandatory
+                                }
+                                readOnly={
+                                  !(
+                                    activeFlowTab === "UNDER REVIEW" &&
+                                    field.fieldName === "Reviewer Comment"
+                                  )
+                                }
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             {activeDefaultTab === "Approver Remarks" &&
               fields[activeDefaultTab]?.map((section, secIndex) => (
                 <div key={secIndex} className="mb-20">
@@ -1061,13 +1062,13 @@ const BMRProcessDetails = ({ fieldData }) => {
                             className="border border-gray-600 p-2 w-full rounded mt-2"
                             required={
                               activeFlowTab === "UNDER APPROVAL" &&
-                              field.fieldName === "Approver Comments" &&
+                              field.fieldName === "Approver Comment" &&
                               field.isMandatory
                             }
                             readOnly={
                               !(
                                 activeFlowTab === "UNDER APPROVAL" &&
-                                field.fieldName === "Approver Comments"
+                                field.fieldName === "Approver Comment"
                               )
                             }
                           />
@@ -1285,7 +1286,6 @@ const BMRProcessDetails = ({ fieldData }) => {
                                   </thead>
                                   <tbody>
                                     {field?.gridData?.map((row, rowIndex) => {
-                                      console.log("row", row);
                                       return (
                                         <tr key={rowIndex}>
                                           {field?.acceptsMultiple?.columns?.map(

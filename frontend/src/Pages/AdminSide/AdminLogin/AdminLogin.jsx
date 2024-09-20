@@ -7,6 +7,7 @@ import AtmButton from "../../../AtmComponents/AtmButton";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import {BASE_URL} from "../../../config.json"
 
 const AdminLogin = () => {
   const [username, setUsername] = useState("");
@@ -21,7 +22,7 @@ const AdminLogin = () => {
       password: password,
     };
     axios
-      .post("https://bmrapi.mydemosoftware.com/user/admin-login", data, {
+      .post(`${BASE_URL}/user/admin-login`, data, {
         headers: {
           "Content-Type": "application/json",
         },

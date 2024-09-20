@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import HeaderTop from "../../../Components/Header/HeaderTop";
+import {BASE_URL} from "../../../config.json"
 
 function AuditTrail() {
   const [auditTrails, setAuditTrails] = useState([]);
@@ -17,7 +18,7 @@ function AuditTrail() {
 
       try {
         const response = await axios.get(
-          `https://bmrapi.mydemosoftware.com/bmr-form/get-bmr-form-audit-trail/${location.state?.bmr_id}`,
+          `${BASE_URL}/bmr-form/get-bmr-form-audit-trail/${location.state?.bmr_id}`,
           {
             headers: myHeaders,
           }
@@ -34,7 +35,7 @@ function AuditTrail() {
 
       //     try {
       //       const response = await axios.get(
-      //         `http://https://bmrapi.mydemosoftware.com:1000/temprature-record/get-audit-trail-for-elog/${location.state?.formId}`,
+      //         `${BASE_URL}/temprature-record/get-audit-trail-for-elog/${location.state?.formId}`,
       //         {
       //           headers: myHeaders,
       //         }

@@ -8,7 +8,7 @@ import { IconButton, Tooltip } from "@mui/material";
 import { IoInformationCircleOutline } from "react-icons/io5";
 import "./BMRForms.css";
 import { useNavigate } from "react-router-dom";
-
+import {BASE_URL} from "../../../../../config.json"
 import AtmTable from "../../../../../AtmComponents/AtmTable"; // Adjust the import path according to your file structure
 import { useSelector } from "react-redux";
 
@@ -34,7 +34,7 @@ const BMRForms = ({ Data }) => {
 
   useEffect(() => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-all-bmr", {
+      .get(`${BASE_URL}/bmr-form/get-all-bmr`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },

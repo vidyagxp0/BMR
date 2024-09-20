@@ -1,9 +1,10 @@
 // userSlice.js
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import {BASE_URL} from "../src/config.json"
 
 export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
-  const response = await axios.get("https://bmrapi.mydemosoftware.com/user/get-users", {
+  const response = await axios.get(`${BASE_URL}/user/get-users`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
     },
@@ -13,7 +14,7 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
 
 export const fetchBmr = createAsyncThunk("bmr/fetchBmr", async () => {
   const response = await axios.get(
-    "https://bmrapi.mydemosoftware.com/bmr-form/get-bmr",
+    `${BASE_URL}/bmr-form/get-bmr`,
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("user-token")}`,

@@ -3,6 +3,7 @@ import "./UserVerificationPopUp.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import {BASE_URL} from "../../config.json"
 
 const UserVerificationPopUp = ({
   onClose,
@@ -42,7 +43,7 @@ const UserVerificationPopUp = ({
 
   //   try {
   //     const response = await axios.post(
-  //       "https://bmrapi.mydemosoftware.com/user/user-verification",
+  //       `${BASE_URL}/user/user-verification`,
   //       data,
   //       {
   //         headers: { "Content-Type": "application/json" },

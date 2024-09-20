@@ -4,6 +4,7 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import axios from "axios";
 import InitiateModal from "../Modals/InitiateModal";
+import {BASE_URL} from "../../../config.json"
 
 import "./Dashboard.css";
 
@@ -34,7 +35,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-approved-bmrs", {
+      .get(`${BASE_URL}/bmr-form/get-approved-bmrs`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },

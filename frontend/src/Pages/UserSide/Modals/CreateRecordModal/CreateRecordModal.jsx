@@ -7,6 +7,7 @@ import { addBmr } from "../../../../userSlice";
 import axios from "axios";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
 import { useNavigate } from "react-router-dom";
+import {BASE_URL} from "../../../../config.json"
 
 const modalStyle = {
   position: "absolute",
@@ -57,7 +58,7 @@ function CreateRecordModal({ open, onClose }) {
   const handleVerificationSubmit = (verified) => {
     axios
       .post(
-        "https://bmrapi.mydemosoftware.com/bmr-form/add-bmr",
+        `${BASE_URL}/bmr-form/add-bmr`,
         {
           name: formData.name,
           description: formData.description,
@@ -92,7 +93,6 @@ function CreateRecordModal({ open, onClose }) {
         }
       )
       .then((response) => {
-        console.log(response.data.message.split(" ")[3], "gdgdgdf");
         toast.success(response.data.message || "BMR added successfully!");
         dispatch(addBmr(response.data.bmr));
         navigate(
@@ -118,7 +118,7 @@ function CreateRecordModal({ open, onClose }) {
   useEffect(() => {
     axios
       .post(
-        "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+       `${BASE_URL}/bmr-form/get-user-roles`,
         { role_id: 3 },
         {
           headers: {
@@ -148,7 +148,7 @@ function CreateRecordModal({ open, onClose }) {
 
     axios
       .post(
-        "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+        `${BASE_URL}/bmr-form/get-user-roles`,
         { role_id: 4 },
         {
           headers: {
@@ -177,7 +177,7 @@ function CreateRecordModal({ open, onClose }) {
       });
 
     axios
-      .get("https://bmrapi.mydemosoftware.com/user/get-all-user-departments", {
+      .get(`${BASE_URL}/user/get-all-user-departments`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",
@@ -213,7 +213,6 @@ function CreateRecordModal({ open, onClose }) {
   };
 
   const handleSelectChange = (selected, field) => {
-    console.log(selected, "<><><><>");
     if (selected?.some((option) => option.value === "select-all")) {
       const allOptions = field === "reviewers" ? reviewers : approvers;
       const nonSelectAllOptions = allOptions.filter(

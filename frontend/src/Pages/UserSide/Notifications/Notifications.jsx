@@ -4,6 +4,7 @@ import socketIOClient from "socket.io-client";
 import { formatDistanceToNow } from "date-fns";
 // import { isToday, isThisWeek } from 'date-fns';
 import "./Notifications.css"; // Import CSS file for styling
+import {BASE_URL} from "../../../config.json"
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
@@ -39,7 +40,7 @@ const Notifications = () => {
   // ];
 
   useEffect(() => {
-    setSocket(socketIOClient("https://bmrapi.mydemosoftware.com/"));
+    setSocket(socketIOClient(`${BASE_URL}/`));
     return () => {
       if (socket) socket.disconnect();
     };
@@ -63,7 +64,7 @@ const Notifications = () => {
 
   useEffect(() => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-user-notifications", {
+      .get(`${BASE_URL}/bmr-form/get-user-notifications`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           "Content-Type": "application/json",
@@ -88,7 +89,7 @@ const Notifications = () => {
   const markNotificationsAsRead = (notificationIds) => {
     axios
       .put(
-        "https://bmrapi.mydemosoftware.com/bmr-form/read-notification",
+        `${BASE_URL}/bmr-form/read-notification`,
         {
           notification_ids: notificationIds,
         },

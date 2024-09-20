@@ -52,13 +52,13 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
                 key={rowIndex}
                 className={rowIndex % 2 === 0 ? "bg-white" : "bg-blue-500"}
               >
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-gray-300">
+                <td className="px-4 py-2 whitespace-normal text-sm text-gray-900 border border-gray-300">
                   {(currentPage - 1) * rowsPerPage + rowIndex + 1}
                 </td>
                 {columns.map((column, colIndex) => (
                   <td
                     key={colIndex}
-                    className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 border border-gray-300"
+                    className="px-4 py-2 whitespace-normal text-sm text-gray-900 border border-gray-300"
                     onClick={
                       column.header === "BMR NAME"
                         ? () => handleBMRClick(row)
@@ -67,6 +67,7 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
                     style={{
                       cursor:
                         column.header === "BMR Name" ? "pointer" : "default",
+                        
                     }}
                   >
                     {column.Cell

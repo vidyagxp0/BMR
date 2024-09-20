@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AtmButton from "../../../../../AtmComponents/AtmButton";
 import UserVerificationPopUp from "../../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
+import {BASE_URL} from "../../../../../config.json"
 
 const AddSectionModal = ({
   closeModal,
@@ -23,7 +24,7 @@ const AddSectionModal = ({
     if (updateSection === "add-section") {
       try {
         const response = await axios.post(
-          `https://bmrapi.mydemosoftware.com/bmr-form/add-bmr-section`,
+          `${BASE_URL}/bmr-form/add-bmr-section`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
@@ -49,7 +50,7 @@ const AddSectionModal = ({
     } else if (updateSection === "edit-section") {
       try {
         const response = await axios.put(
-          `https://bmrapi.mydemosoftware.com/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          `${BASE_URL}/bmr-form/edit-bmr-section/${bmr_section_id}`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
@@ -75,7 +76,7 @@ const AddSectionModal = ({
     } else if (updateSection === "edit-section") {
       try {
         const response = await axios.put(
-          `https://bmrapi.mydemosoftware.com/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          `${BASE_URL}/bmr-form/edit-bmr-section/${bmr_section_id}`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,
@@ -101,7 +102,7 @@ const AddSectionModal = ({
     } else if (updateSection === "edit-section") {
       try {
         const response = await axios.put(
-          `https://bmrapi.mydemosoftware.com/bmr-form/edit-bmr-section/${bmr_section_id}`,
+          `${BASE_URL}/bmr-form/edit-bmr-section/${bmr_section_id}`,
           {
             bmr_id: bmr_id,
             bmr_tab_id: bmr_tab_id,

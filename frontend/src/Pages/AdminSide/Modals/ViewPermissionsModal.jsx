@@ -1,12 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-
+import {BASE_URL} from "../../../config.json"
 const ViewPermissionsModal = ({ user, onClose, id }) => {
   const [roles, setRoles] = useState([]);
 
   useEffect(() => {
     axios
-      .get(`https://bmrapi.mydemosoftware.com/user/get-user-permissions/${id}`, {
+      .get(`${BASE_URL}/user/get-user-permissions/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
           "Content-Type": "application/json",
