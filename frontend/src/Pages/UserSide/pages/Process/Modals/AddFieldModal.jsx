@@ -169,11 +169,16 @@ const AddFieldModal = ({
   const handleAddOption = () => {
     setFieldData((prevData) => ({
       ...prevData,
-      acceptsMultiple: [...prevData.acceptsMultiple, ""],
+      acceptsMultiple: Array.isArray(prevData.acceptsMultiple) 
+        ? [...prevData.acceptsMultiple, ""] 
+        : [""], // Initialize as an array if undefined
     }));
+  
     setGridData((prevData) => ({
       ...prevData,
-      acceptsMultiple: [...prevData.acceptsMultiple, ""],
+      acceptsMultiple: Array.isArray(prevData.acceptsMultiple) 
+        ? [...prevData.acceptsMultiple, ""] 
+        : [""], // Initialize as an array if undefined
     }));
   };
 

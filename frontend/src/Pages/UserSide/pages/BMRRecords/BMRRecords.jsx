@@ -23,16 +23,14 @@ const BMRRecords = () => {
   );
 
   const fieldTypes = [];
-  selectedBMR.BMR_Tabs[0].BMR_sections[0].BMR_fields.forEach((field) => {
+  selectedBMR.BMR_Tabs[0]?.BMR_sections[0]?.BMR_fields.forEach((field) => {
     fieldTypes.push(field.field_type);
   });
-  console.log(selectedBMR, "[][]][][][][][][][][]");
 
   const helpText = [];
-  selectedBMR.BMR_Tabs[0].BMR_sections[0].BMR_fields.forEach((field) => {
+  selectedBMR?.BMR_Tabs[0]?.BMR_sections[0]?.BMR_fields.forEach((field) => {
     helpText.push(field.helpText);
   });
-  console.log(helpText, "><><><><><><><><><");
 
   const [formData, setFormDataState] = useState({
     initiatorName: null,
