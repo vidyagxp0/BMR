@@ -11,14 +11,14 @@ function DashboardBottom() {
     setTimeout(() => {
       setLoading(false);
       navigate(path);
-    }, 500);
+    }, 1000);
   };
 
   return (
     <div className="Header_Bottom bg-white">
       {loading && (
         <div className="loader-container">
-          <div className="loader"></div>
+          <div className="loader" ></div>
         </div>
       )}
       <div className="headerBottomInner">
