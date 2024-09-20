@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./BMRDetails.css"; // Assuming you'll create a CSS file
-
+import {BASE_URL} from "../../../../config.json"
 const BMRDetails = ({
   selectedBMR,
   dateOfInitiation,
@@ -18,7 +18,7 @@ const BMRDetails = ({
 
   // useEffect(() => {
   //   axios
-  //     .get(`https://bmrapi.mydemosoftware.com/bmr-form/get-all-bmr`, {
+  //     .get(`${BASE_URL}/bmr-form/get-all-bmr`, {
   //       headers: {
   //         Authorization: `Bearer ${localStorage.getItem("user-token")}`,
   //       },

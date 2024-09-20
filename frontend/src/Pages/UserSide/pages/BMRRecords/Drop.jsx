@@ -3,6 +3,7 @@ import HeaderTop from "../../../../Components/Header/HeaderTop";
 import Select from "react-select";
 import axios from "axios";
 import { Button } from "@mui/material";
+import {BASE_URL} from "../../../../config.json"
 
 const BMRRecords = ({ selectedBMR, onClose }) => {
   const [activeTab, setActiveTab] = useState("General Information");
@@ -43,7 +44,7 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
       try {
         const [reviewersResponse, approversResponse] = await Promise.all([
           axios.post(
-            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+            `${BASE_URL}/bmr-form/get-user-roles`,
             { role_id: 3 },
             {
               headers: {
@@ -53,7 +54,7 @@ const BMRRecords = ({ selectedBMR, onClose }) => {
             }
           ),
           axios.post(
-            "https://bmrapi.mydemosoftware.com/bmr-form/get-user-roles",
+            `${BASE_URL}/bmr-form/get-user-roles`,
             { role_id: 4 },
             {
               headers: {

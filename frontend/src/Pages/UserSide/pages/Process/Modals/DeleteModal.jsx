@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserVerificationPopUp from "../../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
+import {BASE_URL} from "../../../../../config.json"
 
 const DeleteModal = ({
   onClose,
@@ -22,7 +23,7 @@ const DeleteModal = ({
     try {
       if (itemType === "tab") {
         const response = await axios.delete(
-          `https://bmrapi.mydemosoftware.com/bmr-form/delete-bmr-tab/${id}`,
+          `${BASE_URL}/bmr-form/delete-bmr-tab/${id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -41,7 +42,7 @@ const DeleteModal = ({
         toast.success("Tab deleted successfully!");
       } else if (itemType === "section") {
         const response = await axios.delete(
-          `https://bmrapi.mydemosoftware.com/bmr-form/delete-bmr-section/${section_id}`,
+          `${BASE_URL}/bmr-form/delete-bmr-section/${section_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("user-token")}`,
@@ -70,7 +71,7 @@ const DeleteModal = ({
         toast.success("Field deleted successfully!");
       } else if (itemType === "field") {
         const response = await axios.delete(
-          `https://bmrapi.mydemosoftware.com/bmr-form/delete-bmr-field/${bmr_field_id}`,
+          `${BASE_URL}/bmr-form/delete-bmr-field/${bmr_field_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("user-token")}`,

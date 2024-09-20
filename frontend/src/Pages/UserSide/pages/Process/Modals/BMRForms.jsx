@@ -8,8 +8,8 @@ import { IconButton, Tooltip } from "@mui/material";
 import { IoInformationCircleOutline } from "react-icons/io5";
 import "./BMRForms.css";
 import { useNavigate } from "react-router-dom";
-
-import AtmTable from "../../../../../AtmComponents/AtmTable";
+import {BASE_URL} from "../../../../../config.json"
+import AtmTable from "../../../../../AtmComponents/AtmTable"; // Adjust the import path according to your file structure
 import { useSelector } from "react-redux";
 
 const formatDate = (dateString) => {
@@ -45,7 +45,7 @@ const BMRForms = () => {
 
   useEffect(() => {
     axios
-      .get("https://bmrapi.mydemosoftware.com/bmr-form/get-all-bmr", {
+      .get(`${BASE_URL}/bmr-form/get-all-bmr`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
         },
@@ -200,6 +200,21 @@ const BMRForms = () => {
     filter === "" ? true : item.name.toLowerCase() === filter.toLowerCase()
   );
 
+  const calculateProgress = (dueDate) => {
+    const currentDate = new Date();
+    const endDate = new Date(dueDate);
+
+    const totalDuration = endDate.getTime() - currentDate.getTime();
+    const daysRemaining = Math.ceil(totalDuration / (1000 * 60 * 60 * 24));
+
+    const overdueProgress = Math.max(
+      0,
+      Math.min(100, (10 - daysRemaining) * 10)
+    );
+    const onTimeProgress = 100 - overdueProgress; // The remaining progress that's on time
+    return { overdueProgress, onTimeProgress, isOverdue: daysRemaining < 0 };
+  };
+
   return (
     <div className="flex flex-col p-3">
       <header className="fixed top-0 left-0 w-full z-50">
@@ -216,7 +231,7 @@ const BMRForms = () => {
               <select
                 id="options"
                 name="options"
-                className="border-2 border-[#B3C1CB] w-80 shadow-md rounded-lg p-2 focus:p-2 focus:outline-none focus:ring-2 focus:ring-[#346C86]"
+                className="border-2 border-gray-400 w-80 shadow-md rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#346C86]"
                 style={{ border: "2px solid gray" }}
                 value={filter}
                 onChange={handleFilterChange}
@@ -234,7 +249,7 @@ const BMRForms = () => {
                 {/* <pre>Selected BMR: {JSON.stringify(selectedBMR, null, 2)}</pre> */}
               </div>
               <button
-                className="btn bg-[#346C86] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#123e53]"
+                className="btn bg-[#2a323e] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#123e53] transition-all"
                 onClick={openModal}
               >
                 Initiate
