@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./DashboardBottom.css";
 
 function DashboardBottom() {
@@ -11,14 +11,18 @@ function DashboardBottom() {
     setTimeout(() => {
       setLoading(false);
       navigate(path);
-    }, 1000);
+    }, 500);
   };
 
   return (
-    <div className="Header_Bottom bg-white ">
-      {loading && <div className="loader"></div>}
-      <div className="headerBottomInner ">
-        <div className="headerBottomLft ">
+    <div className="Header_Bottom bg-white">
+      {loading && (
+        <div className="loader-container">
+          <div className="loader"></div>
+        </div>
+      )}
+      <div className="headerBottomInner">
+        <div className="headerBottomLft">
           <div className="navItem" onClick={() => handleClick("/dashboard")}>
             <i className="ri-home-3-fill"></i>
             <h3>Dashboard</h3>
