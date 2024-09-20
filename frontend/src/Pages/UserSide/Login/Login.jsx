@@ -71,6 +71,7 @@ const HealthLogin = () => {
     //     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://media.licdn.com/dms/image/D4E12AQH2Cvxk8R5zsA/article-cover_image-shrink_600_2000/0/1666529530825?e=2147483647&v=beta&t=wcgOIbUQLV3zz5Ad3qpTqUNpgh0AMKn2d6PVR2e2-5c')`,
     //     backgroundSize: "cover",
     //     backgroundPosition: "center",
+    // https://wallpapers.com/images/hd/blue-gradient-background-ep1pumh6olkbxxsm.jpg
     //     backgroundRepeat: "no-repeat",
     //   }}
     // >

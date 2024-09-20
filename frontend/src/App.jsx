@@ -43,18 +43,102 @@ function RouteGuard() {
 
   useEffect(() => {
     const handlePopState = (event) => {
-      if (location.pathname === "/dashboard") {
-        history.pushState(null, "", location.pathname);
+      const currentPath = location.pathname;
+
+      // If the user is on `/process/processdetails/:bmr_id`, redirect to `/process/bmr_process`
+      if (currentPath.startsWith("/process/processdetails/")) {
+        navigate("/process/bmr_process", { replace: true });
+      }
+
+      // If the user is on `/process/bmr_process`, redirect to `/dashboard`
+      else if (currentPath === "/process/bmr_process") {
+        navigate("/dashboard", { replace: true });
+      }
+
+      // If the user is on `/dashboard`, do nothing (prevent them from going back)
+      else if (currentPath === "/dashboard") {
+        window.history.pushState(null, "", "/dashboard");
       }
     };
 
+    // Listen for back button clicks (popstate event)
     window.addEventListener("popstate", handlePopState);
 
+    // Cleanup the event listener when the component unmounts
     return () => {
       window.removeEventListener("popstate", handlePopState);
     };
-  }, [location, navigate]);
+  }, [location.pathname, navigate]);
 
+  useEffect(() => {
+    const handlePopState = (event) => {
+      // Check if the user is not on the dashboard or login page
+      if (location.pathname !== "/dashboard" && location.pathname !== "/") {
+        // Redirect the user to the dashboard and replace the history state
+        navigate("/dashboard", { replace: true });
+      } else if (location.pathname === "/dashboard") {
+        // If user is on the dashboard, prevent the back button by pushing the dashboard state
+        window.history.pushState(null, "", "/dashboard");
+      }
+    };
+
+    // Add an event listener for the popstate event (browser back button)
+    window.addEventListener("popstate", handlePopState);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [location.pathname, navigate]);
+
+  useEffect(() => {
+    // Disable the back button when on the dashboard by overriding the back navigation behavior
+    if (location.pathname === "/dashboard") {
+      window.history.pushState(null, "", "/dashboard");
+
+      const disableBackButton = () => {
+        window.history.pushState(null, "", "/dashboard");
+      };
+
+      window.addEventListener("popstate", disableBackButton);
+
+      return () => {
+        window.removeEventListener("popstate", disableBackButton);
+      };
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    // Ensure that when the location changes, the current state is pushed to the history stack
+    if (location.pathname !== "/" && location.pathname !== "/dashboard") {
+      window.history.pushState(null, "", location.pathname);
+    }
+  }, [location.pathname]);
+
+  // Optional: useEffect specifically to lock the user on the dashboard
+  useEffect(() => {
+    if (location.pathname === "/dashboard") {
+      // Add additional logic to handle history when the user is on the dashboard
+      window.history.pushState(null, "", "/dashboard");
+
+      // Disable the back button by setting a custom state and preventing back navigation
+      const disableBackNavigation = () => {
+        window.history.pushState(null, "", "/dashboard");
+      };
+
+      // Override the back button behavior to prevent going back from the dashboard
+      window.onpopstate = function () {
+        window.history.go(1); // Prevent navigating back
+      };
+
+      // Add event listener for the popstate event to handle the back button
+      window.addEventListener("popstate", disableBackNavigation);
+
+      return () => {
+        window.removeEventListener("popstate", disableBackNavigation);
+      };
+    }
+  }, [location.pathname]);
   return (
     <Routes>
       <Route path="/" element={<Login />} />

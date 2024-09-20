@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 const ProtectedAdminRoute = ({ element }) => {
   const token = localStorage.getItem("admin-token");
@@ -8,20 +8,19 @@ const ProtectedAdminRoute = ({ element }) => {
   let isAuthenticated = false;
 
   useEffect(() => {
-    // Disable backward navigation for admin dashboard
-    const handlePopState = (event) => {
-      if (isAuthenticated && window.location.pathname === "/admin-dashboard") {
-        window.history.pushState(null, null, window.location.pathname);
+    const handleStorageChange = (event) => {
+      if (event.key === "admin-token") {
+        isAuthenticated = false; // Assume logout if token changes
+        navigate("/", { replace: true });
       }
     };
 
-    window.addEventListener("popstate", handlePopState);
+    window.addEventListener("storage", handleStorageChange);
 
     return () => {
-      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("storage", handleStorageChange);
     };
-  }, [isAuthenticated]);
-
+  }, []);
   if (token) {
     try {
       const decodedToken = jwtDecode(token);

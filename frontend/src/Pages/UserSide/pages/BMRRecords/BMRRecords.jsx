@@ -8,7 +8,7 @@ import BMRForms from "../Process/Modals/BMRForms";
 import { useDispatch } from "react-redux";
 import { setFormData, setSelectedBMR } from "../../../../../src/userSlice";
 import {BASE_URL} from "../../../../config.json"
-
+import { Tooltip } from "@mui/material";
 
 const BMRRecords = () => {
   const location = useLocation();
@@ -21,10 +21,18 @@ const BMRRecords = () => {
   const [selectedBMR, setSelectedBMRState] = useState(
     location.state?.selectedBMR || {}
   );
-  console.log(
-    selectedBMR.BMR_Tabs[0].BMR_sections[0].BMR_fields[0].acceptsMultiple,
-    "acceptsMultiple"
-  );
+
+  const fieldTypes = [];
+  selectedBMR.BMR_Tabs[0].BMR_sections[0].BMR_fields.forEach((field) => {
+    fieldTypes.push(field.field_type);
+  });
+  console.log(selectedBMR, "[][]][][][][][][][][]");
+
+  const helpText = [];
+  selectedBMR.BMR_Tabs[0].BMR_sections[0].BMR_fields.forEach((field) => {
+    helpText.push(field.helpText);
+  });
+  console.log(helpText, "><><><><><><><><><");
 
   const [formData, setFormDataState] = useState({
     initiatorName: null,
@@ -195,7 +203,7 @@ const BMRRecords = () => {
   };
 
   const handleSave = () => {
-    console.log("Form Data to Save:", formData, selectedBMR);
+    console.log("Saved Form Data:", formData, selectedBMR);
     dispatch({
       type: "ACTION_TYPE",
       payload: formData,
@@ -215,12 +223,12 @@ const BMRRecords = () => {
         <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-[#4f839b] to-[#0c384d] mt-2 p-4 rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold text-white ">
             BMR Name :{" "}
-            <span className="text-gray-800"> {selectedBMR.name}</span>
+            <span className="text-gray-200"> {selectedBMR.name}</span>
           </h2>
 
           <h2 className="text-lg font-semibold text-white ">
             Status :{" "}
-            <span className="text-gray-800 ">{selectedBMR.status}</span>
+            <span className="text-gray-200 ">{selectedBMR.status}</span>
           </h2>
         </div>
         <div className="flex justify-start space-x-2 px-4 pb-4 ">
@@ -325,12 +333,13 @@ const BMRRecords = () => {
                       </h3>
                       <div className="grid grid-cols-2 gap-4">
                         {section.BMR_fields.map((field, idx) => (
-                          // console.log(section.BMR_fields,)
                           <div key={idx} className="border border-gray-300 p-2">
                             <InputField
                               label={field.label || "Field Name"}
                               type={field.field_type || "text"}
                               placeholder={field.placeholder}
+                              value={field.value}
+                              helpText={field.helpText}
                               onChange={(e) =>
                                 handleDynamicFieldChange(
                                   field.id,
@@ -382,11 +391,26 @@ const Button1 = ({ label, active, onClick }) => (
     {label}
   </button>
 );
-const InputField = ({ label, type = "text", placeholder, value, onChange }) => (
+
+const InputField = ({
+  label,
+  type = "text",
+  placeholder,
+  value,
+  onChange,
+  helpText,
+}) => (
   <div>
-    <label className="block text-gray-700 font-bold p-2 mb-2">
+    <label className=" text-gray-700 font-bold p-2 mb-2 flex items-center">
       {label}
       {type === "text" && <span className="text-red-600">*</span>}
+      {helpText && (
+        <Tooltip title={helpText} placement="right-start">
+          <div className="text-gray-950 cursor-pointer ml-2">
+            <span className="text-black">ⓘ</span>
+          </div>
+        </Tooltip>
+      )}
     </label>
     <input
       type={type}

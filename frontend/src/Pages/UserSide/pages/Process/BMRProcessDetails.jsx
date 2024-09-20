@@ -662,7 +662,7 @@ const BMRProcessDetails = ({ fieldData }) => {
   };
   return (
     <div className="p-4 relative h-full">
-      <header className="bg-[#346c86] w-full shadow-lg flex justify-between items-center p-4 mb-4">
+      <header className="bg-[#2a323e] w-full shadow-lg flex justify-between items-center p-4 mb-4">
         <p className="text-lg text-gray-200 font-bold">BMR Process Details</p>
         <div className="flex space-x-2">
           {showForm === "default" ? (
@@ -831,8 +831,8 @@ const BMRProcessDetails = ({ fieldData }) => {
               onClick={() => handleFlowTabClick(tab)}
               className={`py-2 px-4 rounded border-2 border-black text-white ${
                 activeFlowTab === tab
-                  ? "bg-[#103546] text-white"
-                  : "bg-[#3a88b3] text-black "
+                  ? "bg-[#2a323e] text-white"
+                  : "bg-[#2a323e] text-white "
               }`}
             >
               {tab}
@@ -850,8 +850,8 @@ const BMRProcessDetails = ({ fieldData }) => {
               onClick={() => handleDefaultTabClick(tab)}
               className={`py-2 px-4 rounded border-2 border-black ${
                 activeDefaultTab === tab
-                  ? "bg-[#103546]  text-[#ffffff]"
-                  : "bg-[#2077a0]  text-[#ffffff]"
+                  ? "bg-[#2a323e]  text-[#ffffff]"
+                  : "bg-[#2a323e]  text-[#ffffff]"
               }`}
             >
               {tab}
@@ -1427,11 +1427,11 @@ const BMRProcessDetails = ({ fieldData }) => {
                                 }}
                                 required={field.isMandatory}
                               >
-                                {field?.acceptsMultiple?.map((option, idx) => (
+                                {/* {field?.acceptsMultiple?.map((option, idx) => (
                                   <option key={idx} value={option}>
                                     {option}
                                   </option>
-                                ))}
+                                ))} */}
                               </select>
                             </div>
                           )}

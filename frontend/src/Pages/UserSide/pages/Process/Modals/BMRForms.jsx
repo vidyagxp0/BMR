@@ -12,12 +12,15 @@ import {BASE_URL} from "../../../../../config.json"
 import AtmTable from "../../../../../AtmComponents/AtmTable"; // Adjust the import path according to your file structure
 import { useSelector } from "react-redux";
 
-const formatDate = (date) => {
-  const options = { day: "2-digit", month: "2-digit", year: "numeric" };
-  return new Date(date).toLocaleDateString("en-GB", options);
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
 };
 
-const BMRForms = ({ Data }) => {
+const BMRForms = () => {
   const [approvedBMR, setApprovedBMR] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -30,7 +33,15 @@ const BMRForms = ({ Data }) => {
 
   const formData = useSelector((state) => state.users.formData);
   const selectedBMR = useSelector((state) => state.users.selectedBMR);
-  // console.log(selectedBMR,"popopo")
+
+  const dateOfInitiation = formatDate(selectedBMR.date_of_initiation);
+  // console.log(dateOfInitiation, "doi");
+
+  const dueDate = formatDate(selectedBMR.due_date);
+  // console.log(dueDate, "dueDate");
+
+  // const divisionn = selectedBMR.division_id
+  // console.log(divisionn,"division");
 
   useEffect(() => {
     axios
@@ -74,29 +85,13 @@ const BMRForms = ({ Data }) => {
     setShowDetailsModal(false);
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-
-    return `${day}-${month}-${year}`;
-  };
-
   const columns = [
     {
       header: "BMR Name",
       accessor: "name",
       cell: () => selectedBMR.name || formData.name || "N/A",
     },
-    {
-      header: "Date of Initiation",
-      accessor: "date_of_initiation",
-      cell: () =>
-        formatDate(bmr.dateOFInitiation) ||
-        formatDate(selectedBMR.date_of_initiation) ||
-        "N/A",
-    },
+
     {
       header: "Division",
       accessor: "division",
@@ -112,6 +107,15 @@ const BMRForms = ({ Data }) => {
       cell: () => selectedBMR.description || "N/A",
     },
     {
+      header: "Date of Initiation",
+      accessor: "date_of_initiation",
+      cell: () => {
+        const date =
+          formData.dateOfInitiation || selectedBMR.date_of_initiation;
+        return date ? formatDate(date) : "N/A";
+      },
+    },
+    {
       header: "Current Date",
       accessor: "current_date",
       Cell: () => formatDate(new Date()),
@@ -119,7 +123,10 @@ const BMRForms = ({ Data }) => {
     {
       header: "Due Date",
       accessor: "due_date",
-      cell: () => formatDate(selectedBMR.due_date || "N/A"),
+      cell: () => {
+        const dueDate = selectedBMR.due_date;
+        return dueDate ? formatDate(dueDate) : "N/A";
+      },
     },
     {
       header: "Due Date Progress",
@@ -127,7 +134,6 @@ const BMRForms = ({ Data }) => {
       Cell: ({ row }) => {
         const dueDate = new Date(row.original.due_date);
         const currentDate = new Date();
-
         const timeDiff = dueDate - currentDate;
         const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
@@ -147,11 +153,11 @@ const BMRForms = ({ Data }) => {
         }
 
         return (
-          <div className=" flex items-center justify-between">
+          <div className="flex items-center justify-between">
             {(diffDays < 0 && (
-              <Tooltip title="Due date is crossed " placement="top-start">
+              <Tooltip title="Due date is crossed" placement="top-start">
                 <IconButton>
-                  <div className="icon-animate ">
+                  <div className="icon-animate">
                     <IoInformationCircleOutline />
                   </div>
                 </IconButton>
@@ -162,7 +168,7 @@ const BMRForms = ({ Data }) => {
                 placement="top-start"
               >
                 <IconButton>
-                  <div className="icon-animate ">
+                  <div className="icon-animate">
                     <IoInformationCircleOutline />
                   </div>
                 </IconButton>
@@ -194,6 +200,21 @@ const BMRForms = ({ Data }) => {
     filter === "" ? true : item.name.toLowerCase() === filter.toLowerCase()
   );
 
+  const calculateProgress = (dueDate) => {
+    const currentDate = new Date();
+    const endDate = new Date(dueDate);
+
+    const totalDuration = endDate.getTime() - currentDate.getTime();
+    const daysRemaining = Math.ceil(totalDuration / (1000 * 60 * 60 * 24));
+
+    const overdueProgress = Math.max(
+      0,
+      Math.min(100, (10 - daysRemaining) * 10)
+    );
+    const onTimeProgress = 100 - overdueProgress; // The remaining progress that's on time
+    return { overdueProgress, onTimeProgress, isOverdue: daysRemaining < 0 };
+  };
+
   return (
     <div className="flex flex-col p-3">
       <header className="fixed top-0 left-0 w-full z-50">
@@ -210,7 +231,7 @@ const BMRForms = ({ Data }) => {
               <select
                 id="options"
                 name="options"
-                className="border-2 border-[#B3C1CB] w-80 shadow-md rounded-lg p-2 focus:p-2 focus:outline-none focus:ring-2 focus:ring-[#346C86]"
+                className="border-2 border-gray-400 w-80 shadow-md rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#346C86]"
                 style={{ border: "2px solid gray" }}
                 value={filter}
                 onChange={handleFilterChange}
@@ -228,7 +249,7 @@ const BMRForms = ({ Data }) => {
                 {/* <pre>Selected BMR: {JSON.stringify(selectedBMR, null, 2)}</pre> */}
               </div>
               <button
-                className="btn bg-[#346C86] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#123e53]"
+                className="btn bg-[#2a323e] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#123e53] transition-all"
                 onClick={openModal}
               >
                 Initiate

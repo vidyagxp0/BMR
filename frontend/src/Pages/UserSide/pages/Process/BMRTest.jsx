@@ -11,10 +11,6 @@ import DeleteModal from "./Modals/DeleteModal";
 import "react-toastify/dist/ReactToastify.css";
 import {BASE_URL} from "../../../../config.json"
 
-
-
-
-
 const BMRProcessDetails = () => {
   const [data, setData] = useState([]);
   console.log(data, "data");

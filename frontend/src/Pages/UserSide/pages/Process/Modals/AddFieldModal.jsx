@@ -56,12 +56,13 @@ const AddFieldModal = ({
           columns: [],
         }, // Ensure proper structure when editing
       }));
-      setGridData((prevData)=>({
+      setGridData((prevData) => ({
         ...prevData,
         ...existingFieldData,
         acceptsMultiple: existingFieldData.acceptsMultiple || {
           columns: [],
-      }}))
+        },
+      }));
     }
   }, [existingFieldData, updateField]);
 
@@ -74,10 +75,10 @@ const AddFieldModal = ({
       ...prevData,
       acceptsMultiple: { ...prevData.acceptsMultiple, columns },
     }));
-    setGridData((prevData)=>({
+    setGridData((prevData) => ({
       ...prevData,
       acceptsMultiple: { ...prevData.acceptsMultiple, columns },
-    }))
+    }));
     setShowGridColumnConfigModal(false);
   };
 
@@ -113,8 +114,8 @@ const AddFieldModal = ({
 
   const handleVerificationSubmit = async (verified) => {
     try {
-      let data = {}
-      if(fieldData.field_type==="grid"){
+      let data = {};
+      if (fieldData.field_type === "grid") {
         data = {
           bmr_id,
           ...gridData,
@@ -122,16 +123,16 @@ const AddFieldModal = ({
           password: verified.password,
           declaration: verified.declaration,
           comments: verified.comments,
-        }
-      }else{
-         data = {
+        };
+      } else {
+        data = {
           bmr_id,
           ...fieldData,
           email: verified.email,
           password: verified.password,
           declaration: verified.declaration,
           comments: verified.comments,
-        }
+        };
       }
       const response = await axios({
         method: updateField === "add-field" ? "post" : "put",
@@ -235,9 +236,7 @@ const AddFieldModal = ({
                       ))}
                     </tr>
                   </thead>
-                  <tbody>
-                    
-                  </tbody>
+                  <tbody></tbody>
                 </table>
               ) : (
                 <p>No columns available.</p>
@@ -519,24 +518,30 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
                       width: "100%",
                     }}
                   />
-                   <select
-            name="field_type"
-            value={col.field_type}
-            onChange={(e)=>handleColumnChange(index, "field_type" , e.target.value)}
-            className="border p-2 w-full mb-4"
-            style={{ border: "1px solid #ccc", padding: "8px", width: "100%" }}
-            placeholder="Field Type"
-          >
-            <option value="select">Select Field Type</option>
-            <option value="text">Text</option>
-            <option value="password">Password</option>
-            <option value="email">Email</option>
-            <option value="date">Date</option>
-            <option value="time">Time</option>
-            <option value="number">Number</option>
-            <option value="checkbox">Checkbox</option>
-            <option value="radio">Radio</option>
-          </select>
+                  <select
+                    name="field_type"
+                    value={col.field_type}
+                    onChange={(e) =>
+                      handleColumnChange(index, "field_type", e.target.value)
+                    }
+                    className="border p-2 w-full mb-4"
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      width: "100%",
+                    }}
+                    placeholder="Field Type"
+                  >
+                    <option value="select">Select Field Type</option>
+                    <option value="text">Text</option>
+                    <option value="password">Password</option>
+                    <option value="email">Email</option>
+                    <option value="date">Date</option>
+                    <option value="time">Time</option>
+                    <option value="number">Number</option>
+                    <option value="checkbox">Checkbox</option>
+                    <option value="radio">Radio</option>
+                  </select>
                   <input
                     type="text"
                     name="defaultValue"
@@ -599,7 +604,6 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
                       width: "100%",
                     }}
                   />
-                 
                 </>
               </div>
             </div>
