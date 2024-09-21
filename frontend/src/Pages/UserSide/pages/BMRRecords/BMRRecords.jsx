@@ -23,7 +23,14 @@ const BMRRecords = () => {
   );
 
   const fieldTypes = [];
+  selectedBMR.BMR_Tabs[0]?.BMR_sections[0]?.BMR_fields.forEach((field) => {
+    fieldTypes.push(field.field_type);
+  });
+
   const helpText = [];
+  selectedBMR?.BMR_Tabs[0]?.BMR_sections[0]?.BMR_fields.forEach((field) => {
+    helpText.push(field.helpText);
+  });
 
   // Check if BMR_Tabs and its first element exists
   if (selectedBMR?.BMR_Tabs && selectedBMR.BMR_Tabs.length > 0) {
