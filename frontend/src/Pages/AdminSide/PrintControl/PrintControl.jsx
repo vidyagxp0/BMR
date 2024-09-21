@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import AtmButton from "../../../AtmComponents/AtmButton";
 import { useNavigate } from "react-router-dom";
 import AtmTable from "../../../AtmComponents/AtmTable";
+import DeleteUserModal from "../Modals/DeleteUserModal";
 
 export default function PrintControl() {
   const navigate = useNavigate();
 
   // State to control the table visibility
   const [selectedOption, setSelectedOption] = useState("rolewise");
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showDeleteUser, setShowDeleteUser] = useState(false);
 
   const handleDropdownChange = (event) => {
     setSelectedOption(event.target.value);
@@ -19,6 +22,40 @@ export default function PrintControl() {
     { header: "Prints Allowed Per Week", accessor: "tpcw" },
     { header: "Prints Allowed Per Month", accessor: "tpcm" },
     { header: "Prints Allowed Per Year", accessor: "tpcy" },
+    {
+      header: "Action",
+      accessor: "action",
+      Cell: ({ row }) => {
+        const user = row.original;
+        return (
+          <div className="flex justify-evenly space-x-2a">
+            <button
+              onClick={() => navigate("/view-print-control", { state: { role: user.role } })}
+              className="bg-gradient-to-r from-teal-500 to-teal-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-teal-600 hover:to-teal-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+            >
+              View
+            </button>
+
+            <button
+              onClick={() => navigate("/view-print-control", { state: { role: user.role } })}
+              className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-indigo-600 hover:to-indigo-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+            >
+              Edit
+            </button>
+
+            <button
+              onClick={() => {
+                setSelectedUser(user);
+                setShowDeleteUser(true);
+              }}
+              className="bg-gradient-to-r from-red-500 to-red-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+            >
+              Delete
+            </button>
+          </div>
+        );
+      },
+    },
   ];
 
   const [rolePrints, setrolePrints] = useState([
@@ -29,7 +66,6 @@ export default function PrintControl() {
     { name: "Initiator", role: "Initiator", tpcd: 80, tpcw: 400, tpcm: 1600, tpcy: 9600 },
   ]);
 
-
   const userwiseColumns = [
     { header: "User Name", accessor: "name" },
     { header: "Role", accessor: "role" },
@@ -37,6 +73,40 @@ export default function PrintControl() {
     { header: "Prints Allowed Per Week", accessor: "tpcw" },
     { header: "Prints Allowed Per Month", accessor: "tpcm" },
     { header: "Prints Allowed Per Year", accessor: "tpcy" },
+    {
+      header: "Action",
+      accessor: "action",
+      Cell: ({ row }) => {
+        const user = row.original;
+        return (
+          <div className="flex justify-evenly space-x-2a">
+            <button
+              onClick={() => navigate("/view-print-control", { state: { role: user.role } })}
+              className="bg-gradient-to-r from-teal-500 to-teal-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-teal-600 hover:to-teal-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+            >
+              View
+            </button>
+
+            <button
+              onClick={() => navigate("/view-print-control", { state: { role: user.role } })}
+              className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-indigo-600 hover:to-indigo-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+            >
+              Edit
+            </button>
+
+            <button
+              onClick={() => {
+                setSelectedUser(user);
+                setShowDeleteUser(true);
+              }}
+              className="bg-gradient-to-r from-red-500 to-red-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+            >
+              Delete
+            </button>
+          </div>
+        );
+      },
+    },
   ];
 
   const [userPrints, setuserPrints] = useState([
@@ -98,6 +168,17 @@ export default function PrintControl() {
           <div className="w-full h-1 bg-[#ae8dc2] my-4"></div>
           <AtmTable columns={userwiseColumns} data={userPrints} />
         </div>
+      )}
+
+      {showDeleteUser && (
+        <DeleteUserModal
+          user={selectedUser}
+          onClose={() => setShowDeleteUser(false)}
+          id={selectedUser?.user_id}
+          setAllUsers={"setAllUsers"}
+          warningHeading="Delete Print Control"
+          warningContent="Are you sure you want to delete this print control?"
+        />
       )}
     </div>
   );

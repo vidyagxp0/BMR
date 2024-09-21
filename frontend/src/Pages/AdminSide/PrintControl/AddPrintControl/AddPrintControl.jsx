@@ -7,9 +7,9 @@ import axios from "axios";
 export default function AddPrintControl() {
   const [activeTab, setActiveTab] = useState("role");
   const [errors, setErrors] = useState({});
-
   const [roles, setRoles] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
+  const [userDetails, setUserDetails] = useState({});
 
   const [roleWiseData, setRolewiseData] = useState({
     rolesArray: [],
@@ -30,10 +30,7 @@ export default function AddPrintControl() {
     selectedApprover: [],
   });
 
-  useEffect(() => {
-    console.log("userWiseData", userWiseData);
-    console.log("roleWiseData", roleWiseData);
-  }, [userWiseData, roleWiseData]);
+  // const userDetails2 = JSON.parse(localStorage.getItem("user-details"));
 
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
@@ -203,12 +200,44 @@ export default function AddPrintControl() {
     }));
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      let dataToSubmit;
+      if (activeTab === "role") {
+        console.log("roleWiseData:", roleWiseData);
+
+        dataToSubmit = {
+          ...roleWiseData,
+        };
+      } else if (activeTab === "user") {
+        console.log("userWiseData:", userWiseData); 
+        dataToSubmit = {
+          ...userWiseData,
+        };
+      }
+
+      const response = await axios.post(
+        "https://bmrapi.mydemosoftware.com/your-endpoint-here",
+        dataToSubmit,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Response:", response.data);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
   return (
     <div className=" mx-auto bg-white rounded-lg shadow-lg p-6">
       <div className="flex justify-between border-b-2 border-gray-200 mb-6">
         <div
           className={`w-1/2 text-center py-2 cursor-pointer font-bold ${
-            activeTab === "role" ? "border-b-2 border-red-400 text-red-400" : "text-gray-600"
+            activeTab === "role" ? "border-b-2 border-blue-600  text-blue-600" : "text-gray-600"
           }`}
           onClick={() => setActiveTab("role")}
         >
@@ -216,7 +245,7 @@ export default function AddPrintControl() {
         </div>
         <div
           className={`w-1/2 text-center py-2 cursor-pointer font-bold ${
-            activeTab === "user" ? "border-b-2 border-red-400 text-red-400" : "text-gray-600"
+            activeTab === "user" ? "border-b-2 border-blue-600  text-blue-600" : "text-gray-600"
           }`}
           onClick={() => setActiveTab("user")}
         >
@@ -226,9 +255,9 @@ export default function AddPrintControl() {
 
       <div>
         {activeTab === "role" && (
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="group-input" style={{ margin: "15px", padding: "15px" }}>
-              <label htmlFor="roles" className="text-red-400">
+              <label htmlFor="roles" className=" text-blue-600">
                 Roles
               </label>
               <Select
@@ -238,7 +267,7 @@ export default function AddPrintControl() {
                 isMulti
                 onChange={handleRoleChange}
               />
-              {errors.rolesArray && <p className="text-red-500 text-sm">{errors.rolesArray}</p>}
+              {errors.rolesArray && <p className=" text-blue-600 text-sm">{errors.rolesArray}</p>}
             </div>
 
             <div className="group-input" style={{ margin: "15px" }}>
@@ -252,7 +281,7 @@ export default function AddPrintControl() {
                     printLimitDay: e.target.value,
                   })
                 }
-                labelClassName="text-red-500"
+                labelClassName=" text-blue-600"
                 type="number"
               />
             </div>
@@ -268,7 +297,7 @@ export default function AddPrintControl() {
                     printLimitWeek: e.target.value,
                   })
                 }
-                labelClassName="text-red-500"
+                labelClassName=" text-blue-600"
                 // error={errors.name}
                 type="number"
               />
@@ -285,7 +314,7 @@ export default function AddPrintControl() {
                     printLimitMonth: e.target.value,
                   })
                 }
-                labelClassName="text-red-500"
+                labelClassName=" text-blue-600"
                 // error={errors.name}
                 type="number"
               />
@@ -302,14 +331,14 @@ export default function AddPrintControl() {
                     printLimitYear: e.target.value,
                   })
                 }
-                labelClassName="text-red-500"
+                labelClassName=" text-blue-600"
                 // error={errors.name}
                 type="number"
               />
             </div>
 
             <div className="group-input" style={{ margin: "15px", padding: "15px" }}>
-              <label htmlFor="roles" className="text-red-400">
+              <label htmlFor="roles" className=" text-blue-600">
                 Select Reviewers
               </label>
 
@@ -320,11 +349,11 @@ export default function AddPrintControl() {
                 isMulti
                 onChange={(selected) => handleDropdownChange(selected, "reviewers")}
               />
-              {errors.rolesArray && <p className="text-red-500 text-sm">{errors.rolesArray}</p>}
+              {errors.rolesArray && <p className=" text-blue-600 text-sm">{errors.rolesArray}</p>}
             </div>
 
             <div className="group-input" style={{ margin: "15px", padding: "15px" }}>
-              <label htmlFor="roles" className="text-red-400">
+              <label htmlFor="roles" className=" text-blue-600">
                 Select Approvers
               </label>
               <Select
@@ -334,7 +363,7 @@ export default function AddPrintControl() {
                 isMulti
                 onChange={(selected) => handleDropdownChange(selected, "approvers")}
               />
-              {errors.rolesArray && <p className="text-red-500 text-sm">{errors.rolesArray}</p>}
+              {errors.rolesArray && <p className=" text-blue-600 text-sm">{errors.rolesArray}</p>}
             </div>
 
             <div
@@ -344,15 +373,19 @@ export default function AddPrintControl() {
                 marginTop: "20px",
               }}
             >
-              <AtmButton label="Set Print Limit" type="submit" className="bg-red-400" />
+              <AtmButton
+                label="Create Print Control"
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-700"
+              />
             </div>
           </form>
         )}
 
         {activeTab === "user" && (
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="group-input" style={{ margin: "15px", padding: "15px" }}>
-              <label htmlFor="roles" className="text-red-400">
+              <label htmlFor="roles" className=" text-blue-600">
                 Users
               </label>
               <Select
@@ -362,7 +395,7 @@ export default function AddPrintControl() {
                 isMulti
                 onChange={handleUserChange}
               />
-              {errors.rolesArray && <p className="text-red-500 text-sm">{errors.rolesArray}</p>}
+              {errors.rolesArray && <p className=" text-blue-600 text-sm">{errors.rolesArray}</p>}
             </div>
 
             <div className="group-input" style={{ margin: "15px" }}>
@@ -376,7 +409,7 @@ export default function AddPrintControl() {
                     printLimitDay: e.target.value,
                   })
                 }
-                labelClassName="text-red-500"
+                labelClassName=" text-blue-600"
                 type="number"
               />
             </div>
@@ -392,7 +425,7 @@ export default function AddPrintControl() {
                     printLimitWeek: e.target.value,
                   })
                 }
-                labelClassName="text-red-500"
+                labelClassName=" text-blue-600"
                 // error={errors.name}
                 type="number"
               />
@@ -409,7 +442,7 @@ export default function AddPrintControl() {
                     printLimitMonth: e.target.value,
                   })
                 }
-                labelClassName="text-red-500"
+                labelClassName=" text-blue-600"
                 // error={errors.name}
                 type="number"
               />
@@ -426,14 +459,14 @@ export default function AddPrintControl() {
                     printLimitYear: e.target.value,
                   })
                 }
-                labelClassName="text-red-500"
+                labelClassName=" text-blue-600"
                 // error={errors.name}
                 type="number"
               />
             </div>
 
             <div className="group-input" style={{ margin: "15px", padding: "15px" }}>
-              <label htmlFor="roles" className="text-red-400">
+              <label htmlFor="roles" className=" text-blue-600">
                 Select Reviewers
               </label>
 
@@ -444,11 +477,11 @@ export default function AddPrintControl() {
                 isMulti
                 onChange={(selected) => handleUserDropdownChange(selected, "reviewers")}
               />
-              {errors.rolesArray && <p className="text-red-500 text-sm">{errors.rolesArray}</p>}
+              {errors.rolesArray && <p className=" text-blue-600 text-sm">{errors.rolesArray}</p>}
             </div>
 
             <div className="group-input" style={{ margin: "15px", padding: "15px" }}>
-              <label htmlFor="roles" className="text-red-400">
+              <label htmlFor="roles" className=" text-blue-600">
                 Select Approvers
               </label>
               <Select
@@ -458,7 +491,7 @@ export default function AddPrintControl() {
                 isMulti
                 onChange={(selected) => handleUserDropdownChange(selected, "approvers")}
               />
-              {errors.rolesArray && <p className="text-red-500 text-sm">{errors.rolesArray}</p>}
+              {errors.rolesArray && <p className=" text-blue-600 text-sm">{errors.rolesArray}</p>}
             </div>
 
             <div
@@ -468,7 +501,7 @@ export default function AddPrintControl() {
                 marginTop: "20px",
               }}
             >
-              <AtmButton label="Set Print Limit" type="submit" className="bg-red-400" />
+              <AtmButton label="Create Print Control" type="submit" className="bg-blue-400" />
             </div>
           </form>
         )}

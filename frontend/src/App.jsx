@@ -28,6 +28,7 @@ import BMRForms from "./Pages/UserSide/pages/Process/Modals/BMRForms";
 import Analytics from "./Pages/UserSide/Analytics/Analytics";
 import PrintControl from "./Pages/AdminSide/PrintControl/PrintControl";
 import AddPrintControl from "./Pages/AdminSide/PrintControl/AddPrintControl/AddPrintControl";
+import ViewPrintControl from "./Pages/AdminSide/PrintControl/ViewPrintControl/ViewPrintControl";
 // import Logs from "./Pages/UserSide/Logs/Logs";
 
 function App() {
@@ -43,112 +44,12 @@ function RouteGuard() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handlePopState = (event) => {
-      const currentPath = location.pathname;
 
-      // If the user is on `/process/processdetails/:bmr_id`, redirect to `/process/bmr_process`
-      if (currentPath.startsWith("/process/processdetails/")) {
-        navigate("/process/bmr_process", { replace: true });
-      }
-
-      // If the user is on `/process/bmr_process`, redirect to `/dashboard`
-      else if (currentPath === "/process/bmr_process") {
-        navigate("/dashboard", { replace: true });
-      }
-
-      // If the user is on `/dashboard`, do nothing (prevent them from going back)
-      else if (currentPath === "/dashboard") {
-        window.history.pushState(null, "", "/dashboard");
-      }
-    };
-
-    // Listen for back button clicks (popstate event)
-    window.addEventListener("popstate", handlePopState);
-
-    // Cleanup the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, [location.pathname, navigate]);
-
-  useEffect(() => {
-    const handlePopState = (event) => {
-      // Check if the user is not on the dashboard or login page
-      if (location.pathname !== "/dashboard" && location.pathname !== "/") {
-        // Redirect the user to the dashboard and replace the history state
-        navigate("/dashboard", { replace: true });
-      } else if (location.pathname === "/dashboard") {
-        // If user is on the dashboard, prevent the back button by pushing the dashboard state
-        window.history.pushState(null, "", "/dashboard");
-      }
-    };
-
-    // Add an event listener for the popstate event (browser back button)
-    window.addEventListener("popstate", handlePopState);
-
-    // Cleanup the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, [location.pathname, navigate]);
-
-  useEffect(() => {
-    // Disable the back button when on the dashboard by overriding the back navigation behavior
-    if (location.pathname === "/dashboard") {
-      window.history.pushState(null, "", "/dashboard");
-
-      const disableBackButton = () => {
-        window.history.pushState(null, "", "/dashboard");
-      };
-
-      window.addEventListener("popstate", disableBackButton);
-
-      return () => {
-        window.removeEventListener("popstate", disableBackButton);
-      };
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    // Ensure that when the location changes, the current state is pushed to the history stack
-    if (location.pathname !== "/" && location.pathname !== "/dashboard") {
-      window.history.pushState(null, "", location.pathname);
-    }
-  }, [location.pathname]);
-
-  // Optional: useEffect specifically to lock the user on the dashboard
-  useEffect(() => {
-    if (location.pathname === "/dashboard") {
-      // Add additional logic to handle history when the user is on the dashboard
-      window.history.pushState(null, "", "/dashboard");
-
-      // Disable the back button by setting a custom state and preventing back navigation
-      const disableBackNavigation = () => {
-        window.history.pushState(null, "", "/dashboard");
-      };
-
-      // Override the back button behavior to prevent going back from the dashboard
-      window.onpopstate = function () {
-        window.history.go(1); // Prevent navigating back
-      };
-
-      // Add event listener for the popstate event to handle the back button
-      window.addEventListener("popstate", disableBackNavigation);
-
-      return () => {
-        window.removeEventListener("popstate", disableBackNavigation);
-      };
-    }
-  }, [location.pathname]);
   return (
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="" element={<WrapperUser />}>
-        <Route
-          path="/dashboard"
-          element={<ProtectedUserRoute element={<Dashboard />} />}
-        />
+        <Route path="/dashboard" element={<ProtectedUserRoute element={<Dashboard />} />} />
         <Route
           path="/process/bmr_process"
           element={<ProtectedUserRoute element={<BMRProcess />} />}
@@ -161,49 +62,31 @@ function RouteGuard() {
           path="/process/processdetails/:bmr_id"
           element={<ProtectedUserRoute element={<BMRProcessDetails />} />}
         />
-        <Route
-          path="/bmr_records"
-          element={<ProtectedUserRoute element={<BMRRecords />} />}
-        />
+        <Route path="/bmr_records" element={<ProtectedUserRoute element={<BMRRecords />} />} />
         <Route
           path="/user-notifications"
           element={<ProtectedUserRoute element={<Notifications />} />}
         />
-        <Route
-          path="/analytics"
-          element={<ProtectedUserRoute element={<Analytics />} />}
-        />
+        <Route path="/analytics" element={<ProtectedUserRoute element={<Analytics />} />} />
         {/* <Route
           path="/logs"
           element={<ProtectedUserRoute element={<Logs />} />}
         /> */}
-        <Route
-          path="/bmr-forms"
-          element={<ProtectedUserRoute element={<BMRForms />} />}
-        />
+        <Route path="/bmr-forms" element={<ProtectedUserRoute element={<BMRForms />} />} />
         <Route
           path="/bmr-details/:bmr_id" // Route to handle BMR details
           element={<ProtectedUserRoute element={<BMRDetails />} />} // Render the BMRDetails component
         />
       </Route>
-      <Route
-        path="/audit-trail"
-        element={<ProtectedUserRoute element={<AuditTrail />} />}
-      />
+      <Route path="/audit-trail" element={<ProtectedUserRoute element={<AuditTrail />} />} />
       <Route
         path="/boardOfDirectors"
         element={<ProtectedUserRoute element={<BoardOfDirectors />} />}
       />
       <Route path="/help" element={<ProtectedUserRoute element={<Help />} />} />
-      <Route
-        path="/about"
-        element={<ProtectedUserRoute element={<About />} />}
-      />
+      <Route path="/about" element={<ProtectedUserRoute element={<About />} />} />
 
-      <Route
-        path="/helpdesk"
-        element={<ProtectedUserRoute element={<HelpdeskPersonnel />} />}
-      />
+      <Route path="/helpdesk" element={<ProtectedUserRoute element={<HelpdeskPersonnel />} />} />
 
       <Route path="/admin-login" element={<AdminLogin />} />
       <Route path="" element={<Wrapper />}>
@@ -220,9 +103,10 @@ function RouteGuard() {
           element={<ProtectedAdminRoute element={<AddPrintControl />} />}
         />
         <Route
-          path="/admin-add-user"
-          element={<ProtectedAdminRoute element={<AddUser />} />}
+          path="/view-print-control"
+          element={<ProtectedAdminRoute element={<ViewPrintControl />} />}
         />
+        <Route path="/admin-add-user" element={<ProtectedAdminRoute element={<AddUser />} />} />
         <Route
           path="/admin-update-user"
           element={<ProtectedAdminRoute element={<UpdateUser />} />}

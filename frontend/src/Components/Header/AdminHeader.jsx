@@ -40,35 +40,7 @@ const AdminHeader = () => {
               />
               <div className="ml-2 text-white">Mr. Amit Guru</div>
             </div>
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg">
-              <div className="px-4 py-2">
-                <div className="flex items-center space-x-2">
-                  <InfoIcon />
-                  <span>About</span>
-                </div>
-              </div>
-              <Link to="#" className="block px-4 py-2">
-                <div className="flex items-center space-x-2">
-                  <ContactSupportIcon />
-                  <span>Help</span>
-                </div>
-              </Link>
-              <button
-                onClick={handleShowModal}
-                className="block w-full px-4 py-2 text-left"
-              >
-                <div className="flex items-center space-x-2">
-                  <LogoutIcon />
-                  <span>Logout</span>
-                </div>
-              </button>
-              <Link className="block px-4 py-2">
-                <div className="flex items-center space-x-2">
-                  <ManageAccountsIcon />
-                  <span>Settings</span>
-                </div>
-              </Link>
-            </div>
+            
           </div>
         </div>
       </header>
