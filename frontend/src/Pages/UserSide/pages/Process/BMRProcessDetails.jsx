@@ -23,6 +23,7 @@ const BMRProcessDetails = ({ fieldData }) => {
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
+
   // console.log(bmrFields, "0000000000000000000000000");
   const [tabs, setTabs] = useState([
     "Initiator Remarks",
@@ -40,6 +41,7 @@ const BMRProcessDetails = ({ fieldData }) => {
   const [newFields, setNewFields] = useState({});
   const [newSection, setNewSection] = useState([]);
   const [section, setSection] = useState([]);
+
   console.log(fieldData, "555555555555555555");
   const [fields, setFields] = useState({
     "Initiator Remarks": [
@@ -105,7 +107,7 @@ const BMRProcessDetails = ({ fieldData }) => {
   });
   console.log(fields, "fieldssssssssssssssss");
 
-  const [activeFlowTab, setActiveFlowTab] = useState(flowoTabs[0]);
+  const [activeFlowTab, setActiveFlowTab] = useState("INITIATION");
   const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
   const [activeSendFormTab, setActiveSendFormTab] = useState(null);
   const [isActiveTab, setIsActiveTab] = useState(0);
@@ -171,6 +173,10 @@ const BMRProcessDetails = ({ fieldData }) => {
         </div>
       );
     }
+  };
+  const handleStageClick = (stage) => {
+    setActiveFlowTab(stage);
+    // Add any additional logic needed when a stage is clicked
   };
 
   const handleAddRow = (tabName) => {
@@ -915,7 +921,7 @@ const BMRProcessDetails = ({ fieldData }) => {
               className={`py-2 px-4 rounded border-2 border-black ${
                 activeFlowTab === tab
                   ? "bg-[#2a323e] text-white"
-                  : "bg-[#2a323e] text-white "
+                  : "bg-[#6f7070] text-white "
               }`}
             >
               {tab}
@@ -934,7 +940,7 @@ const BMRProcessDetails = ({ fieldData }) => {
               className={`py-2 px-4 rounded border-2 border-black ${
                 activeDefaultTab === tab
                   ? "bg-[#2a323e]  text-[#ffffff]"
-                  : "bg-[#2a323e]  text-[#ffffff]"
+                  : "bg-[#6f7070]  text-[#ffffff]"
               }`}
             >
               {tab}
@@ -1388,7 +1394,10 @@ const BMRProcessDetails = ({ fieldData }) => {
                                 }}
                                 required={field.isMandatory}
                               >
-                                {field?.acceptsMultiple?.map((option, idx) => (
+                                {(Array.isArray(field?.acceptsMultiple)
+                                  ? field.acceptsMultiple
+                                  : []
+                                ).map((option, idx) => (
                                   <option key={idx} value={option}>
                                     {option}
                                   </option>

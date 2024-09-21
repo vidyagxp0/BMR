@@ -3,7 +3,7 @@ import "./UserVerificationPopUp.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import {BASE_URL} from "../../config.json"
+import { BASE_URL } from "../../config.json";
 
 const UserVerificationPopUp = ({
   onClose,
@@ -18,61 +18,12 @@ const UserVerificationPopUp = ({
   const navigate = useNavigate();
   const [flag, setFlag] = useState(false);
 
-  // useEffect(() => {
-  //   if (flag) {
-  //     toast.success("Successfully Initiated");
-  //     navigate("/process/bmr_process");
-  //     console.log(flag, "okkkkkkk");
-  //   } else {
-  //     toast.error("An error occurred. Please try again.");
-  //     console.log(flag, "errorrrr");
-  //   }
-  // }, [flag, navigate]);
-
   const handleFlag = () => {
     setFlag(true);
     console.log("Flag is set to true", flag);
     navigate("/process/bmr_process");
   };
 
-  //   const data = {
-  //     email: email,
-  //     password: password,
-  //     declaration: declaration,
-  //   };
-
-  //   try {
-  //     const response = await axios.post(
-  //       `${BASE_URL}/user/user-verification`,
-  //       data,
-  //       {
-  //         headers: { "Content-Type": "application/json" },
-  //       }
-  //     );
-
-  //     toast.success("Successfully Initiated");
-
-  //     const token = response.data.token;
-  //     localStorage.setItem("user-token", token);
-
-  //     const decoded = jwtDecode(token);
-  //     localStorage.setItem("user-details", JSON.stringify(decoded));
-
-  //     navigate("/process/bmr_process"); // Corrected to lowercase 'navigate'
-  //     console.log("success");
-  //   } catch (error) {
-  //     if (
-  //       error.response &&
-  //       error.response.data &&
-  //       error.response.data.message
-  //     ) {
-  //       toast.error(error.response.data.message);
-  //     } else {
-  //       toast.error("An error occurred. Please try again.");
-  //     }
-  //     console.error(error);
-  //   }
-  // };
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit({ email, password, declaration, comments }, handleFlag);
@@ -125,7 +76,9 @@ const UserVerificationPopUp = ({
             />
           </div>
           <div className="form-group">
-            <label className="color-label">Comment </label>
+            <label className="color-label">
+              Comment <span className="required-asterisk text-red-500">*</span>
+            </label>
             <input
               type="text"
               value={comments}

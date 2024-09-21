@@ -3,7 +3,7 @@ import { Modal, Box, Typography, TextField } from "@mui/material";
 import AtmButton from "../../../AtmComponents/AtmButton";
 import axios from "axios";
 import { toast } from "react-toastify";
-import {BASE_URL} from "../../../config.json"
+import { BASE_URL } from "../../../config.json";
 
 const modalStyle = {
   position: "absolute",
@@ -21,14 +21,31 @@ const ResetPasswordModal = ({ user, onClose, id, setAllUsers }) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [error, setError] = useState("");
+
   const handleReset = (e) => {
     e.preventDefault();
+
+    // Client-side validation
+    if (newPassword.length < 8) {
+      setError("New password must be at least 8 characters long.");
+      return;
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      setError("New password and confirm password do not match.");
+      return;
+    }
+
+    setError(""); // Clear previous errors
+
     const data = {
       user_id: user.user_id,
       current_password: currentPassword,
       new_password: newPassword,
       confirm_new_password: confirmNewPassword,
     };
+
     axios
       .post(`${BASE_URL}/user/reset-password`, data, {
         headers: {
@@ -43,7 +60,7 @@ const ResetPasswordModal = ({ user, onClose, id, setAllUsers }) => {
         }, 500);
       })
       .catch((error) => {
-        toast.error(error.response.data.message || "Paaword Changed failed");
+        toast.error(error.response.data.message || "Password Change Failed");
         console.error(error);
       });
   };
@@ -82,6 +99,11 @@ const ResetPasswordModal = ({ user, onClose, id, setAllUsers }) => {
             value={confirmNewPassword}
             onChange={(e) => setConfirmNewPassword(e.target.value)}
           />
+          {error && (
+            <Typography color="error" variant="body2" margin="normal">
+              {error}
+            </Typography>
+          )}
           <div className="flex pt-5 gap-3 h-16">
             <AtmButton
               onClick={onClose}
