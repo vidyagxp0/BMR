@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AtmButton from "../../../AtmComponents/AtmButton";
 import { useNavigate } from "react-router-dom";
 import AtmTable from "../../../AtmComponents/AtmTable";
 import DeleteUserModal from "../Modals/DeleteUserModal";
+import axios from "axios";
 
 export default function PrintControl() {
   const navigate = useNavigate();
@@ -15,6 +16,15 @@ export default function PrintControl() {
   const handleDropdownChange = (event) => {
     setSelectedOption(event.target.value);
   };
+
+  useEffect(() => {
+    const getUserPrints = async () => {
+      // const response = await axios.get(`bmr-form/get-user-prints`);
+      // setuserPrints([...userPrints, response.data]);
+      // setrolePrints([...rolePrints, ...response.data]);
+    };
+    getUserPrints();
+  }, []);
 
   const rolewiseColumns = [
     { header: "Role Name", accessor: "role" },
@@ -30,14 +40,14 @@ export default function PrintControl() {
         return (
           <div className="flex justify-evenly space-x-2a">
             <button
-              onClick={() => navigate("/view-print-control", { state: { role: user.role } })}
+              onClick={() => navigate(`/view-print-control/${user.id}`)}
               className="bg-gradient-to-r from-teal-500 to-teal-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-teal-600 hover:to-teal-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
             >
               View
             </button>
 
             <button
-              onClick={() => navigate("/view-print-control", { state: { role: user.role } })}
+              onClick={() => navigate(`/view-print-control/${user.id}`)}
               className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-indigo-600 hover:to-indigo-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
             >
               Edit
@@ -59,11 +69,11 @@ export default function PrintControl() {
   ];
 
   const [rolePrints, setrolePrints] = useState([
-    { name: "Admin", role: "Admin", tpcd: 100, tpcw: 500, tpcm: 2000, tpcy: 12000 },
-    { name: "Approver", role: "Approver", tpcd: 50, tpcw: 250, tpcm: 1000, tpcy: 6000 },
-    { name: "Reviewer", role: "Reviewer", tpcd: 20, tpcw: 100, tpcm: 400, tpcy: 2400 },
-    { name: "HOD", role: "HOD", tpcd: 30, tpcw: 150, tpcm: 600, tpcy: 3600 },
-    { name: "Initiator", role: "Initiator", tpcd: 80, tpcw: 400, tpcm: 1600, tpcy: 9600 },
+    { id: 1, name: "Admin", role: "Admin", tpcd: 100, tpcw: 500, tpcm: 2000, tpcy: 12000 },
+    { id: 2, name: "Approver", role: "Approver", tpcd: 50, tpcw: 250, tpcm: 1000, tpcy: 6000 },
+    { id: 3, name: "Reviewer", role: "Reviewer", tpcd: 20, tpcw: 100, tpcm: 400, tpcy: 2400 },
+    { id: 4, name: "HOD", role: "HOD", tpcd: 30, tpcw: 150, tpcm: 600, tpcy: 3600 },
+    { id: 5, name: "Initiator", role: "Initiator", tpcd: 80, tpcw: 400, tpcm: 1600, tpcy: 9600 },
   ]);
 
   const userwiseColumns = [
@@ -81,14 +91,18 @@ export default function PrintControl() {
         return (
           <div className="flex justify-evenly space-x-2a">
             <button
-              onClick={() => navigate("/view-print-control", { state: { role: user.role } })}
+              onClick={() =>
+                navigate(`/view-print-control/${user.id}`, { state: { role: user.role } })
+              }
               className="bg-gradient-to-r from-teal-500 to-teal-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-teal-600 hover:to-teal-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
             >
               View
             </button>
 
             <button
-              onClick={() => navigate("/view-print-control", { state: { role: user.role } })}
+              onClick={() =>
+                navigate(`/view-print-control/${user.id}`, { state: { role: user.role } })
+              }
               className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-indigo-600 hover:to-indigo-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
             >
               Edit
@@ -108,13 +122,20 @@ export default function PrintControl() {
       },
     },
   ];
-
   const [userPrints, setuserPrints] = useState([
-    { name: "Mayank Rathore", role: "Admin", tpcd: 100, tpcw: 500, tpcm: 2000, tpcy: 12000 },
-    { name: "Gaurav Meena", role: "Approver", tpcd: 50, tpcw: 250, tpcm: 1000, tpcy: 6000 },
-    { name: "Farhan Khan", role: "Reviewer", tpcd: 20, tpcw: 100, tpcm: 400, tpcy: 2400 },
-    { name: "Pankaj Jat", role: "HOD", tpcd: 30, tpcw: 150, tpcm: 600, tpcy: 3600 },
-    { name: "Anshul Thakur", role: "Initiator", tpcd: 80, tpcw: 400, tpcm: 1600, tpcy: 9600 },
+    { id: 1, name: "Mayank Rathore", role: "Admin", tpcd: 100, tpcw: 500, tpcm: 2000, tpcy: 12000 },
+    { id: 2, name: "Gaurav Meena", role: "Approver", tpcd: 50, tpcw: 250, tpcm: 1000, tpcy: 6000 },
+    { id: 3, name: "Farhan Khan", role: "Reviewer", tpcd: 20, tpcw: 100, tpcm: 400, tpcy: 2400 },
+    { id: 4, name: "Pankaj Jat", role: "HOD", tpcd: 30, tpcw: 150, tpcm: 600, tpcy: 3600 },
+    {
+      id: 5,
+      name: "Anshul Thakur",
+      role: "Initiator",
+      tpcd: 80,
+      tpcw: 400,
+      tpcm: 1600,
+      tpcy: 9600,
+    },
   ]);
 
   return (

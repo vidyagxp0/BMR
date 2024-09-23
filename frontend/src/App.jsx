@@ -44,7 +44,6 @@ function RouteGuard() {
   const location = useLocation();
   const navigate = useNavigate();
 
-
   return (
     <Routes>
       <Route path="/" element={<Login />} />
@@ -103,7 +102,7 @@ function RouteGuard() {
           element={<ProtectedAdminRoute element={<AddPrintControl />} />}
         />
         <Route
-          path="/view-print-control"
+          path="/view-print-control/:id"
           element={<ProtectedAdminRoute element={<ViewPrintControl />} />}
         />
         <Route path="/admin-add-user" element={<ProtectedAdminRoute element={<AddUser />} />} />

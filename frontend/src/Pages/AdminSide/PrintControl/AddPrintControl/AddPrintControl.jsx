@@ -9,9 +9,12 @@ export default function AddPrintControl() {
   const [errors, setErrors] = useState({});
   const [roles, setRoles] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
-  const [userDetails, setUserDetails] = useState({});
+  const userDetails = JSON.parse(localStorage.getItem("user-details"));
 
   const [roleWiseData, setRolewiseData] = useState({
+    userId: userDetails?.userId || "",
+    role_id: userDetails?.roles?.[0]?.role_id || "",
+    initiator_id: userDetails?.userId || "",
     rolesArray: [],
     printLimitDay: "",
     printLimitWeek: "",
@@ -21,6 +24,9 @@ export default function AddPrintControl() {
     selectedApprover: [],
   });
   const [userWiseData, setUserwiseData] = useState({
+    userId: userDetails?.userId || "",
+    role_id: userDetails?.roles?.[0]?.role_id || "",
+    initiator_id: userDetails?.userId || "",
     userArray: [],
     printLimitDay: "",
     printLimitWeek: "",
@@ -211,7 +217,7 @@ export default function AddPrintControl() {
           ...roleWiseData,
         };
       } else if (activeTab === "user") {
-        console.log("userWiseData:", userWiseData); 
+        console.log("userWiseData:", userWiseData);
         dataToSubmit = {
           ...userWiseData,
         };

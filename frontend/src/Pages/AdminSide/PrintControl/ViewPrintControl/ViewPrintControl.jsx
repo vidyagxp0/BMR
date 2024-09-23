@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ProgressBar from "../../../../Components/ProgressBar/ProgressBar";
 import Select from "react-select";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 export default function ViewPrintControl() {
   const [activeTab, setActiveTab] = useState("general");
@@ -9,6 +10,7 @@ export default function ViewPrintControl() {
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
 
+  const { id } = useParams();
 
   const [roleWiseData, setRolewiseData] = useState({
     rolesArray: [],
@@ -20,6 +22,29 @@ export default function ViewPrintControl() {
     selectedApprover: [],
   });
 
+  const [userWiseData, setUserwiseData] = useState({
+    userArray: [],
+    printLimitDay: "",
+    printLimitWeek: "",
+    printLimitMonth: "",
+    printLimitYear: "",
+    selectedReviewer: [],
+    selectedApprover: [],
+  });
+
+  useEffect(() => {
+    const fetchPrintControlData = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/bmr-form/get-print-control/${id}`);
+        setRolewiseData(response.data.message);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchPrintControlData();
+  }, []);
+
   const [activityLog, setActivityLog] = useState({
     initiatedBy: "John Doe",
     initiatedOn: "10-02-2024",
@@ -28,7 +53,6 @@ export default function ViewPrintControl() {
     approvedBy: "Jane Smith",
     approvedOn: "20-11-2024",
   });
-
 
   // Fetch roles, reviewers, and approvers from APIs
   useEffect(() => {
