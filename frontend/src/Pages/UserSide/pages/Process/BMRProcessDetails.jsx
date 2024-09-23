@@ -1445,12 +1445,12 @@ const BMRProcessDetails = ({ fieldData }) => {
                               <>
                                 <Select
                                   isMulti
-                                  options={field?.acceptsMultiple?.map(
-                                    (option) => ({
-                                      value: option,
-                                      label: option,
-                                    })
-                                  )}
+                                  // options={field?.acceptsMultiple?.map(
+                                  //   (option) => ({
+                                  //     value: option,
+                                  //     label: option,
+                                  //   })
+                                  // )}
                                   value={selectedOptions[field.id] || []}
                                   onChange={(options) =>
                                     handleMultiSelectChange(field.id, options)
