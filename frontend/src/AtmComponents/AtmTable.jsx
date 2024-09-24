@@ -49,42 +49,42 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
 
           <tbody>
             {paginatedData.map((row, rowIndex) => (
-            <tr
-            key={rowIndex}
-            style={{
-              backgroundColor: rowIndex % 2 === 0 ? "#fafbfc" : "#cad2de", // Softer Gray for even rows, Softer Blue for odd rows
-            }}
-            className="border-b border-gray-300"
-          >
-            <td
-              className={`px-4 py-2 whitespace-nowrap text-sm ${
-                rowIndex % 2 === 0 ? "text-[#000000]" : "text-[#000000]" // Dark text on Softer Gray, Light text on Softer Blue
-              } border-r border-gray-300`}
-            >
-              {(currentPage - 1) * rowsPerPage + rowIndex + 1}
-            </td>
-            {columns.map((column, colIndex) => (
-              <td
-                key={colIndex}
-                className={`px-4 py-2 whitespace-nowrap text-sm ${
-                  rowIndex % 2 === 0 ? "text-[#000000]" : "text-[#090808]" // Adjust text color for readability
-                }`}
-                onClick={
-                  column.header === "BMR NAME"
-                    ? () => handleBMRClick(row)
-                    : null
-                }
+              <tr
+                key={rowIndex}
                 style={{
-                  cursor: column.header === "BMR NAME" ? "pointer" : "default",
+                  backgroundColor: rowIndex % 2 === 0 ? "#fafbfc" : "#cad2de", // Softer Gray for even rows, Softer Blue for odd rows
                 }}
+                className="border-b border-gray-300"
               >
-                {column.Cell
-                  ? column.Cell({ row: { original: row } })
-                  : row[column.accessor]}
-              </td>
-            ))}
-          </tr>
-          
+                <td
+                  className={`px-4 py-2 whitespace-nowrap text-sm ${
+                    rowIndex % 2 === 0 ? "text-[#000000]" : "text-[#000000]" // Dark text on Softer Gray, Light text on Softer Blue
+                  } border-r border-gray-300`}
+                >
+                  {(currentPage - 1) * rowsPerPage + rowIndex + 1}
+                </td>
+                {columns.map((column, colIndex) => (
+                  <td
+                    key={colIndex}
+                    className={`px-4 py-2 whitespace-nowrap text-sm ${
+                      rowIndex % 2 === 0 ? "text-[#000000]" : "text-[#090808]" // Adjust text color for readability
+                    }`}
+                    onClick={
+                      column.header === "BMR NAME"
+                        ? () => handleBMRClick(row)
+                        : null
+                    }
+                    style={{
+                      cursor:
+                        column.header === "BMR NAME" ? "pointer" : "default",
+                    }}
+                  >
+                    {column.Cell
+                      ? column.Cell({ row: { original: row } })
+                      : row[column.accessor]}
+                  </td>
+                ))}
+              </tr>
             ))}
           </tbody>
         </table>

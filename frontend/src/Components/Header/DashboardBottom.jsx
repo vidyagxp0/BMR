@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./DashboardBottom.css";
 
 function DashboardBottom() {
@@ -16,7 +16,11 @@ function DashboardBottom() {
 
   return (
     <div className="Header_Bottom bg-white">
-      {loading && <div className="loader"></div>}
+      {loading && (
+        <div className="loader-container">
+          <div className="loader" ></div>
+        </div>
+      )}
       <div className="headerBottomInner">
         <div className="headerBottomLft">
           <div className="navItem" onClick={() => handleClick("/dashboard")}>

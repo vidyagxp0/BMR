@@ -1,7 +1,7 @@
 .Header_Bottom {
   width: 100%;
   height: 50px;
-  /* background-color: rgb(82 82 82 / 7%); */
+  cursor: pointer;
 }
 
 .Header_Bottom .headerBottomInner {
@@ -13,11 +13,9 @@
 
 .Header_Bottom .headerBottomLft {
   display: flex;
-  /* border: 2px solid red; */
   align-items: center;
   width: 50px;
   gap: 30px;
-  /* margin-left: 235px; */
 }
 
 .navItem {
@@ -43,58 +41,82 @@
   font-size: 1.2rem;
 }
 
-/* .loader {
+/* Loader background blur */
+.loader-container {
   position: fixed;
-  top: 50;
+  top: 0;
   left: 0;
   width: 100%;
-  height: 10%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-
-  color: white;
+  backdrop-filter: blur(5px);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.5rem;
-  z-index: 1000;
-} */
+  z-index: 9999;
+}
 
-/* HTML: <div class="loader"></div> */
 .loader {
-  width: 60px;
-  aspect-ratio: 1;
-  display: grid;
-  position: absolute;
-
-  left: 50%;
-  border-radius: 50%;
+  --c1: #673b14;
+  --c2: #f8b13b;
+  width: 40px;
+  height: 80px;
+  border-top: 4px solid var(--c1);
+  border-bottom: 4px solid var(--c1);
   background: linear-gradient(
-        0deg,
-        rgb(0 0 50/50%) 30%,
-        #0000 0 70%,
-        rgb(0 0 0/100%) 0
-      )
-      50%/8% 100%,
-    linear-gradient(90deg, rgb(0 0 50/25%) 30%, #0000 0 70%, rgb(0 0 0/75%) 0)
-      50%/100% 8%;
-  background-repeat: no-repeat;
-  animation: l23 1s infinite steps(12);
+      90deg,
+      var(--c1) 2px,
+      var(--c2) 0 5px,
+      var(--c1) 0
+    )
+    50%/7px 8px no-repeat;
+  display: grid;
+  overflow: hidden;
+  animation: l5-0 2s infinite linear;
 }
 .loader::before,
 .loader::after {
   content: "";
   grid-area: 1/1;
-  border-radius: 50%;
-  background: inherit;
-  opacity: 0.915;
-  transform: rotate(30deg);
+  width: 75%;
+  height: calc(50% - 4px);
+  margin: 0 auto;
+  border: 2px solid var(--c1);
+  border-top: 0;
+  box-sizing: content-box;
+  border-radius: 0 0 40% 40%;
+  -webkit-mask: linear-gradient(#000 0 0) bottom/4px 2px no-repeat,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  background: linear-gradient(var(--d, 0deg), var(--c2) 50%, #0000 0) bottom /
+      100% 205%,
+    linear-gradient(var(--c2) 0 0) center/0 100%;
+  background-repeat: no-repeat;
+  animation: inherit;
+  animation-name: l5-1;
 }
 .loader::after {
-  opacity: 0.83;
-  transform: rotate(60deg);
+  transform-origin: 50% calc(100% + 2px);
+  transform: scaleY(-1);
+  --s: 3px;
+  --d: 180deg;
 }
-@keyframes l23 {
+@keyframes l5-0 {
+  80% {
+    transform: rotate(0);
+  }
   100% {
-    transform: rotate(1turn);
+    transform: rotate(0.5turn);
+  }
+}
+@keyframes l5-1 {
+  10%,
+  70% {
+    background-size: 100% 205%, var(--s, 0) 100%;
+  }
+  70%,
+  100% {
+    background-position: top, center;
   }
 }

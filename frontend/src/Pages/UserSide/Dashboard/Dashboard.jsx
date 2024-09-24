@@ -4,7 +4,7 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import axios from "axios";
 import InitiateModal from "../Modals/InitiateModal";
-import {BASE_URL} from "../../../config.json"
+import { BASE_URL } from "../../../config.json";
 
 import "./Dashboard.css";
 
@@ -142,16 +142,16 @@ const Dashboard = () => {
 
       {/* Display Filtered BMR Records */}
       <div className="bg-white p-6 rounded-lg shadow-lg mb-8 border border-gray-200">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-700">
-          Approved BMR Records
+        <h2 className="text-2xl font-extrabold mb-4 text-gray-800">
+          BMR Records
         </h2>
-        <ul className="list-disc list-inside text-gray-600">
+        {/* <ul className="list-disc list-inside text-gray-600">
           {filteredBMR.map((bmr, index) => (
             <li key={index} className="mb-2">
               {bmr.name} - Approved on {bmr.approvalDate}
             </li>
           ))}
-        </ul>
+        </ul> */}
       </div>
 
       {/* Stats Section */}

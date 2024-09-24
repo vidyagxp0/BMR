@@ -116,6 +116,7 @@ const AddSectionModal = ({
           />
           <label htmlFor="">
             Limit <span className="text-red-500">*</span>
+          </label>
           <select
             name="section"
             id="section"
@@ -124,7 +125,7 @@ const AddSectionModal = ({
             onChange={(e) => setLimit(e.target.value)}
             value={limit}
           >
-            <option value="select_limit">Select Limit</option>
+            <option value="">Select Limit</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>

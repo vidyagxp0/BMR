@@ -155,7 +155,7 @@ const BMRProcess = () => {
                 setSelectedUser(user);
                 setIsEditModalOpen(true);
               }}
-              className="bg-gradient-to-r from-indigo-300 to-indigo-500 text-white px-4 py-2 rounded-full shadow-lg hover:from-indigo-200 hover:to-indigo-400 transition duration-300 ease-in-out transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 rounded-full shadow-lg hover:from-blue-500 hover:to-blue-600 transition duration-300 ease-in-out transform hover:-translate-y-1"
             >
               Edit
             </button>
@@ -165,7 +165,7 @@ const BMRProcess = () => {
                 setSelectedUser(user);
                 setShowDeleteUser(true);
               }}
-              className="bg-gradient-to-r from-red-300 to-red-500 text-white px-4 py-2 rounded-full shadow-lg hover:from-red-200 hover:to-red-400 transition duration-300 ease-in-out transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-red-500 to-red-500 text-white px-4 py-2 rounded-full shadow-lg hover:from-red-500 hover:to-red-600 transition duration-300 ease-in-out transform hover:-translate-y-1"
             >
               Delete
             </button>

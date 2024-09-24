@@ -2,17 +2,20 @@ import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import AtmInput from "../../../AtmComponents/AtmInput";
 import AtmButton from "../../../AtmComponents/AtmButton";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../../../userSlice";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import {BASE_URL} from "../../../config.json"
+import { BASE_URL } from "../../../config.json";
 
 const AddUser = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // Capture the logged-in user's information
+  const loggedInUser = useSelector((state) => state.auth.user); // Assuming user info is stored in auth slice
 
   const [formData, setFormData] = useState({
     name: "",
@@ -20,6 +23,7 @@ const AddUser = () => {
     password: "",
     profile_pic: null,
     rolesArray: [],
+    createdBy: loggedInUser ? loggedInUser.username : "", // Add the username here
   });
 
   const [roles, setRoles] = useState([]);
@@ -98,6 +102,7 @@ const AddUser = () => {
     formDataToSend.append("name", formData.name);
     formDataToSend.append("email", formData.email);
     formDataToSend.append("password", formData.password);
+    formDataToSend.append("createdBy", formData.createdBy); // Append the createdBy username
     formData.rolesArray.forEach((role) => {
       formDataToSend.append("rolesArray", role);
     });
@@ -118,6 +123,7 @@ const AddUser = () => {
           password: "",
           profile_pic: "",
           rolesArray: [],
+          createdBy: loggedInUser ? loggedInUser.username : "", // Reset the username
         });
         setErrors({});
         setTimeout(() => {

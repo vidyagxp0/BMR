@@ -7,7 +7,7 @@ import { addBmr } from "../../../../userSlice";
 import axios from "axios";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
 import { useNavigate } from "react-router-dom";
-import {BASE_URL} from "../../../../config.json"
+import { BASE_URL } from "../../../../config.json";
 
 const modalStyle = {
   position: "absolute",
@@ -72,7 +72,7 @@ function CreateRecordModal({ open, onClose }) {
             date_of_review: "NA",
             comment: null,
           })),
-          approvers: isSelectedApprover.map((approver) => ({
+            approvers: isSelectedApprover.map((approver) => ({
             approverId: approver.value,
             status: "pending",
             approver: approver.label,
@@ -118,7 +118,7 @@ function CreateRecordModal({ open, onClose }) {
   useEffect(() => {
     axios
       .post(
-       `${BASE_URL}/bmr-form/get-user-roles`,
+        `${BASE_URL}/bmr-form/get-user-roles`,
         { role_id: 3 },
         {
           headers: {
@@ -278,6 +278,12 @@ function CreateRecordModal({ open, onClose }) {
       <div className="h-[40%]">
         <Box open={true} onClose={onClose} sx={{ zIndex: 10 }}>
           <Box sx={modalStyle}>
+            <button
+              className="float-end border-1 border-black rounded-full p-2 cursor-pointer text-2xl"
+              onClose={onClose}
+            >
+              x
+            </button>
             <Typography variant="h6" component="h2" align="center" gutterBottom>
               BMR Editor
             </Typography>

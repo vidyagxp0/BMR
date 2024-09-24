@@ -11,7 +11,7 @@ import { FaPeopleLine } from "react-icons/fa6";
 import socketIOClient from "socket.io-client";
 import "./Header.css";
 import "./HeaderTop.css";
-import {BASE_URL} from "../../config.json"
+import { BASE_URL } from "../../config.json";
 
 function HeaderTop() {
   const navigate = useNavigate();
@@ -164,7 +164,7 @@ function HeaderTop() {
 
           {/* Admin Section */}
           <div className="flex items-center">
-            <div className="mr-4 mt-5 text-white">Admin</div>
+            <div className="mr-4 mt-5 text-white">User</div>
             <div className="rounded-full w-12 h-12 bg-gray-400 flex items-center justify-center overflow-hidden">
               <img
                 className="rounded-full w-full h-full object-cover"
