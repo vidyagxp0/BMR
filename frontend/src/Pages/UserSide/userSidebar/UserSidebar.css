@@ -162,7 +162,7 @@ aside .inner-block .sidebar-link .sidebar-subList .active {
 }
 
 .sidebar-header {
-  background-color: #207ec6; /* Header background color */
+  background-color: #2a323e; /* Header background color */
   color: white;
   padding: 10px;
   border-radius: 8px 8px 0 0;
@@ -191,18 +191,18 @@ aside .inner-block .sidebar-link .sidebar-subList .active {
 }
 
 .opened {
-  background-color: #d4f4d4; /* Light green for opened step */
-  color: #333;
+  background-color: #2a323e; /* Light green for opened step */
+  color: #fff;
 }
 
 .review {
-  background-color: #e2f0f7; /* Light blue for review steps */
-  color: #333;
+  background-color: #777778; /* Light blue for review steps */
+  color: #fff;
 }
 
 .closed {
-  background-color: #f8d7da; /* Light red for closed step */
-  color: #333;
+  background-color: #195b7a; /* Light red for closed step */
+  color: #fff;
 }
 
 .arrow {

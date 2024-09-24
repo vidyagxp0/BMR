@@ -433,6 +433,7 @@ const InputField = ({
         </Tooltip>
       )}
     </label>
+    
     <input
       type={type}
       placeholder={placeholder}
@@ -441,6 +442,7 @@ const InputField = ({
       className="w-full px-3 h-10 p-2 border-2 border-gray-500 rounded shadow-md focus:border-blue-500 transition duration-200"
       style={{ border: "1px solid gray" }}
     />
+
   </div>
 );
 
