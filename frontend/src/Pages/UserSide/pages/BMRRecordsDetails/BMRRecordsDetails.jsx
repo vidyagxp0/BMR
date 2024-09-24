@@ -6,7 +6,7 @@ import AtmButton from "../../../../AtmComponents/AtmButton";
 import { toast } from "react-toastify";
 const BMRRecordsDetails = () => {
   const [data, setData] = useState([]);
-  console.log(data)
+  console.log(data);
   const [tabs, setTabs] = useState([
     "Initiator Remarks",
     "Reviewer Remarks",
@@ -86,7 +86,7 @@ const BMRRecordsDetails = () => {
   const [isActiveTab, setIsActiveTab] = useState(0);
   const [showForm, setShowForm] = useState("default");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const formattedDateForInput = (dateString) => {
     if (dateString === "NA" || !dateString) {
@@ -582,7 +582,7 @@ const BMRRecordsDetails = () => {
           <AtmButton
             label={"Exit"}
             onClick={() => {
-              navigate(-1);
+              navigate("/bmr-forms");
             }}
             className="rounded-l-full"
           />

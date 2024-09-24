@@ -456,597 +456,598 @@ const BMRProcessDetails = ({ fieldData }) => {
     return `${year}-${month}-${day}`;
   };
   return (
-    <div className=" p-2 relative top-5 h-[55%] ">
-      <header className="bg-[#2a323e] w-full shadow-lg flex justify-between items-center p-4 mb-4">
-        <p className="text-lg text-gray-200 font-bold">BMR Process Details</p>
-        <div className="flex space-x-2">
-          {showForm === "default" ? (
-            <>
-              <Tooltip title="Audit Trail">
-                <IconButton>
-                  <AiOutlineAudit
-                    size={28}
-                    className="flex justify-center text-gray-50 items-center cursor-pointer "
-                    onClick={() => {
-                      navigate("/audit-trail", { state: data[0] });
-                    }}
-                  />
-                </IconButton>
-              </Tooltip>
-              <PDF data={data} />
+    <div className="bg-white">
+      <div className=" p-2 relative top-5 h-[55%] ">
+        <header className="bg-[#2a323e] w-full shadow-lg flex justify-between items-center p-4 mb-4">
+          <p className="text-lg text-gray-200 font-bold">BMR Process Details</p>
+          <div className="flex space-x-2">
+            {showForm === "default" ? (
+              <>
+                <Tooltip title="Audit Trail">
+                  <IconButton>
+                    <AiOutlineAudit
+                      size={28}
+                      className="flex justify-center text-gray-50 items-center cursor-pointer "
+                      onClick={() => {
+                        navigate("/audit-trail", { state: data[0] });
+                      }}
+                    />
+                  </IconButton>
+                </Tooltip>
+                <PDF data={data} />
 
-              {activeFlowTab === "INITIATION" && (
-                <>
-                  <AtmButton
-                    label={newTab.length > 0 ? "Edit Form" : "Create Form"}
-                    onClick={() => setShowForm("sendForm")}
-                    className="bg-[#193948] hover:bg-[#122f3d] px-4 py-2"
-                  />
-                </>
-              )}
-            </>
-          ) : showForm === "sendForm" ? (
-            <>
-              {/* Only show "Add Tab" button if no tab is added */}
-              <AtmButton
-                label="Add Tab"
-                onClick={() => (
-                  setIsAddTabModalOpen(true),
-                  setUpdateTabModalOpen("add"),
-                  setPopupAction("add-tab")
+                {activeFlowTab === "INITIATION" && (
+                  <>
+                    <AtmButton
+                      label={newTab.length > 0 ? "Edit Form" : "Create Form"}
+                      onClick={() => setShowForm("sendForm")}
+                      className="bg-[#193948] hover:bg-[#122f3d] px-4 py-2"
+                    />
+                  </>
                 )}
-                className="bg-pink-700 hover:bg-pink-900 px-4 py-2"
-              />
+              </>
+            ) : showForm === "sendForm" ? (
+              <>
+                {/* Only show "Add Tab" button if no tab is added */}
+                <AtmButton
+                  label="Add Tab"
+                  onClick={() => (
+                    setIsAddTabModalOpen(true),
+                    setUpdateTabModalOpen("add"),
+                    setPopupAction("add-tab")
+                  )}
+                  className="bg-pink-700 hover:bg-pink-900 px-4 py-2"
+                />
 
-              {/* Show "Add Section" button only if a tab is active */}
-              {activeSendFormTab && (
-                <>
-                  <AtmButton
-                    label="Add Section"
-                    onClick={() => (
-                      setIsSectionModalOpen(true),
-                      setUpdateSectionModalOpen("add-section"),
-                      setPopupAction("add-section")
-                    )}
-                    className="bg-purple-700 hover:bg-purple-950 px-4 py-2"
-                  />
-                </>
-              )}
+                {/* Show "Add Section" button only if a tab is active */}
+                {activeSendFormTab && (
+                  <>
+                    <AtmButton
+                      label="Add Section"
+                      onClick={() => (
+                        setIsSectionModalOpen(true),
+                        setUpdateSectionModalOpen("add-section"),
+                        setPopupAction("add-section")
+                      )}
+                      className="bg-purple-700 hover:bg-purple-950 px-4 py-2"
+                    />
+                  </>
+                )}
 
-              {/* Show "Add Field" button only if a section is active */}
-              {activeSection && (
-                <>
-                  <AtmButton
-                    label="Add Field"
-                    onClick={() => (
-                      setIsAddFieldModalOpen(true),
-                      setUpdateFieldModalOpen("add-field"),
-                      setPopupAction("add-field")
-                    )}
-                    className="bg-green-700 hover:bg-green-950 px-4 py-2"
-                  />
-                </>
-              )}
+                {/* Show "Add Field" button only if a section is active */}
+                {activeSection && (
+                  <>
+                    <AtmButton
+                      label="Add Field"
+                      onClick={() => (
+                        setIsAddFieldModalOpen(true),
+                        setUpdateFieldModalOpen("add-field"),
+                        setPopupAction("add-field")
+                      )}
+                      className="bg-green-700 hover:bg-green-950 px-4 py-2"
+                    />
+                  </>
+                )}
 
+                <AtmButton
+                  label="Back to Default"
+                  onClick={() => setShowForm("default")}
+                  className="bg-gray-500 hover:bg-gray-700 px-4 py-2"
+                />
+              </>
+            ) : (
               <AtmButton
                 label="Back to Default"
                 onClick={() => setShowForm("default")}
                 className="bg-gray-500 hover:bg-gray-700 px-4 py-2"
               />
-            </>
-          ) : (
-            <AtmButton
-              label="Back to Default"
-              onClick={() => setShowForm("default")}
-              className="bg-gray-500 hover:bg-gray-700 px-4 py-2"
-            />
-          )}
-        </div>
-      </header>
+            )}
+          </div>
+        </header>
 
-      {showForm === "sendForm" && (
-        <div className="flex justify-end gap-4 mb-4">
-          {activeField ? (
-            <>
-              <AtmButton
-                label="Edit Field"
-                className="bg-cyan-500 hover:bg-cyan-700"
-                onClick={() => (
-                  setUpdateFieldModalOpen("edit-field"),
-                  setIsAddFieldModalOpen(true)
-                )}
-              />
-              <AtmButton
-                label="Delete Field"
-                className="bg-red-600 hover:bg-red-700"
-                onClick={() => (
-                  setDeleteModalOpen(true), setDeleteItemType("field")
-                )}
-              />
-            </>
-          ) : activeSection ? (
-            <>
-              <AtmButton
-                label="Edit Section"
-                className="bg-cyan-500 hover:bg-cyan-700"
-                onClick={() => (
-                  setUpdateSectionModalOpen("edit-section"),
-                  setIsSectionModalOpen(true)
-                )}
-              />
-              <AtmButton
-                label="Delete Section"
-                className="bg-red-600 hover:bg-red-700"
-                onClick={() => (
-                  setDeleteModalOpen(true), setDeleteItemType("section")
-                )}
-              />
-            </>
-          ) : activeSendFormTab ? (
-            <>
-              <AtmButton
-                label="Edit Tab"
-                className="bg-cyan-500 hover:bg-cyan-700"
-                onClick={() => (
-                  setUpdateTabModalOpen("edit"), setIsAddTabModalOpen(true)
-                )}
-              />
-              <AtmButton
-                label="Delete Tab"
-                className="bg-red-600 hover:bg-red-800"
-                onClick={() => (
-                  setDeleteModalOpen(true), setDeleteItemType("tab")
-                )}
-              />
-            </>
-          ) : null}
-        </div>
-      )}
+        {showForm === "sendForm" && (
+          <div className="flex justify-end gap-4 mb-4">
+            {activeField ? (
+              <>
+                <AtmButton
+                  label="Edit Field"
+                  className="bg-cyan-500 hover:bg-cyan-700"
+                  onClick={() => (
+                    setUpdateFieldModalOpen("edit-field"),
+                    setIsAddFieldModalOpen(true)
+                  )}
+                />
+                <AtmButton
+                  label="Delete Field"
+                  className="bg-red-600 hover:bg-red-700"
+                  onClick={() => (
+                    setDeleteModalOpen(true), setDeleteItemType("field")
+                  )}
+                />
+              </>
+            ) : activeSection ? (
+              <>
+                <AtmButton
+                  label="Edit Section"
+                  className="bg-cyan-500 hover:bg-cyan-700"
+                  onClick={() => (
+                    setUpdateSectionModalOpen("edit-section"),
+                    setIsSectionModalOpen(true)
+                  )}
+                />
+                <AtmButton
+                  label="Delete Section"
+                  className="bg-red-600 hover:bg-red-700"
+                  onClick={() => (
+                    setDeleteModalOpen(true), setDeleteItemType("section")
+                  )}
+                />
+              </>
+            ) : activeSendFormTab ? (
+              <>
+                <AtmButton
+                  label="Edit Tab"
+                  className="bg-cyan-500 hover:bg-cyan-700"
+                  onClick={() => (
+                    setUpdateTabModalOpen("edit"), setIsAddTabModalOpen(true)
+                  )}
+                />
+                <AtmButton
+                  label="Delete Tab"
+                  className="bg-red-600 hover:bg-red-800"
+                  onClick={() => (
+                    setDeleteModalOpen(true), setDeleteItemType("tab")
+                  )}
+                />
+              </>
+            ) : null}
+          </div>
+        )}
 
-      {showForm === "default" && (
-        <div className="flex gap-4 mb-4">
-          {flowoTabs?.map((tab, index) => (
-            <button
-              disabled
-              style={{ border: "1px solid gray" }}
-              key={index}
-              onClick={() => handleFlowTabClick(tab)}
-              className={`py-2 px-4 rounded border-2 border-black text-white ${
-                activeFlowTab === tab && tab === "APPROVED"
-                  ? "bg-[#195b7a] text-white"
-                  : flowoTabs.indexOf(activeFlowTab) >= index
-                  ? "bg-[#2a323e] text-white"
-                  : "bg-[#777778] text-white"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-      )}
-      {showForm === "default" && (
-        <div className="flex flex-wrap gap-4 mb-4">
-          {tabs?.map((tab, index) => (
-            <button
-              style={{ border: "1px solid gray" }}
-              key={index}
-              onClick={() => handleDefaultTabClick(tab)}
-              className={`py-2 px-4 rounded border-2 border-black ${
-                activeDefaultTab === tab
-                  ? "bg-[#2a323e]  text-[#ffffff]"
-                  : "bg-[#777778]  text-[#ffffff]"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-      )}
+        {showForm === "default" && (
+          <div className="flex gap-4 mb-4">
+            {flowoTabs?.map((tab, index) => (
+              <button
+                disabled
+                style={{ border: "1px solid gray" }}
+                key={index}
+                onClick={() => handleFlowTabClick(tab)}
+                className={`py-2 px-4 rounded border-2 border-black text-white ${
+                  activeFlowTab === tab && tab === "APPROVED"
+                    ? "bg-[#195b7a] text-white"
+                    : flowoTabs.indexOf(activeFlowTab) >= index
+                    ? "bg-[#2a323e] text-white"
+                    : "bg-[#777778] text-white"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        )}
+        {showForm === "default" && (
+          <div className="flex flex-wrap gap-4 mb-4">
+            {tabs?.map((tab, index) => (
+              <button
+                style={{ border: "1px solid gray" }}
+                key={index}
+                onClick={() => handleDefaultTabClick(tab)}
+                className={`py-2 px-4 rounded border-2 border-black ${
+                  activeDefaultTab === tab
+                    ? "bg-[#2a323e]  text-[#ffffff]"
+                    : "bg-[#777778]  text-[#ffffff]"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        )}
 
-      {showForm === "sendForm" && (
-        <div className="flex flex-wrap gap-4 mb-4">
-          {newTab?.map((tab, index) => (
-            <button
-              style={{ border: "1px solid gray" }}
-              key={index}
-              onClick={() => handleSendFormTabClick(tab)}
-              className={`py-2 px-4 rounded border-2 border-black ${
-                activeSendFormTab === tab
-                  ? "bg-blue-500 text-white text-lg"
-                  : "bg-blue-200 text-black text-lg"
-              }`}
-            >
-              {tab.tab_name}
-            </button>
-          ))}
-        </div>
-      )}
+        {showForm === "sendForm" && (
+          <div className="flex flex-wrap gap-4 mb-4">
+            {newTab?.map((tab, index) => (
+              <button
+                style={{ border: "1px solid gray" }}
+                key={index}
+                onClick={() => handleSendFormTabClick(tab)}
+                className={`py-2 px-4 rounded border-2 border-black ${
+                  activeSendFormTab === tab
+                    ? "bg-blue-500 text-white text-lg"
+                    : "bg-blue-200 text-black text-lg"
+                }`}
+              >
+                {tab.tab_name}
+              </button>
+            ))}
+          </div>
+        )}
 
-      {showForm === "default" && (
-        <div className="relative m-2">
-          <div className="p-3">
-            {activeDefaultTab === "Initiator Remarks" &&
-              fields["Initiator Remarks"]?.length > 0 && (
-                <div className="mb-20">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
-                    {fields["Initiator Remarks"].map((field, index) => (
-                      <div
-                        key={index}
-                        className="p-6 flex flex-col bg-white border border-gray-100 shadow-md rounded-lg  mb-4"
-                      >
-                        <label className="text-lg font-semibold text-gray-800 mb-2">
-                          {field.fieldName}
-                          {activeFlowTab === "INITIATION" &&
-                            field.fieldName === "Initiator Comments" && (
-                              <span className="text-red-500">*</span>
-                            )}
-                        </label>
+        {showForm === "default" && (
+          <div className="relative m-2">
+            <div className="p-3">
+              {activeDefaultTab === "Initiator Remarks" &&
+                fields["Initiator Remarks"]?.length > 0 && (
+                  <div className="mb-20">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
+                      {fields["Initiator Remarks"].map((field, index) => (
+                        <div
+                          key={index}
+                          className="p-6 flex flex-col bg-white border border-gray-100 shadow-md rounded-lg  mb-4"
+                        >
+                          <label className="text-lg font-semibold text-gray-800 mb-2">
+                            {field.fieldName}
+                            {activeFlowTab === "INITIATION" &&
+                              field.fieldName === "Initiator Comments" && (
+                                <span className="text-red-500">*</span>
+                              )}
+                          </label>
 
-                        {field.field_type === "text" && (
-                          <input
-                            type="text"
-                            value={data[0]?.Initiator.name}
-                            className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 "
-                            style={{
-                              height: "40px",
-                            }}
-                            disabled
-                          />
-                        )}
+                          {field.field_type === "text" && (
+                            <input
+                              type="text"
+                              value={data[0]?.Initiator.name}
+                              className="border border-gray-600 text-gray-600 p-2 w-full rounded"
+                              style={{
+                                height: "40px",
+                                border: "2.8px solid gray",
+                              }}
+                              disabled
+                            />
+                          )}
 
-                        {field.field_type === "date" && (
-                          <input
-                            type="date"
-                            value={formattedDateForInput(
-                              data[0]?.date_of_initiation
-                            )}
-                            className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400 "
-                            required={field.isMandatory}
-                            readOnly
-                          />
-                        )}
+                          {field.field_type === "date" && (
+                            <input
+                              type="date"
+                              value={formattedDateForInput(
+                                data[0]?.date_of_initiation
+                              )}
+                              className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400 "
+                              required={field.isMandatory}
+                              readOnly
+                            />
+                          )}
 
-                        {field.field_type === "text-area" && (
-                          <textarea
-                            className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400 "
-                            required={
-                              activeFlowTab === "INITIATION" &&
-                              field.fieldName === "Initiator Comments" &&
-                              field.isMandatory
-                            }
-                            readOnly={
-                              !(
+                          {field.field_type === "text-area" && (
+                            <textarea
+                              className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400 "
+                              required={
                                 activeFlowTab === "INITIATION" &&
-                                field.fieldName === "Initiator Comments"
-                              )
-                            }
-                            rows={4}
-                          />
-                        )}
-                      </div>
-                    ))}
+                                field.fieldName === "Initiator Comments" &&
+                                field.isMandatory
+                              }
+                              readOnly={
+                                !(
+                                  activeFlowTab === "INITIATION" &&
+                                  field.fieldName === "Initiator Comments"
+                                )
+                              }
+                              rows={4}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-            {activeDefaultTab === "Reviewer Remarks" &&
-              fields[activeDefaultTab]?.map((section, secIndex) => {
-                return (
+              {activeDefaultTab === "Reviewer Remarks" &&
+                fields[activeDefaultTab]?.map((section, secIndex) => {
+                  return (
+                    <div key={secIndex} className="mb-20">
+                      <div className="p-6 flex flex-col bg-white border border-gray-200 shadow-md rounded-lg  mb-4">
+                        {section.section}
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        {section.fields?.map((field, index) => {
+                          return (
+                            <div
+                              key={index}
+                              className="p-6 flex flex-col bg-white shadow  border border-gray-200 rounded"
+                            >
+                              <label className="text-lg font-semibold text-gray-800 mb-2">
+                                {field.fieldName}
+                                {activeFlowTab === "UNDER REVIEW" &&
+                                  field.fieldName === "Reviewer Comment" && (
+                                    <span className="text-red-500"> *</span>
+                                  )}
+                              </label>
+                              {field.field_type === "text" && (
+                                <input
+                                  type="text"
+                                  className=" p-3 w-full bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 "
+                                  style={{
+                                    // border: "1px solid #D1D5DB",
+                                    height: "30px",
+                                  }}
+                                  value={field.value || ""}
+                                  disabled
+                                />
+                              )}
+                              {field.field_type === "date" && (
+                                <input
+                                  type="date"
+                                  value={formattedDateForInput(
+                                    data[0]?.reviewers?.map(
+                                      (date) => date?.date_of_review
+                                    )
+                                  )}
+                                  className=" p-2 w-full bg-gray-100  rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                  style={{
+                                    // border: "1px solid #D1D5DB",
+                                    height: "30px",
+                                  }}
+                                  readOnly
+                                />
+                              )}
+                              {field.field_type === "text-area" && (
+                                <textarea
+                                  className="border border-gray-300 p-2 w-full rounded mt-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                  style={{ border: "1px solid #D1D5DB" }}
+                                  required={
+                                    activeFlowTab === "UNDER REVIEW" &&
+                                    field.fieldName === "Reviewer Comment" &&
+                                    field.isMandatory
+                                  }
+                                  readOnly={
+                                    !(
+                                      activeFlowTab === "UNDER REVIEW" &&
+                                      field.fieldName === "Reviewer Comment"
+                                    )
+                                  }
+                                />
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+
+              {activeDefaultTab === "Approver Remarks" &&
+                fields[activeDefaultTab]?.map((section, secIndex) => (
                   <div key={secIndex} className="mb-20">
                     <div className="p-6 flex flex-col bg-white border border-gray-200 shadow-md rounded-lg  mb-4">
                       {section.section}
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      {section.fields?.map((field, index) => {
+                      {section.fields?.map((field, index) => (
+                        <div
+                          key={index}
+                          className="p-6 flex flex-col bg-white shadow  border border-gray-200 rounded"
+                        >
+                          <label className="text-lg font-extrabold text-gray-700 mb-2">
+                            {field.fieldName}
+                            {activeFlowTab === "UNDER APPROVAL" &&
+                              field.fieldName === "Approver Comment" && (
+                                <span className="text-red-500"> *</span>
+                              )}
+                          </label>
+                          {field.field_type === "text" && (
+                            <input
+                              type="text"
+                              className="border border-gray-300 p-2 w-full bg-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                              style={{
+                                // border: "1px solid #D1D5DB",
+                                height: "30px",
+                                border: "2.8px solid gray",
+                              }}
+                              value={field.value || ""}
+                              disabled
+                            />
+                          )}
+                          {field.field_type === "date" && (
+                            <input
+                              type="date"
+                              value={formattedDateForInput(
+                                data[0]?.approvers?.map(
+                                  (date) => date?.date_of_approval
+                                )
+                              )}
+                              className="border border-gray-300 bg-gray-100  p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                              style={{
+                                // border: "1px solid #D1D5DB",
+                                height: "30px",
+                              }}
+                              readOnly
+                            />
+                          )}
+                          {field.field_type === "text-area" && (
+                            <textarea
+                              className="border border-gray-300 p-2 w-full rounded mt-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                              required={
+                                activeFlowTab === "UNDER APPROVAL" &&
+                                field.fieldName === "Approver Comment" &&
+                                field.isMandatory
+                              }
+                              readOnly={
+                                !(
+                                  activeFlowTab === "UNDER APPROVAL" &&
+                                  field.fieldName === "Approver Comment"
+                                )
+                              }
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+            </div>
+
+            <div className="fixed bottom-36 right-[-10px] w-auto flex-col border-gray-300  flex gap-5">
+              {data[0]?.stage === 1 &&
+                data[0]?.initiator === userDetails.userId && (
+                  <AtmButton
+                    label={"Send For Review"}
+                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
+                    onClick={() => {
+                      setIsPopupOpen(true);
+                      setPopupAction("sendFromOpenToReview"); // Set the action when opening the popup
+                    }}
+                  />
+                )}
+              {data[0]?.stage === 2 &&
+                data[0]?.reviewers.some(
+                  (reviewer) => reviewer.reviewerId === userDetails.userId
+                ) &&
+                (data[0]?.reviewers.find(
+                  (reviewer) => reviewer.reviewerId === userDetails.userId
+                )?.status === "reviewed" ? (
+                  <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded shadow-md">
+                    <p className="font-semibold text-lg flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
+                        />
+                      </svg>
+                      You have already reviewed this.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <AtmButton
+                      label={"Send For Approval"}
+                      className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
+                      onClick={() => {
+                        setIsPopupOpen(true);
+                        setPopupAction("sendFromReviewToApproval"); // Set the action when opening the popup
+                      }}
+                    />
+                    <AtmButton
+                      label={"Open BMR"}
+                      className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
+                      onClick={() => {
+                        setIsPopupOpen(true);
+                        setPopupAction("sendFromReviewToOpen"); // Set the action when opening the popup
+                      }}
+                    />
+                  </>
+                ))}
+              {data[0]?.stage === 3 &&
+              data[0]?.approvers.some(
+                (approver) => approver.approverId === userDetails.userId
+              ) ? (
+                data[0]?.approvers.find(
+                  (approver) => approver.approverId === userDetails.userId
+                )?.status === "approved" ? (
+                  <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md">
+                    <p className="font-semibold text-lg flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
+                        />
+                      </svg>
+                      You have already approved this.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <AtmButton
+                      label={"Approve BMR"}
+                      className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
+                      onClick={() => {
+                        setIsPopupOpen(true);
+                        setPopupAction("sendFromApprovalToApproved"); // Set the action when opening the popup
+                      }}
+                    />
+                    <AtmButton
+                      label={"Open BMR"}
+                      className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
+                      onClick={() => {
+                        setIsPopupOpen(true);
+                        setPopupAction("sendFromApprovalToOpen"); // Set the action when opening the popup
+                      }}
+                    />
+                  </>
+                )
+              ) : null}
+              <AtmButton
+                label={"Exit"}
+                onClick={() => {
+                  navigate(-1);
+                }}
+                className="rounded-l-full"
+              />
+            </div>
+          </div>
+        )}
+        <div className="">
+          {showForm === "sendForm" && activeSendFormTab && (
+            <div className="text-lg flex flex-col gap-9 font-bold text-gray-500">
+              {activeSendFormTab?.BMR_sections?.map((section, index) => {
+                return (
+                  <div
+                    key={index}
+                    className={`mb-2 cursor-pointer ${
+                      activeSection === section ? "border border-black" : ""
+                    }`}
+                  >
+                    <div onClick={() => handleSectionClick(section)}>
+                      <div
+                        className={`py-2 px-4 mb-2 cursor-pointer ${
+                          activeSection === section
+                            ? "bg-blue-300 text-gray-700"
+                            : "bg-blue-200 text-gray-400"
+                        }`}
+                      >
+                        {section.section_name}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-4 gap-4 px-5 py-[64px]">
+                      {section.BMR_fields?.map((field, index) => {
                         return (
                           <div
                             key={index}
-                            className="p-6 flex flex-col bg-white shadow  border border-gray-200 rounded"
+                            onClick={() => handleFieldClick(field)}
+                            className={`p-4 rounded bg-gray-50 border-gray-300 ${
+                              field.field_type === "grid"
+                                ? "col-span-4" // Makes grid field span full width
+                                : "col-span-2" // Other fields remain in 2x2 layout
+                            }`}
                           >
-                            <label className="text-lg font-semibold text-gray-800 mb-2">
-                              {field.fieldName}
-                              {activeFlowTab === "UNDER REVIEW" &&
-                                field.fieldName === "Reviewer Comment" && (
-                                  <span className="text-red-500"> *</span>
-                                )}
+                            <label className="text-base font-bold text-gray-900 flex gap-1 mb-2">
+                              {field.label}
+                              {field.isMandatory && (
+                                <div className="text-red-500"> *</div>
+                              )}
+                              {field.helpText && (
+                                <Tooltip
+                                  title={field.helpText}
+                                  placement="right-start"
+                                >
+                                  <div className="text-gray-950 cursor-pointer">
+                                    <span className="text-black">ⓘ</span>
+                                  </div>
+                                </Tooltip>
+                              )}
                             </label>
+
                             {field.field_type === "text" && (
-                              <input
-                                type="text"
-                                className=" p-3 w-full bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 "
-                                style={{
-                                  // border: "1px solid #D1D5DB",
-                                  height: "30px",
-                                }}
-                                value={field.value || ""}
-                                disabled
-                              />
-                            )}
-                            {field.field_type === "date" && (
-                              <input
-                                type="date"
-                                value={formattedDateForInput(
-                                  data[0]?.reviewers?.map(
-                                    (date) => date?.date_of_review
-                                  )
-                                )}
-                                className=" p-2 w-full bg-gray-100  rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-                                style={{
-                                  // border: "1px solid #D1D5DB",
-                                  height: "30px",
-                                }}
-                                readOnly
-                              />
-                            )}
-                            {field.field_type === "text-area" && (
-                              <textarea
-                                className="border border-gray-300 p-2 w-full rounded mt-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                                style={{ border: "1px solid #D1D5DB" }}
-                                required={
-                                  activeFlowTab === "UNDER REVIEW" &&
-                                  field.fieldName === "Reviewer Comment" &&
-                                  field.isMandatory
-                                }
-                                readOnly={
-                                  !(
-                                    activeFlowTab === "UNDER REVIEW" &&
-                                    field.fieldName === "Reviewer Comment"
-                                  )
-                                }
-                              />
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-
-            {activeDefaultTab === "Approver Remarks" &&
-              fields[activeDefaultTab]?.map((section, secIndex) => (
-                <div key={secIndex} className="mb-20">
-                  <div className="p-6 flex flex-col bg-white border border-gray-200 shadow-md rounded-lg  mb-4">
-                    {section.section}
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    {section.fields?.map((field, index) => (
-                      <div
-                        key={index}
-                        className="p-6 flex flex-col bg-white shadow  border border-gray-200 rounded"
-                      >
-                        <label className="text-lg font-extrabold text-gray-700 mb-2">
-                          {field.fieldName}
-                          {activeFlowTab === "UNDER APPROVAL" &&
-                            field.fieldName === "Approver Comment" && (
-                              <span className="text-red-500"> *</span>
-                            )}
-                        </label>
-                        {field.field_type === "text" && (
-                          <input
-                            type="text"
-                            className="border border-gray-300 p-2 w-full bg-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-                            style={{
-                              // border: "1px solid #D1D5DB",
-                              height: "30px",
-                            }}
-                            value={field.value || ""}
-                            disabled
-                          />
-                        )}
-                        {field.field_type === "date" && (
-                          <input
-                            type="date"
-                            value={formattedDateForInput(
-                              data[0]?.approvers?.map(
-                                (date) => date?.date_of_approval
-                              )
-                            )}
-                            className="border border-gray-300 bg-gray-100  p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-                            style={{
-                              // border: "1px solid #D1D5DB",
-                              height: "30px",
-                            }}
-                            readOnly
-                          />
-                        )}
-                        {field.field_type === "text-area" && (
-                          <textarea
-                            className="border border-gray-300 p-2 w-full rounded mt-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                            required={
-                              activeFlowTab === "UNDER APPROVAL" &&
-                              field.fieldName === "Approver Comment" &&
-                              field.isMandatory
-                            }
-                            readOnly={
-                              !(
-                                activeFlowTab === "UNDER APPROVAL" &&
-                                field.fieldName === "Approver Comment"
-                              )
-                            }
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-          </div>
-
-          <div className="fixed bottom-36 right-[-10px] w-auto flex-col border-gray-300  flex gap-5">
-            {data[0]?.stage === 1 &&
-              data[0]?.initiator === userDetails.userId && (
-                <AtmButton
-                  label={"Send For Review"}
-                  className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
-                  onClick={() => {
-                    setIsPopupOpen(true);
-                    setPopupAction("sendFromOpenToReview"); // Set the action when opening the popup
-                  }}
-                />
-              )}
-            {data[0]?.stage === 2 &&
-              data[0]?.reviewers.some(
-                (reviewer) => reviewer.reviewerId === userDetails.userId
-              ) &&
-              (data[0]?.reviewers.find(
-                (reviewer) => reviewer.reviewerId === userDetails.userId
-              )?.status === "reviewed" ? (
-                <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded shadow-md">
-                  <p className="font-semibold text-lg flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 mr-2"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
-                      />
-                    </svg>
-                    You have already reviewed this.
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <AtmButton
-                    label={"Send For Approval"}
-                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
-                    onClick={() => {
-                      setIsPopupOpen(true);
-                      setPopupAction("sendFromReviewToApproval"); // Set the action when opening the popup
-                    }}
-                  />
-                  <AtmButton
-                    label={"Open BMR"}
-                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
-                    onClick={() => {
-                      setIsPopupOpen(true);
-                      setPopupAction("sendFromReviewToOpen"); // Set the action when opening the popup
-                    }}
-                  />
-                </>
-              ))}
-            {data[0]?.stage === 3 &&
-            data[0]?.approvers.some(
-              (approver) => approver.approverId === userDetails.userId
-            ) ? (
-              data[0]?.approvers.find(
-                (approver) => approver.approverId === userDetails.userId
-              )?.status === "approved" ? (
-                <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md">
-                  <p className="font-semibold text-lg flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 mr-2"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
-                      />
-                    </svg>
-                    You have already approved this.
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <AtmButton
-                    label={"Approve BMR"}
-                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
-                    onClick={() => {
-                      setIsPopupOpen(true);
-                      setPopupAction("sendFromApprovalToApproved"); // Set the action when opening the popup
-                    }}
-                  />
-                  <AtmButton
-                    label={"Open BMR"}
-                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
-                    onClick={() => {
-                      setIsPopupOpen(true);
-                      setPopupAction("sendFromApprovalToOpen"); // Set the action when opening the popup
-                    }}
-                  />
-                </>
-              )
-            ) : null}
-            <AtmButton
-              label={"Exit"}
-              onClick={() => {
-                navigate(-1);
-              }}
-              className="rounded-l-full"
-            />
-          </div>
-        </div>
-      )}
-
-      <div className="">
-        {showForm === "sendForm" && activeSendFormTab && (
-          <div className="text-lg flex flex-col gap-9 font-bold text-gray-500">
-            {activeSendFormTab?.BMR_sections?.map((section, index) => {
-              return (
-                <div
-                  key={index}
-                  className={`mb-2 cursor-pointer ${
-                    activeSection === section ? "border border-black" : ""
-                  }`}
-                >
-                  <div onClick={() => handleSectionClick(section)}>
-                    <div
-                      className={`py-2 px-4 mb-2 cursor-pointer ${
-                        activeSection === section
-                          ? "bg-blue-300 text-gray-700"
-                          : "bg-blue-200 text-gray-400"
-                      }`}
-                    >
-                      {section.section_name}
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-4 shadow-xl gap-4 px-5 py-[64px]">
-                    {section.BMR_fields?.map((field, index) => {
-                      return (
-                        <div
-                          key={index}
-                          onClick={() => handleFieldClick(field)}
-                          className={`p-4 rounded bg-gray-50 border border-gray-300 ${
-                            field.field_type === "grid"
-                              ? "col-span-12"
-                              : "col-span-2"
-                          }`}
-                        >
-                          <label className="text-base font-bold text-gray-900  flex gap-1 mb-2">
-                            {field.label}
-                            {field.isMandatory && (
-                              <div className="text-red-500"> *</div>
-                            )}
-                            {field.helpText && (
-                              <Tooltip
-                                title={field.helpText}
-                                placement="right-start"
-                              >
-                                <div className="text-gray-950 cursor-pointer ">
-                                  <span className="text-black ">ⓘ</span>
-                                </div>
-                              </Tooltip>
-                            )}
-                          </label>
-
-                          {field.field_type === "text" && (
-                            <>
                               <div className="relative">
                                 <input
                                   placeholder={field.placeholder}
                                   style={{
-                                    border: "1px solid gray",
+                                    border: "2.8px solid gray",
                                     height: "48px",
                                   }}
                                   type="text"
@@ -1055,274 +1056,255 @@ const BMRProcessDetails = ({ fieldData }) => {
                                   readOnly={field.isReadonly}
                                 />
                               </div>
-                            </>
-                          )}
+                            )}
 
-                          {field.field_type === "grid" && (
-                            <div className="relative">
-                              {JSON.parse(field?.acceptsMultiple)?.columns
-                                ?.length > 0 && (
-                                <table className="table-auto w-full border border-gray-600 mb-4">
-                                  <thead>
-                                    <tr>
-                                      {JSON.parse(
-                                        field?.acceptsMultiple
-                                      )?.columns?.map((column, idx) => {
+                            {field.field_type === "grid" && (
+                              <div className="relative">
+                                {JSON.parse(field?.acceptsMultiple)?.columns
+                                  ?.length > 0 && (
+                                  <table className="table-auto w-full border border-gray-600 mb-4">
+                                    <thead>
+                                      <tr>
+                                        {JSON.parse(
+                                          field?.acceptsMultiple
+                                        )?.columns?.map((column, idx) => {
+                                          return (
+                                            <th
+                                              key={idx}
+                                              className="border border-gray-600 p-2"
+                                            >
+                                              {column?.name || "No Name"}
+                                            </th>
+                                          );
+                                        })}
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {field?.gridData?.map((row, rowIndex) => {
                                         return (
-                                          <th
-                                            key={idx}
-                                            className="border border-gray-600 p-2"
-                                          >
-                                            {column?.name || "No Name"}
-                                          </th>
+                                          <tr key={rowIndex}>
+                                            {field?.acceptsMultiple?.columns?.map(
+                                              (column, colIdx) => (
+                                                <td
+                                                  key={colIdx}
+                                                  className="border border-gray-600 p-2"
+                                                >
+                                                  <input
+                                                    type="text"
+                                                    placeholder={
+                                                      column.placeholder
+                                                    }
+                                                    value={
+                                                      row[column.name] || ""
+                                                    }
+                                                    onChange={(e) =>
+                                                      handleGridChange(
+                                                        activeDefaultTab,
+                                                        rowIndex,
+                                                        column.name,
+                                                        e.target.value
+                                                      )
+                                                    }
+                                                    className="border border-gray-600 p-2 w-full rounded"
+                                                  />
+                                                </td>
+                                              )
+                                            )}
+                                          </tr>
                                         );
                                       })}
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {field?.gridData?.map((row, rowIndex) => {
-                                      return (
-                                        <tr key={rowIndex}>
-                                          {field?.acceptsMultiple?.columns?.map(
-                                            (column, colIdx) => (
-                                              <td
-                                                key={colIdx}
-                                                className="border border-gray-600 p-2"
-                                              >
-                                                <input
-                                                  type="text"
-                                                  placeholder={
-                                                    column.placeholder
-                                                  }
-                                                  value={row[column.name] || ""}
-                                                  onChange={(e) =>
-                                                    handleGridChange(
-                                                      activeDefaultTab,
-                                                      rowIndex,
-                                                      column.name,
-                                                      e.target.value
-                                                    )
-                                                  }
-                                                  className="border border-gray-600 p-2 w-full rounded"
-                                                />
-                                              </td>
-                                            )
-                                          )}
-                                        </tr>
-                                      );
-                                    })}
-                                  </tbody>
-                                </table>
-                              )}
-                            </div>
-                          )}
+                                    </tbody>
+                                  </table>
+                                )}
+                              </div>
+                            )}
 
-                          {field.field_type === "password" && (
-                            <div className="relative">
-                              <input
-                                placeholder={field.placeholder}
-                                style={{
-                                  border: "1px solid gray",
-                                  height: "48px",
-                                }}
-                                type="password"
-                                className="border border-gray-600 text-gray-600 p-2 w-full rounded"
-                                required={field.isMandatory}
-                                readOnly={field.isReadonly}
-                              />
-                            </div>
-                          )}
-
-                          {field.field_type === "date" && (
-                            <div className="relative">
-                              <input
-                                placeholder={field.placeholder}
-                                style={{
-                                  border: "1px solid gray",
-                                  height: "48px",
-                                }}
-                                type="date"
-                                className="border border-gray-600 p-2 w-full rounded"
-                                required={field.isMandatory}
-                                readOnly={field.isReadonly}
-                              />
-                            </div>
-                          )}
-                          {field.field_type === "time" && (
-                            <div className="relative">
-                              <input
-                                placeholder={field.placeholder}
-                                style={{
-                                  border: "1px solid gray",
-                                  height: "48px",
-                                }}
-                                type="time"
-                                className="border border-gray-600 p-2 w-full rounded"
-                                required={field.isMandatory}
-                                readOnly={field.isReadonly}
-                              />
-                            </div>
-                          )}
-
-                          {field.field_type === "email" && (
-                            <div className="relative">
-                              <input
-                                placeholder={field.placeholder}
-                                style={{
-                                  border: "1px solid gray",
-                                  height: "48px",
-                                }}
-                                type="email"
-                                className="border border-gray-600 p-2 w-full rounded"
-                                required={field.isMandatory}
-                                readOnly={field.isReadonly}
-                              />
-                            </div>
-                          )}
-
-                          {field.field_type === "number" && (
-                            <div className="relative">
-                              <input
-                                placeholder={field.placeholder}
-                                style={{
-                                  border: "1px solid gray",
-                                  height: "48px",
-                                }}
-                                type="number"
-                                className="border border-gray-600 p-2 w-full rounded"
-                                required={field.isMandatory}
-                                readOnly={field.isReadonly}
-                              />
-                            </div>
-                          )}
-
-                          {field.field_type === "checkbox" && (
-                            <div className="relative">
-                              <input
-                                placeholder={field.placeholder}
-                                style={{
-                                  border: "1px solid gray",
-                                  height: "48px",
-                                }}
-                                type="checkbox"
-                                className="border border-gray-600 p-2 rounded"
-                                required={field.isMandatory}
-                                readOnly={field.isReadonly}
-                              />
-                            </div>
-                          )}
-
-                          {field.field_type === "dropdown" && (
-                            <div className="relative">
-                              <select
-                                className="border border-gray-600 p-2 w-full rounded"
-                                style={{
-                                  border: "1px solid gray",
-                                  height: "48px",
-                                }}
-                                required={field.isMandatory}
-                              >
-                                {/* {field?.acceptsMultiple?.map((option, idx) => (
-                                  <option key={idx} value={option}>
-                                    {option}
-                                  </option>
-                                ))} */}
-                              </select>
-                            </div>
-                          )}
-                          {/* 
-                          {field.field_type === "multi-select" && (
-                            <div className="relative">
-                              <>
-                                <Select
-                                  isMulti
-                                  // options={field?.acceptsMultiple?.map(
-                                  //   (option) => ({
-                                  //     value: option,
-                                  //     label: option,
-                                  //   })
-                                  // )}
-                                  value={selectedOptions[field.id] || []}
-                                  onChange={(options) =>
-                                    handleMultiSelectChange(field.id, options)
-                                  }
-                                  formatOptionLabel={formatOptionLabel}
-                                  className="text-start"
+                            {field.field_type === "password" && (
+                              <div className="relative">
+                                <input
+                                  placeholder={field.placeholder}
+                                  style={{
+                                    border: "2.8px solid gray",
+                                    height: "48px",
+                                  }}
+                                  type="password"
+                                  className="border border-gray-600 text-gray-600 p-2 w-full rounded"
+                                  required={field.isMandatory}
+                                  readOnly={field.isReadonly}
                                 />
-                              </>
-                            </div>
-                          )} */}
-                        </div>
-                      );
-                    })}
+                              </div>
+                            )}
+
+                            {field.field_type === "date" && (
+                              <div className="relative">
+                                <input
+                                  placeholder={field.placeholder}
+                                  style={{
+                                    border: "2.8px solid gray",
+                                    height: "48px",
+                                  }}
+                                  type="date"
+                                  className="border border-gray-600 p-2 w-full rounded"
+                                  required={field.isMandatory}
+                                  readOnly={field.isReadonly}
+                                />
+                              </div>
+                            )}
+
+                            {field.field_type === "time" && (
+                              <div className="relative">
+                                <input
+                                  placeholder={field.placeholder}
+                                  style={{
+                                    border: "2.8px solid gray",
+                                    height: "48px",
+                                  }}
+                                  type="time"
+                                  className="border border-gray-600 p-2 w-full rounded"
+                                  required={field.isMandatory}
+                                  readOnly={field.isReadonly}
+                                />
+                              </div>
+                            )}
+
+                            {field.field_type === "email" && (
+                              <div className="relative">
+                                <input
+                                  placeholder={field.placeholder}
+                                  style={{
+                                    border: "2.8px solid gray",
+                                    height: "48px",
+                                  }}
+                                  type="email"
+                                  className="border border-gray-600 p-2 w-full rounded"
+                                  required={field.isMandatory}
+                                  readOnly={field.isReadonly}
+                                />
+                              </div>
+                            )}
+
+                            {field.field_type === "number" && (
+                              <div className="relative">
+                                <input
+                                  placeholder={field.placeholder}
+                                  style={{
+                                    border: "2.8px solid gray",
+                                    height: "48px",
+                                  }}
+                                  type="number"
+                                  className="border border-gray-600 p-2 w-full rounded"
+                                  required={field.isMandatory}
+                                  readOnly={field.isReadonly}
+                                />
+                              </div>
+                            )}
+
+                            {field.field_type === "checkbox" && (
+                              <div className="relative">
+                                <input
+                                  placeholder={field.placeholder}
+                                  style={{
+                                    border: "2.8px solid gray",
+                                    height: "48px",
+                                  }}
+                                  type="checkbox"
+                                  className="border border-gray-600 p-2 rounded"
+                                  required={field.isMandatory}
+                                  readOnly={field.isReadonly}
+                                />
+                              </div>
+                            )}
+
+                            {field.field_type === "dropdown" && (
+                              <div className="relative">
+                                <select
+                                  className="border border-gray-600 p-2 w-full rounded"
+                                  style={{
+                                    border: "2.8px solid gray",
+                                    height: "48px",
+                                  }}
+                                  required={field.isMandatory}
+                                >
+                                  {/* {field?.acceptsMultiple?.map((option, idx) => (
+                            <option key={idx} value={option}>
+                              {option}
+                            </option>
+                          ))} */}
+                                </select>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {isAddTabModalOpen && (
+          <AddTabModal
+            isOpen={isAddTabModalOpen}
+            closeModal={() => setIsAddTabModalOpen(false)}
+            addTab={addTab}
+            updateTab={updateTabModalOpen}
+            bmr_tab_id={currentTabId}
+            existingTabName={existingTabName}
+            openConfirmPopup={isPopupOpen}
+            setIsPopupOpen={setIsPopupOpen}
+          />
         )}
+
+        {activeSection && isAddFieldModalOpen && (
+          <AddFieldModal
+            isOpen={isAddFieldModalOpen}
+            closeModal={() => setIsAddFieldModalOpen(false)}
+            addField={addField}
+            bmr_tab_id={currentTabId}
+            bmr_section_id={activeSection.bmr_section_id}
+            updateField={updateFieldModalOpen}
+            bmr_field_id={activeField?.bmr_field_id}
+            existingFieldData={existingFieldName}
+          />
+        )}
+
+        {activeSendFormTab && isSectionModalOpen && (
+          <AddSectionModal
+            isOpen={isSectionModalOpen}
+            closeModal={() => setIsSectionModalOpen(false)}
+            addSection={addSection}
+            bmr_tab_id={currentTabId}
+            updateSection={updateSectionModalOpen}
+            bmr_section_id={activeSection?.bmr_section_id}
+            existingSectionName={existingSectionName}
+          />
+        )}
+        {deleteModalOpen && (
+          <DeleteModal
+            onClose={() => setDeleteModalOpen(false)}
+            id={currentTabId}
+            newTab={newTab}
+            setNewTab={setNewTab}
+            newSection={activeSendFormTab?.BMR_sections}
+            setNewSection={setNewSection}
+            section_id={activeSection?.bmr_section_id}
+            bmr_field_id={activeField?.bmr_field_id}
+            newFields={newFields}
+            setNewFields={setNewFields}
+            itemType={deleteItemType}
+            fetchBMRData={fetchBMRData}
+          />
+        )}
+        {isPopupOpen && (
+          <UserVerificationPopUp
+            onClose={handlePopupClose}
+            onSubmit={handlePopupSubmit}
+          />
+        )}
+        <ToastContainer />
       </div>
-
-      {isAddTabModalOpen && (
-        <AddTabModal
-          isOpen={isAddTabModalOpen}
-          closeModal={() => setIsAddTabModalOpen(false)}
-          addTab={addTab}
-          updateTab={updateTabModalOpen}
-          bmr_tab_id={currentTabId}
-          existingTabName={existingTabName}
-          openConfirmPopup={isPopupOpen}
-          setIsPopupOpen={setIsPopupOpen}
-        />
-      )}
-
-      {activeSection && isAddFieldModalOpen && (
-        <AddFieldModal
-          isOpen={isAddFieldModalOpen}
-          closeModal={() => setIsAddFieldModalOpen(false)}
-          addField={addField}
-          bmr_tab_id={currentTabId}
-          bmr_section_id={activeSection.bmr_section_id}
-          updateField={updateFieldModalOpen}
-          bmr_field_id={activeField?.bmr_field_id}
-          existingFieldData={existingFieldName}
-        />
-      )}
-
-      {activeSendFormTab && isSectionModalOpen && (
-        <AddSectionModal
-          isOpen={isSectionModalOpen}
-          closeModal={() => setIsSectionModalOpen(false)}
-          addSection={addSection}
-          bmr_tab_id={currentTabId}
-          updateSection={updateSectionModalOpen}
-          bmr_section_id={activeSection?.bmr_section_id}
-          existingSectionName={existingSectionName}
-        />
-      )}
-      {deleteModalOpen && (
-        <DeleteModal
-          onClose={() => setDeleteModalOpen(false)}
-          id={currentTabId}
-          newTab={newTab}
-          setNewTab={setNewTab}
-          newSection={activeSendFormTab?.BMR_sections}
-          setNewSection={setNewSection}
-          section_id={activeSection?.bmr_section_id}
-          bmr_field_id={activeField?.bmr_field_id}
-          newFields={newFields}
-          setNewFields={setNewFields}
-          itemType={deleteItemType}
-          fetchBMRData={fetchBMRData}
-        />
-      )}
-      {isPopupOpen && (
-        <UserVerificationPopUp
-          onClose={handlePopupClose}
-          onSubmit={handlePopupSubmit}
-        />
-      )}
-      <ToastContainer />
     </div>
   );
 };

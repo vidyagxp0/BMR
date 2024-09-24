@@ -83,7 +83,7 @@ const Dashboard = () => {
       <div className="flex justify-between items-center p-6 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 rounded-md shadow-lg text-white mb-8">
         <div>
           <h1 className="text-4xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-sm opacity-75">Welcome back, {"Admin"}!</p>
+          <p className="text-sm opacity-75">Welcome back, User!</p>
         </div>
         <button
           className="btn bg-[#ffffff] text-black font-semibold py-2 px-4 rounded-md hover:bg-[#123e53]"
