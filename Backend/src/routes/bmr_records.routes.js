@@ -17,6 +17,12 @@ router.put(
   BmrRecordsController.updateBMRRecord
 );
 
+router.get(
+  "/get-all-bmr-records",
+  Auth.checkJwtToken,
+  BmrRecordsController.getAllBMRRecords
+);
+
 router.put(
   "/send-record-for-review",
   Auth.checkJwtToken,

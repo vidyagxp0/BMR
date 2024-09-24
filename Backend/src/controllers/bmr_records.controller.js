@@ -54,9 +54,9 @@ const getAllFieldsForBMR = async (bmr_id) => {
 
   // Extract and parse fields
   const fields = [];
-  bmrForm.BMR_Tabs.forEach((tab) => {
-    tab.BMR_sections.forEach((section) => {
-      section.BMR_fields.forEach((field) => {
+  bmrForm?.BMR_Tabs?.forEach((tab) => {
+    tab?.BMR_sections?.forEach((section) => {
+      section?.BMR_fields?.forEach((field) => {
         if (field.acceptsMultiple) {
           field.acceptsMultiple = JSON.parse(field.acceptsMultiple); // Parse JSON string into object/array
         }
@@ -115,9 +115,11 @@ exports.createBmrRecord = async (req, res) => {
       {
         bmr_id,
         data: validData,
-        status: "Initiation",
+        status: "Under Initiation",
         stage: 1,
         initiator: req.user.userId,
+        reviewers: reviewers,
+        approvers: approvers,
       },
       { transaction }
     );
@@ -285,6 +287,33 @@ exports.updateBMRRecord = async (req, res) => {
       message: `Error updating record: ${e.message}`,
     });
   }
+};
+
+exports.getAllBMRRecords = async (req, res) => {
+  BMRRecord.findAll({
+    include: [
+      {
+        model: BMR,
+        attributes: ["name", "division_id"],
+      },
+      {
+        model: User,
+        as: "InitiatorUser", // Use the alias defined in the association
+      },
+    ],
+  })
+    .then((result) => {
+      res.status(200).json({
+        error: false,
+        message: result,
+      });
+    })
+    .catch((e) => {
+      res.status(500).json({
+        error: true,
+        message: `Error getting records: ${e.message}`,
+      });
+    });
 };
 
 exports.sendRecordForReview = async (req, res) => {
