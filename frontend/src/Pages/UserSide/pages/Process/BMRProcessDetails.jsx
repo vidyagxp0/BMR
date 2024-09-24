@@ -6,17 +6,16 @@ import AddTabModal from "./Modals/AddTabModal";
 import AddFieldModal from "./Modals/AddFieldModal";
 import AddSectionModal from "./Modals/AddSectionModal";
 import axios from "axios";
-import Select from "react-select";
 import { toast, ToastContainer } from "react-toastify";
 import DeleteModal from "./Modals/DeleteModal";
 import "react-toastify/dist/ReactToastify.css";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
-import { FaRegFilePdf } from "react-icons/fa";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { IoIosCreate } from "react-icons/io";
 import { AiOutlineAudit } from "react-icons/ai";
-import { DeleteIcon } from "../../../../Components/Icons/Icon";
+import { BASE_URL } from "../../../../config.json";
+import PDF from "./PDF";
 
 const BMRProcessDetails = ({ fieldData }) => {
   const [data, setData] = useState([]);
@@ -129,74 +128,6 @@ const BMRProcessDetails = ({ fieldData }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
 
-  const renderTable = (field) => {
-    if (
-      field.field_type === "grid" &&
-      field.acceptsMultiple.columns.length > 0
-    ) {
-      return (
-        <div key={field.label}>
-          <h3>{field.label}</h3>
-          <table className="table-auto w-full border-collapse border border-gray-400">
-            <thead>
-              <tr>
-                {field.acceptsMultiple.columns.map((column, index) => (
-                  <th key={index} className="border border-gray-300 p-2">
-                    {column.name}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {field.acceptsMultiple.rows.length > 0 ? (
-                field.acceptsMultiple.rows.map((row, rowIndex) => (
-                  <tr key={rowIndex}>
-                    {field.acceptsMultiple.columns.map((column, colIndex) => (
-                      <td key={colIndex} className="border border-gray-300 p-2">
-                        {row[column.name]}
-                      </td>
-                    ))}
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={field.acceptsMultiple.columns.length}
-                    className="border border-gray-300 p-2 text-center"
-                  >
-                    No Data Available
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      );
-    }
-  };
-  const handleStageClick = (stage) => {
-    setActiveFlowTab(stage);
-    // Add any additional logic needed when a stage is clicked
-  };
-
-  const handleAddRow = (tabName) => {
-    setFields((prevFields) => {
-      const updatedFields = { ...prevFields };
-      const field = updatedFields[tabName].find(
-        (fld) => fld.field_type === "grid"
-      );
-
-      if (field) {
-        const newRow = field.acceptsMultiple.columns.reduce((acc, column) => {
-          acc[column.name] = "";
-          return acc;
-        }, {});
-        field.gridData.push(newRow);
-      }
-      return updatedFields;
-    });
-  };
-
   const handleGridChange = (tabName, rowIndex, columnName, value) => {
     setFields((prevFields) => {
       const updatedFields = { ...prevFields };
@@ -216,7 +147,7 @@ const BMRProcessDetails = ({ fieldData }) => {
     if (!field) return null;
 
     return (
-      <div>
+      <div className="bg-white">
         <table className="min-w-full divide-y divide-gray-200">
           <thead>
             <tr>
@@ -277,7 +208,6 @@ const BMRProcessDetails = ({ fieldData }) => {
       [fieldId]: options,
     }));
   };
-  const formatOptionLabel = (option) => <div>{option.label}</div>;
   const fetchBMRData = () => {
     axios
       .get(`https://bmrapi.mydemosoftware.com/bmr-form/get-a-bmr/${bmr_id}`, {
@@ -436,178 +366,6 @@ const BMRProcessDetails = ({ fieldData }) => {
     setPopupAction(null);
   };
 
-  async function generateReport() {
-    // Create the confirmation popup container
-    const confirmationContainer = document.createElement("div");
-    confirmationContainer.style.position = "fixed";
-    confirmationContainer.style.top = "20px"; // Adjusted top position
-    confirmationContainer.style.left = "50%";
-    confirmationContainer.style.transform = "translate(-50%, 0)";
-    confirmationContainer.style.backgroundColor = "#ffffff";
-    confirmationContainer.style.border = "1px solid #ccc";
-    confirmationContainer.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.1)";
-    confirmationContainer.style.padding = "20px";
-    confirmationContainer.style.borderRadius = "5px";
-    confirmationContainer.style.zIndex = "1000";
-    confirmationContainer.style.width = "300px";
-
-    // Create the confirmation message
-    const confirmationMessage = document.createElement("div");
-    confirmationMessage.textContent =
-      "Are you sure you want to generate the PDF?";
-    confirmationMessage.style.fontSize = "16px";
-    confirmationMessage.style.marginBottom = "15px";
-
-    // Create the buttons container
-    const buttonsContainer = document.createElement("div");
-    buttonsContainer.style.textAlign = "center";
-
-    // Create the confirm button
-    const confirmButton = document.createElement("button");
-    confirmButton.textContent = "Confirm";
-    confirmButton.style.padding = "10px 20px";
-    confirmButton.style.margin = "0 10px";
-    confirmButton.style.cursor = "pointer";
-    confirmButton.style.border = "none";
-    confirmButton.style.borderRadius = "5px";
-    confirmButton.style.backgroundColor = "#4CAF50";
-    confirmButton.style.color = "white";
-    confirmButton.style.fontSize = "14px";
-
-    // Create the cancel button
-    const cancelButton = document.createElement("button");
-    cancelButton.textContent = "Cancel";
-    cancelButton.style.padding = "10px 20px";
-    cancelButton.style.margin = "0 10px";
-    cancelButton.style.cursor = "pointer";
-    cancelButton.style.border = "none";
-    cancelButton.style.borderRadius = "5px";
-    cancelButton.style.backgroundColor = "#f44336";
-    cancelButton.style.color = "white";
-    cancelButton.style.fontSize = "14px";
-
-    // Append buttons to the buttons container
-    buttonsContainer.appendChild(confirmButton);
-    buttonsContainer.appendChild(cancelButton);
-
-    // Append message and buttons to the confirmation container
-    confirmationContainer.appendChild(confirmationMessage);
-    confirmationContainer.appendChild(buttonsContainer);
-
-    // Append the confirmation container to the document body
-    document.body.appendChild(confirmationContainer);
-
-    // Add event listener to the confirm button
-    confirmButton.addEventListener("click", async () => {
-      try {
-        // Close the confirmation popup
-        confirmationContainer.remove();
-
-        // Make API request to generate PDF
-        const response = await axios({
-          url: "https://bmrapi.mydemosoftware.com/bmr-form/generate-report",
-          method: "POST",
-          responseType: "blob",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-            "Content-Type": "application/json",
-          },
-          data: {
-            reportData: data[0],
-          },
-        });
-
-        // Create a blob URL for the PDF content
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-
-        // Create an anchor element to trigger the download
-        const a = document.createElement("a");
-        a.style.display = "none";
-        a.href = url;
-        a.download = `BMRform${data[0].bmr_id}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-
-        // Clean up the blob URL
-        window.URL.revokeObjectURL(url);
-
-        // Display success message as styled popup
-        const successMessage = document.createElement("div");
-        successMessage.textContent = "PDF generated successfully!";
-        successMessage.style.position = "fixed";
-        successMessage.style.top = "20px";
-        successMessage.style.left = "50%";
-        successMessage.style.transform = "translateX(-50%)";
-        successMessage.style.backgroundColor =
-          "rgba(76, 175, 80, 0.8)"; /* Green for success */
-        successMessage.style.color = "white";
-        successMessage.style.padding = "15px";
-        successMessage.style.borderRadius = "5px";
-        successMessage.style.zIndex = "1000";
-        successMessage.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
-        successMessage.style.fontSize = "14px";
-        document.body.appendChild(successMessage);
-
-        // Remove the success message after 3 seconds
-        setTimeout(() => {
-          successMessage.remove();
-        }, 3000);
-      } catch (error) {
-        console.error("Error:", error);
-        // Display error message as styled popup
-        const errorMessage = document.createElement("div");
-        errorMessage.textContent =
-          "Failed to generate PDF. Please try again later.";
-        errorMessage.style.position = "fixed";
-        errorMessage.style.top = "20px";
-        errorMessage.style.left = "50%";
-        errorMessage.style.transform = "translateX(-50%)";
-        errorMessage.style.backgroundColor =
-          "rgba(244, 67, 54, 0.8)"; /* Red for error */
-        errorMessage.style.color = "white";
-        errorMessage.style.padding = "15px";
-        errorMessage.style.borderRadius = "5px";
-        errorMessage.style.zIndex = "1000";
-        errorMessage.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
-        errorMessage.style.fontSize = "14px";
-        document.body.appendChild(errorMessage);
-
-        // Remove the error message after 3 seconds
-        setTimeout(() => {
-          errorMessage.remove();
-        }, 3000);
-      }
-    });
-
-    // Add event listener to the cancel button
-    cancelButton.addEventListener("click", () => {
-      // Close the confirmation popup
-      confirmationContainer.remove();
-
-      // Display cancel message as styled popup
-      const cancelMessage = document.createElement("div");
-      cancelMessage.textContent = "PDF generation canceled.";
-      cancelMessage.style.position = "fixed";
-      cancelMessage.style.top = "20px";
-      cancelMessage.style.left = "50%";
-      cancelMessage.style.transform = "translateX(-50%)";
-      cancelMessage.style.backgroundColor =
-        "rgba(183, 28, 28, 0.8)"; /* Dark red for cancel */
-      cancelMessage.style.color = "white";
-      cancelMessage.style.padding = "15px";
-      cancelMessage.style.borderRadius = "5px";
-      cancelMessage.style.zIndex = "1000";
-      cancelMessage.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
-      cancelMessage.style.fontSize = "14px";
-      document.body.appendChild(cancelMessage);
-
-      // Remove the cancel message after 3 seconds
-      setTimeout(() => {
-        cancelMessage.remove();
-      }, 3000);
-    });
-  }
-
   const handleFlowTabClick = (tab) => {
     setActiveFlowTab(tab);
   };
@@ -752,7 +510,7 @@ const BMRProcessDetails = ({ fieldData }) => {
   }, [data]);
 
   return (
-    <div className="p-4 relative h-full">
+    <div className="p-4 relative h-full bg-white">
       <header className="bg-[#2a323e] w-full shadow-lg flex justify-between items-center p-4 mb-4">
         <p className="text-lg text-gray-200 font-bold">BMR Process Details</p>
         <div className="flex space-x-2">
@@ -769,23 +527,12 @@ const BMRProcessDetails = ({ fieldData }) => {
                   />
                 </IconButton>
               </Tooltip>
-
-              <Tooltip title="Generate PDF">
-                <IconButton>
-                  <FaRegFilePdf
-                    size={28}
-                    className="flex justify-center text-gray-50 hover:  items-center cursor-pointer "
-                    onClick={() => {
-                      generateReport();
-                    }}
-                  />
-                </IconButton>
-              </Tooltip>
+              <PDF data={data} />
 
               {activeFlowTab === "INITIATION" && (
                 <>
                   <AtmButton
-                    label={newTab.length === 0 ? "Create Form" : "Edit Form"}
+                    label={newTab.length > 0 ? "Edit Form" : "Create Form"}
                     onClick={() => setShowForm("sendForm")}
                     className="flex justify-center items-center cursor-pointer "
                   />
@@ -795,6 +542,7 @@ const BMRProcessDetails = ({ fieldData }) => {
           ) : showForm === "sendForm" ? (
             <>
               {/* Only show "Add Tab" button if no tab is added */}
+
               <AtmButton
                 label="Add Tab"
                 onClick={() => (
@@ -802,7 +550,12 @@ const BMRProcessDetails = ({ fieldData }) => {
                   setUpdateTabModalOpen("add"),
                   setPopupAction("add-tab")
                 )}
-                className="bg-pink-700 hover:bg-pink-900 px-4 py-2"
+                className="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-300"
+                style={{
+                  backgroundColor: "#007bff", // Bright blue background color
+                  color: "#ffffff", // White text color
+                  border: "2px solid #0056b3", // Slightly darker blue border for definition
+                }}
               />
 
               {/* Show "Add Section" button only if a tab is active */}
@@ -815,11 +568,15 @@ const BMRProcessDetails = ({ fieldData }) => {
                       setUpdateSectionModalOpen("add-section"),
                       setPopupAction("add-section")
                     )}
-                    className="bg-purple-700 hover:bg-purple-950 px-4 py-2"
+                    className="bg-teal-600 hover:bg-teal-800 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-300"
+                    style={{
+                      backgroundColor: "#004d40", // Teal color background
+                      color: "#ffffff", // White text color
+                      border: "2px solid #00796b", // Lighter teal border for definition
+                    }}
                   />
                 </>
               )}
-
               {/* Show "Add Field" button only if a section is active */}
               {activeSection && (
                 <>
@@ -830,15 +587,19 @@ const BMRProcessDetails = ({ fieldData }) => {
                       setUpdateFieldModalOpen("add-field"),
                       setPopupAction("add-field")
                     )}
-                    className="bg-green-700 hover:bg-green-950 px-4 py-2"
+                    className="bg-teal-600 hover:bg-teal-800 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-300"
+                    style={{
+                      backgroundColor: "#009688", // Teal color background
+                      color: "#ffffff", // White text color
+                      border: "2px solid #00796b", // Slightly darker teal border for definition
+                    }}
                   />
                 </>
               )}
-
               <AtmButton
                 label="Back to Default"
                 onClick={() => setShowForm("default")}
-                className="bg-gray-500 hover:bg-gray-700 px-4 py-2"
+                className="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow-md transition-all duration-300"
               />
             </>
           ) : (
@@ -857,15 +618,22 @@ const BMRProcessDetails = ({ fieldData }) => {
             <>
               <AtmButton
                 label="Edit Field"
-                className="bg-cyan-500 hover:bg-cyan-700"
+                className="bg-cyan-500 hover:bg-cyan-700 text-white px-4 py-2 rounded-lg shadow-md transition-all duration-300"
                 onClick={() => (
                   setUpdateFieldModalOpen("edit-field"),
                   setIsAddFieldModalOpen(true)
                 )}
+                style={{
+                  border: "1px solid #0c4a6e", // Adds a subtle border for better definition
+                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Slightly larger shadow for depth
+                  fontWeight: "bold", // Bold text for emphasis
+                  textAlign: "center", // Center-align text
+                }}
               />
+
               <AtmButton
                 label="Delete Field"
-                className="bg-red-600 hover:bg-red-700"
+                className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg shadow-md transition-all duration-300"
                 onClick={() => (
                   setDeleteModalOpen(true), setDeleteItemType("field")
                 )}
@@ -918,10 +686,12 @@ const BMRProcessDetails = ({ fieldData }) => {
               style={{ border: "1px solid gray" }}
               key={index}
               onClick={() => handleFlowTabClick(tab)}
-              className={`py-2 px-4 rounded border-2 border-black ${
-                activeFlowTab === tab
+              className={`py-2 px-4 rounded border-2 border-black text-white ${
+                activeFlowTab === tab && tab === "APPROVED"
+                  ? "bg-[#195b7a] text-white"
+                  : flowoTabs.indexOf(activeFlowTab) >= index
                   ? "bg-[#2a323e] text-white"
-                  : "bg-[#6f7070] text-white "
+                  : "bg-[#777778] text-white"
               }`}
             >
               {tab}
@@ -929,7 +699,6 @@ const BMRProcessDetails = ({ fieldData }) => {
           ))}
         </div>
       )}
-
       {showForm === "default" && (
         <div className="flex flex-wrap gap-4 mb-4">
           {tabs?.map((tab, index) => (
@@ -1063,12 +832,13 @@ const BMRProcessDetails = ({ fieldData }) => {
                 </div>
               ))}
           </div>
-          <div className="fixed bottom-0 left-0 w-full bg-white border-gray-300 p-4 flex justify-end gap-5">
+
+          <div className="fixed bottom-36 right-[-10px] w-auto flex-col border-gray-300  flex gap-5">
             {data[0]?.stage === 1 &&
               data[0]?.initiator === userDetails.userId && (
                 <AtmButton
                   label={"Send For Review"}
-                  className="bg-blue-500 hover:bg-blue-700 p-2"
+                  className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
                   onClick={() => {
                     setIsPopupOpen(true);
                     setPopupAction("sendFromOpenToReview"); // Set the action when opening the popup
@@ -1105,7 +875,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                 <>
                   <AtmButton
                     label={"Send For Approval"}
-                    className="bg-blue-500 hover:bg-blue-700 p-2"
+                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
                     onClick={() => {
                       setIsPopupOpen(true);
                       setPopupAction("sendFromReviewToApproval"); // Set the action when opening the popup
@@ -1113,7 +883,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                   />
                   <AtmButton
                     label={"Open BMR"}
-                    className="bg-blue-500 hover:bg-blue-700 p-2"
+                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
                     onClick={() => {
                       setIsPopupOpen(true);
                       setPopupAction("sendFromReviewToOpen"); // Set the action when opening the popup
@@ -1151,7 +921,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                 <>
                   <AtmButton
                     label={"Approve BMR"}
-                    className="bg-blue-500 hover:bg-blue-700 p-2"
+                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
                     onClick={() => {
                       setIsPopupOpen(true);
                       setPopupAction("sendFromApprovalToApproved"); // Set the action when opening the popup
@@ -1159,7 +929,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                   />
                   <AtmButton
                     label={"Open BMR"}
-                    className="bg-blue-500 hover:bg-blue-700 p-2"
+                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
                     onClick={() => {
                       setIsPopupOpen(true);
                       setPopupAction("sendFromApprovalToOpen"); // Set the action when opening the popup
@@ -1173,6 +943,7 @@ const BMRProcessDetails = ({ fieldData }) => {
               onClick={() => {
                 navigate(-1);
               }}
+              className="rounded-l-full"
             />
           </div>
         </div>
@@ -1206,7 +977,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                         <div
                           key={index}
                           onClick={() => handleFieldClick(field)}
-                          className="p-4 rounded bg-gray-50 shadow border border-gray-600"
+                          className="p-4 rounded  "
                         >
                           <label className="text-base font-bold text-gray-900  flex gap-1 mb-2">
                             {field.label}
@@ -1228,21 +999,20 @@ const BMRProcessDetails = ({ fieldData }) => {
                           {/* Render input fields based on type */}
 
                           {field.field_type === "text" && (
-                            <>
-                              <div className="relative">
-                                <input
-                                  placeholder={field.placeholder}
-                                  style={{
-                                    border: "1px solid gray",
-                                    height: "48px",
-                                  }}
-                                  type="text"
-                                  className="border border-gray-600 p-2 w-full rounded"
-                                  required={field.isMandatory}
-                                  readOnly={field.isReadonly}
-                                />
-                              </div>
-                            </>
+                            <div className="relative">
+                              <input
+                                placeholder={field.placeholder}
+                                type="text"
+                                style={{
+                                  border: "2px solid gray", // Apply inline border style
+                                  height: "48px",
+                                  width: "320px", // Adjust width as per requirement
+                                }}
+                                className="bg-white text-gray-800 placeholder-gray-500 p-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
+                                required={field.isMandatory}
+                                readOnly={field.isReadonly}
+                              />
+                            </div>
                           )}
 
                           {field.field_type === "grid" && (
@@ -1308,12 +1078,13 @@ const BMRProcessDetails = ({ fieldData }) => {
                             <div className="relative">
                               <input
                                 placeholder={field.placeholder}
-                                style={{
-                                  border: "1px solid gray",
-                                  height: "48px",
-                                }}
                                 type="password"
-                                className="border border-gray-600 text-gray-600 p-2 w-full rounded"
+                                style={{
+                                  border: "2px solid gray", // Apply inline border style
+                                  height: "48px",
+                                  width: "320px", // Adjust width as per requirement
+                                }}
+                                className="pl-12 border border-gray-600 text-gray-600 p-2 w-full rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 required={field.isMandatory}
                                 readOnly={field.isReadonly}
                               />
@@ -1325,8 +1096,9 @@ const BMRProcessDetails = ({ fieldData }) => {
                               <input
                                 placeholder={field.placeholder}
                                 style={{
-                                  border: "1px solid gray",
+                                  border: "2px solid gray", // Apply inline border style
                                   height: "48px",
+                                  width: "320px", // Adjust width as per requirement
                                 }}
                                 type="date"
                                 className="border border-gray-600 p-2 w-full rounded"
@@ -1341,8 +1113,9 @@ const BMRProcessDetails = ({ fieldData }) => {
                               <input
                                 placeholder={field.placeholder}
                                 style={{
-                                  border: "1px solid gray",
+                                  border: "2px solid gray", // Apply inline border style
                                   height: "48px",
+                                  width: "320px", // Adjust width as per requirement
                                 }}
                                 type="email"
                                 className="border border-gray-600 p-2 w-full rounded"
@@ -1357,8 +1130,9 @@ const BMRProcessDetails = ({ fieldData }) => {
                               <input
                                 placeholder={field.placeholder}
                                 style={{
-                                  border: "1px solid gray",
+                                  border: "2px solid gray", // Apply inline border style
                                   height: "48px",
+                                  width: "320px", // Adjust width as per requirement
                                 }}
                                 type="number"
                                 className="border border-gray-600 p-2 w-full rounded"
@@ -1369,28 +1143,38 @@ const BMRProcessDetails = ({ fieldData }) => {
                           )}
 
                           {field.field_type === "checkbox" && (
-                            <div className="relative">
+                            <div className="relative flex items-center">
                               <input
-                                placeholder={field.placeholder}
-                                style={{
-                                  border: "1px solid gray",
-                                  height: "48px",
-                                }}
                                 type="checkbox"
-                                className="border border-gray-600 p-2 rounded"
+                                style={{
+                                  border: "2px solid gray", // Apply inline border style
+                                  height: "24px", // Adjust height for better visibility
+                                  width: "24px", // Adjust width to match height
+                                  borderRadius: "4px", // Rounded corners for a modern look
+                                  accentColor: "#4A90E2", // Custom checkbox color when checked
+                                }}
+                                className="focus:outline-none focus:ring-2 focus:ring-blue-500 checked:bg-blue-500 checked:border-transparent"
                                 required={field.isMandatory}
                                 readOnly={field.isReadonly}
                               />
+                              <span className="ml-2 text-gray-600">
+                                {field.placeholder}
+                              </span>{" "}
+                              {/* Label for the checkbox */}
                             </div>
                           )}
 
                           {field.field_type === "dropdown" && (
                             <div className="relative">
                               <select
-                                className="border border-gray-600 p-2 w-full rounded"
+                                className="border border-gray-600 p-3 pl-4 pr-10 rounded-lg bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 style={{
-                                  border: "1px solid gray",
-                                  height: "48px",
+                                  border: "2px solid gray", // Apply inline border style
+                                  height: "48px", // Adjust height
+                                  width: "320px", // Adjust width
+                                  backgroundColor: "#f9f9f9", // Light background color for the dropdown
+                                  color: "#333", // Darker text color for better readability
+                                  fontSize: "16px", // Larger font size for readability
                                 }}
                                 required={field.isMandatory}
                               >
@@ -1406,17 +1190,18 @@ const BMRProcessDetails = ({ fieldData }) => {
                             </div>
                           )}
 
+                          {/* 
                           {field.field_type === "multi-select" && (
                             <div className="relative">
                               <>
                                 <Select
                                   isMulti
-                                  options={field?.acceptsMultiple?.map(
-                                    (option) => ({
-                                      value: option,
-                                      label: option,
-                                    })
-                                  )}
+                                  // options={field?.acceptsMultiple?.map(
+                                  //   (option) => ({
+                                  //     value: option,
+                                  //     label: option,
+                                  //   })
+                                  // )}
                                   value={selectedOptions[field.id] || []}
                                   onChange={(options) =>
                                     handleMultiSelectChange(field.id, options)
@@ -1426,7 +1211,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                                 />
                               </>
                             </div>
-                          )}
+                          )} */}
                         </div>
                       );
                     })}

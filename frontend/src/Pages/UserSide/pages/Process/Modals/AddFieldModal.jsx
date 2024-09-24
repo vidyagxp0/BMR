@@ -230,7 +230,7 @@ const AddFieldModal = ({
                 <table className="w-full border border-gray-300">
                   <thead>
                     <tr>
-                      {gridData.acceptsMultiple.columns.map((col, idx) => (
+                      {gridData?.acceptsMultiple?.columns?.map((col, idx) => (
                         <th key={idx} className="border border-gray-300 p-2">
                           {col.name}
                         </th>
