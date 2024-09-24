@@ -12,6 +12,8 @@ import { toast, ToastContainer } from "react-toastify";
 import { AiOutlineSearch } from "react-icons/ai";
 import "react-toastify/dist/ReactToastify.css";
 import {BASE_URL} from "../../../../config.json"
+import { IconButton, Tooltip } from "@mui/material";
+import { IoInformationCircleOutline } from "react-icons/io5";
 
 const BMRProcess = () => {
   const [data, setData] = useState([]);
@@ -139,6 +141,66 @@ const BMRProcess = () => {
               ? "Supervisor"
               : "Director"}
           </>
+        );
+      },
+    },
+    {
+      header: "Due Date Progress",
+      accessor: "due_date_progress",
+      Cell: ({ row }) => {
+        const dueDate = new Date(row.original.due_date);
+        const currentDate = new Date();
+        const timeDiff = dueDate - currentDate;
+        const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+        let color;
+        let message;
+
+        if (diffDays > 10) {
+          color = `linear-gradient(to right, #00ff00 ${100}%, #00ff00 ${100}%)`;
+          message = `${diffDays} Days Remaining`;
+        } else if (diffDays > 0) {
+          const percentage = (10 - diffDays) * 10;
+          color = `linear-gradient(to right, #ff0000 ${percentage}%, #00ff00 ${percentage}%)`;
+          message = `${diffDays} Days Remaining`;
+        } else {
+          color = `linear-gradient(to right, #ff0000 100%, #ff0000 100%)`;
+          message = `Overdue (${Math.abs(diffDays)} Days Past Due)`;
+        }
+
+        return (
+          <div className="flex items-center justify-between w-[140px] ">
+            {(diffDays < 0 && (
+              <Tooltip title="Due date is crossed" placement="top-start">
+                <IconButton>
+                  <div className="icon-animate">
+                    <IoInformationCircleOutline />
+                  </div>
+                </IconButton>
+              </Tooltip>
+            )) || (
+              <Tooltip
+                title={`${diffDays} Days Remaining`}
+                placement="top-start"
+              >
+                <IconButton>
+                  <div className="icon-animate">
+                    <IoInformationCircleOutline />
+                  </div>
+                </IconButton>
+              </Tooltip>
+            )}
+
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                height: "10px",
+                borderRadius: "5px",
+                background: color,
+              }}
+            ></div>
+          </div>
         );
       },
     },

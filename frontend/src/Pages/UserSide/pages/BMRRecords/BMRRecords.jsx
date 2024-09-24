@@ -9,14 +9,37 @@ import { useDispatch } from "react-redux";
 import { setFormData, setSelectedBMR } from "../../../../../src/userSlice";
 import { BASE_URL } from "../../../../config.json";
 import { Tooltip } from "@mui/material";
+import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
 
 const BMRRecords = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("General Information");
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [dateOfInitiation, setDateOfInitiation] = useState(
     new Date().toISOString().split("T")[0]
   );
 
+  const [recordData , setRecordData]= useState({
+    bmr_id :"",
+    reviewers :[],
+    approvers :[],
+    data:[]
+  })
+
+  const closeUserVerifiedModal = () => {
+    setShowVerificationModal(false);
+  };
+
+  const handleAddRecordsClick = () => {
+    if (
+      recordData.bmr_id  
+    ) {
+      toast.error("Please fill all fields to add a new Record.");
+      return;
+    }
+
+    setShowVerificationModal(true);
+  };
   const dispatch = useDispatch();
   const [selectedBMR, setSelectedBMRState] = useState(
     location.state?.selectedBMR || {}
@@ -81,14 +104,148 @@ const BMRRecords = () => {
       return acc;
     }, {}),
   });
-
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
-  const [selectedReviewers, setSelectedReviewers] = useState([]);
-  const [selectedApprovers, setSelectedApprovers] = useState([]);
+  const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
+  const [isSelectedApprover, setIsSelectedApprover] = useState([]);
+
   const bmr_id = selectedBMR.bmr_id;
   const [initiatorName, setInitiatorName] = useState(null);
   const navigate = useNavigate();
+
+
+
+
+  const handleVerificationSubmit = (verified) => {
+    axios
+      .post(
+        `${BASE_URL}/bmr-record/create-bmr-record`,
+       
+        {
+          data :recordData.data,
+          bmr_id : selectedBMR.bmr_id,
+          reviewers: isSelectedReviewer.map((reviewer) => ({
+            reviewerId: reviewer.value,
+            status: "pending",
+            reviewer: reviewer.label,
+            date_of_review: "NA",
+            comment: null,
+          })),
+            approvers: isSelectedApprover.map((approver) => ({
+            approverId: approver.value,
+            status: "pending",
+            approver: approver.label,
+            date_of_approval: "NA",
+            comment: null,
+          })),
+          email: verified.email,
+          password: verified.password,
+          declaration: verified.declaration,
+          comments: verified.comments,
+        },
+
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        toast.success(response.data.message || "BMR added successfully!");
+        dispatch(addBmr(response.data.bmr));
+        navigate(
+          `/process/processdetails/${response.data.message.split(" ")[3]}`,
+          {
+            state: { bmr: response.data.bmr },
+          }
+        );
+        setRecordData({ bmr_id: selectedBMR.bmr_id, reviewers: [], approvers: [] });
+        setIsSelectedApprover([]);
+        setIsSelectedReviewer([]);
+        setTimeout(() => {
+          closeUserVerifiedModal();
+          onClose();
+        }, 1000);
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error("Records Already Registered");
+      });
+  };
+
+  useEffect(() => {
+    axios
+      .post(
+        `${BASE_URL}/bmr-form/get-user-roles`,
+        { role_id: 3 },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        const reviewerOptions = [
+          { value: "select-all", label: "Select All" },
+          ...new Map(
+            response.data.message.map((role) => [
+              role.user_id,
+              {
+                value: role.user_id,
+                label: `${role.User.name}`,
+              },
+            ])
+          ).values(),
+        ];
+        setReviewers(reviewerOptions);
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
+
+    axios
+      .post(
+        `${BASE_URL}/bmr-form/get-user-roles`,
+        { role_id: 4 },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        const approverOptions = [
+          { value: "select-all", label: "Select All" },
+          ...new Map(
+            response.data.message.map((role) => [
+              role.user_id,
+              {
+                value: role.user_id,
+                label: `${role.User.name}`,
+              },
+            ])
+          ).values(),
+        ];
+        setApprovers(approverOptions);
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
+  }, []);
+
+
+
+
+
+
+
+
+
+
+
 
   const fetchBMRData = () => {
     axios
@@ -191,21 +348,6 @@ const BMRRecords = () => {
 
     fetchUserRoles();
   }, []);
-  const handleSelectChange = (selected, field) => {
-    const updatedValues = selected.some(
-      (option) => option.value === "select-all"
-    )
-      ? field === "reviewers"
-        ? reviewers.filter((option) => option.value !== "select-all")
-        : approvers.filter((option) => option.value !== "select-all")
-      : selected;
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [field === "reviewers" ? "selectedReviewers" : "selectedApprovers"]:
-        updatedValues,
-    }));
-  };
 
   // const formattedDate = new Date(selectedBMR.date_of_initiation)
   //   .toISOString()
@@ -223,15 +365,35 @@ const BMRRecords = () => {
     }));
   };
 
-  const handleSave = () => {
-    console.log("Saved Form Data:", formData, selectedBMR);
-    dispatch({
-      type: "ACTION_TYPE",
-      payload: formData,
-      selectedBMR,
-    });
-    navigate("/bmr-forms");
+  const handleSelectChange = (selected, field) => {
+    if (selected?.some((option) => option.value === "select-all")) {
+      const allOptions = field === "reviewers" ? reviewers : approvers;
+      const nonSelectAllOptions = allOptions.filter(
+        (option) => option.value !== "select-all"
+      );
+      setIsSelectedReviewer(
+        field === "reviewers" ? nonSelectAllOptions : isSelectedReviewer
+      );
+      setIsSelectedApprover(
+        field === "approvers" ? nonSelectAllOptions : isSelectedApprover
+      );
+    } else {
+      if (field === "reviewers") {
+        setIsSelectedReviewer(selected);
+      } else if (field === "approvers") {
+        setIsSelectedApprover(selected);
+      }
+    }
   };
+
+  useEffect(() => {
+    setRecordData({
+      ...recordData,
+      reviewers: isSelectedReviewer,
+      approvers: isSelectedApprover,
+    });
+  }, [isSelectedReviewer, isSelectedApprover]);
+
 
   return (
     <div className="w-full h-full flex items-center justify-center ">
@@ -291,7 +453,7 @@ const BMRRecords = () => {
                 <Select
                   isMulti
                   options={reviewers}
-                  value={selectedReviewers.label}
+                  value={isSelectedReviewer}
                   onChange={(selected) =>
                     handleSelectChange(selected, "reviewers")
                   }
@@ -314,7 +476,7 @@ const BMRRecords = () => {
                 <Select
                   isMulti
                   options={approvers}
-                  value={selectedApprovers.label}
+                  value={isSelectedApprover}
                   onChange={(selected) =>
                     handleSelectChange(selected, "approvers")
                   }
@@ -382,7 +544,7 @@ const BMRRecords = () => {
         <div className="flex justify-end gap-4 items-end p-4 border-t">
           <button
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none transition duration-200"
-            onClick={handleSave}
+            onClick={handleAddRecordsClick}
           >
             Save
           </button>
@@ -395,6 +557,12 @@ const BMRRecords = () => {
           </button>
         </div>
       </div>
+      {showVerificationModal && (
+        <UserVerificationPopUp
+          onClose={closeUserVerifiedModal}
+          onSubmit={handleVerificationSubmit}
+        />
+      )}
 
       {/* {initiatorName && <BMRProcessDetails initiatorName2={initiatorName}/>} */}
     </div>
