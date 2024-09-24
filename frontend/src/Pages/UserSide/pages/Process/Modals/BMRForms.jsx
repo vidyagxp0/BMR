@@ -3,14 +3,13 @@ import InitiateModal from "../../../Modals/InitiateModal";
 import HeaderTop from "../../../../../Components/Header/HeaderTop";
 import DashboardBottom from "../../../../../Components/Header/DashboardBottom";
 import axios from "axios";
-import { IconButton, Tooltip } from "@mui/material";
-// import BMRDetailsModal from "./BMRDetailsModal";
-import { IoInformationCircleOutline } from "react-icons/io5";
 import "./BMRForms.css";
 import { useNavigate } from "react-router-dom";
 import {BASE_URL} from "../../../../../config.json"
 import AtmTable from "../../../../../AtmComponents/AtmTable"; // Adjust the import path according to your file structure
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { formattedDate } from "../../../../../AtmComponents/Helper";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -24,13 +23,9 @@ const BMRForms = () => {
   const [approvedBMR, setApprovedBMR] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [selectedBMRData, setSelectedBMRData] = useState(null);
+  const [bmrRecordsData , setBmrRecordsData] = useState([])
   const navigate = useNavigate();
   const data = useSelector((state) => state.users);
-  const openBMRDetailsPage = (bmrId) => {
-    navigate(`/bmr-details/${bmrId}`);
-  };
-
   const formData = useSelector((state) => state.users.formData);
   const selectedBMR = useSelector((state) => state.users.selectedBMR);
 
@@ -70,10 +65,6 @@ const BMRForms = () => {
     setShowModal(false);
   };
 
-  // const openDetailsModal = (bmrData) => {
-  //   setSelectedBMRData(bmrData);
-  //   setShowDetailsModal(true);
-  // };
   const divisionMap = {
     1: "India",
     2: "Malaysia",
@@ -84,110 +75,73 @@ const BMRForms = () => {
   const closeDetailsModal = () => {
     setShowDetailsModal(false);
   };
-
+ 
   const columns = [
+    {
+      header: "Record Name",
+      accessor: "record_name",
+      Cell: ({ row }) => {
+        const record_id = row.original.record_id;
+        const formattedrecordId = record_id < 10 ? `${row.original.BMR.name} 000${record_id}` : `${row.original.BMR.name} 00${record_id}`;
+        return ( 
+          <>
+        <span
+        className="cursor-pointer hover:text-blue-500"
+         onClick={() => {
+                   navigate(`/bmr_records/bmr_records_details/${row.original.record_id}`);
+                 }}
+        >{formattedrecordId}</span>
+        </>
+      )
+      },
+    },
     {
       header: "BMR Name",
       accessor: "name",
-      cell: () => selectedBMR.name || formData.name || "N/A",
+      Cell: ({ row }) => {
+        return (
+          <>{row.original.BMR.name}</>
+        );
+      },
     },
 
+    {
+      header: "Initiator Name",
+      accessor: "initiator_name",
+      Cell: ({ row }) => {
+        return (
+          <>{row.original.InitiatorUser.name}</>
+        );
+      },
+    },
     {
       header: "Division",
       accessor: "division",
       Cell: ({ row }) => {
         return (
-          <>{divisionMap[selectedBMR.division_id] || divisionMap.default}</>
+          <>
+            {" "}
+            {row.original.division_id === 1
+              ? "India"
+              : row.original.division_id === 2
+              ? "Malaysia "
+              : row.original.division_id === 3
+              ? "EU"
+              : "EMEA"}
+          </>
         );
       },
     },
     {
-      header: "Description",
-      accessor: "description",
-      cell: () => selectedBMR.description || "N/A",
-    },
-    {
-      header: "Date of Initiation",
+      header: "Date Of Initiation",
       accessor: "date_of_initiation",
-      cell: () => {
-        const date =
-          formData.dateOfInitiation || selectedBMR.date_of_initiation;
-        return date ? formatDate(date) : "N/A";
-      },
+      Cell: ({ row }) => formattedDate(row.original.date_of_initiation),
     },
     {
-      header: "Current Date",
-      accessor: "current_date",
-      Cell: () => formatDate(new Date()),
+      header: "Status",
+      accessor: "status",
     },
-    {
-      header: "Due Date",
-      accessor: "due_date",
-      cell: () => {
-        const dueDate = selectedBMR.due_date;
-        return dueDate ? formatDate(dueDate) : "N/A";
-      },
-    },
-    {
-      header: "Due Date Progress",
-      accessor: "due_date_progress",
-      Cell: ({ row }) => {
-        const dueDate = new Date(row.original.due_date);
-        const currentDate = new Date();
-        const timeDiff = dueDate - currentDate;
-        const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
-        let color;
-        let message;
-
-        if (diffDays > 10) {
-          color = `linear-gradient(to right, #00ff00 ${100}%, #00ff00 ${100}%)`;
-          message = `${diffDays} Days Remaining`;
-        } else if (diffDays > 0) {
-          const percentage = (10 - diffDays) * 10;
-          color = `linear-gradient(to right, #ff0000 ${percentage}%, #00ff00 ${percentage}%)`;
-          message = `${diffDays} Days Remaining`;
-        } else {
-          color = `linear-gradient(to right, #ff0000 100%, #ff0000 100%)`;
-          message = `Overdue (${Math.abs(diffDays)} Days Past Due)`;
-        }
-
-        return (
-          <div className="flex items-center justify-between">
-            {(diffDays < 0 && (
-              <Tooltip title="Due date is crossed" placement="top-start">
-                <IconButton>
-                  <div className="icon-animate">
-                    <IoInformationCircleOutline />
-                  </div>
-                </IconButton>
-              </Tooltip>
-            )) || (
-              <Tooltip
-                title={`${diffDays} Days Remaining`}
-                placement="top-start"
-              >
-                <IconButton>
-                  <div className="icon-animate">
-                    <IoInformationCircleOutline />
-                  </div>
-                </IconButton>
-              </Tooltip>
-            )}
-
-            <div
-              style={{
-                position: "relative",
-                width: "100%",
-                height: "10px",
-                borderRadius: "5px",
-                background: color,
-              }}
-            ></div>
-          </div>
-        );
-      },
-    },
   ];
 
   const [filter, setFilter] = useState("");
@@ -214,6 +168,31 @@ const BMRForms = () => {
     const onTimeProgress = 100 - overdueProgress; // The remaining progress that's on time
     return { overdueProgress, onTimeProgress, isOverdue: daysRemaining < 0 };
   };
+
+  const fetchBMRData = () => {
+    axios
+      .get(`${BASE_URL}/bmr-record/get-all-bmr-records`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+        },
+      })
+      .then((response) => {
+        const sortedData = response.data.message.sort(
+          (a, b) =>
+            new Date(b.date_of_initiation) - new Date(a.date_of_initiation)
+        );
+        setBmrRecordsData(sortedData);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Error Fetching BMR");
+      });
+  };
+
+  useEffect(() => {
+    fetchBMRData();
+  }, []);
+
 
   return (
     <div className="flex flex-col p-3">
@@ -243,11 +222,6 @@ const BMRForms = () => {
                   </option>
                 ))}
               </select>
-              <div>
-                {" "}
-                {/* <pre>FormData: {JSON.stringify(formData, null, 2)}</pre>---- */}
-                {/* <pre>Selected BMR: {JSON.stringify(selectedBMR, null, 2)}</pre> */}
-              </div>
               <button
                 className="btn bg-[#2a323e] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#123e53] transition-all"
                 onClick={openModal}
@@ -261,7 +235,7 @@ const BMRForms = () => {
             <InitiateModal approvedBMR={approvedBMR} onClose={closeModal} />
           )}
 
-          <AtmTable columns={columns} data={filteredBMR} rowsPerPage={7} />
+          <AtmTable columns={columns}  data={bmrRecordsData} />
         </div>
       </main>
     </div>

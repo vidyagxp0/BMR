@@ -27,6 +27,7 @@ import Notifications from "./Pages/UserSide/Notifications/Notifications";
 import BMRForms from "./Pages/UserSide/pages/Process/Modals/BMRForms";
 import Analytics from "./Pages/UserSide/Analytics/Analytics";
 import Logs from "./Pages/UserSide/Logs/Logs";
+import BMRRecordsDetails from "./Pages/UserSide/pages/BMRRecordsDetails/BMRRecordsDetails";
 
 function App() {
   return (
@@ -162,6 +163,10 @@ function RouteGuard() {
         <Route
           path="/bmr_records"
           element={<ProtectedUserRoute element={<BMRRecords />} />}
+        />
+        <Route
+          path="/bmr_records/bmr_records_details/:record_id"
+          element={<ProtectedUserRoute element={<BMRRecordsDetails />} />}
         />
         <Route
           path="/user-notifications"
