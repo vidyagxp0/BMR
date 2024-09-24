@@ -12,7 +12,6 @@ import "react-toastify/dist/ReactToastify.css";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import { IoIosCreate } from "react-icons/io";
 import { AiOutlineAudit } from "react-icons/ai";
 import { BASE_URL } from "../../../../config.json";
 import PDF from "./PDF";
@@ -22,8 +21,6 @@ const BMRProcessDetails = ({ fieldData }) => {
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
-
-  // console.log(bmrFields, "0000000000000000000000000");
   const [tabs, setTabs] = useState([
     "Initiator Remarks",
     "Reviewer Remarks",
@@ -40,8 +37,6 @@ const BMRProcessDetails = ({ fieldData }) => {
   const [newFields, setNewFields] = useState({});
   const [newSection, setNewSection] = useState([]);
   const [section, setSection] = useState([]);
-
-  console.log(fieldData, "555555555555555555");
   const [fields, setFields] = useState({
     "Initiator Remarks": [
       {
@@ -58,7 +53,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       },
       {
         fieldName: "Initiator Comments",
-        field_type: "text",
+        field_type: "text-area",
         options: [],
         isMandatory: true,
       },
@@ -78,7 +73,7 @@ const BMRProcessDetails = ({ fieldData }) => {
       },
       {
         fieldName: "Reviewer Comments",
-        field_type: "text",
+        field_type: "text-area",
         options: [],
         isMandatory: true,
       },
@@ -98,15 +93,14 @@ const BMRProcessDetails = ({ fieldData }) => {
       },
       {
         fieldName: "Approver Comments",
-        field_type: "text",
+        field_type: "text-area",
         options: [],
         isMandatory: true,
       },
     ],
   });
-  console.log(fields, "fieldssssssssssssssss");
 
-  const [activeFlowTab, setActiveFlowTab] = useState("INITIATION");
+  const [activeFlowTab, setActiveFlowTab] = useState(flowoTabs[0]);
   const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
   const [activeSendFormTab, setActiveSendFormTab] = useState(null);
   const [isActiveTab, setIsActiveTab] = useState(0);
@@ -131,6 +125,7 @@ const BMRProcessDetails = ({ fieldData }) => {
   const handleGridChange = (tabName, rowIndex, columnName, value) => {
     setFields((prevFields) => {
       const updatedFields = { ...prevFields };
+
       const field = updatedFields[tabName].find(
         (fld) => fld.field_type === "grid"
       );
@@ -138,62 +133,9 @@ const BMRProcessDetails = ({ fieldData }) => {
       if (field) {
         field.gridData[rowIndex][columnName] = value;
       }
+
       return updatedFields;
     });
-  };
-
-  const renderGridTable = (tabName) => {
-    const field = fields[tabName]?.find((fld) => fld.field_type === "grid");
-    if (!field) return null;
-
-    return (
-      <div className="bg-white">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead>
-            <tr>
-              {field.acceptsMultiple.columns.map((column, idx) => (
-                <th
-                  key={idx}
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {column.name}
-                </th>
-              ))}
-              <th className="px-6 py-3"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {field.gridData.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {field.acceptsMultiple.columns.map((column, colIndex) => (
-                  <td key={colIndex} className="px-6 py-4 whitespace-nowrap">
-                    <input
-                      type="text"
-                      value={row[column.name] || ""}
-                      onChange={(e) =>
-                        handleGridChange(
-                          tabName,
-                          rowIndex,
-                          column.name,
-                          e.target.value
-                        )
-                      }
-                      className="border border-gray-300 p-2 w-full"
-                    />
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <button
-          onClick={() => handleAddRow(tabName)}
-          className="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Add Row
-        </button>
-      </div>
-    );
   };
 
   const userDetails = JSON.parse(localStorage.getItem("user-details"));
@@ -216,7 +158,7 @@ const BMRProcessDetails = ({ fieldData }) => {
         },
       })
       .then((response) => {
-        const bmrData = response.data.message;
+        const bmrData = response.data?.message;
         setData(bmrData);
         setNewTab(bmrData[0]?.BMR_Tabs || []);
         const sections = bmrData[0]?.BMR_Sections || [];
@@ -501,8 +443,20 @@ const BMRProcessDetails = ({ fieldData }) => {
     populateReviewerFields();
   }, [data]);
 
+  const formattedDateForInput = (dateString) => {
+    if (dateString === "NA" || !dateString) {
+      return ""; // Return an empty string if the date is not available
+    }
+
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
   return (
-    <div className="p-4 relative h-full bg-white">
+    <div className=" p-2 relative top-5 h-[55%] ">
       <header className="bg-[#2a323e] w-full shadow-lg flex justify-between items-center p-4 mb-4">
         <p className="text-lg text-gray-200 font-bold">BMR Process Details</p>
         <div className="flex space-x-2">
@@ -512,7 +466,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                 <IconButton>
                   <AiOutlineAudit
                     size={28}
-                    className="flex justify-center text-gray-50  hover:  items-center cursor-pointer "
+                    className="flex justify-center text-gray-50 items-center cursor-pointer "
                     onClick={() => {
                       navigate("/audit-trail", { state: data[0] });
                     }}
@@ -526,7 +480,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                   <AtmButton
                     label={newTab.length > 0 ? "Edit Form" : "Create Form"}
                     onClick={() => setShowForm("sendForm")}
-                    className="flex justify-center items-center cursor-pointer "
+                    className="bg-[#193948] hover:bg-[#122f3d] px-4 py-2"
                   />
                 </>
               )}
@@ -534,7 +488,6 @@ const BMRProcessDetails = ({ fieldData }) => {
           ) : showForm === "sendForm" ? (
             <>
               {/* Only show "Add Tab" button if no tab is added */}
-
               <AtmButton
                 label="Add Tab"
                 onClick={() => (
@@ -542,12 +495,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                   setUpdateTabModalOpen("add"),
                   setPopupAction("add-tab")
                 )}
-                className="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-300"
-                style={{
-                  backgroundColor: "#007bff", // Bright blue background color
-                  color: "#ffffff", // White text color
-                  border: "2px solid #0056b3", // Slightly darker blue border for definition
-                }}
+                className="bg-pink-700 hover:bg-pink-900 px-4 py-2"
               />
 
               {/* Show "Add Section" button only if a tab is active */}
@@ -560,15 +508,11 @@ const BMRProcessDetails = ({ fieldData }) => {
                       setUpdateSectionModalOpen("add-section"),
                       setPopupAction("add-section")
                     )}
-                    className="bg-teal-600 hover:bg-teal-800 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-300"
-                    style={{
-                      backgroundColor: "#004d40", // Teal color background
-                      color: "#ffffff", // White text color
-                      border: "2px solid #00796b", // Lighter teal border for definition
-                    }}
+                    className="bg-purple-700 hover:bg-purple-950 px-4 py-2"
                   />
                 </>
               )}
+
               {/* Show "Add Field" button only if a section is active */}
               {activeSection && (
                 <>
@@ -579,19 +523,15 @@ const BMRProcessDetails = ({ fieldData }) => {
                       setUpdateFieldModalOpen("add-field"),
                       setPopupAction("add-field")
                     )}
-                    className="bg-teal-600 hover:bg-teal-800 text-white px-4 py-2 rounded-lg shadow-md transition-colors duration-300"
-                    style={{
-                      backgroundColor: "#009688", // Teal color background
-                      color: "#ffffff", // White text color
-                      border: "2px solid #00796b", // Slightly darker teal border for definition
-                    }}
+                    className="bg-green-700 hover:bg-green-950 px-4 py-2"
                   />
                 </>
               )}
+
               <AtmButton
                 label="Back to Default"
                 onClick={() => setShowForm("default")}
-                className="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow-md transition-all duration-300"
+                className="bg-gray-500 hover:bg-gray-700 px-4 py-2"
               />
             </>
           ) : (
@@ -610,22 +550,15 @@ const BMRProcessDetails = ({ fieldData }) => {
             <>
               <AtmButton
                 label="Edit Field"
-                className="bg-cyan-500 hover:bg-cyan-700 text-white px-4 py-2 rounded-lg shadow-md transition-all duration-300"
+                className="bg-cyan-500 hover:bg-cyan-700"
                 onClick={() => (
                   setUpdateFieldModalOpen("edit-field"),
                   setIsAddFieldModalOpen(true)
                 )}
-                style={{
-                  border: "1px solid #0c4a6e", // Adds a subtle border for better definition
-                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Slightly larger shadow for depth
-                  fontWeight: "bold", // Bold text for emphasis
-                  textAlign: "center", // Center-align text
-                }}
               />
-
               <AtmButton
                 label="Delete Field"
-                className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg shadow-md transition-all duration-300"
+                className="bg-red-600 hover:bg-red-700"
                 onClick={() => (
                   setDeleteModalOpen(true), setDeleteItemType("field")
                 )}
@@ -701,7 +634,7 @@ const BMRProcessDetails = ({ fieldData }) => {
               className={`py-2 px-4 rounded border-2 border-black ${
                 activeDefaultTab === tab
                   ? "bg-[#2a323e]  text-[#ffffff]"
-                  : "bg-[#6f7070]  text-[#ffffff]"
+                  : "bg-[#777778]  text-[#ffffff]"
               }`}
             >
               {tab}
@@ -730,45 +663,64 @@ const BMRProcessDetails = ({ fieldData }) => {
       )}
 
       {showForm === "default" && (
-        <div className="relative h-screen ">
-          <div className="overflow-auto border border-gray-500 p-6 mb-16">
+        <div className="relative m-2">
+          <div className="p-3">
             {activeDefaultTab === "Initiator Remarks" &&
               fields["Initiator Remarks"]?.length > 0 && (
                 <div className="mb-20">
-                  <div className="grid grid-cols-2 gap-4  ">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
                     {fields["Initiator Remarks"].map((field, index) => (
                       <div
                         key={index}
-                        className="p-4 flex flex-col bg-white rounded-2xl shadow-lg border border-gray-300 mb-4"
+                        className="p-6 flex flex-col bg-white border border-gray-100 shadow-md rounded-lg  mb-4"
                       >
-                        <label className="text-lg font-extrabold text-gray-700 mb-2">
+                        <label className="text-lg font-semibold text-gray-800 mb-2">
                           {field.fieldName}
-                          {field.isMandatory && (
-                            <span className="text-red-500"> *</span>
-                          )}
+                          {activeFlowTab === "INITIATION" &&
+                            field.fieldName === "Initiator Comments" && (
+                              <span className="text-red-500">*</span>
+                            )}
                         </label>
+
                         {field.field_type === "text" && (
                           <input
                             type="text"
-                            className="border border-gray-600 p-2 w-full rounded"
-                            style={{ border: "1px solid gray", height: "30px" }}
-                            required={field.isMandatory}
+                            value={data[0]?.Initiator.name}
+                            className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 "
+                            style={{
+                              height: "40px",
+                            }}
+                            disabled
                           />
                         )}
+
                         {field.field_type === "date" && (
                           <input
                             type="date"
-                            className="border border-gray-600 p-2 w-full rounded mt-2"
-                            style={{ border: "1px solid gray", height: "30px" }}
-                            required={field.isMandatory}
-                          />
-                        )}
-                        {field.field_type === "text-area" && (
-                          <textarea
-                            className="border border-gray-600 p-2 w-full rounded mt-2"
-                            value={field.value || ""}
+                            value={formattedDateForInput(
+                              data[0]?.date_of_initiation
+                            )}
+                            className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400 "
                             required={field.isMandatory}
                             readOnly
+                          />
+                        )}
+
+                        {field.field_type === "text-area" && (
+                          <textarea
+                            className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400 "
+                            required={
+                              activeFlowTab === "INITIATION" &&
+                              field.fieldName === "Initiator Comments" &&
+                              field.isMandatory
+                            }
+                            readOnly={
+                              !(
+                                activeFlowTab === "INITIATION" &&
+                                field.fieldName === "Initiator Comments"
+                              )
+                            }
+                            rows={4}
                           />
                         )}
                       </div>
@@ -776,46 +728,142 @@ const BMRProcessDetails = ({ fieldData }) => {
                   </div>
                 </div>
               )}
-            {activeDefaultTab !== "Initiator Remarks" &&
+
+            {activeDefaultTab === "Reviewer Remarks" &&
+              fields[activeDefaultTab]?.map((section, secIndex) => {
+                return (
+                  <div key={secIndex} className="mb-20">
+                    <div className="p-6 flex flex-col bg-white border border-gray-200 shadow-md rounded-lg  mb-4">
+                      {section.section}
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      {section.fields?.map((field, index) => {
+                        return (
+                          <div
+                            key={index}
+                            className="p-6 flex flex-col bg-white shadow  border border-gray-200 rounded"
+                          >
+                            <label className="text-lg font-semibold text-gray-800 mb-2">
+                              {field.fieldName}
+                              {activeFlowTab === "UNDER REVIEW" &&
+                                field.fieldName === "Reviewer Comment" && (
+                                  <span className="text-red-500"> *</span>
+                                )}
+                            </label>
+                            {field.field_type === "text" && (
+                              <input
+                                type="text"
+                                className=" p-3 w-full bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 "
+                                style={{
+                                  // border: "1px solid #D1D5DB",
+                                  height: "30px",
+                                }}
+                                value={field.value || ""}
+                                disabled
+                              />
+                            )}
+                            {field.field_type === "date" && (
+                              <input
+                                type="date"
+                                value={formattedDateForInput(
+                                  data[0]?.reviewers?.map(
+                                    (date) => date?.date_of_review
+                                  )
+                                )}
+                                className=" p-2 w-full bg-gray-100  rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                style={{
+                                  // border: "1px solid #D1D5DB",
+                                  height: "30px",
+                                }}
+                                readOnly
+                              />
+                            )}
+                            {field.field_type === "text-area" && (
+                              <textarea
+                                className="border border-gray-300 p-2 w-full rounded mt-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                style={{ border: "1px solid #D1D5DB" }}
+                                required={
+                                  activeFlowTab === "UNDER REVIEW" &&
+                                  field.fieldName === "Reviewer Comment" &&
+                                  field.isMandatory
+                                }
+                                readOnly={
+                                  !(
+                                    activeFlowTab === "UNDER REVIEW" &&
+                                    field.fieldName === "Reviewer Comment"
+                                  )
+                                }
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+
+            {activeDefaultTab === "Approver Remarks" &&
               fields[activeDefaultTab]?.map((section, secIndex) => (
                 <div key={secIndex} className="mb-20">
-                  <div className="col-span-3 p-4 mt-4 rounded bg-gray-100 mb-5 font-semibold text-gray-700 border border-gray-300">
+                  <div className="p-6 flex flex-col bg-white border border-gray-200 shadow-md rounded-lg  mb-4">
                     {section.section}
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     {section.fields?.map((field, index) => (
                       <div
                         key={index}
-                        className="p-4 flex flex-col bg-white shadow border border-gray-300"
+                        className="p-6 flex flex-col bg-white shadow  border border-gray-200 rounded"
                       >
                         <label className="text-lg font-extrabold text-gray-700 mb-2">
                           {field.fieldName}
-                          {field.isMandatory && (
-                            <span className="text-red-500"> *</span>
-                          )}
+                          {activeFlowTab === "UNDER APPROVAL" &&
+                            field.fieldName === "Approver Comment" && (
+                              <span className="text-red-500"> *</span>
+                            )}
                         </label>
                         {field.field_type === "text" && (
                           <input
                             type="text"
-                            className="border border-gray-600 p-2 w-full rounded"
-                            style={{ border: "1px solid gray", height: "30px" }}
+                            className="border border-gray-300 p-2 w-full bg-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                            style={{
+                              // border: "1px solid #D1D5DB",
+                              height: "30px",
+                            }}
                             value={field.value || ""}
-                            required={field.isMandatory}
+                            disabled
                           />
                         )}
                         {field.field_type === "date" && (
                           <input
                             type="date"
-                            className="border border-gray-600 p-2 w-full rounded"
-                            style={{ border: "1px solid gray", height: "30px" }}
-                            required={field.isMandatory}
+                            value={formattedDateForInput(
+                              data[0]?.approvers?.map(
+                                (date) => date?.date_of_approval
+                              )
+                            )}
+                            className="border border-gray-300 bg-gray-100  p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                            style={{
+                              // border: "1px solid #D1D5DB",
+                              height: "30px",
+                            }}
+                            readOnly
                           />
                         )}
                         {field.field_type === "text-area" && (
                           <textarea
-                            className="border border-gray-600 p-2 w-full rounded mt-2"
-                            value={field.value || ""}
-                            required={field.isMandatory}
+                            className="border border-gray-300 p-2 w-full rounded mt-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                            required={
+                              activeFlowTab === "UNDER APPROVAL" &&
+                              field.fieldName === "Approver Comment" &&
+                              field.isMandatory
+                            }
+                            readOnly={
+                              !(
+                                activeFlowTab === "UNDER APPROVAL" &&
+                                field.fieldName === "Approver Comment"
+                              )
+                            }
                           />
                         )}
                       </div>
@@ -963,13 +1011,17 @@ const BMRProcessDetails = ({ fieldData }) => {
                       {section.section_name}
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 shadow-xl gap-4 px-5 py-[64px]">
+                  <div className="grid grid-cols-4 shadow-xl gap-4 px-5 py-[64px]">
                     {section.BMR_fields?.map((field, index) => {
                       return (
                         <div
                           key={index}
                           onClick={() => handleFieldClick(field)}
-                          className="p-4 rounded  "
+                          className={`p-4 rounded bg-gray-50 border border-gray-300 ${
+                            field.field_type === "grid"
+                              ? "col-span-12"
+                              : "col-span-2"
+                          }`}
                         >
                           <label className="text-base font-bold text-gray-900  flex gap-1 mb-2">
                             {field.label}
@@ -988,81 +1040,80 @@ const BMRProcessDetails = ({ fieldData }) => {
                             )}
                           </label>
 
-                          {/* Render input fields based on type */}
-
                           {field.field_type === "text" && (
-                            <div className="relative">
-                              <input
-                                placeholder={field.placeholder}
-                                type="text"
-                                style={{
-                                  border: "2px solid gray", // Apply inline border style
-                                  height: "48px",
-                                  width: "320px", // Adjust width as per requirement
-                                }}
-                                className="bg-white text-gray-800 placeholder-gray-500 p-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
-                                required={field.isMandatory}
-                                readOnly={field.isReadonly}
-                              />
-                            </div>
+                            <>
+                              <div className="relative">
+                                <input
+                                  placeholder={field.placeholder}
+                                  style={{
+                                    border: "1px solid gray",
+                                    height: "48px",
+                                  }}
+                                  type="text"
+                                  className="border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 p-3 w-full"
+                                  required={field.isMandatory}
+                                  readOnly={field.isReadonly}
+                                />
+                              </div>
+                            </>
                           )}
 
                           {field.field_type === "grid" && (
                             <div className="relative">
-                              <table className="table-auto w-full border border-gray-600 mb-4">
-                                <thead>
-                                  <tr>
-                                    {field?.acceptsMultiple?.columns?.map(
-                                      (column, idx) => {
-                                        console.log(column, "columns");
+                              {JSON.parse(field?.acceptsMultiple)?.columns
+                                ?.length > 0 && (
+                                <table className="table-auto w-full border border-gray-600 mb-4">
+                                  <thead>
+                                    <tr>
+                                      {JSON.parse(
+                                        field?.acceptsMultiple
+                                      )?.columns?.map((column, idx) => {
                                         return (
                                           <th
                                             key={idx}
                                             className="border border-gray-600 p-2"
                                           >
-                                            {column}
+                                            {column?.name || "No Name"}
                                           </th>
                                         );
-                                      }
-                                    )}
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {field?.gridData?.map((row, rowIndex) => (
-                                    <tr key={rowIndex}>
-                                      {field?.acceptsMultiple?.columns?.map(
-                                        (column, colIdx) => (
-                                          <td
-                                            key={colIdx}
-                                            className="border border-gray-600 p-2"
-                                          >
-                                            <input
-                                              type="text"
-                                              placeholder={column.placeholder}
-                                              value={row[column.name] || ""}
-                                              onChange={(e) =>
-                                                handleGridChange(
-                                                  activeDefaultTab,
-                                                  rowIndex,
-                                                  column.name,
-                                                  e.target.value
-                                                )
-                                              }
-                                              className="border border-gray-600 p-2 w-full rounded"
-                                            />
-                                          </td>
-                                        )
-                                      )}
+                                      })}
                                     </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                              <button
-                                onClick={() => handleAddRow(activeDefaultTab)}
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
-                              >
-                                Add Row
-                              </button>
+                                  </thead>
+                                  <tbody>
+                                    {field?.gridData?.map((row, rowIndex) => {
+                                      return (
+                                        <tr key={rowIndex}>
+                                          {field?.acceptsMultiple?.columns?.map(
+                                            (column, colIdx) => (
+                                              <td
+                                                key={colIdx}
+                                                className="border border-gray-600 p-2"
+                                              >
+                                                <input
+                                                  type="text"
+                                                  placeholder={
+                                                    column.placeholder
+                                                  }
+                                                  value={row[column.name] || ""}
+                                                  onChange={(e) =>
+                                                    handleGridChange(
+                                                      activeDefaultTab,
+                                                      rowIndex,
+                                                      column.name,
+                                                      e.target.value
+                                                    )
+                                                  }
+                                                  className="border border-gray-600 p-2 w-full rounded"
+                                                />
+                                              </td>
+                                            )
+                                          )}
+                                        </tr>
+                                      );
+                                    })}
+                                  </tbody>
+                                </table>
+                              )}
                             </div>
                           )}
 
@@ -1070,13 +1121,12 @@ const BMRProcessDetails = ({ fieldData }) => {
                             <div className="relative">
                               <input
                                 placeholder={field.placeholder}
-                                type="password"
                                 style={{
-                                  border: "2px solid gray", // Apply inline border style
+                                  border: "1px solid gray",
                                   height: "48px",
-                                  width: "320px", // Adjust width as per requirement
                                 }}
-                                className="pl-12 border border-gray-600 text-gray-600 p-2 w-full rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                type="password"
+                                className="border border-gray-600 text-gray-600 p-2 w-full rounded"
                                 required={field.isMandatory}
                                 readOnly={field.isReadonly}
                               />
@@ -1088,11 +1138,25 @@ const BMRProcessDetails = ({ fieldData }) => {
                               <input
                                 placeholder={field.placeholder}
                                 style={{
-                                  border: "2px solid gray", // Apply inline border style
+                                  border: "1px solid gray",
                                   height: "48px",
-                                  width: "320px", // Adjust width as per requirement
                                 }}
                                 type="date"
+                                className="border border-gray-600 p-2 w-full rounded"
+                                required={field.isMandatory}
+                                readOnly={field.isReadonly}
+                              />
+                            </div>
+                          )}
+                          {field.field_type === "time" && (
+                            <div className="relative">
+                              <input
+                                placeholder={field.placeholder}
+                                style={{
+                                  border: "1px solid gray",
+                                  height: "48px",
+                                }}
+                                type="time"
                                 className="border border-gray-600 p-2 w-full rounded"
                                 required={field.isMandatory}
                                 readOnly={field.isReadonly}
@@ -1105,9 +1169,8 @@ const BMRProcessDetails = ({ fieldData }) => {
                               <input
                                 placeholder={field.placeholder}
                                 style={{
-                                  border: "2px solid gray", // Apply inline border style
+                                  border: "1px solid gray",
                                   height: "48px",
-                                  width: "320px", // Adjust width as per requirement
                                 }}
                                 type="email"
                                 className="border border-gray-600 p-2 w-full rounded"
@@ -1122,9 +1185,8 @@ const BMRProcessDetails = ({ fieldData }) => {
                               <input
                                 placeholder={field.placeholder}
                                 style={{
-                                  border: "2px solid gray", // Apply inline border style
+                                  border: "1px solid gray",
                                   height: "48px",
-                                  width: "320px", // Adjust width as per requirement
                                 }}
                                 type="number"
                                 className="border border-gray-600 p-2 w-full rounded"
@@ -1135,53 +1197,39 @@ const BMRProcessDetails = ({ fieldData }) => {
                           )}
 
                           {field.field_type === "checkbox" && (
-                            <div className="relative flex items-center">
+                            <div className="relative">
                               <input
-                                type="checkbox"
+                                placeholder={field.placeholder}
                                 style={{
-                                  border: "2px solid gray", // Apply inline border style
-                                  height: "24px", // Adjust height for better visibility
-                                  width: "24px", // Adjust width to match height
-                                  borderRadius: "4px", // Rounded corners for a modern look
-                                  accentColor: "#4A90E2", // Custom checkbox color when checked
+                                  border: "1px solid gray",
+                                  height: "48px",
                                 }}
-                                className="focus:outline-none focus:ring-2 focus:ring-blue-500 checked:bg-blue-500 checked:border-transparent"
+                                type="checkbox"
+                                className="border border-gray-600 p-2 rounded"
                                 required={field.isMandatory}
                                 readOnly={field.isReadonly}
                               />
-                              <span className="ml-2 text-gray-600">
-                                {field.placeholder}
-                              </span>{" "}
-                              {/* Label for the checkbox */}
                             </div>
                           )}
 
                           {field.field_type === "dropdown" && (
                             <div className="relative">
                               <select
-                                className="border border-gray-600 p-3 pl-4 pr-10 rounded-lg bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="border border-gray-600 p-2 w-full rounded"
                                 style={{
-                                  border: "2px solid gray", // Apply inline border style
-                                  height: "48px", // Adjust height
-                                  width: "320px", // Adjust width
-                                  backgroundColor: "#f9f9f9", // Light background color for the dropdown
-                                  color: "#333", // Darker text color for better readability
-                                  fontSize: "16px", // Larger font size for readability
+                                  border: "1px solid gray",
+                                  height: "48px",
                                 }}
                                 required={field.isMandatory}
                               >
-                                {(Array.isArray(field?.acceptsMultiple)
-                                  ? field.acceptsMultiple
-                                  : []
-                                ).map((option, idx) => (
+                                {/* {field?.acceptsMultiple?.map((option, idx) => (
                                   <option key={idx} value={option}>
                                     {option}
                                   </option>
-                                ))}
+                                ))} */}
                               </select>
                             </div>
                           )}
-
                           {/* 
                           {field.field_type === "multi-select" && (
                             <div className="relative">

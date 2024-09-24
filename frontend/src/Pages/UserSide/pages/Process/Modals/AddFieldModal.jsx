@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import UserVerificationPopUp from "../../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
-
+import { BASE_URL } from "../../../../../config.json";
 const AddFieldModal = ({
   closeModal,
   addField,
