@@ -403,7 +403,7 @@ const AddFieldModal = ({
                     onChange={handleSelectChange}
                     value={fieldData.selectedValues}
                   >
-                    {fieldData.acceptsMultiple.rows?.map((option, idx) => (
+                    {fieldData.acceptsMultiple?.map((option, idx) => (
                       <option key={idx} value={option}>
                         {option}
                       </option>

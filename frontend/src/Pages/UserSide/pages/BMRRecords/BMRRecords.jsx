@@ -389,7 +389,7 @@ const BMRRecords = () => {
 
           <button
             className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none transition duration-200"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/bmr-forms")}
           >
             Exit
           </button>
@@ -433,6 +433,7 @@ const InputField = ({
         </Tooltip>
       )}
     </label>
+    
     <input
       type={type}
       placeholder={placeholder}
@@ -441,6 +442,7 @@ const InputField = ({
       className="w-full px-3 h-10 p-2 border-2 border-gray-500 rounded shadow-md focus:border-blue-500 transition duration-200"
       style={{ border: "1px solid gray" }}
     />
+
   </div>
 );
 

@@ -19,8 +19,9 @@ const InitiateModal = ({ approvedBMR, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-xl shadow-lg w-full max-w-6xl  flex flex-col overflow-hidden">
-        
-        <div className="flex justify-center gap-14 items-center p-5 bg-gradient-to-r from-[#294a59] to-[#053850]">
+        <div
+          className="flex justify-center gap-14 items-center p-5 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600"
+        >
           <h2 className="text-2xl font-bold text-white">Initiate BMR Record</h2>
           <button
             className="text-white text-2xl rounded-full p-2 focus:outline-none"
@@ -31,8 +32,11 @@ const InitiateModal = ({ approvedBMR, onClose }) => {
         </div>
 
         <div className="p-4 flex-1 overflow-y-auto">
-          <div className="mb-4 relative flex justify-center items-center w-full" >
-            <div className="relative w-[35%] rounded-lg shadow-lg" style={{border:"1px solid lightgray"}}>
+          <div className="mb-4 relative flex justify-center items-center w-full">
+            <div
+              className="relative w-[35%] rounded-lg shadow-lg"
+              style={{ border: "1px solid lightgray" }}
+            >
               {/* <span className="absolute top-1/2 left-80 transform -translate-y-1/2 text-[20px] text-gray-500">
                 <FcSearch />
               </span> */}
@@ -42,7 +46,7 @@ const InitiateModal = ({ approvedBMR, onClose }) => {
                 className="w-full p-3 pl-10 rounded-lg  focus:ring-2 focus:ring-green-600 focus:p-3"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                style={{border:"1px solid gray"}}
+                style={{ border: "1px solid gray" }}
               />
             </div>
           </div>
@@ -51,13 +55,10 @@ const InitiateModal = ({ approvedBMR, onClose }) => {
             {filteredBMR.map((item, index) => (
               <div
                 key={index}
-                className="px-4 py-2 bg-white hover:bg-blue-100 rounded-md cursor-pointer shadow-lg"
+                className="px-4 py-2 bg-white hover:bg-gray-100 rounded-md cursor-pointer shadow-lg"
                 onClick={() => handleOpenRecordModal(item)}
               >
-                <button
-                  className="text-gray-800 font-thin hover:font-extrabold "
-                 
-                >
+                <button className="text-gray-800 font-thin hover:font-extrabold ">
                   • {item.name}
                 </button>
               </div>
@@ -76,7 +77,6 @@ const InitiateModal = ({ approvedBMR, onClose }) => {
             Close
           </button>
         </div>
-
       </div>
     </div>
   );
