@@ -4,6 +4,7 @@ const { Op } = require("sequelize");
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const { canUserPrint } = require("../middlewares/print_control");
+const PrintControlAuditTrail = require("../models/print_control_audit_trail.model");
 
 // Create Print Control
 exports.createPrintControl = async (req, res) => {
@@ -36,15 +37,15 @@ exports.createPrintControl = async (req, res) => {
       });
     }
 
-    await PrintControl.create(
+    let newPC = await PrintControl.create(
       {
         role_id,
         user_id,
         initiator,
-        reviewers,
-        approvers,
+        reviewers: JSON.stringify(reviewers),
+        approvers: JSON.stringify(approvers),
         stage: 1,
-        status: "Under Initation",
+        status: "Under Initiation",
         daily,
         weekly,
         monthly,
@@ -53,16 +54,73 @@ exports.createPrintControl = async (req, res) => {
       { transaction: t }
     );
 
+    // Fields to be logged in the audit trail
+    const fieldsToLog = [
+      "role_id",
+      "user_id",
+      "initiator",
+      "daily",
+      "weekly",
+      "monthly",
+      "yearly",
+    ];
+    for (let field of fieldsToLog) {
+      let fieldValue = req.body[field];
+      if (fieldValue !== undefined) {
+        await PrintControlAuditTrail.create(
+          {
+            print_control_id: newPC.print_control_id,
+            changed_by: req.user.userId,
+            field_name: field,
+            previous_value: "Not Applicable",
+            new_value: fieldValue,
+            previous_status: "None",
+            new_status: "Under Initiation",
+            action: "Creation",
+          },
+          { transaction: t }
+        );
+      }
+    }
+
+    // Function to log reviewers and approvers
+    const logReviewersAndApprovers = async (arr, type) => {
+      for (const item of arr) {
+        await PrintControlAuditTrail.create(
+          {
+            print_control_id: newPC.print_control_id,
+            changed_by: req.user.userId,
+            field_name: `${type} details`,
+            previous_value: "Not Applicable",
+            new_value: JSON.stringify(item),
+            previous_status: "None",
+            new_status: "Under Initiation",
+            action: "Creation",
+          },
+          { transaction: t }
+        );
+      }
+    };
+
+    if (reviewers && reviewers.length > 0) {
+      await logReviewersAndApprovers(reviewers, "Reviewer");
+    }
+
+    if (approvers && approvers.length > 0) {
+      await logReviewersAndApprovers(approvers, "Approver");
+    }
+
     await t.commit();
     return res.status(201).json({
       error: false,
-      message: "Print Control Added Successfully",
+      message: "Print Control added successfully.",
     });
   } catch (error) {
     await t.rollback();
     return res.status(500).json({
       error: true,
-      message: "An error occurred while creating print control." + error,
+      message:
+        "An error occurred while creating print control: " + error.message,
     });
   }
 };
@@ -100,13 +158,58 @@ exports.updatePrintControl = async (req, res) => {
         isActive: true,
       },
     });
+
     if (!printControl) {
       return res
         .status(404)
         .json({ error: true, message: "Print control not found." });
     }
 
+    // Store the old values for comparison
+    const oldValues = printControl.toJSON();
+    const oldReviewers = JSON.parse(oldValues.reviewers || "[]");
+    const oldApprovers = JSON.parse(oldValues.approvers || "[]");
+
+    // Update the print control with the new values
     await printControl.update(updates, { transaction: t });
+
+    // Function to log changes in the audit trail
+    const logChange = async (field, oldValue, newValue) => {
+      if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
+        await PrintControlAuditTrail.create(
+          {
+            print_control_id: id,
+            changed_by: req.user.userId,
+            field_name: field,
+            previous_value: JSON.stringify(oldValue),
+            new_value: JSON.stringify(newValue),
+            previous_status: oldValues.status, // assuming 'status' is part of the printControl
+            new_status: updates.status || oldValues.status,
+            action: "Update",
+          },
+          { transaction: t }
+        );
+      }
+    };
+
+    // Check for changes in simple fields
+    for (const key in updates) {
+      if (
+        updates.hasOwnProperty(key) &&
+        !["reviewers", "approvers"].includes(key)
+      ) {
+        await logChange(key, oldValues[key], updates[key]);
+      }
+    }
+
+    // Special handling for reviewers and approvers if they're included in updates
+    if ("reviewers" in updates) {
+      await logChange("reviewers", oldReviewers, updates.reviewers);
+    }
+    if ("approvers" in updates) {
+      await logChange("approvers", oldApprovers, updates.approvers);
+    }
+
     await t.commit();
     return res.status(200).json({
       error: false,
@@ -116,7 +219,8 @@ exports.updatePrintControl = async (req, res) => {
     await t.rollback();
     return res.status(500).json({
       error: true,
-      message: "An error occurred while updating print control." + error,
+      message:
+        "An error occurred while updating print control: " + error.message,
     });
   }
 };
@@ -140,6 +244,19 @@ exports.deletePrintControl = async (req, res) => {
     }
 
     await printControl.update({ isActive: false }, { transaction: t });
+    await PrintControlAuditTrail.create(
+      {
+        print_control_id: id,
+        changed_by: req.user.userId,
+        field_name: 'Not Applicable',
+        previous_value: 'Not Applicable',
+        new_value: 'Not Applicable',
+        previous_status: oldValues.status, // assuming 'status' is part of the printControl
+        new_status: updates.status || oldValues.status,
+        action: "Delete",
+      },
+      { transaction: t }
+    );
     await t.commit();
     return res
       .status(200)
@@ -230,21 +347,21 @@ exports.SendPrintControlForReview = async (req, res) => {
       { transaction }
     );
 
-    // // Log the audit trail synchronously to ensure consistency within the transaction
-    // await FormAuditTrail.create(
-    //   {
-    //     bmr_id: bmr_id,
-    //     changed_by: req.user.userId,
-    //     previous_value: "Not Applicable",
-    //     new_value: "Not Applicable",
-    //     previous_status: "Under Initiation",
-    //     new_status: "Under Review",
-    //     declaration: declaration,
-    //     comments: comments,
-    //     action: "Send for Review",
-    //   },
-    //   { transaction }
-    // );
+    await PrintControlAuditTrail.create(
+      {
+        print_control_id: print_control_id,
+        changed_by: req.user.userId,
+        field_name: "Stage Change",
+        previous_value: "Not Applicable",
+        new_value: "Not Applicable",
+        previous_status: "Under Initiation",
+        new_status: "Under Review",
+        declaration: declaration,
+        comments: comments,
+        action: "Send for Review",
+      },
+      { transaction }
+    );
 
     await transaction.commit(); // Commit the transaction
 
@@ -357,21 +474,22 @@ exports.SendPrintControlfromReviewToOpen = async (req, res) => {
       { transaction }
     );
 
-    // // Log the audit trail synchronously to ensure consistency within the transaction
-    // await FormAuditTrail.create(
-    //   {
-    //     bmr_id: bmr_id,
-    //     changed_by: req.user.userId,
-    //     previous_value: "Not Applicable",
-    //     new_value: "Not Applicable",
-    //     previous_status: "Under Review",
-    //     new_status: "Under Initiation",
-    //     declaration: declaration,
-    //     comments: comments,
-    //     action: "Send from Review to Open",
-    //   },
-    //   { transaction }
-    // );
+    // Log the audit trail synchronously to ensure consistency within the transaction
+    await PrintControlAuditTrail.create(
+      {
+        print_control_id: print_control_id,
+        changed_by: req.user.userId,
+        field_name: "Stage Change",
+        previous_value: "Not Applicable",
+        new_value: "Not Applicable",
+        previous_status: "Under Review",
+        new_status: "Under Initiation",
+        declaration: declaration,
+        comments: comments,
+        action: "Send from Review to Open",
+      },
+      { transaction }
+    );
 
     // Commit the transaction
     await transaction.commit();
@@ -525,21 +643,22 @@ exports.SendPrintControlReviewToApproval = async (req, res) => {
       // Update the form and commit the transaction
       await Printcontrol.update(updateData, { transaction });
 
-      // // Log the audit trail synchronously to ensure consistency within the transaction
-      // await FormAuditTrail.create(
-      //   {
-      //     bmr_id: bmr_id,
-      //     changed_by: req.user.userId,
-      //     previous_value: "Not Applicable",
-      //     new_value: "Not Applicable",
-      //     previous_status: "Under Review",
-      //     new_status: "Under Approval",
-      //     declaration: declaration,
-      //     comments: comments,
-      //     action: "Send from Review to Approval",
-      //   },
-      //   { transaction }
-      // );
+      // Log the audit trail synchronously to ensure consistency within the transaction
+      await PrintControlAuditTrail.create(
+        {
+          print_control_id: print_control_id,
+          changed_by: req.user.userId,
+          field_name: "Stage Change",
+          previous_value: "Not Applicable",
+          new_value: "Not Applicable",
+          previous_status: "Under Review",
+          new_status: "Under Approval",
+          declaration: declaration,
+          comments: comments,
+          action: "Send from Review to Approval",
+        },
+        { transaction }
+      );
 
       await transaction.commit(); // Commit the transaction
 
@@ -572,21 +691,22 @@ exports.SendPrintControlReviewToApproval = async (req, res) => {
       // If not all reviewers have reviewed, simply update the reviewers' statuses
       await Printcontrol.update(updateData, { transaction });
 
-      // // Log the audit trail synchronously to ensure consistency within the transaction
-      // await FormAuditTrail.create(
-      //   {
-      //     bmr_id: bmr_id,
-      //     changed_by: req.user.userId,
-      //     previous_value: "Not Applicable",
-      //     new_value: "Not Applicable",
-      //     previous_status: "Under Review",
-      //     new_status: "Under Review",
-      //     declaration: declaration,
-      //     comments: comments,
-      //     action: "Send from Review to Approval",
-      //   },
-      //   { transaction }
-      // );
+      // Log the audit trail synchronously to ensure consistency within the transaction
+      await PrintControlAuditTrail.create(
+        {
+          print_control_id: print_control_id,
+          changed_by: req.user.userId,
+          field_name: "Stage Change",
+          previous_value: "Not Applicable",
+          new_value: "Not Applicable",
+          previous_status: "Under Review",
+          new_status: "Under Review",
+          declaration: declaration,
+          comments: comments,
+          action: "Send from Review to Approval",
+        },
+        { transaction }
+      );
 
       await transaction.commit(); // Commit the transaction
     }
@@ -688,20 +808,21 @@ exports.SendPrintControlfromApprovalToOpen = async (req, res) => {
     );
 
     // Log the audit trail synchronously to ensure consistency within the transaction
-    // await FormAuditTrail.create(
-    //   {
-    //     bmr_id: bmr_id,
-    //     changed_by: req.user.userId,
-    //     previous_value: "Not Applicable",
-    //     new_value: "Not Applicable",
-    //     previous_status: "Under Approval",
-    //     new_status: "Under Initiation",
-    //     declaration: declaration,
-    //     comments: comments,
-    //     action: "Send from Approval to Open",
-    //   },
-    //   { transaction }
-    // );
+    await PrintControlAuditTrail.create(
+      {
+        print_control_id: print_control_id,
+        changed_by: req.user.userId,
+        field_name: "Stage Change",
+        previous_value: "Not Applicable",
+        new_value: "Not Applicable",
+        previous_status: "Under Approval",
+        new_status: "Under Initiation",
+        declaration: declaration,
+        comments: comments,
+        action: "Send from Approval to Open",
+      },
+      { transaction }
+    );
 
     // Commit the transaction
     await transaction.commit();
@@ -847,20 +968,21 @@ exports.ApprovePrintControl = async (req, res) => {
     await Printcontrol.update(updateData, { transaction });
 
     // Log the audit trail synchronously to ensure consistency within the transaction
-    // await FormAuditTrail.create(
-    //   {
-    //     bmr_id: bmr_id,
-    //     changed_by: req.user.userId,
-    //     previous_value: "Not Applicable",
-    //     new_value: "Not Applicable",
-    //     previous_status: "Under Approval",
-    //     new_status: allApproved ? "Approved" : "Under Approval",
-    //     declaration: declaration,
-    //     comments: comments,
-    //     action: "Approve BMR form",
-    //   },
-    //   { transaction }
-    // );
+    await PrintControlAuditTrail.create(
+      {
+        print_control_id: print_control_id,
+        changed_by: req.user.userId,
+        field_name: "Stage Change",
+        previous_value: "Not Applicable",
+        new_value: "Not Applicable",
+        previous_status: "Under Approval",
+        new_status: allApproved ? "Approved" : "Under Approval",
+        declaration: declaration,
+        comments: comments,
+        action: "Approve BMR form",
+      },
+      { transaction }
+    );
 
     await transaction.commit();
     res.status(200).json({
