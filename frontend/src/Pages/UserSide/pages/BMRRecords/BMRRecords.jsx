@@ -30,16 +30,6 @@ const BMRRecords = () => {
     setShowVerificationModal(false);
   };
 
-  const handleAddRecordsClick = () => {
-    if (
-      recordData.bmr_id  
-    ) {
-      toast.error("Please fill all fields to add a new Record.");
-      return;
-    }
-
-    setShowVerificationModal(true);
-  };
   const dispatch = useDispatch();
   const [selectedBMR, setSelectedBMRState] = useState(
     location.state?.selectedBMR || {}
@@ -108,13 +98,9 @@ const BMRRecords = () => {
   const [approvers, setApprovers] = useState([]);
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
   const [isSelectedApprover, setIsSelectedApprover] = useState([]);
-
   const bmr_id = selectedBMR.bmr_id;
   const [initiatorName, setInitiatorName] = useState(null);
   const navigate = useNavigate();
-
-
-
 
   const handleVerificationSubmit = (verified) => {
     axios
@@ -152,20 +138,19 @@ const BMRRecords = () => {
         }
       )
       .then((response) => {
-        toast.success(response.data.message || "BMR added successfully!");
-        dispatch(addBmr(response.data.bmr));
+        toast.success(response.data.message || "BMR Records added successfully!")
         navigate(
-          `/process/processdetails/${response.data.message.split(" ")[3]}`,
+          `/bmr-forms`,
           {
             state: { bmr: response.data.bmr },
           }
         );
         setRecordData({ bmr_id: selectedBMR.bmr_id, reviewers: [], approvers: [] });
+        setFormDataState({ bmr_id: selectedBMR.bmr_id, reviewers: [], approvers: [] });
         setIsSelectedApprover([]);
         setIsSelectedReviewer([]);
         setTimeout(() => {
           closeUserVerifiedModal();
-          onClose();
         }, 1000);
       })
       .catch((err) => {
@@ -236,17 +221,6 @@ const BMRRecords = () => {
       });
   }, []);
 
-
-
-
-
-
-
-
-
-
-
-
   const fetchBMRData = () => {
     axios
       .get(`${BASE_URL}/bmr-form/get-a-bmr/${bmr_id}`, {
@@ -289,69 +263,7 @@ const BMRRecords = () => {
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
-  useEffect(() => {
-    const fetchUserRoles = async () => {
-      try {
-        const [reviewersResponse, approversResponse] = await Promise.all([
-          axios.post(
-            `${BASE_URL}/bmr-form/get-user-roles`,
-            { role_id: 3 },
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-                "Content-Type": "application/json",
-              },
-            }
-          ),
-          axios.post(
-            `${BASE_URL}/bmr-form/get-user-roles`,
-            { role_id: 4 },
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-                "Content-Type": "application/json",
-              },
-            }
-          ),
-        ]);
-        const reviewerOptions = [
-          { value: "select-all", label: "Select All" },
-          ...new Map(
-            reviewersResponse.data.message.map((role) => [
-              role.user_id,
-              {
-                value: role.user_id,
-                label: `${role.User.name}`,
-              },
-            ])
-          ).values(),
-        ];
-        setReviewers(reviewerOptions);
 
-        const approverOptions = [
-          { value: "select-all", label: "Select All" },
-          ...new Map(
-            approversResponse.data.message.map((role) => [
-              role.user_id,
-              {
-                value: role.user_id,
-                label: `${role.User.name}`,
-              },
-            ])
-          ).values(),
-        ];
-        setApprovers(approverOptions);
-      } catch (error) {
-        console.error("Error: ", error);
-      }
-    };
-
-    fetchUserRoles();
-  }, []);
-
-  // const formattedDate = new Date(selectedBMR.date_of_initiation)
-  //   .toISOString()
-  //   .split("T")[0];
   const handleDynamicFieldChange = (id, value, tab) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -393,6 +305,18 @@ const BMRRecords = () => {
       approvers: isSelectedApprover,
     });
   }, [isSelectedReviewer, isSelectedApprover]);
+
+  const handleAddRecordsClick = () => {
+    if (
+      isSelectedReviewer.length === 0 ||
+      isSelectedApprover.length === 0
+    ) {
+      toast.error("Please fill all fields to add a new Record.");
+      return;
+    }
+
+    setShowVerificationModal(true);
+  };
 
 
   return (

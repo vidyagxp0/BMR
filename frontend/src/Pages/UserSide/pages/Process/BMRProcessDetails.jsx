@@ -404,7 +404,6 @@ const BMRProcessDetails = ({ fieldData }) => {
   const populateReviewerFields = () => {
     if (data.length > 0) {
       const reviewers = data[0].reviewers || [];
-
       const reviewerFields = reviewers.flatMap((reviewer, idx) => [
         {
           section: `Reviewer ${idx + 1}`,
@@ -875,7 +874,9 @@ const BMRProcessDetails = ({ fieldData }) => {
 
           <div className="fixed bottom-36 right-[-10px] w-auto flex-col border-gray-300  flex gap-5">
             {data[0]?.stage === 1 &&
-              data[0]?.initiator === userDetails.userId && (
+              data[0]?.initiator === userDetails.userId &&
+              (
+                // newFields.length > 0 ? (
                 <AtmButton
                   label={"Send For Review"}
                   className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
@@ -884,6 +885,9 @@ const BMRProcessDetails = ({ fieldData }) => {
                     setPopupAction("sendFromOpenToReview"); // Set the action when opening the popup
                   }}
                 />
+              // ) : (
+              //   ""
+              // )
               )}
             {data[0]?.stage === 2 &&
               data[0]?.reviewers.some(
