@@ -74,7 +74,7 @@ function Messenger() {
                           ? chat.receiverId
                           : chat.senderId
                       }`,
-                      { state: user }
+                      { state: chat.Receiver }
                     );
                   }}
                 >

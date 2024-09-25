@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 
 function ChatWindow() {
@@ -9,14 +9,20 @@ function ChatWindow() {
   const socketRef = useRef();
   const location = useLocation();
   const userDetails = JSON.parse(localStorage.getItem("user-details"));
+  const { userId } = useParams();
 
   useEffect(() => {
     const fetchMessages = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:7000/message/messages/${location.state.user_id}`
+          `http://localhost:7000/message/messages/${userId}`,
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("user-token"),
+            },
+          }
         );
-        setMessages(res.data);
+        setMessages(res.data.message);
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
@@ -38,9 +44,10 @@ function ChatWindow() {
   const sendMessage = async () => {
     const newMessage = {
       sender: userDetails.userId,
-      receiver: location.state.user_id,
+      receiver: userId,
       message: message,
     };
+    messages.push(newMessage);
     socketRef.current.emit("sendMessage", newMessage);
     setMessage("");
   };
@@ -51,7 +58,7 @@ function ChatWindow() {
       <div>
         {messages.map((msg) => (
           <p key={msg.id}>
-            {msg.sender}: {msg.message}
+            {msg.senderId || msg.sender}: {msg.message}
           </p>
         ))}
       </div>
