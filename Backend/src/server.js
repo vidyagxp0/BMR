@@ -5,11 +5,13 @@ const userRoutes = require("./routes/user.routes");
 const bmrFormRoutes = require("./routes/bmr_form.routes");
 const bmrRecords = require("./routes/bmr_records.routes");
 const PrintControlRoutes = require("./routes/print_control.routes");
+const messageRoutes = require("./routes/messages.routes");
 const http = require("http");
 const cors = require("cors");
 const path = require("path");
 const helmet = require("helmet");
 const socketManager = require("./socket");
+const Message = require("./models/messages.model");
 
 const app = express();
 const server = http.createServer(app);
@@ -36,15 +38,51 @@ app.use("/user", userRoutes);
 app.use("/bmr-form", bmrFormRoutes);
 app.use("/bmr-record", bmrRecords);
 app.use("/print-control", PrintControlRoutes);
+app.use("/message", messageRoutes);
 
 const io = socketManager.init(server);
 
 io.on("connection", (socket) => {
   console.log("New client connected");
+
   socket.on("register", (userId) => {
-    console.log("User registered:", userId);
-    socket.join(userId.toString());
+    socket.join(userId.toString()); // Each user joins a room named after their userId
   });
+
+  socket.on("sendMessage", async (data) => {
+    try {
+      const newMessage = await Message.create({
+        senderId: data.sender,
+        receiverId: data.receiver,
+        message: data.message,
+      });
+      socket.to(data.receiver.toString()).emit("receiveMessage", {
+        sender: data.sender,
+        message: data.message,
+        messageId: newMessage.id,
+        time: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error("Error sending/receiving message:", error);
+    }
+  });
+
+  socket.on("getMessages", async (data) => {
+    try {
+      const messages = await Message.findAll({
+        where: {
+          [Op.or]: [
+            { senderId: data.userId, receiverId: data.otherUserId },
+            { senderId: data.otherUserId, receiverId: data.userId },
+          ],
+        },
+      });
+      socket.emit("loadMessages", messages);
+    } catch (error) {
+      console.error("Error loading messages:", error);
+    }
+  });
+
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });

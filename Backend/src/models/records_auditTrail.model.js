@@ -9,12 +9,12 @@ const RecordAuditTrail = sequelize.define("RecordAuditTrail", {
     primaryKey: true,
     autoIncrement: true,
   },
-  bmr_record_id: {
+  record_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
       model: BMR_Records,
-      key: "bmr_record_id",
+      key: "record_id",
     },
   },
   changed_by: {
@@ -62,10 +62,10 @@ RecordAuditTrail.belongsTo(User, { foreignKey: "changed_by" });
 User.hasMany(RecordAuditTrail, { foreignKey: "changed_by" });
 
 RecordAuditTrail.belongsTo(BMR_Records, {
-  foreignKey: "bmr_record_id",
+  foreignKey: "record_id",
 });
 BMR_Records.hasMany(RecordAuditTrail, {
-  foreignKey: "bmr_record_id",
+  foreignKey: "record_id",
 });
 
 module.exports = RecordAuditTrail;

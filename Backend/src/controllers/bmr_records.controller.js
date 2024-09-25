@@ -58,9 +58,9 @@ const getAllFieldsForBMR = async (bmr_id) => {
   bmrForm?.BMR_Tabs?.forEach((tab) => {
     tab?.BMR_sections?.forEach((section) => {
       section?.BMR_fields?.forEach((field) => {
-        if (field.acceptsMultiple) {
-          field.acceptsMultiple = JSON.parse(field.acceptsMultiple); // Parse JSON string into object/array
-        }
+        // if (field.acceptsMultiple) {
+        //   field.acceptsMultiple = JSON.parse(field.acceptsMultiple); // Parse JSON string into object/array
+        // }
         fields.push(field);
       });
     });
@@ -190,6 +190,8 @@ exports.createBmrRecord = async (req, res) => {
     });
   } catch (e) {
     await transaction.rollback();
+    console.log(e,'>>>>>>>>>>>>>>>');
+    
     res.status(500).json({
       error: true,
       message: `Error creating record: ${e.message}`,
@@ -380,7 +382,7 @@ exports.sendRecordForReview = async (req, res) => {
     // Log the audit trail synchronously to ensure consistency within the transaction
     await RecordAuditTrail.create(
       {
-        bmr_record_id: record_id,
+        record_id: record_id,
         changed_by: req.user.userId,
         field_name: "Stage Change",
         previous_value: "Not Applicable",
@@ -507,7 +509,7 @@ exports.sendFromReviewToOpen = async (req, res) => {
     // Log the audit trail synchronously to ensure consistency within the transaction
     await RecordAuditTrail.create(
       {
-        bmr_record_id: record_id,
+        record_id: record_id,
         changed_by: req.user.userId,
         field_name: "Stage Change",
         previous_value: "Not Applicable",
@@ -643,7 +645,7 @@ exports.sendFromReviewToApproval = async (req, res) => {
     // Log the audit trail synchronously to ensure consistency within the transaction
     await RecordAuditTrail.create(
       {
-        bmr_record_id: record_id,
+        record_id: record_id,
         changed_by: req.user.userId,
         field_name: "Stage Change",
         previous_value: "Not Applicable",
@@ -779,7 +781,7 @@ exports.sendFromApprovalToOpen = async (req, res) => {
     // Log the audit trail synchronously to ensure consistency within the transaction
     await RecordAuditTrail.create(
       {
-        bmr_record_id: record_id,
+        record_id: record_id,
         changed_by: req.user.userId,
         field_name: "Stage Change",
         previous_value: "Not Applicable",
@@ -860,7 +862,7 @@ exports.approveBMR = async (req, res) => {
 
     const record = await BMRRecord.findOne({
       where: {
-        bmr_record_id: record_id,
+        record_id: record_id,
         status: "Under Approval",
         isActive: true,
       },
@@ -911,7 +913,7 @@ exports.approveBMR = async (req, res) => {
     // Log the audit trail synchronously to ensure consistency within the transaction
     await RecordAuditTrail.create(
       {
-        bmr_record_id: record_id,
+        record_id: record_id,
         changed_by: req.user.userId,
         field_name: "Stage Change",
         previous_value: "Not Applicable",
