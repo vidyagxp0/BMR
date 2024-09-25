@@ -6,6 +6,7 @@ const BMR_section = require("../models/bmr_sections.model");
 const BMR_field = require("../models/bmr_fields.model");
 const { sequelize } = require("../config/db");
 const Mailer = require("../middlewares/mailer");
+const bcrypt = require('bcrypt')
 const RecordAuditTrail = require("../models/records_auditTrail.model");
 
 const getUserById = async (user_id) => {
@@ -351,9 +352,9 @@ exports.sendRecordForReview = async (req, res) => {
     }
 
     const record = await BMRRecord.findOne({
-      where: { id: record_id, status: "Initiation", isActive: true },
+      where: { record_id: record_id, isActive: true },
       transaction,
-    });
+    });    
 
     const form = await BMR.findOne({
       where: {
@@ -471,7 +472,7 @@ exports.sendFromReviewToOpen = async (req, res) => {
 
     // Find the record
     const record = await BMRRecord.findOne({
-      where: { id: record_id, status: "Under Review", isActive: true },
+      where: { record_id: record_id, isActive: true },
       transaction,
     });
 
@@ -590,7 +591,7 @@ exports.sendFromReviewToApproval = async (req, res) => {
     }
 
     const record = await BMRRecord.findOne({
-      where: { id: record_id, status: "Under Review", isActive: true },
+      where: { record_id: record_id, isActive: true },
       transaction,
     });
 
@@ -736,7 +737,7 @@ exports.sendFromApprovalToOpen = async (req, res) => {
 
     // Find the record
     const record = await BMRRecord.findOne({
-      where: { id: record_id, status: "Under Approval", isActive: true },
+      where: { record_id: record_id, isActive: true },
       transaction,
     });
 
@@ -863,7 +864,6 @@ exports.approveBMR = async (req, res) => {
     const record = await BMRRecord.findOne({
       where: {
         record_id: record_id,
-        status: "Under Approval",
         isActive: true,
       },
       transaction,
