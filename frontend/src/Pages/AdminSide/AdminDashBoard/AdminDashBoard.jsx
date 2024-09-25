@@ -12,7 +12,7 @@ import { ToastContainer, toast } from "react-toastify";
 import UpdateUser from "../Modals/UpdateUserModal";
 import "react-toastify/dist/ReactToastify.css";
 import ResetPasswordModal from "../Modals/ResetPasswordModal";
-import {BASE_URL} from "../../../config.json"
+import { BASE_URL } from "../../../config.json";
 
 const AdminDashBoard = () => {
   const navigate = useNavigate();
@@ -36,13 +36,13 @@ const AdminDashBoard = () => {
       Cell: ({ row }) => {
         const user = row.original;
         return (
-          <div className="flex space-x-2a">
+          <div className="flex space-x-4">
             <button
               onClick={() => {
                 setSelectedUser(user);
                 setShowViewPermissions(true);
               }}
-              className="bg-gradient-to-r from-teal-500 to-teal-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-teal-600 hover:to-teal-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-[#403f3f] to-[#3f4348] text-white px-4 py-2 rounded-lg shadow-lg hover:bg-opacity-90 transition-transform duration-300 ease-in-out hover:scale-105"
             >
               View Permissions
             </button>
@@ -52,7 +52,7 @@ const AdminDashBoard = () => {
                 setSelectedUser(user);
                 setShowEditUser(true);
               }}
-              className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-indigo-600 hover:to-indigo-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-[#403f3f] to-[#3f4348] text-white px-4 py-2 rounded-lg shadow-lg hover:bg-opacity-90 transition-transform duration-300 ease-in-out hover:scale-105"
             >
               Edit
             </button>
@@ -62,7 +62,7 @@ const AdminDashBoard = () => {
                 setSelectedUser(user);
                 setResetPassword(true);
               }}
-              className="bg-gradient-to-r from-orange-500 to-orange-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-orange-600 hover:to-orange-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-[#403f3f] to-[#3f4348] text-white px-4 py-2 rounded-lg shadow-lg hover:bg-opacity-90 transition-transform duration-300 ease-in-out hover:scale-105"
             >
               Reset Password
             </button>
@@ -72,8 +72,7 @@ const AdminDashBoard = () => {
                 setSelectedUser(user);
                 setShowDeleteUser(true);
               }}
-              className="bg-gradient-to-r from-red-500 to-red-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
-            >
+              className="bg-gradient-to-r from-[#403f3f] to-[#3f4348] text-white px-4 py-2 rounded-lg shadow-lg hover:bg-opacity-90 transition-transform duration-300 ease-in-out hover:scale-105">
               Delete
             </button>
           </div>

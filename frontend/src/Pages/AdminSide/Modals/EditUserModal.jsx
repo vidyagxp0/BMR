@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { fetchUsers } from "../../../userSlice";
 import UserVerificationPopUp from "../../../Components/UserVerificationPopUp/UserVerificationPopUp";
-import {BASE_URL} from "../../../config.json"
+import { BASE_URL } from "../../../config.json";
 
 const modalStyle = {
   position: "absolute",
@@ -103,16 +103,12 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
     };
 
     axios
-      .put(
-        `${BASE_URL}/user/edit-user/${user.user_id}`,
-        updatedFormData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
-          },
-        }
-      )
+      .put(`${BASE_URL}/user/edit-user/${user.user_id}`, updatedFormData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
+        },
+      })
       .then((response) => {
         console.log("API Response: ", response.data);
         toast.success("User Details Updated Successfully");
@@ -155,6 +151,10 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
       ...formData,
       rolesArray: selectedOptions || [],
     });
+  };
+
+  const handleCancel = () => {
+    onClose();
   };
 
   if (!user) return null;
@@ -210,16 +210,26 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
               fullWidth
               className="mt-2"
             />
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              disabled={!isButtonEnabled}
-              sx={{ mt: 2 }}
+            <Box
+              sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}
             >
-              Update
-            </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={!isButtonEnabled}
+              >
+                Update
+              </Button>
+              <Button
+                type="button"
+                variant="outlined"
+                color="secondary"
+                onClick={handleCancel}
+              >
+                Cancel
+              </Button>
+            </Box>
           </form>
         </Box>
       </Box>
