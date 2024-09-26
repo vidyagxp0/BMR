@@ -11,7 +11,7 @@ import { formattedDate } from "../../../../AtmComponents/Helper";
 import { toast, ToastContainer } from "react-toastify";
 import { AiOutlineSearch } from "react-icons/ai";
 import "react-toastify/dist/ReactToastify.css";
-import {BASE_URL} from "../../../../config.json"
+import { BASE_URL } from "../../../../config.json";
 import { IconButton, Tooltip } from "@mui/material";
 import { IoInformationCircleOutline } from "react-icons/io5";
 
@@ -217,7 +217,7 @@ const BMRProcess = () => {
                 setSelectedUser(user);
                 setIsEditModalOpen(true);
               }}
-              className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 rounded-full shadow-lg hover:from-blue-500 hover:to-blue-600 transition duration-300 ease-in-out transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-[#403f3f] to-[#3f4348] text-white px-4 py-2 rounded-full shadow-lg hover:from-blue-500 hover:to-blue-600 transition duration-300 ease-in-out transform hover:-translate-y-1"
             >
               Edit
             </button>
