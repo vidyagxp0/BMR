@@ -707,6 +707,7 @@ const BMRProcessDetails = ({ fieldData }) => {
 
                         {field.field_type === "text-area" && (
                           <textarea
+                          value={data[0]?.initiatorComment}
                             className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400 "
                             required={
                               activeFlowTab === "INITIATION" &&

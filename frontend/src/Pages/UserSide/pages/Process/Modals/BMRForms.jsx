@@ -155,7 +155,7 @@ const BMRForms = () => {
         <div className="w-full">
           <div className="flex items-center justify-center m-3">
             <div className="w-full flex items-center justify-between">
-              <label className="text-gray-700 font-bold">BMR</label>
+              <label className="text-gray-700 font-bold">RECORDS</label>
               <select
                 id="options"
                 name="options"

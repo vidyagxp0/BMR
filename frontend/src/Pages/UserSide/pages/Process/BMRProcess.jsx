@@ -17,7 +17,7 @@ import { IoInformationCircleOutline } from "react-icons/io5";
 
 const BMRProcess = () => {
   const [data, setData] = useState([]);
-  // console.log(data, "000000000000000000");
+  console.log(data, "000000000000000000");
   const [activeTab, setActiveTab] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);

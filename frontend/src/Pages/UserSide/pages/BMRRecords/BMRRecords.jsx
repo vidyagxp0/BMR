@@ -4,7 +4,6 @@ import Select from "react-select";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import BMRForms from "../Process/Modals/BMRForms";
 import { useDispatch } from "react-redux";
 import { setFormData, setSelectedBMR } from "../../../../../src/userSlice";
 import { BASE_URL } from "../../../../config.json";
@@ -19,12 +18,12 @@ const BMRRecords = () => {
     new Date().toISOString().split("T")[0]
   );
 
-  const [recordData , setRecordData]= useState({
-    bmr_id :"",
-    reviewers :[],
-    approvers :[],
-    data:[]
-  })
+  const [recordData, setRecordData] = useState({
+    bmr_id: "",
+    reviewers: [],
+    approvers: [],
+    data: {},
+  });
 
   const closeUserVerifiedModal = () => {
     setShowVerificationModal(false);
@@ -106,10 +105,10 @@ const BMRRecords = () => {
     axios
       .post(
         `${BASE_URL}/bmr-record/create-bmr-record`,
-       
+
         {
-          data :recordData.data,
-          bmr_id : selectedBMR.bmr_id,
+          data: recordData.data,
+          bmr_id: selectedBMR.bmr_id,
           reviewers: isSelectedReviewer.map((reviewer) => ({
             reviewerId: reviewer.value,
             status: "pending",
@@ -117,7 +116,7 @@ const BMRRecords = () => {
             date_of_review: "NA",
             comment: null,
           })),
-            approvers: isSelectedApprover.map((approver) => ({
+          approvers: isSelectedApprover.map((approver) => ({
             approverId: approver.value,
             status: "pending",
             approver: approver.label,
@@ -138,15 +137,22 @@ const BMRRecords = () => {
         }
       )
       .then((response) => {
-        toast.success(response.data.message || "BMR Records added successfully!")
-        navigate(
-          `/bmr-forms`,
-          {
-            state: { bmr: response.data.bmr },
-          }
+        toast.success(
+          response.data.message || "BMR Records added successfully!"
         );
-        setRecordData({ bmr_id: selectedBMR.bmr_id, reviewers: [], approvers: [] });
-        setFormDataState({ bmr_id: selectedBMR.bmr_id, reviewers: [], approvers: [] });
+        navigate(`/bmr-forms`, {
+          state: { bmr: response.data.bmr },
+        });
+        setRecordData({
+          bmr_id: selectedBMR.bmr_id,
+          reviewers: [],
+          approvers: [],
+        });
+        setFormDataState({
+          bmr_id: selectedBMR.bmr_id,
+          reviewers: [],
+          approvers: [],
+        });
         setIsSelectedApprover([]);
         setIsSelectedReviewer([]);
         setTimeout(() => {
@@ -307,17 +313,13 @@ const BMRRecords = () => {
   }, [isSelectedReviewer, isSelectedApprover]);
 
   const handleAddRecordsClick = () => {
-    if (
-      isSelectedReviewer.length === 0 ||
-      isSelectedApprover.length === 0
-    ) {
+    if (isSelectedReviewer.length === 0 || isSelectedApprover.length === 0) {
       toast.error("Please fill all fields to add a new Record.");
       return;
     }
 
     setShowVerificationModal(true);
   };
-
 
   return (
     <div className="w-full h-full flex items-center justify-center ">
@@ -525,7 +527,7 @@ const InputField = ({
         </Tooltip>
       )}
     </label>
-    
+
     <input
       type={type}
       placeholder={placeholder}
@@ -534,7 +536,6 @@ const InputField = ({
       className="w-full px-3 h-10 p-2 border-2 border-gray-500 rounded shadow-md focus:border-blue-500 transition duration-200"
       style={{ border: "1px solid gray" }}
     />
-
   </div>
 );
 
