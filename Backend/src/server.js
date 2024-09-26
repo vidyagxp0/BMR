@@ -18,7 +18,7 @@ const server = http.createServer(app);
 
 app.use(
   cors({
-    origin: "*", // Ensure this matches the client's origin in production
+    origin: "*", // Allowing all origins for CORS (be sure this is secure as per your needs)
     credentials: true,
   })
 );
@@ -46,7 +46,7 @@ io.on("connection", (socket) => {
   console.log("New client connected");
 
   socket.on("register", (userId) => {
-    socket.join(userId.toString()); // Each user joins a room named after their userId
+    socket.join(userId.toString());
   });
 
   socket.on("sendMessage", async (data) => {
@@ -56,30 +56,9 @@ io.on("connection", (socket) => {
         receiverId: data.receiver,
         message: data.message,
       });
-      socket.to(data.receiver.toString()).emit("receiveMessage", {
-        sender: data.sender,
-        message: data.message,
-        messageId: newMessage.id,
-        time: new Date().toISOString(),
-      });
+      socket.to(data.receiver.toString()).emit("receiveMessage", newMessage);
     } catch (error) {
       console.error("Error sending/receiving message:", error);
-    }
-  });
-
-  socket.on("getMessages", async (data) => {
-    try {
-      const messages = await Message.findAll({
-        where: {
-          [Op.or]: [
-            { senderId: data.userId, receiverId: data.otherUserId },
-            { senderId: data.otherUserId, receiverId: data.userId },
-          ],
-        },
-      });
-      socket.emit("loadMessages", messages);
-    } catch (error) {
-      console.error("Error loading messages:", error);
     }
   });
 
@@ -88,10 +67,10 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(config.development.PORT, "0.0.0.0", async () => {
+server.listen(config.development.PORT, "0.0.0.0", () => {
   connectToDB()
     .then(() => {
-      console.log("Server is running at port: " + config.development.PORT);
+      console.log(`Server is running at port: ${config.development.PORT}`);
     })
     .catch((e) => {
       console.log("Error in database connection", e);
