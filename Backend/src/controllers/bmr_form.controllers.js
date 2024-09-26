@@ -194,7 +194,7 @@ exports.postBMR = async (req, res) => {
     // Send success response
     res.status(200).json({
       error: false,
-      message: `BMR with id ${bmr?.bmr_id} Created successfully`,
+      message: `BMR with id ${bmr?.bmr_id} created successfully.`,
     });
   } catch (e) {
     await transaction.rollback();
@@ -212,7 +212,7 @@ exports.postBMRTab = async (req, res) => {
   if (!password || !declaration) {
     return res
       .status(401)
-      .json({ error: true, message: "Invalid email or password." });
+      .json({ error: true, message: "Password and declaration are required." });
   }
 
   const transaction = await sequelize.transaction(); // Start a transaction
@@ -227,7 +227,7 @@ exports.postBMRTab = async (req, res) => {
       await transaction.rollback();
       return res
         .status(401)
-        .json({ error: true, message: "Invalid email or password." });
+        .json({ error: true, message: "User not found or inactive." });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -235,7 +235,7 @@ exports.postBMRTab = async (req, res) => {
       await transaction.rollback();
       return res
         .status(401)
-        .json({ error: true, message: "Invalid email or password." });
+        .json({ error: true, message: "Invalid password." });
     }
 
     // Check for missing fields
@@ -243,7 +243,7 @@ exports.postBMRTab = async (req, res) => {
       await transaction.rollback();
       return res.status(400).json({
         error: true,
-        message: "Please provide proper details.",
+        message: "BMR ID and tab name are required.",
       });
     }
 
@@ -329,7 +329,7 @@ exports.postBMRSection = async (req, res) => {
   if (!password || !declaration) {
     return res
       .status(401)
-      .json({ error: true, message: "Invalid email or password." });
+      .json({ error: true, message: "Password and declaration are required." });
   }
 
   const transaction = await sequelize.transaction(); // Start a transaction
@@ -344,7 +344,7 @@ exports.postBMRSection = async (req, res) => {
       await transaction.rollback();
       return res
         .status(401)
-        .json({ error: true, message: "Invalid email or password." });
+        .json({ error: true, message: "User not found or inactive." });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -352,11 +352,11 @@ exports.postBMRSection = async (req, res) => {
       await transaction.rollback();
       return res
         .status(401)
-        .json({ error: true, message: "Invalid email or password." });
+        .json({ error: true, message: "Invalid password." });
     }
 
     // Validate provided details
-    if (!bmr_id || !bmr_tab_id || !section_name || !limit) {
+    if (!bmr_id || !bmr_tab_id || !section_name || limit == null) {
       await transaction.rollback();
       return res.status(400).json({
         error: true,
@@ -422,7 +422,6 @@ exports.postBMRSection = async (req, res) => {
 
     await transaction.commit(); // Commit the transaction
 
-    // Send success response
     return res.status(200).json({
       error: false,
       message: "BMR Section created successfully!",
@@ -448,11 +447,10 @@ exports.postBMRField = async (req, res) => {
     helpText,
     minValue,
     maxValue,
-    order,
     isVisible,
     isRequired,
     isReadOnly,
-    acceptsMultiple, // This will now potentially hold either options or grid definitions
+    acceptsMultiple, // This can hold either options or grid definitions
     password,
     declaration,
     comments,
@@ -462,7 +460,7 @@ exports.postBMRField = async (req, res) => {
   if (!password || !declaration) {
     return res
       .status(401)
-      .json({ error: true, message: "Invalid email or password." });
+      .json({ error: true, message: "Password and declaration are required." });
   }
 
   const transaction = await sequelize.transaction(); // Start a transaction
@@ -477,7 +475,7 @@ exports.postBMRField = async (req, res) => {
       await transaction.rollback();
       return res
         .status(401)
-        .json({ error: true, message: "Invalid email or password." });
+        .json({ error: true, message: "User not found or inactive." });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -485,7 +483,7 @@ exports.postBMRField = async (req, res) => {
       await transaction.rollback();
       return res
         .status(401)
-        .json({ error: true, message: "Invalid email or password." });
+        .json({ error: true, message: "Invalid password." });
     }
 
     // Check for required fields
@@ -493,7 +491,7 @@ exports.postBMRField = async (req, res) => {
       await transaction.rollback();
       return res.status(400).json({
         error: true,
-        message: "Please provide proper details.",
+        message: "All required field details must be provided.",
       });
     }
 
@@ -560,7 +558,6 @@ exports.postBMRField = async (req, res) => {
         helpText: helpText,
         minValue: minValue,
         maxValue: maxValue,
-        order: order,
         isVisible: isVisible,
         isRequired: isRequired,
         isReadOnly: isReadOnly,
@@ -596,7 +593,6 @@ exports.postBMRField = async (req, res) => {
 
     await transaction.commit(); // Commit the transaction
 
-    // Send success response
     return res.status(200).json({
       error: false,
       message: "BMR Field created successfully!",
@@ -1029,7 +1025,6 @@ exports.editBMRField = async (req, res) => {
     helpText,
     minValue,
     maxValue,
-    order,
     isVisible,
     isRequired,
     isReadOnly,
@@ -1043,7 +1038,7 @@ exports.editBMRField = async (req, res) => {
   if (!password || !declaration) {
     return res
       .status(401)
-      .json({ error: true, message: "Invalid email or password." });
+      .json({ error: true, message: "Password and declaration are required." });
   }
 
   const transaction = await sequelize.transaction(); // Start a transaction
@@ -1059,7 +1054,7 @@ exports.editBMRField = async (req, res) => {
       await transaction.rollback();
       return res
         .status(401)
-        .json({ error: true, message: "Invalid email or password." });
+        .json({ error: true, message: "User not found or inactive." });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -1067,10 +1062,10 @@ exports.editBMRField = async (req, res) => {
       await transaction.rollback();
       return res
         .status(401)
-        .json({ error: true, message: "Invalid email or password." });
+        .json({ error: true, message: "Invalid password." });
     }
 
-    // Validate required fields
+    // Check for required fields
     if (
       !bmr_id ||
       !bmr_tab_id ||
@@ -1081,7 +1076,7 @@ exports.editBMRField = async (req, res) => {
       await transaction.rollback();
       return res.status(400).json({
         error: true,
-        message: "Please provide proper details.",
+        message: "Please provide all required field details.",
       });
     }
 
@@ -1147,7 +1142,6 @@ exports.editBMRField = async (req, res) => {
         helpText: helpText,
         minValue: minValue,
         maxValue: maxValue,
-        order: order,
         isVisible: isVisible,
         isRequired: isRequired,
         isReadOnly: isReadOnly,
@@ -1902,6 +1896,7 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
       ...reviewer,
       status: "pending",
       comment: null,
+      date_of_review: "NA",
     }));
 
     // Update the form details
@@ -1915,32 +1910,23 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
     );
 
     // Log the audit trail synchronously to ensure consistency within the transaction
-    try {
-      await FormAuditTrail.create(
-        {
-          bmr_id: bmr_id,
-          changed_by: req.user.userId,
-          previous_value: "Not Applicable",
-          new_value: "Not Applicable",
-          previous_status: "Under Review",
-          new_status: "Under Initiation",
-          declaration: declaration,
-          comments: comments,
-          action: "Send from Review to Open",
-        },
-        { transaction }
-      );
-    } catch (auditError) {
-      console.error("Failed to log audit trail:", auditError.message);
-      await transaction.rollback();
-      return res.status(500).json({
-        error: true,
-        message: `Error logging audit trail: ${auditError.message}`,
-      });
-    }
+    await FormAuditTrail.create(
+      {
+        bmr_id: bmr_id,
+        changed_by: req.user.userId,
+        previous_value: "Not Applicable",
+        new_value: "Not Applicable",
+        previous_status: "Under Review",
+        new_status: "Under Initiation",
+        declaration: declaration,
+        comments: comments,
+        action: "Send from Review to Open",
+      },
+      { transaction }
+    );
 
-    // Commit the transaction before sending the email
-    await transaction.commit(); // Commit the transaction
+    // Commit the transaction
+    await transaction.commit();
 
     // Prepare mail data for the initiator
     const initiator = await getUserById(form.initiator);
@@ -1967,7 +1953,9 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
     };
 
     // Send email to the initiator asynchronously
-    Mailer.sendEmail("reminderInitiator", mailData).catch((emailError) => {
+    const emailPromise =
+      Mailer.sendEmail("reminderInitiator", mailData) || Promise.resolve();
+    emailPromise.catch((emailError) => {
       console.error("Failed to send email to initiator:", emailError.message);
     });
 
@@ -1976,8 +1964,8 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
       message: "BMR status successfully changed from review to initiation",
     });
   } catch (error) {
-    // Rollback the transaction only if it hasn't been committed yet
-    if (!transaction.finished) {
+    console.error("Error during BMR operation:", error.message);
+    if (transaction && !transaction.finished) {
       await transaction.rollback();
     }
     return res.status(500).json({
@@ -1990,17 +1978,15 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
 exports.SendBMRReviewToApproval = async (req, res) => {
   const { bmr_id, reviewComment, password, declaration, comments } = req.body;
 
-  // Validate required fields
   if (!password || !declaration) {
     return res
       .status(401)
       .json({ error: true, message: "Invalid email or password." });
   }
 
-  const transaction = await sequelize.transaction(); // Start a transaction
+  const transaction = await sequelize.transaction();
 
   try {
-    // Authenticate the user
     const user = await User.findOne({
       where: { user_id: req.user.userId, isActive: true },
       transaction,
@@ -2013,7 +1999,6 @@ exports.SendBMRReviewToApproval = async (req, res) => {
         .json({ error: true, message: "Invalid email or password." });
     }
 
-    // Retrieve the BMR form
     const form = await BMR.findOne({
       where: { bmr_id, isActive: true },
       transaction,
@@ -2032,7 +2017,6 @@ exports.SendBMRReviewToApproval = async (req, res) => {
       });
     }
 
-    // Check if the user is assigned as a reviewer and if they have already reviewed
     let alreadyReviewed = false;
     const updatedReviewers = form.reviewers.map((reviewer) => {
       if (reviewer.reviewerId === user.user_id) {
@@ -2040,7 +2024,12 @@ exports.SendBMRReviewToApproval = async (req, res) => {
           alreadyReviewed = true;
           return reviewer;
         } else {
-          return { ...reviewer, status: "reviewed", comment: reviewComment };
+          return {
+            ...reviewer,
+            status: "reviewed",
+            comment: reviewComment,
+            date_of_review: new Date(),
+          };
         }
       }
       return reviewer;
@@ -2062,7 +2051,6 @@ exports.SendBMRReviewToApproval = async (req, res) => {
         .json({ error: true, message: "You have already reviewed this BMR." });
     }
 
-    // Check if all reviewers have completed their review
     const allReviewed = updatedReviewers.every(
       (reviewer) => reviewer.status === "reviewed"
     );
@@ -2225,6 +2213,7 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
       ...reviewer,
       status: "pending",
       comment: null, // Optionally reset the comment
+      date_of_approval: "NA",
     }));
 
     const updatedApprovers = form.approvers.map((approver) => ({
@@ -2245,29 +2234,20 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
     );
 
     // Log the audit trail synchronously to ensure consistency within the transaction
-    try {
-      await FormAuditTrail.create(
-        {
-          bmr_id: bmr_id,
-          changed_by: req.user.userId,
-          previous_value: "Not Applicable",
-          new_value: "Not Applicable",
-          previous_status: "Under Approval",
-          new_status: "Under Initiation",
-          declaration: declaration,
-          comments: comments,
-          action: "Send from Approval to Open",
-        },
-        { transaction }
-      );
-    } catch (auditError) {
-      console.error("Failed to log audit trail:", auditError.message);
-      await transaction.rollback();
-      return res.status(500).json({
-        error: true,
-        message: `Error logging audit trail: ${auditError.message}`,
-      });
-    }
+    await FormAuditTrail.create(
+      {
+        bmr_id: bmr_id,
+        changed_by: req.user.userId,
+        previous_value: "Not Applicable",
+        new_value: "Not Applicable",
+        previous_status: "Under Approval",
+        new_status: "Under Initiation",
+        declaration: declaration,
+        comments: comments,
+        action: "Send from Approval to Open",
+      },
+      { transaction }
+    );
 
     // Commit the transaction
     await transaction.commit();
@@ -2298,7 +2278,9 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
     };
 
     // Send email to the initiator asynchronously
-    Mailer.sendEmail("reminderInitiator", mailData).catch((emailError) => {
+    const emailPromise =
+      Mailer.sendEmail("reminderInitiator", mailData) || Promise.resolve();
+    emailPromise.catch((emailError) => {
       console.error("Failed to send email to initiator:", emailError.message);
     });
 
@@ -2307,7 +2289,7 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
       message: "BMR status successfully changed from approval to initiation",
     });
   } catch (error) {
-    // Rollback the transaction only if it hasn't been committed yet
+    console.error("Error during BMR operation:", error.message);
     if (!transaction.finished) {
       await transaction.rollback();
     }
@@ -2321,7 +2303,6 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
 exports.ApproveBMR = async (req, res) => {
   const { bmr_id, approvalComment, password, declaration, comments } = req.body;
 
-  // Validate required fields
   if (!password || !declaration) {
     return res
       .status(401)
@@ -2331,7 +2312,6 @@ exports.ApproveBMR = async (req, res) => {
   const transaction = await sequelize.transaction(); // Start a transaction
 
   try {
-    // Authenticate the user
     const user = await User.findOne({
       where: { user_id: req.user.userId, isActive: true },
       transaction,
@@ -2344,7 +2324,6 @@ exports.ApproveBMR = async (req, res) => {
         .json({ error: true, message: "Invalid email or password." });
     }
 
-    // Retrieve the BMR form
     const form = await BMR.findOne({
       where: { bmr_id, isActive: true },
       transaction,
@@ -2356,7 +2335,6 @@ exports.ApproveBMR = async (req, res) => {
     }
 
     if (form.stage !== 3) {
-      // Ensure the BMR is at the correct stage for approval
       await transaction.rollback();
       return res.status(400).json({
         error: true,
@@ -2364,7 +2342,6 @@ exports.ApproveBMR = async (req, res) => {
       });
     }
 
-    // Check if the user is assigned as an approver and if they have already approved
     let alreadyApproved = false;
     const updatedApprovers = form.approvers.map((approver) => {
       if (approver.approverId === user.user_id) {
@@ -2372,7 +2349,12 @@ exports.ApproveBMR = async (req, res) => {
           alreadyApproved = true;
           return approver; // Return existing approver details if already approved
         } else {
-          return { ...approver, status: "approved", comment: approvalComment }; // Update approval details
+          return {
+            ...approver,
+            status: "approved",
+            comment: approvalComment,
+            date_of_approval: new Date(),
+          }; // Update approval details
         }
       }
       return approver;
@@ -2394,7 +2376,6 @@ exports.ApproveBMR = async (req, res) => {
         .json({ error: true, message: "You have already approved this BMR." });
     }
 
-    // Check if all approvers have completed their approval
     const allApproved = updatedApprovers.every(
       (approver) => approver.status === "approved"
     );
@@ -2424,7 +2405,6 @@ exports.ApproveBMR = async (req, res) => {
       { transaction }
     );
 
-    // Commit the transaction if all goes well
     await transaction.commit();
     res.status(200).json({
       error: false,
@@ -2672,9 +2652,7 @@ exports.getUserNotifications = async (req, res) => {
 
 exports.readAUserNotification = async (req, res) => {
   try {
-    const notificationIds = req.body.notification_ids; // Assuming notification_ids is an array
-
-    // Create an update statement using Sequelize's `in` operator
+    const notificationIds = req.body.notification_ids;
     const updateResult = await Notifications.update(
       { isRead: true },
       {
@@ -2682,6 +2660,7 @@ exports.readAUserNotification = async (req, res) => {
           notification_id: {
             [Op.in]: notificationIds,
           },
+          isRead: false,
         },
       }
     );
@@ -2689,7 +2668,7 @@ exports.readAUserNotification = async (req, res) => {
     if (updateResult[0] > 0) {
       res.send({ message: "Notifications marked as read" });
     } else {
-      res.send({ message: "No notifications found to update" });
+      res.send({ message: "No unread notifications found to update" });
     }
   } catch (error) {
     res.status(500).send({

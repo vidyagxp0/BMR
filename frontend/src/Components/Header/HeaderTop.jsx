@@ -7,7 +7,7 @@ import {
   FaHeadset,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { FaPeopleLine } from "react-icons/fa6";
+import { FaPeopleLine, FaMessage } from "react-icons/fa6";
 import socketIOClient from "socket.io-client";
 import "./Header.css";
 import "./HeaderTop.css";
@@ -128,10 +128,15 @@ function HeaderTop() {
               <span className="link-name text-white">Board Members</span>
             </Link>
 
-            <Link
-              to="/about"
-              className="link-item mt-8 flex items-center space-x-2"
-            >
+            <Link to="/messenger" className="link-item mt-5 ">
+              <FaMessage className="text-white text-2xl" />
+              <span className="link-name">Messenger</span>
+            </Link>
+            <Link to="/boardOfDirectors" className="link-item mt-5 ">
+              <FaPeopleLine className="text-white text-2xl" />
+              <span className="link-name">Board Members</span>
+            </Link>
+            <Link to="/about" className="link-item mt-8 items-center space-x-2">
               <FaGlobe className="text-white text-2xl" />
               <span className="link-name text-white">About</span>
             </Link>
