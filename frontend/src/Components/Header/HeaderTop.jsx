@@ -120,19 +120,11 @@ function HeaderTop() {
           </div>
         </div> */}
 
-            <Link
-              to="/boardOfDirectors"
-              className="link-item mt-5 flex items-center space-x-2"
-            >
-              <FaPeopleLine className="text-white text-2xl mt-3" />
-              <span className="link-name text-white">Board Members</span>
-            </Link>
-
-            <Link to="/messenger" className="link-item mt-5 ">
+            <Link to="/messenger" className="link-item mt-8 ">
               <FaMessage className="text-white text-2xl" />
               <span className="link-name">Messenger</span>
             </Link>
-            <Link to="/boardOfDirectors" className="link-item mt-5 ">
+            <Link to="/boardOfDirectors" className="link-item mt-8 ">
               <FaPeopleLine className="text-white text-2xl" />
               <span className="link-name">Board Members</span>
             </Link>

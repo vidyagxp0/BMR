@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { BASE_URL } from "../../../config.json";
 
 function Messenger() {
   const [chats, setChats] = useState([]);
@@ -10,7 +11,7 @@ function Messenger() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:7000/message/get-recent-chats", {
+      .get(`${BASE_URL}/message/get-recent-chats`, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("user-token"),
         },
@@ -26,7 +27,7 @@ function Messenger() {
   useEffect(() => {
     // Fetch all users using axios
     axios
-      .get("http://localhost:7000/user/get-all-users", {
+      .get(`${BASE_URL}/user/get-all-users`, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("user-token"),
         },

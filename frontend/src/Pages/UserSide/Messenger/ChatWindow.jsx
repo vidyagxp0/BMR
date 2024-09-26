@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import { useLocation, useParams } from "react-router-dom";
 import axios from "axios";
+import { BASE_URL } from "../../../config.json";
 
 function ChatWindow() {
   const [message, setMessage] = useState("");
@@ -15,7 +16,7 @@ function ChatWindow() {
     const fetchMessages = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:7000/message/messages/${userId}`,
+          `${BASE_URL}/message/messages/${userId}`,
           {
             headers: {
               Authorization: "Bearer " + localStorage.getItem("user-token"),
@@ -31,7 +32,7 @@ function ChatWindow() {
     fetchMessages();
 
     // Initialize socket connection
-    socketRef.current = io.connect("http://localhost:7000");
+    socketRef.current = io.connect(`${BASE_URL}`);
     socketRef.current.on("receiveMessage", (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
