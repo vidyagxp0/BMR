@@ -404,7 +404,6 @@ const BMRProcessDetails = ({ fieldData }) => {
   const populateReviewerFields = () => {
     if (data.length > 0) {
       const reviewers = data[0].reviewers || [];
-
       const reviewerFields = reviewers.flatMap((reviewer, idx) => [
         {
           section: `Reviewer ${idx + 1}`,
