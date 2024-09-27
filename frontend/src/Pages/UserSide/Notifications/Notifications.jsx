@@ -2,42 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import socketIOClient from "socket.io-client";
 import { formatDistanceToNow } from "date-fns";
-// import { isToday, isThisWeek } from 'date-fns';
 import "./Notifications.css"; // Import CSS file for styling
-import {BASE_URL} from "../../../config.json"
+import { BASE_URL } from "../../../config.json";
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const userDetails = JSON.parse(localStorage.getItem("user-details"));
   const [socket, setSocket] = useState(null);
-
-  // const notifications2 = [
-  //   {
-  //     title: "assignReviewer",
-  //     data: { bmrName: "BMR 123" },
-  //     createdAt: new Date().toISOString(),
-  //   },
-  //   {
-  //     title: "assignApprover",
-  //     data: { bmrName: "BMR 456" },
-  //     createdAt: new Date().toISOString(),
-  //   },
-  //   {
-  //     title: "reminderReviewer",
-  //     data: { bmrName: "BMR 789" },
-  //     createdAt: new Date().toISOString(),
-  //   },
-  //   {
-  //     title: "reminderApprover",
-  //     data: { bmrName: "BMR 101" },
-  //     createdAt: new Date().toISOString(),
-  //   },
-  //   {
-  //     title: "reminderInitiator",
-  //     data: { bmrName: "BMR 202" },
-  //     createdAt: new Date().toISOString(),
-  //   },
-  // ];
 
   useEffect(() => {
     setSocket(socketIOClient(`${BASE_URL}/`));

@@ -15,7 +15,7 @@ const AddUser = () => {
   const navigate = useNavigate();
 
   // Capture the logged-in user's information
-  const loggedInUser = useSelector((state) => state.auth.user); // Assuming user info is stored in auth slice
+  const loggedInUser = useSelector((state) => state.auth?.user); // Assuming user info is stored in auth slice
 
   const [formData, setFormData] = useState({
     name: "",

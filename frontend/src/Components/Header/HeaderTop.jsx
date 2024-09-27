@@ -16,7 +16,9 @@ import { BASE_URL } from "../../config.json";
 function HeaderTop() {
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
+  // const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [socket, setSocket] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     setSocket(socketIOClient(`${BASE_URL}/`));
@@ -32,18 +34,15 @@ function HeaderTop() {
       socket.on("new_notification", () => {
         setUnreadCount((prev) => prev + 1);
       });
+      // socket.on("updateUnreadCount", (count) => {
+      //   setUnreadMessageCount(count);
+      // });
       return () => {
         socket.off("new_notification");
+        // socket.off("updateUnreadCount");
       };
     }
   }, [socket]);
-  const [openItems, setOpenItems] = useState({});
-  const [User, setUser] = useState(null);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-
-  const handleLogoutClick = () => {
-    setShowLogoutModal(true);
-  };
 
   const handleLogout = () => {
     localStorage.removeItem("user-token");
@@ -59,21 +58,6 @@ function HeaderTop() {
   const confirmLogout = () => {
     handleLogout();
     handleCloseModal();
-  };
-
-  const toggleItem = (id) => {
-    setOpenItems((prevState) => ({
-      ...prevState,
-      [id]: !prevState[id],
-    }));
-  };
-
-  const Each = ({ render, of }) => of.map((item, index) => render(item, index));
-
-  const isParentActive = (children) => {
-    // Implement logic to determine if any child link is active
-    // e.g., based on current path or some other condition
-    return children.some((child) => child.link === location.pathname);
   };
 
   return (
@@ -102,27 +86,15 @@ function HeaderTop() {
                 </span>
               )}
             </Link>
-            {/* <div className="center">
-          <div className="inputContainer border-2 border-gray-500 w-96">
-            <div className="inputInnerLeft">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="#1a9e66"
-                width={"25"}
-                height={"25"}
-              >
-                <path d="M18.031 16.6168L22.3137 20.8995L20.8995 22.3137L16.6168 18.031C15.0769 19.263 13.124 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2C15.968 2 20 6.032 20 11C20 13.124 19.263 15.0769 18.031 16.6168ZM16.0247 15.8748C17.2475 14.6146 18 12.8956 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18C12.8956 18 14.6146 17.2475 15.8748 16.0247L16.0247 15.8748Z"></path>
-              </svg>
-            </div>
-            <input type="search" placeholder="Search..." />
-            <button className="search-button">Search</button>
-          </div>
-        </div> */}
 
             <Link to="/messenger" className="link-item mt-8 ">
               <FaMessage className="text-white text-2xl" />
               <span className="link-name">Messenger</span>
+              {/* {unreadMessageCount > 0 && (
+                <span className="absolute -top-2 left-6 bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
+                  {unreadMessageCount}
+                </span>
+              )} */}
             </Link>
             <Link to="/boardOfDirectors" className="link-item mt-8 ">
               <FaPeopleLine className="text-white text-2xl" />
