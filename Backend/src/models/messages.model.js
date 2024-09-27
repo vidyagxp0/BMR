@@ -15,12 +15,15 @@ const Message = sequelize.define("Message", {
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  isRead: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
-User.hasMany(Message, { foreignKey: 'senderId', as: 'SentMessages' });
-User.hasMany(Message, { foreignKey: 'receiverId', as: 'ReceivedMessages' });
-Message.belongsTo(User, { foreignKey: 'senderId', as: 'Sender' });
-Message.belongsTo(User, { foreignKey: 'receiverId', as: 'Receiver' });
-
+User.hasMany(Message, { foreignKey: "senderId", as: "SentMessages" });
+User.hasMany(Message, { foreignKey: "receiverId", as: "ReceivedMessages" });
+Message.belongsTo(User, { foreignKey: "senderId", as: "Sender" });
+Message.belongsTo(User, { foreignKey: "receiverId", as: "Receiver" });
 
 module.exports = Message;

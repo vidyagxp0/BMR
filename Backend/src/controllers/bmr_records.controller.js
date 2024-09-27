@@ -6,7 +6,7 @@ const BMR_section = require("../models/bmr_sections.model");
 const BMR_field = require("../models/bmr_fields.model");
 const { sequelize } = require("../config/db");
 const Mailer = require("../middlewares/mailer");
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt");
 const RecordAuditTrail = require("../models/records_auditTrail.model");
 
 const getUserById = async (user_id) => {
@@ -191,7 +191,6 @@ exports.createBmrRecord = async (req, res) => {
     });
   } catch (e) {
     await transaction.rollback();
-    console.log(e,'>>>>>>>>>>>>>>>');
     
     res.status(500).json({
       error: true,
@@ -293,8 +292,109 @@ exports.updateBMRRecord = async (req, res) => {
   }
 };
 
+exports.deleteBMRRecord = async (req, res) => {
+  const bmrRecordId = req.params.id;
+  const { password, declaration, comments } = req.body;
+
+  // Validate password and declaration before starting the transaction
+  if (!password || !declaration) {
+    return res
+      .status(401)
+      .json({ error: true, message: "Invalid email or password." });
+  }
+
+  const transaction = await sequelize.transaction(); // Start a transaction
+
+  try {
+    const user = await User.findOne({
+      where: { user_id: req.user.userId, isActive: true },
+      transaction,
+    });
+
+    if (!user) {
+      await transaction.rollback();
+      return res
+        .status(401)
+        .json({ error: true, message: "Invalid email or password." });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      await transaction.rollback();
+      return res
+        .status(401)
+        .json({ error: true, message: "Invalid email or password." });
+    }
+
+    // Check if the BMR exists and is active
+    const BmrRecord = await BMRRecord.findOne({
+      where: { record_id: bmrRecordId, isActive: true },
+      transaction,
+    });
+
+    if (!BmrRecord) {
+      await transaction.rollback();
+      return res.status(404).json({
+        error: true,
+        message: "BMR record not found",
+      });
+    }
+
+    // Mark the BMR as inactive
+    await BMRRecord.update(
+      { isActive: false },
+      {
+        where: { record_id: bmrRecordId },
+        transaction,
+      }
+    );
+
+    // Log audit trail synchronously to ensure consistency within the transaction
+    try {
+      await RecordAuditTrail.create(
+        {
+          record_id: bmrRecordId,
+          field_name: "Not Applicable",
+          changed_by: req.user.userId,
+          previous_value: "Active",
+          new_value: "Inactive",
+          previous_status: "Under Initiation",
+          new_status: "Under Initiation",
+          declaration: declaration,
+          comments: comments,
+          action: "BMR Record Deleted",
+        },
+        { transaction }
+      );
+    } catch (auditError) {
+      console.error("Failed to log audit trail:", auditError.message);
+      await transaction.rollback();
+      return res.status(500).json({
+        error: true,
+        message: `Error logging audit trail: ${auditError.message}`,
+      });
+    }
+
+    await transaction.commit(); // Commit the transaction
+
+    res.json({
+      error: false,
+      message: "BMR Record deleted successfully",
+    });
+  } catch (err) {
+    await transaction.rollback(); // Rollback the transaction on error
+    res.status(500).json({
+      error: true,
+      message: `Error deleting BMR Record: ${err.message}`,
+    });
+  }
+};
+
 exports.getAllBMRRecords = async (req, res) => {
   BMRRecord.findAll({
+    where: {
+      isActive: true,
+    },
     include: [
       {
         model: BMR,
@@ -354,7 +454,7 @@ exports.sendRecordForReview = async (req, res) => {
     const record = await BMRRecord.findOne({
       where: { record_id: record_id, isActive: true },
       transaction,
-    });    
+    });
 
     const form = await BMR.findOne({
       where: {
