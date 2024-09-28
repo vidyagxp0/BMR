@@ -51,6 +51,9 @@ function HeaderTop() {
     navigate("/");
   };
 
+  console.log(";;;;;;;;;;");
+  
+
   const handleCloseModal = () => {
     setShowLogoutModal(false);
   };
