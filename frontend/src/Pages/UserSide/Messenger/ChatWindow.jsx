@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import io from "socket.io-client";
+import socketIOClient from "socket.io-client";
 import { useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../../../config.json";
@@ -7,7 +7,7 @@ import { BASE_URL } from "../../../config.json";
 function ChatWindow() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const socketRef = useRef();
+  const [socket, setSocket] = useState(null);
   const location = useLocation();
   const userDetails = JSON.parse(localStorage.getItem("user-details"));
   const { userId } = useParams();
@@ -15,32 +15,39 @@ function ChatWindow() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await axios.get(
-          `${BASE_URL}/message/messages/${userId}`,
-          {
-            headers: {
-              Authorization: "Bearer " + localStorage.getItem("user-token"),
-            },
-          }
-        );
+        const res = await axios.get(`${BASE_URL}/message/messages/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+          },
+        });
+
         setMessages(res.data.message);
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
     };
-
     fetchMessages();
+  }, []);
 
-    // Initialize socket connection
-    socketRef.current = io.connect(`${BASE_URL}`);
-    socketRef.current.on("receiveMessage", (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
-
+  useEffect(() => {
+    setSocket(socketIOClient(`${BASE_URL}/`));
     return () => {
-      socketRef.current.disconnect();
+      if (socket) socket.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    if (socket) {
+      socket.emit("register", userDetails.userId);
+      socket.on("receiveMessage", (message) => {
+        console.log(message);
+        setMessages((prevMessages) => [...prevMessages, message]);
+      });
+      return () => {
+        socket.off("receiveMessage");
+      };
+    }
+  }, [socket]);
 
   const sendMessage = async () => {
     const newMessage = {
@@ -49,13 +56,13 @@ function ChatWindow() {
       message: message,
     };
     messages.push(newMessage);
-    socketRef.current.emit("sendMessage", newMessage);
+    socket.emit("sendMessage", newMessage);
     setMessage("");
   };
 
   return (
     <div>
-      <h1>Chat with {location.state.name}</h1>
+      <h1>Chat with {location.state?.name}</h1>
       <div>
         {messages.map((msg) => (
           <p key={msg.id}>

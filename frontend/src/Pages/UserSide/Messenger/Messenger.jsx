@@ -13,7 +13,7 @@ function Messenger() {
     axios
       .get(`${BASE_URL}/message/get-recent-chats`, {
         headers: {
-          Authorization: "Bearer " + localStorage.getItem("user-token"),
+          Authorization: "Bearer" + localStorage.getItem("user-token"),
         },
       })
       .then((response) => {
@@ -35,7 +35,9 @@ function Messenger() {
       .then((response) => {
         console.log(response.data.response);
 
-        setAllUsers(response.data.response);
+        let filteredUserArray = response.data.response.filter(user=>user.user_id !== userDetails.userId)
+
+        setAllUsers(filteredUserArray);
       })
       .catch((error) => {
         console.error("Error fetching users:", error);

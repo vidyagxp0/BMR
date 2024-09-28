@@ -9,11 +9,15 @@ import { BASE_URL } from "../../../../../config.json";
 import AtmTable from "../../../../../AtmComponents/AtmTable";
 import { toast } from "react-toastify";
 import { formattedDate } from "../../../../../AtmComponents/Helper";
-
+import DeleteRecordModal from "../../BMRRecords/DeleteRecordModal";
 const BMRForms = () => {
   const [approvedBMR, setApprovedBMR] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [bmrRecordsData, setBmrRecordsData] = useState([]);
+  console.log("<*><*><*>",bmrRecordsData)
+  const [showDeleteRecord, setShowDeleteRecord] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  console.log(selectedRecord,"selectedRecords")
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -50,8 +54,8 @@ const BMRForms = () => {
         const record_id = row.original.record_id;
         const formattedrecordId =
           record_id < 10
-            ? `${row.original.BMR.name} 000${record_id}`
-            : `${row.original.BMR.name} 00${record_id}`;
+            ? `${row.original.BMR?.name} 000${record_id}`
+            : `${row.original.BMR?.name} 00${record_id}`;
         return (
           <>
             <span
@@ -73,7 +77,7 @@ const BMRForms = () => {
       header: "BMR Name",
       accessor: "name",
       Cell: ({ row }) => {
-        return <>{row.original.BMR.name}</>;
+        return <>{row?.original?.BMR?.name}</>;
       },
     },
 
@@ -81,7 +85,7 @@ const BMRForms = () => {
       header: "Initiator Name",
       accessor: "initiator_name",
       Cell: ({ row }) => {
-        return <>{row.original.InitiatorUser.name}</>;
+        return <>{row?.original?.InitiatorUser?.name}</>;
       },
     },
     {
@@ -110,6 +114,28 @@ const BMRForms = () => {
     {
       header: "Status",
       accessor: "status",
+    },
+    {
+      header: "Actions",
+      accessor: "actions",
+      Cell: ({ row }) => {
+        const user = row.original;
+        return (
+          <div className="flex space-x-2">
+            
+
+            <button
+              onClick={() => {
+                setSelectedRecord(user);
+                setShowDeleteRecord(true);
+              }}
+              className="bg-gradient-to-r from-red-500 to-red-500 text-white px-4 py-2 rounded-full shadow-lg hover:from-red-500 hover:to-red-600 transition duration-300 ease-in-out transform hover:-translate-y-1"
+            >
+              Delete
+            </button>
+          </div>
+        );
+      },
     },
   ];
 
@@ -185,6 +211,14 @@ const BMRForms = () => {
           )}
 
           <AtmTable columns={columns} data={bmrRecordsData} />
+          {showDeleteRecord && (
+        <DeleteRecordModal
+          user={selectedRecord}                                                             
+          onClose={() => setShowDeleteRecord(false)}
+          id={selectedRecord?.record_id}
+          setData = {setBmrRecordsData}
+        />
+      )}
         </div>
       </main>
     </div>
