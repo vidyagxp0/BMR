@@ -7,7 +7,7 @@ import {
   FaHeadset,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { FaPeopleLine } from "react-icons/fa6";
+import { FaPeopleLine, FaMessage } from "react-icons/fa6";
 import socketIOClient from "socket.io-client";
 import "./Header.css";
 import "./HeaderTop.css";
@@ -16,7 +16,9 @@ import { BASE_URL } from "../../config.json";
 function HeaderTop() {
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
+  // const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [socket, setSocket] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     setSocket(socketIOClient(`${BASE_URL}/`));
@@ -32,18 +34,15 @@ function HeaderTop() {
       socket.on("new_notification", () => {
         setUnreadCount((prev) => prev + 1);
       });
+      // socket.on("updateUnreadCount", (count) => {
+      //   setUnreadMessageCount(count);
+      // });
       return () => {
         socket.off("new_notification");
+        // socket.off("updateUnreadCount");
       };
     }
   }, [socket]);
-
-  const [openItems, setOpenItems] = useState({});
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-
-  const handleLogoutClick = () => {
-    setShowLogoutModal(true);
-  };
 
   const handleLogout = () => {
     localStorage.removeItem("user-token");
@@ -53,7 +52,6 @@ function HeaderTop() {
   };
 
   console.log(";;;;;;;;;;");
-  
 
   const handleCloseModal = () => {
     setShowLogoutModal(false);
@@ -62,21 +60,6 @@ function HeaderTop() {
   const confirmLogout = () => {
     handleLogout();
     handleCloseModal();
-  };
-
-  const toggleItem = (id) => {
-    setOpenItems((prevState) => ({
-      ...prevState,
-      [id]: !prevState[id],
-    }));
-  };
-
-  const Each = ({ render, of }) => of.map((item, index) => render(item, index));
-
-  const isParentActive = (children) => {
-    // Implement logic to determine if any child link is active
-    // e.g., based on current path or some other condition
-    return children.some((child) => child.link === location.pathname);
   };
 
   return (
@@ -93,31 +76,33 @@ function HeaderTop() {
           </div>
         </div>
 
-        <div className="right flex items-center">
+        <div className="right flex items-center ">
           {/* Links Container */}
           <div className="links-container mr-10">
             <Link to="/user-notifications" className="link-item mt-8">
               <FaBell className="text-black text-2xl" />
               <span className="link-name text-black">Notifications</span>
               {unreadCount > 0 && (
-                <span className="absolute -top-2 left-6 bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
+                <span className="absolute -top-2 left-6 bg-red-500 text-black text-xs font-semibold px-1.5 py-0.5 rounded-full">
                   {unreadCount}
                 </span>
               )}
             </Link>
 
-            <Link
-              to="/boardOfDirectors"
-              className="link-item mt-5 flex items-center space-x-2"
-            >
-              <FaPeopleLine className="text-black text-2xl mt-3" />
-              <span className="link-name text-black">Board Members</span>
+            <Link to="/messenger" className="link-item mt-8 ">
+              <FaMessage className="text-black text-2xl" />
+              <span className="link-name">Messenger</span>
+              {/* {unreadMessageCount > 0 && (
+                <span className="absolute -top-2 left-6 bg-red-500 text-black text-xs font-semibold px-1.5 py-0.5 rounded-full">
+                  {unreadMessageCount}
+                </span>
+              )} */}
             </Link>
-
-            <Link
-              to="/about"
-              className="link-item mt-8 flex items-center space-x-2"
-            >
+            <Link to="/boardOfDirectors" className="link-item mt-8 ">
+              <FaPeopleLine className="text-black text-2xl" />
+              <span className="link-name">Board Members</span>
+            </Link>
+            <Link to="/about" className="link-item mt-8 items-center space-x-2">
               <FaGlobe className="text-black text-2xl" />
               <span className="link-name text-black">About</span>
             </Link>
@@ -139,9 +124,9 @@ function HeaderTop() {
             </Link>
 
             <Link
-              to="#"
+              to="/"
               className="link-item mt-8 flex items-center space-x-2"
-              onClick={handleLogoutClick}
+              onClick={handleLogout}
             >
               <FaSignOutAlt className="text-black text-2xl" />
               <span className="link-name text-black">Logout</span>
@@ -150,7 +135,7 @@ function HeaderTop() {
 
           {/* Admin Section */}
           <div className="flex items-center">
-            <div className="mr-4 mt-5 text-white">User</div>
+            <div className="mr-4 mt-5 text-black">User</div>
             <div className="rounded-full w-12 h-12 bg-gray-400 flex items-center justify-center overflow-hidden">
               <img
                 className="rounded-full w-full h-full object-cover"
@@ -172,7 +157,7 @@ function HeaderTop() {
             </p>
             <div className="flex justify-end space-x-2">
               <button
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                className="px-4 py-2 bg-red-600 text-black rounded hover:bg-red-700"
                 onClick={confirmLogout}
               >
                 Yes, Logout
