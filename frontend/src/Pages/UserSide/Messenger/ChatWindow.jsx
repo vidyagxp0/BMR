@@ -57,13 +57,18 @@ function ChatWindow() {
 
   return (
     <div className="chat-window">
-      <h1>Chat with {location.state?.name || "User"}</h1>
+      <h1 style={{ textAlign: "center" }}>
+        <strong>{location.state?.name || "User"}</strong>
+      </h1>
       <div className="message-container">
         {messages.map((msg, index) => (
           <div
             key={index}
             className={`message ${
-              msg.senderId === userDetails.userId || msg.sender === userDetails.userId ? "sent" : "received"
+              msg.senderId === userDetails.userId ||
+              msg.sender === userDetails.userId
+                ? "sent"
+                : "received"
             }`}
           >
             <span>{msg.message}</span>
