@@ -21,12 +21,12 @@ function ChatWindow() {
             Authorization: `Bearer ${localStorage.getItem("user-token")}`,
           },
         });
+
         setMessages(res.data.message);
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
     };
-
     fetchMessages();
   }, [userId]);
 
@@ -42,6 +42,19 @@ function ChatWindow() {
       newSocket.disconnect();
     };
   }, [userDetails.userId]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.emit("register", userDetails.userId);
+      socket.on("receiveMessage", (message) => {
+        console.log(message);
+        setMessages((prevMessages) => [...prevMessages, message]);
+      });
+      return () => {
+        socket.off("receiveMessage");
+      };
+    }
+  }, [socket]);
 
   const sendMessage = async () => {
     const newMessage = {

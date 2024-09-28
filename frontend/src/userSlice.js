@@ -24,6 +24,55 @@ export const fetchBmr = createAsyncThunk("bmr/fetchBmr", async () => {
   return response.data;
 });
 
+export const fetchUserRoles = createAsyncThunk('users/fetchUserRoles', async () => {
+  const token = localStorage.getItem('user-token');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  };
+
+  try {
+    // Fetch reviewers
+    const reviewerResponse = await axios.post(
+      `${BASE_URL}/bmr-form/get-user-roles`,
+      { role_id: 3 },
+      { headers }
+    );
+
+    const reviewers = [
+      { value: 'select-all', label: 'Select All' },
+      ...new Map(
+        reviewerResponse.data.message.map((role) => [
+          role.user_id,
+          { value: role.user_id, label: `${role.User.name}` },
+        ])
+      ).values(),
+    ];
+
+    // Fetch approvers
+    const approverResponse = await axios.post(
+      `${BASE_URL}/bmr-form/get-user-roles`,
+      { role_id: 4 },
+      { headers }
+    );
+
+    const approvers = [
+      { value: 'select-all', label: 'Select All' },
+      ...new Map(
+        approverResponse.data.message.map((role) => [
+          role.user_id,
+          { value: role.user_id, label: `${role.User.name}` },
+        ])
+      ).values(),
+    ];
+
+    return { reviewers, approvers };
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+
 const userSlice = createSlice({
   name: "users",
   initialState: {
@@ -31,6 +80,8 @@ const userSlice = createSlice({
     bmrList: [],
     formData: {},
     selectedBMR: {},
+    loading: false,
+    error: null,
   },
   reducers: {
     setUsers(state, action) {
@@ -74,6 +125,33 @@ const userSlice = createSlice({
     setSelectedBMR(state, action) {
       state.selectedBMR = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUsers.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload;
+      })
+      .addCase(fetchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      // Added extraReducers for fetchUserRoles
+      .addCase(fetchUserRoles.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchUserRoles.fulfilled, (state, action) => {
+        state.loading = false;
+        state.reviewers = action.payload.reviewers;
+        state.approvers = action.payload.approvers;
+      })
+      .addCase(fetchUserRoles.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
   },
 });
 

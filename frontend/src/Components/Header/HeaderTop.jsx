@@ -12,12 +12,15 @@ import socketIOClient from "socket.io-client";
 import "./Header.css";
 import "./HeaderTop.css";
 import { BASE_URL } from "../../config.json";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 function HeaderTop() {
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
   // const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [socket, setSocket] = useState(null);
+  const [userDetails, setUserDetails] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
@@ -28,7 +31,10 @@ function HeaderTop() {
   }, []);
 
   useEffect(() => {
-    const userDetails = JSON.parse(localStorage.getItem("user-details"));
+    const storedUserDetails = JSON.parse(localStorage.getItem("user-details"));
+    if (storedUserDetails) {
+      setUserDetails(storedUserDetails);
+    }
     if (socket && userDetails) {
       socket.emit("register", userDetails.userId);
       socket.on("new_notification", () => {
@@ -62,7 +68,6 @@ function HeaderTop() {
     handleLogout();
     handleCloseModal();
   };
-
   return (
     <div id="Header_Top" className="Header_Top">
       <div className="header_inner">
@@ -71,7 +76,7 @@ function HeaderTop() {
             <img
               onClick={() => navigate("/dashboard")}
               style={{ cursor: "pointer" }}
-              src="/vidyalogo2.png"
+              src="/vidyagxpwhite.png"
               alt="Logo"
             />
           </div>
@@ -136,7 +141,7 @@ function HeaderTop() {
 
           {/* Admin Section */}
           <div className="flex items-center">
-            <div className="mr-4 mt-5 text-white">User</div>
+            <div className="mr-4 mt-5 text-white"> {userDetails?.userId ? userDetails.userId : "Loading..."}</div>
             <div className="rounded-full w-12 h-12 bg-gray-400 flex items-center justify-center overflow-hidden">
               <img
                 className="rounded-full w-full h-full object-cover"

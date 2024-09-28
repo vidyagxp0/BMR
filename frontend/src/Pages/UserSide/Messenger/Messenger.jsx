@@ -15,7 +15,7 @@ function Messenger() {
     axios
       .get(`${BASE_URL}/message/get-recent-chats`, {
         headers: {
-          Authorization: "Bearer " + localStorage.getItem("user-token"),
+          Authorization: "Bearer" + localStorage.getItem("user-token"),
         },
       })
       .then((response) => setChats(response.data))
