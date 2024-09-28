@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../../../config.json";
-import './Messenger.css';
+import "./Messenger.css";
 
 function Messenger() {
   const [chats, setChats] = useState([]);
+  console.log(chats, "chats");
   const [allUsers, setAllUsers] = useState([]);
   const [activeTab, setActiveTab] = useState("chats");
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function Messenger() {
     axios
       .get(`${BASE_URL}/message/get-recent-chats`, {
         headers: {
-          Authorization: "Bearer" + localStorage.getItem("user-token"),
+          Authorization: "Bearer " + localStorage.getItem("user-token"),
         },
       })
       .then((response) => setChats(response.data))

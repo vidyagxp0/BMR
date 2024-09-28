@@ -68,6 +68,13 @@ function ChatWindow() {
     setMessage("");
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault(); // prevent default behavior like form submission
+      sendMessage();
+    }
+  };
+
   return (
     <div className="chat-window">
       <h1 style={{ textAlign: "center" }}>
@@ -98,6 +105,7 @@ function ChatWindow() {
         <input
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
           type="text"
           placeholder="Type a message..."
         />
