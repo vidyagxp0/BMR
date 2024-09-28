@@ -30,34 +30,26 @@ const AdminHeader = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  // Function to handle mouse enter and leave events
-  const handleMouseEnter = () => {
-    setIsDropdownOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsDropdownOpen(false);
-  };
-
   return (
     <>
-      <header className="main-header head ">
+      <header className="main-header head shadow-md">
         <div className="inner-grid flex items-center justify-between">
           <div className="w-44">
             <img src="/headerlogo.png" alt="Logo" className="img" />
           </div>
-          <div className="relative" onMouseLeave={handleMouseLeave}>
+          <div className="relative">
             <div
-              className="flex items-center cursor-pointer"
+              className="flex items-center cursor-pointer "
               onClick={toggleDropdown}
-              onMouseEnter={handleMouseEnter} // Show dropdown on hover
             >
               <img
                 className="w-10 h-10 rounded-full"
                 src="/amit_guru.jpg"
                 alt="User Avatar"
               />
-              <div className="ml-2 text-white">Mr. Amit Guru</div>
+              <div className="ml-0 px-3 text-black font-semibold">
+                Mr. Amit Guru
+              </div>
             </div>
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg">

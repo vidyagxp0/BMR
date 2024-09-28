@@ -10,8 +10,8 @@ const BMRRecordsDetails = () => {
   const userDetails = JSON.parse(localStorage.getItem("user-details"));
   const location = useLocation();
   const [data, setData] = useState([]);
-  const [recordData, setRecordData] = useState(location?.state?.original||{})
-  console.log(recordData,"recordData")
+  const [recordData, setRecordData] = useState(location?.state?.original || {});
+  console.log(recordData, "recordData");
   const [tabs, setTabs] = useState([
     "Initiator Remarks",
     "Reviewer Remarks",
@@ -104,8 +104,6 @@ const BMRRecordsDetails = () => {
     return `${year}-${month}-${day}`;
   };
 
-  
-
   const handleFlowTabClick = (tab) => {
     setActiveFlowTab(tab);
   };
@@ -145,7 +143,11 @@ const BMRRecordsDetails = () => {
       dataObject.initiatorDeclaration = credentials?.declaration;
       // dataObject.initiatorComment = recordData.initiatorComment;
       axios
-        .put(`${BASE_URL}/bmr-record/send-record-for-review`, dataObject, config)
+        .put(
+          `${BASE_URL}/bmr-record/send-record-for-review`,
+          dataObject,
+          config
+        )
         .then(() => {
           toast.success("BMR successfully sent for review");
           navigate(-1);
@@ -228,7 +230,7 @@ const BMRRecordsDetails = () => {
   const populateApproverFields = () => {
     if (recordData) {
       const approvers = recordData.approvers || [];
-  
+
       const approverFields = approvers.flatMap((approver, idx) => [
         {
           section: `Approver ${idx + 1}`,
@@ -254,18 +256,18 @@ const BMRRecordsDetails = () => {
           ],
         },
       ]);
-  
+
       setFields((prevFields) => ({
         ...prevFields,
         "Approver Remarks": approverFields,
       }));
     }
   };
-  
+
   const populateReviewerFields = () => {
     if (recordData) {
       const reviewers = recordData.reviewers || [];
-  
+
       const reviewerFields = reviewers.flatMap((reviewer, idx) => [
         {
           section: `Reviewer ${idx + 1}`,
@@ -291,14 +293,14 @@ const BMRRecordsDetails = () => {
           ],
         },
       ]);
-  
+
       setFields((prevFields) => ({
         ...prevFields,
         "Reviewer Remarks": reviewerFields,
       }));
     }
   };
-  
+
   useEffect(() => {
     populateApproverFields();
     populateReviewerFields();
@@ -330,10 +332,10 @@ const BMRRecordsDetails = () => {
             style={{ border: "1px solid gray" }}
             key={index}
             onClick={() => handleDefaultTabClick(tab)}
-            className={`py-2 px-4 rounded border-2 border-black ${
+            className={`py-2 px-4 rounded-md ${
               activeDefaultTab === tab
-                ? "bg-[#2a323e]  text-[#ffffff]"
-                : "bg-[#777778]  text-[#ffffff]"
+                ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 border border-blue-900 opacity-95"
+                : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 rounded-md"
             }`}
           >
             {tab}
@@ -348,7 +350,6 @@ const BMRRecordsDetails = () => {
               <div className="mb-20">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
                   {fields["Initiator Remarks"].map((field, index) => {
-                  
                     return (
                       <div
                         key={index}
@@ -361,7 +362,7 @@ const BMRRecordsDetails = () => {
                               <span className="text-red-500">*</span>
                             )}
                         </label>
-  
+
                         {field.field_type === "text" && (
                           <input
                             type="text"
@@ -373,7 +374,7 @@ const BMRRecordsDetails = () => {
                             disabled
                           />
                         )}
-  
+
                         {field.field_type === "date" && (
                           <input
                             type="date"
@@ -385,10 +386,10 @@ const BMRRecordsDetails = () => {
                             readOnly
                           />
                         )}
-  
+
                         {field.field_type === "text-area" && (
                           <textarea
-                          value={recordData?.initiatorComment}
+                            value={recordData?.initiatorComment}
                             className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400 "
                             required={
                               activeFlowTab === "INITIATION" &&
@@ -405,7 +406,7 @@ const BMRRecordsDetails = () => {
                           />
                         )}
                       </div>
-                    )
+                    );
                   })}
                 </div>
               </div>
@@ -419,7 +420,7 @@ const BMRRecordsDetails = () => {
                     {section?.section}
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                  {section.fields?.map((field, index) => {
+                    {section.fields?.map((field, index) => {
                       return (
                         <div
                           key={index}
@@ -437,7 +438,6 @@ const BMRRecordsDetails = () => {
                               type="text"
                               className=" p-3 w-full bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 "
                               style={{
-                               
                                 height: "30px",
                               }}
                               value={field.value || ""}
@@ -447,7 +447,7 @@ const BMRRecordsDetails = () => {
                           {field.field_type === "date" && (
                             <input
                               type="date"
-                               value={formattedDateForInput(
+                              value={formattedDateForInput(
                                 data[0]?.reviewers?.map(
                                   (date) => date?.date_of_review
                                 )
@@ -483,8 +483,6 @@ const BMRRecordsDetails = () => {
                 </div>
               );
             })}
-
-
 
           {activeDefaultTab === "Approver Remarks" &&
             fields[activeDefaultTab]?.map((section, secIndex) => (
@@ -558,7 +556,7 @@ const BMRRecordsDetails = () => {
 
         <div className="fixed bottom-36 right-[-10px] w-auto flex-col border-gray-300  flex gap-5">
           {recordData?.stage === 1 &&
-           recordData?.initiator === userDetails.userId && (
+            recordData?.initiator === userDetails.userId && (
               <AtmButton
                 label={"Send For Review"}
                 className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"

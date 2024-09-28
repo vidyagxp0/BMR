@@ -37,6 +37,7 @@ function HeaderTop() {
       };
     }
   }, [socket]);
+
   const [openItems, setOpenItems] = useState({});
   const [User, setUser] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -90,75 +91,58 @@ function HeaderTop() {
           </div>
         </div>
 
-        <div className="right flex items-center ">
+        <div className="right flex items-center">
           {/* Links Container */}
           <div className="links-container mr-10">
             <Link to="/user-notifications" className="link-item mt-8">
-              <FaBell className="text-white text-2xl" />
-              <span className="link-name text-white">Notifications</span>
+              <FaBell className="text-black text-2xl" />
+              <span className="link-name text-black">Notifications</span>
               {unreadCount > 0 && (
                 <span className="absolute -top-2 left-6 bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
                   {unreadCount}
                 </span>
               )}
             </Link>
-            {/* <div className="center">
-          <div className="inputContainer border-2 border-gray-500 w-96">
-            <div className="inputInnerLeft">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="#1a9e66"
-                width={"25"}
-                height={"25"}
-              >
-                <path d="M18.031 16.6168L22.3137 20.8995L20.8995 22.3137L16.6168 18.031C15.0769 19.263 13.124 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2C15.968 2 20 6.032 20 11C20 13.124 19.263 15.0769 18.031 16.6168ZM16.0247 15.8748C17.2475 14.6146 18 12.8956 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18C12.8956 18 14.6146 17.2475 15.8748 16.0247L16.0247 15.8748Z"></path>
-              </svg>
-            </div>
-            <input type="search" placeholder="Search..." />
-            <button className="search-button">Search</button>
-          </div>
-        </div> */}
 
             <Link
               to="/boardOfDirectors"
               className="link-item mt-5 flex items-center space-x-2"
             >
-              <FaPeopleLine className="text-white text-2xl mt-3" />
-              <span className="link-name text-white">Board Members</span>
+              <FaPeopleLine className="text-black text-2xl mt-3" />
+              <span className="link-name text-black">Board Members</span>
             </Link>
 
             <Link
               to="/about"
               className="link-item mt-8 flex items-center space-x-2"
             >
-              <FaGlobe className="text-white text-2xl" />
-              <span className="link-name text-white">About</span>
+              <FaGlobe className="text-black text-2xl" />
+              <span className="link-name text-black">About</span>
             </Link>
 
             <Link
               to="/help"
               className="link-item mt-8 flex items-center space-x-2"
             >
-              <FaHandsHelping className="text-white text-2xl" />
-              <span className="link-name text-white">Help</span>
+              <FaHandsHelping className="text-black text-2xl" />
+              <span className="link-name text-black">Help</span>
             </Link>
 
             <Link
               to="/helpdesk"
               className="link-item mt-8 flex items-center space-x-2"
             >
-              <FaHeadset className="text-white text-2xl" />
-              <span className="link-name text-white">Helpdesk Personnel</span>
+              <FaHeadset className="text-black text-2xl" />
+              <span className="link-name text-black">Helpdesk Personnel</span>
             </Link>
 
             <Link
-              to="/"
+              to="#"
               className="link-item mt-8 flex items-center space-x-2"
-              onClick={handleLogout}
+              onClick={handleLogoutClick}
             >
-              <FaSignOutAlt className="text-white text-2xl" />
-              <span className="link-name text-white">Logout</span>
+              <FaSignOutAlt className="text-black text-2xl" />
+              <span className="link-name text-black">Logout</span>
             </Link>
           </div>
 

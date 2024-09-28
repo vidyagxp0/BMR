@@ -457,7 +457,7 @@ const BMRProcessDetails = ({ fieldData }) => {
   return (
     <div className="bg-white">
       <div className=" p-2 relative top-5 h-[55%] ">
-        <header className="bg-[#2a323e] w-full shadow-lg flex justify-between items-center p-4 mb-4">
+        <header className="bg-[#006FC0] w-full shadow-lg flex justify-between items-center p-4 mb-4 h-20">
           <p className="text-lg text-gray-200 font-bold">BMR Process Details</p>
           <div className="flex space-x-2">
             {showForm === "default" ? (
@@ -480,7 +480,8 @@ const BMRProcessDetails = ({ fieldData }) => {
                     <AtmButton
                       label={newTab.length > 0 ? "Edit Form" : "Create Form"}
                       onClick={() => setShowForm("sendForm")}
-                      className="bg-[#193948] hover:bg-[#122f3d] px-4 py-2"
+                      className={`relative px-6 py-3 text-sm font-semibold focus:outline-none transition 
+                   bg-gradient-to-r from-black to-black text-white shadow-lg transform scale-100 transition duration-300 rounded-md border border-blue-900 opacity-95 hover:from-blue-900 hover:to-blue-1000 hover:scale-105 hover:shadow-xl`} // Gradient, shadow, and hover effects
                     />
                   </>
                 )}
@@ -631,11 +632,13 @@ const BMRProcessDetails = ({ fieldData }) => {
                 style={{ border: "1px solid gray" }}
                 key={index}
                 onClick={() => handleDefaultTabClick(tab)}
-                className={`py-2 px-4 rounded border-2 border-black ${
+                className={`relative px-6 py-3 text-sm font-semibold focus:outline-none transition 
+                ${
                   activeDefaultTab === tab
-                    ? "bg-[#2a323e]  text-[#ffffff]"
-                    : "bg-[#777778]  text-[#ffffff]"
-                }`}
+                    ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 rounded-md border border-blue-900 opacity-95" // Active tab: Dark gradient without hover effect
+                    : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 rounded-md" // Non-active: Light gray with blue hover effects
+                }
+                rounded-lg mx-2`} // Added margin-x for horizontal spacing
               >
                 {tab}
               </button>

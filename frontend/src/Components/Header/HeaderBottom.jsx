@@ -16,14 +16,15 @@ function HeaderBottom({ openModal }) {
           {/* {loggedInUser.roles?.some(
             (itm) => itm.role_id === 5 || itm.role_id === 1
           ) ? ( */}
-          <div className="headerBottomRgt">
+        {/*  <div className="headerBottomRgt">
             <div
-              className="btn bg-[#2a323e] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#123e53]"
+              className="btn bg-[#eaeaea] text-black font-semibold py-3 px-4 rounded-md hover:bg-[#123e53] m-1" // Adjusted margin
               onClick={openModal}
             >
               Design BMR
             </div>
           </div>
+
           {/* ) : null} */}
         </div>
       </div>

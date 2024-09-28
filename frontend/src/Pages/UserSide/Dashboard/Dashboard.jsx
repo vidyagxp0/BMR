@@ -5,6 +5,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import axios from "axios";
 import InitiateModal from "../Modals/InitiateModal";
 import { BASE_URL } from "../../../config.json";
+import CountUp from "react-countup"; // Importing CountUp
 
 import "./Dashboard.css";
 
@@ -78,15 +79,17 @@ const Dashboard = () => {
   }, [searchQuery, approvedBMR]);
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-4 md:p-6 bg-gray-50 min-h-screen">
       {/* Header */}
-      <div className="flex justify-between items-center p-6 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 rounded-md shadow-lg text-white mb-8">
-        <div>
-          <h1 className="text-4xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-sm opacity-75">Welcome back, User!</p>
+      <div className="flex flex-col md:flex-row justify-between items-center p-4 md:p-6 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 rounded-md shadow-lg text-white mb-6 md:mb-8">
+        <div className="text-center md:text-left">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+            Dashboard
+          </h1>
+          <p className="text-xs md:text-sm opacity-75">Welcome back, User!</p>
         </div>
         <button
-          className="btn bg-[#ffffff] text-black font-semibold py-2 px-4 rounded-md hover:bg-[#123e53]"
+          className="btn mt-4 md:mt-0 bg-[#ffffff] text-black font-semibold py-2 px-4 rounded-md hover:bg-[#123e53] transition-colors duration-300"
           onClick={openModal}
         >
           Initiate BMR
@@ -98,8 +101,8 @@ const Dashboard = () => {
       )}
 
       {/* Notification Bar */}
-      <div className="p-3 rounded-lg mb-8 shadow-md">
-        <marquee className="bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 text-white p-2 rounded-lg">
+      <div className="p-3 rounded-lg mb-6 md:mb-8 shadow-md bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600">
+        <marquee className="text-white p-2 rounded-lg">
           <span className="flex items-center space-x-2">
             {/* Bell Icon (Start) */}
             <svg
@@ -117,7 +120,7 @@ const Dashboard = () => {
             </svg>
 
             {/* Scrolling Text */}
-            <span>
+            <span className="text-sm md:text-base">
               New updates are available! Check out the latest BMR records and
               upcoming events.
             </span>
@@ -141,36 +144,30 @@ const Dashboard = () => {
       </div>
 
       {/* Display Filtered BMR Records */}
-      <div className="bg-white p-6 rounded-lg shadow-lg mb-8 border border-gray-200">
-        <h2 className="text-2xl font-extrabold mb-4 text-gray-800">
+      <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg mb-6 md:mb-8 border border-gray-200">
+        <h2 className="text-xl md:text-2xl font-extrabold mb-4 text-gray-800">
           BMR Records
         </h2>
-        {/* <ul className="list-disc list-inside text-gray-600">
-          {filteredBMR.map((bmr, index) => (
-            <li key={index} className="mb-2">
-              {bmr.name} - Approved on {bmr.approvalDate}
-            </li>
-          ))}
-        </ul> */}
+        {/* Add your BMR records content here */}
       </div>
 
       {/* Stats Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+      <div className="flex flex-wrap justify-between gap-6 mb-8">
         {/* Total BMR Records */}
-        <div className="bg-gradient-to-r from-gray-100 to-gray-200 p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300">
+        <div className="flex-1 min-w-[200px] bg-gradient-to-r from-gray-100 to-gray-200 p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-transform duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold text-gray-700">
+              <h2 className="text-lg md:text-xl font-bold text-gray-700">
                 Total BMR Records
               </h2>
-              <p className="text-4xl font-semibold text-gray-800">
-                {approvedBMR.length}
+              <p className="text-3xl md:text-4xl font-semibold text-gray-800">
+                <CountUp end={approvedBMR.length} duration={2} />
               </p>
             </div>
             <div className="bg-gray-300 p-3 rounded-full">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-12 w-12 text-gray-500"
+                className="h-10 w-10 md:h-12 md:w-12 text-gray-500"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -187,18 +184,20 @@ const Dashboard = () => {
         </div>
 
         {/* Total Initiate */}
-        <div className="bg-gradient-to-r from-gray-100 to-gray-200 p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300">
+        <div className="flex-1 min-w-[200px] bg-gradient-to-r from-gray-100 to-gray-200 p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-transform duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold text-gray-700">
+              <h2 className="text-lg md:text-xl font-bold text-gray-700">
                 Total Initiate
               </h2>
-              <p className="text-4xl font-semibold text-gray-800">15</p>
+              <p className="text-3xl md:text-4xl font-semibold text-gray-800">
+                <CountUp end={15} duration={2} />
+              </p>
             </div>
             <div className="bg-gray-300 p-3 rounded-full">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-12 w-12 text-gray-500"
+                className="h-10 w-10 md:h-12 md:w-12 text-gray-500"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -215,20 +214,20 @@ const Dashboard = () => {
         </div>
 
         {/* Total Approved */}
-        <div className="bg-gradient-to-r from-gray-100 to-gray-200 p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300">
+        <div className="flex-1 min-w-[200px] bg-gradient-to-r from-gray-100 to-gray-200 p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-transform duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold text-gray-700">
+              <h2 className="text-lg md:text-xl font-bold text-gray-700">
                 Total Approved
               </h2>
-              <p className="text-4xl font-semibold text-gray-800">
-                {approvedBMR.length}
+              <p className="text-3xl md:text-4xl font-semibold text-gray-800">
+                <CountUp end={approvedBMR.length} duration={2} />
               </p>
             </div>
             <div className="bg-gray-300 p-3 rounded-full">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-12 w-12 text-gray-500"
+                className="h-10 w-10 md:h-12 md:w-12 text-gray-500"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -237,37 +236,7 @@ const Dashboard = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M12 7v10M12 7l4 6-4 6V7z"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        {/* Upcoming Events */}
-        <div className="bg-gradient-to-r from-gray-100 to-gray-200 p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-gray-700">
-                Upcoming Events
-              </h2>
-              <p className="text-4xl font-semibold text-gray-800">
-                {events.length}
-              </p>
-            </div>
-            <div className="bg-gray-300 p-3 rounded-full">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-12 w-12 text-gray-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M8 7v10M8 7l4 6 4-6v10"
+                  d="M3 7v10M3 7l9 6 9-6M3 17l9 6 9-6"
                 />
               </svg>
             </div>
@@ -275,18 +244,20 @@ const Dashboard = () => {
         </div>
 
         {/* Pending Actions */}
-        <div className="bg-gradient-to-r from-gray-100 to-gray-200 p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300">
+        <div className="flex-1 min-w-[200px] bg-gradient-to-r from-gray-100 to-gray-200 p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-transform duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold text-gray-700">
+              <h2 className="text-lg md:text-xl font-bold text-gray-700">
                 Pending Actions
               </h2>
-              <p className="text-4xl font-semibold text-gray-800">10</p>
+              <p className="text-3xl md:text-4xl font-semibold text-gray-800">
+                <CountUp end={approvedBMR.length} duration={2} />
+              </p>
             </div>
             <div className="bg-gray-300 p-3 rounded-full">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-12 w-12 text-gray-500"
+                className="h-10 w-10 md:h-12 md:w-12 text-gray-500"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -295,7 +266,37 @@ const Dashboard = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M8 7v10M8 7l4 6 4-6v10"
+                  d="M3 7v10M3 7l9 6 9-6M3 17l9 6 9-6"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Upcoming Events */}
+        <div className="flex-1 min-w-[200px] bg-gradient-to-r from-gray-100 to-gray-200 p-6 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-transform duration-300">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg md:text-xl font-bold text-gray-700">
+                Upcoming Events
+              </h2>
+              <p className="text-3xl md:text-4xl font-semibold text-gray-800">
+                <CountUp end={approvedBMR.length} duration={2} />
+              </p>
+            </div>
+            <div className="bg-gray-300 p-3 rounded-full">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-10 w-10 md:h-12 md:w-12 text-gray-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M3 7v10M3 7l9 6 9-6M3 17l9 6 9-6"
                 />
               </svg>
             </div>
@@ -303,21 +304,25 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Calendar */}
-      <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-700">
-          Upcoming Calendar Events
+      {/* Calendar Section */}
+      <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg mb-8 border border-gray-200 w-full max-w-full">
+        <h2 className="text-xl md:text-2xl font-extrabold mb-4 text-gray-800 text-center">
+          Calendar
         </h2>
-        <Calendar
-          selectable
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: 500, width: "100%" }} // Reduced height and width
-          onSelectEvent={handleEventDelete}
-          onSelectSlot={handleSelect}
-        />
+
+        <div className="overflow-x-auto">
+          <Calendar
+            selectable
+            localizer={localizer}
+            events={events}
+            defaultView="month"
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: "70vh", maxWidth: "100%" }}
+            onSelectEvent={handleEventDelete}
+            onSelectSlot={handleSelect}
+          />
+        </div>
       </div>
     </div>
   );

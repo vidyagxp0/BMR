@@ -33,13 +33,13 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
         <table className="min-w-full border-collapse border border-gray-300">
           <thead>
             <tr>
-              <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#2a323e]">
+              <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#006FC0]">
                 Sr No
               </th>
               {columns.map((column, index) => (
                 <th
                   key={index}
-                  className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#2a323e]"
+                  className="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider border border-gray-300 bg-[#006FC0]"
                 >
                   {column.header}
                 </th>
@@ -52,13 +52,13 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
               <tr
                 key={rowIndex}
                 style={{
-                  backgroundColor: rowIndex % 2 === 0 ? "#fafbfc" : "#cad2de", // Softer Gray for even rows, Softer Blue for odd rows
+                  backgroundColor: rowIndex % 2 === 0 ? "#FFFFF" : "#D9E9F6", // Updated color combination
                 }}
                 className="border-b border-gray-300"
               >
                 <td
                   className={`px-4 py-2 whitespace-nowrap text-sm ${
-                    rowIndex % 2 === 0 ? "text-[#000000]" : "text-[#000000]" // Dark text on Softer Gray, Light text on Softer Blue
+                    rowIndex % 2 === 0 ? "text-[#000000]" : "text-[#000000]" // Dark text on both colors
                   } border-r border-gray-300`}
                 >
                   {(currentPage - 1) * rowsPerPage + rowIndex + 1}
@@ -67,7 +67,7 @@ const AtmTable = ({ columns = [], data = [], rowsPerPage = 10 }) => {
                   <td
                     key={colIndex}
                     className={`px-4 py-2 whitespace-nowrap text-sm ${
-                      rowIndex % 2 === 0 ? "text-[#000000]" : "text-[#090808]" // Adjust text color for readability
+                      rowIndex % 2 === 0 ? "text-[#000000]" : "text-[#000000]" // Dark text on both colors
                     }`}
                     onClick={
                       column.header === "BMR NAME"

@@ -12,7 +12,7 @@ import {
   FaHeartbeat,
   FaNotesMedical,
 } from "react-icons/fa";
-import {BASE_URL} from "../../../config.json"
+import { BASE_URL } from "../../../config.json";
 
 const HealthLogin = () => {
   const [credentials, setCredentials] = useState({
@@ -43,13 +43,10 @@ const HealthLogin = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        `${BASE_URL}/user/user-login`,
-        {
-          email: credentials.username,
-          password: credentials.password,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/user/user-login`, {
+        email: credentials.username,
+        password: credentials.password,
+      });
 
       const token = response.data.token;
       if (token) {

@@ -46,6 +46,31 @@ function RouteGuard() {
     const handlePopState = (event) => {
       const currentPath = location.pathname;
 
+      if (currentPath === "/admin-dashboard" || currentPath === "/dashboard") {
+        // Disable back button on admin-dashboard and dashboard
+        window.history.pushState(null, "", currentPath);
+        window.history.pushState(null, "dashboard", currentPath);
+      } else if (currentPath.startsWith("/admin")) {
+        // Redirect to admin-dashboard when navigating back from any admin route
+        navigate("/admin-dashboard", { replace: true });
+      } else {
+        // You can handle other custom logic here
+        console.log("Navigating in user routes");
+      }
+    };
+
+    // Add event listener to handle back navigation
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [location.pathname, navigate]);
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      const currentPath = location.pathname;
+
       // If the user is on `/process/processdetails/:bmr_id`, redirect to `/process/bmr_process`
       if (currentPath.startsWith("/process/processdetails/")) {
         navigate("/process/bmr_process", { replace: true });

@@ -4,10 +4,10 @@
   }
 
   25% {
-    color: gray; 
+    color: gray;
   }
   50% {
-    color: #3a3a3a; 
+    color: #3a3a3a;
   }
   100% {
     color: #000000;
@@ -16,5 +16,24 @@
 
 .icon-animate {
   font-size: 17px;
-  animation: pulseAnimation 3s infinite; 
+  animation: pulseAnimation 3s infinite;
+}
+
+.btn {
+  margin: 12px;
+  gap: 12px;
+}
+.custom-select {
+  border: 2px solid rgb(131, 129, 129); /* Permanent black border */
+  outline: none; /* Remove outline on focus */
+  box-sizing: border-box; /* Include padding and border in width/height */
+  width: 100%; /* Ensure the select field takes full width */
+  padding: 0.75rem; /* Consistent padding */
+  height: 3rem; /* Fixed height to prevent size change */
+}
+
+/* Focus styles */
+.custom-select:focus {
+  border-color: #346c86; /* Change border color on focus */
+  box-shadow: 0 0 0 2px rgba(52, 108, 134, 0.5); /* Optional shadow effect */
 }
