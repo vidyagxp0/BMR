@@ -39,7 +39,6 @@ function HeaderTop() {
   }, [socket]);
 
   const [openItems, setOpenItems] = useState({});
-  const [User, setUser] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleLogoutClick = () => {
