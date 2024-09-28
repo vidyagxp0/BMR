@@ -11,9 +11,9 @@ import { BASE_URL } from "../../../../config.json";
 
 const modalStyle = {
   position: "absolute",
-  top: "60%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
+  top: "50%", // Center vertically
+  left: "50%", // Center horizontally
+  transform: "translate(-50%, -50%)", // Adjust to the exact center
   width: "90%",
   maxWidth: 600,
   maxHeight: "70vh",
@@ -22,6 +22,16 @@ const modalStyle = {
   boxShadow: 24,
   p: 4,
   overflowY: "auto",
+};
+
+// Custom styles for the Select component to enable scrollbars
+const customSelectStyles = {
+  menu: (provided) => ({
+    ...provided,
+    maxHeight: "150px", // Set the maximum height of the dropdown
+    overflowY: "auto", // Enable vertical scrolling
+    zIndex: 9999, // Ensure the dropdown appears above other elements
+  }),
 };
 
 function CreateRecordModal({ open, onClose }) {
@@ -72,7 +82,7 @@ function CreateRecordModal({ open, onClose }) {
             date_of_review: "NA",
             comment: null,
           })),
-            approvers: isSelectedApprover.map((approver) => ({
+          approvers: isSelectedApprover.map((approver) => ({
             approverId: approver.value,
             status: "pending",
             approver: approver.label,
@@ -280,10 +290,11 @@ function CreateRecordModal({ open, onClose }) {
           <Box sx={modalStyle}>
             <button
               className="float-end border-1 border-black rounded-full p-2 cursor-pointer text-2xl"
-              onClose={onClose}
+              onClick={onClose} // Use onClick instead of onClose
             >
               x
             </button>
+
             <Typography variant="h6" component="h2" align="center" gutterBottom>
               BMR Editor
             </Typography>
@@ -439,6 +450,26 @@ function CreateRecordModal({ open, onClose }) {
                         borderColor: "#a0a0a0",
                       },
                     }),
+                    menu: (provided) => ({
+                      ...provided,
+                      maxHeight: "150px",
+                      overflowY: "auto",
+                      scrollbarWidth: "thin",
+                      scrollBehavior: "smooth",
+                      "&::-webkit-scrollbar": {
+                        width: "6px",
+                      },
+                      "&::-webkit-scrollbar-thumb": {
+                        backgroundColor: "#a0a0a0",
+                        borderRadius: "4px",
+                      },
+                    }),
+                    menuList: (provided) => ({
+                      ...provided,
+                      maxHeight: "150px",
+                      overflowY: "auto",
+                      scrollBehavior: "smooth",
+                    }),
                   }}
                 />
               </div>
@@ -467,6 +498,26 @@ function CreateRecordModal({ open, onClose }) {
                       "&:hover": {
                         borderColor: "#a0a0a0",
                       },
+                    }),
+                    menu: (provided) => ({
+                      ...provided,
+                      maxHeight: "150px",
+                      overflowY: "auto",
+                      scrollbarWidth: "thin",
+                      scrollBehavior: "smooth",
+                      "&::-webkit-scrollbar": {
+                        width: "6px",
+                      },
+                      "&::-webkit-scrollbar-thumb": {
+                        backgroundColor: "#a0a0a0",
+                        borderRadius: "4px",
+                      },
+                    }),
+                    menuList: (provided) => ({
+                      ...provided,
+                      maxHeight: "150px",
+                      overflowY: "auto",
+                      scrollBehavior: "smooth",
                     }),
                   }}
                 />

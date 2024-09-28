@@ -69,10 +69,12 @@
 }
 
 .themeBtn:hover {
-  background: radial-gradient(
-    circle,
-    #5c5ca2, #394274 
-   
-  );
+  background: radial-gradient(circle, #5c5ca2, #394274);
   color: white; /* Text color on hover */
 }
+
+.btn {
+  margin-right: 1px;
+  margin-top: 4px; /* Increase this value to move the button further down */
+}
+

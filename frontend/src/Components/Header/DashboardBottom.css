@@ -2,6 +2,8 @@
   width: 100%;
   height: 50px;
   cursor: pointer;
+  overflow-x: auto; /* Enable horizontal scrolling if content overflows */
+  white-space: nowrap; /* Prevent items from wrapping to the next line */
 }
 
 .Header_Bottom .headerBottomInner {
@@ -14,8 +16,8 @@
 .Header_Bottom .headerBottomLft {
   display: flex;
   align-items: center;
-  width: 50px;
   gap: 30px;
+  flex-shrink: 0; /* Prevent shrinking of the flex container */
 }
 
 .navItem {
@@ -23,17 +25,31 @@
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  color: black;
+  color: black; /* Default text color */
+  background-color: transparent; /* No background color by default */
+  padding: 0.5rem 0.75rem; /* px-3 py-2 equivalent */
+  font-size: 0.875rem; /* text-sm equivalent */
+  font-weight: 600; /* font-semibold equivalent */
+  border-radius: 0.5rem 0.5rem 0 0; /* rounded-t-lg equivalent */
+  transition: color 0.3s; /* Smooth transition */
+  white-space: nowrap; /* Prevent text from wrapping */
 }
 
-.navItem h3 {
-  font-size: 15px;
-  margin: 0;
-  color: inherit;
+/* Remove hover effect for navItem */
+.navItem:hover {
+  color: black; /* Maintain the default text color on hover */
+  background-color: transparent; /* No background color on hover */
 }
 
-.navItem.active h3 {
-  color: blue;
+/* Style for active navItem */
+.navItem.active {
+  color: blue; /* Change text color for active tab */
+  background-color: transparent; /* No background color for active tab */
+}
+
+/* Remove underline from nav items */
+.navItem {
+  border-bottom: none; /* Ensure no underline on all nav items */
 }
 
 .navItem i {
@@ -43,80 +59,147 @@
 
 /* Loader background blur */
 .loader-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(5px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
+  position: fixed; /* Stays in a fixed position */
+  top: 0; /* Aligns to the top of the viewport */
+  left: 0; /* Aligns to the left of the viewport */
+  width: 100%; /* Covers the entire width */
+  height: 100%; /* Covers the entire height */
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  backdrop-filter: blur(8px); /* Blur effect for background content */
+  display: flex; /* Flexbox for centering the loader */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  z-index: 9999; /* Ensure it appears above all other content */
 }
 
+/* Apply blur effect to entire page when loader is active */
+body.blur {
+  filter: blur(5px); /* Adjust the blur amount as needed */
+}
+
+/* Loader Styles */
 .loader {
-  --c1: #673b14;
-  --c2: #f8b13b;
-  width: 40px;
-  height: 80px;
-  border-top: 4px solid var(--c1);
-  border-bottom: 4px solid var(--c1);
-  background: linear-gradient(
-      90deg,
-      var(--c1) 2px,
-      var(--c2) 0 5px,
-      var(--c1) 0
-    )
-    50%/7px 8px no-repeat;
-  display: grid;
-  overflow: hidden;
-  animation: l5-0 2s infinite linear;
+  width: 120px; /* Increased size */
+  height: 80px; /* Increased size */
+  position: fixed; /* Use fixed to stay centered on the page */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust for the loader's size */
+  z-index: 1000; /* Ensure it appears above other content */
 }
-.loader::before,
-.loader::after {
+
+.loader-text {
+  position: absolute;
+  top: 0;
+  padding: 0;
+  margin: 0;
+  color: #ebebec; /* Loader text color */
+  animation: text_713 3.5s ease both infinite;
+  font-size: 1rem; /* Increased font size */
+  letter-spacing: 1px;
+}
+
+.load {
+  background-color: #007bff; /* Change to a blue color */
+  border-radius: 50px;
+  display: block;
+  height: 24px; /* Increased size */
+  width: 24px; /* Increased size */
+  bottom: 0;
+  position: absolute;
+  transform: translateX(80px); /* Adjust for larger size */
+  animation: loading_713 3.5s ease both infinite;
+}
+
+.load::before {
+  position: absolute;
   content: "";
-  grid-area: 1/1;
-  width: 75%;
-  height: calc(50% - 4px);
-  margin: 0 auto;
-  border: 2px solid var(--c1);
-  border-top: 0;
-  box-sizing: content-box;
-  border-radius: 0 0 40% 40%;
-  -webkit-mask: linear-gradient(#000 0 0) bottom/4px 2px no-repeat,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: destination-out;
-  mask-composite: exclude;
-  background: linear-gradient(var(--d, 0deg), var(--c2) 50%, #0000 0) bottom /
-      100% 205%,
-    linear-gradient(var(--c2) 0 0) center/0 100%;
-  background-repeat: no-repeat;
-  animation: inherit;
-  animation-name: l5-1;
+  width: 100%;
+  height: 100%;
+  background-color: #0056b3; /* Darker blue */
+  border-radius: inherit;
+  animation: loading2_713 3.5s ease both infinite;
 }
-.loader::after {
-  transform-origin: 50% calc(100% + 2px);
-  transform: scaleY(-1);
-  --s: 3px;
-  --d: 180deg;
-}
-@keyframes l5-0 {
+
+/* Keep your existing keyframes as they are */
+
+@keyframes text_713 {
+  0% {
+    letter-spacing: 1px;
+    transform: translateX(0px);
+  }
+
+  40% {
+    letter-spacing: 2px;
+    transform: translateX(26px);
+  }
+
   80% {
-    transform: rotate(0);
+    letter-spacing: 1px;
+    transform: translateX(32px);
   }
+
+  90% {
+    letter-spacing: 2px;
+    transform: translateX(0px);
+  }
+
   100% {
-    transform: rotate(0.5turn);
+    letter-spacing: 1px;
+    transform: translateX(0px);
   }
 }
-@keyframes l5-1 {
-  10%,
-  70% {
-    background-size: 100% 205%, var(--s, 0) 100%;
+
+@keyframes loading_713 {
+  0% {
+    width: 24px; /* Increased size */
+    transform: translateX(0px);
   }
-  70%,
+
+  40% {
+    width: 100%;
+    transform: translateX(0px);
+  }
+
+  80% {
+    width: 24px; /* Increased size */
+    transform: translateX(80px); /* Adjust for larger size */
+  }
+
+  90% {
+    width: 100%;
+    transform: translateX(0px);
+  }
+
   100% {
-    background-position: top, center;
+    width: 24px; /* Increased size */
+    transform: translateX(0px);
+  }
+}
+
+@keyframes loading2_713 {
+  0% {
+    transform: translateX(0px);
+    width: 24px; /* Increased size */
+  }
+
+  40% {
+    transform: translateX(0%);
+    width: 80%;
+  }
+
+  80% {
+    width: 100%;
+    transform: translateX(0px);
+  }
+
+  90% {
+    width: 80%;
+    transform: translateX(-15px); /* Backward movement */
+  }
+
+  100% {
+    transform: translateX(0px);
+    width: 24px; /* Increased size */
   }
 }

@@ -181,24 +181,32 @@ const BMRForms = () => {
         <div className="w-full">
           <div className="flex items-center justify-center m-3">
             <div className="w-full flex items-center justify-between">
-              <label className="text-gray-700 font-bold">RECORDS</label>
-              <select
-                id="options"
-                name="options"
-                className="border-2 border-gray-400 w-80 shadow-md rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#346C86]"
-                style={{ border: "2px solid gray" }}
-                value={filter}
-                onChange={handleFilterChange}
-              >
-                <option value="">All Records</option>
-                {approvedBMR.map((item, index) => (
-                  <option key={index} value={item.name}>
-                    {item.name}
+              {/* <label className="text-gray-700 font-bold">BMR</label>*/}
+              <div className="w-full">
+                <select
+                  id="options"
+                  name="options"
+                  className="custom-select w-full shadow-md rounded-md text-gray-700 bg-white transition duration-300 ease-in-out hover:border-[#346C86] cursor-pointer"
+                  value={filter}
+                  onChange={handleFilterChange}
+                >
+                  <option value="" className="text-gray-600">
+                    All Records
                   </option>
-                ))}
-              </select>
+                  {approvedBMR.map((item, index) => (
+                    <option
+                      key={index}
+                      value={item.name}
+                      className="text-gray-700"
+                    >
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <button
-                className="btn bg-[#2a323e] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#123e53] transition-all"
+                className="btn bg-[#2a323e] text-white font-semibold py-2 px-5  rounded-md hover:bg-[#123e53] transition-all"
                 onClick={openModal}
               >
                 Initiate

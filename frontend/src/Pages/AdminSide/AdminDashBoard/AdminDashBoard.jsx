@@ -12,7 +12,7 @@ import { ToastContainer, toast } from "react-toastify";
 import UpdateUser from "../Modals/UpdateUserModal";
 import "react-toastify/dist/ReactToastify.css";
 import ResetPasswordModal from "../Modals/ResetPasswordModal";
-import {BASE_URL} from "../../../config.json"
+import { BASE_URL } from "../../../config.json";
 
 const AdminDashBoard = () => {
   const navigate = useNavigate();
@@ -36,13 +36,13 @@ const AdminDashBoard = () => {
       Cell: ({ row }) => {
         const user = row.original;
         return (
-          <div className="flex space-x-2a">
+          <div className="flex space-x-4">
             <button
               onClick={() => {
                 setSelectedUser(user);
                 setShowViewPermissions(true);
               }}
-              className="bg-gradient-to-r from-teal-500 to-teal-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-teal-600 hover:to-teal-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+              className={`text-white bg-gray-600 border border-gray-900 hover:bg-blue-600 hover:text-white shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 rounded-md mx-2 px-4 py-2`}
             >
               View Permissions
             </button>
@@ -52,7 +52,7 @@ const AdminDashBoard = () => {
                 setSelectedUser(user);
                 setShowEditUser(true);
               }}
-              className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-indigo-600 hover:to-indigo-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+              className={`text-white bg-gray-600 border border-gray-900 hover:bg-blue-600 hover:text-white shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 rounded-md mx-2 px-4 py-2`}
             >
               Edit
             </button>
@@ -62,7 +62,7 @@ const AdminDashBoard = () => {
                 setSelectedUser(user);
                 setResetPassword(true);
               }}
-              className="bg-gradient-to-r from-orange-500 to-orange-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-orange-600 hover:to-orange-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+              className={`text-white bg-gray-600 border border-gray-900 hover:bg-blue-600 hover:text-white shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 rounded-md mx-2 px-4 py-2`}
             >
               Reset Password
             </button>
@@ -72,7 +72,7 @@ const AdminDashBoard = () => {
                 setSelectedUser(user);
                 setShowDeleteUser(true);
               }}
-              className="bg-gradient-to-r from-red-500 to-red-700 text-white px-4 py-2 rounded-full shadow-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1"
+              className={`text-white bg-gray-600 border border-gray-900 hover:bg-blue-600 hover:text-white shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 rounded-md mx-2 px-4 py-2`}
             >
               Delete
             </button>
@@ -100,12 +100,12 @@ const AdminDashBoard = () => {
 
   return (
     <div>
-      <div className="Header_Bottom shadow-xl my-3 py-5">
+      <div className="Header_Bottom shadow-xl my-3 py-5 bg-[#006FC0] overflow-hidden">
         <div className="headerBottomInner flex items-center">
           <div className="headerBottomLft mr-auto">
             <div className="navItem flex items-center">
-              <i className="ri-home-3-fill mr-2 text-2xl text-[#EFA035]"></i>
-              <h3 className="m-0 text-[#333] text-2xl font-semibold">
+              <i className="ri-home-3-fill mr-2 text-2xl text-[#000000]"></i>
+              <h3 className="m-0 text-white text-2xl font-extralight">
                 User Management
               </h3>
             </div>
@@ -114,7 +114,9 @@ const AdminDashBoard = () => {
             className="headerBottomRgt"
             onClick={() => navigate("/admin-add-user")}
           >
-            <AtmButton label="Add User" />
+            <button className="bg-gray-200 hover:bg-gray-300 text-black font-semibold py-2 px-4 rounded transition duration-300  w-25">
+              Add User
+            </button>
           </div>
         </div>
       </div>

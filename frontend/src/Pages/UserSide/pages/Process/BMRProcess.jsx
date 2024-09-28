@@ -11,9 +11,11 @@ import { formattedDate } from "../../../../AtmComponents/Helper";
 import { toast, ToastContainer } from "react-toastify";
 import { AiOutlineSearch } from "react-icons/ai";
 import "react-toastify/dist/ReactToastify.css";
-import {BASE_URL} from "../../../../config.json"
+import { BASE_URL } from "../../../../config.json";
 import { IconButton, Tooltip } from "@mui/material";
 import { IoInformationCircleOutline } from "react-icons/io5";
+import "./BMRProcess.css";
+//import CreateRecordModal from "../../Pages/UserSide/Modals/CreateRecordModal/CreateRecordModal";
 
 const BMRProcess = () => {
   const [data, setData] = useState([]);
@@ -26,7 +28,18 @@ const BMRProcess = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedDivision, setSelectedDivision] = useState(0);
   const [selectedDepartment, setSelectedDepartment] = useState(0);
+  const [isFocused, setIsFocused] = useState(false); // New state for focus
+  const [showCreateRecordModal, setShowCreateRecordModal] = useState(false); // Renamed state to control modal visibility
+
   const navigate = useNavigate();
+
+  const handleTabClick = (tab) => {
+    if (tab === "Design BMR") {
+      setShowCreateRecordModal(true); // Open modal when "Design BMR" is clicked
+    } else {
+      setActiveTab(tab); // Set active tab for other tabs
+    }
+  };
 
   const columns = [
     {
@@ -217,7 +230,7 @@ const BMRProcess = () => {
                 setSelectedUser(user);
                 setIsEditModalOpen(true);
               }}
-              className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 rounded-full shadow-lg hover:from-blue-500 hover:to-blue-600 transition duration-300 ease-in-out transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-[#403f3f] to-[#3f4348] text-white px-4 py-2 rounded-full shadow-lg hover:from-blue-500 hover:to-blue-600 transition duration-300 ease-in-out transform hover:-translate-y-1"
             >
               Edit
             </button>
@@ -385,82 +398,112 @@ const BMRProcess = () => {
     <div>
       <ToastContainer />
       <HeaderBottom openModal={() => setIsModalOpen(true)} />
-      {/* Search Input */}
-      <div className=" flex items-center justify-center w-full mb-2">
-        <div className="relative flex items-center mr-5 w-[350px] rounded ">
-          {/* Fixed width container */}
-          <input
-            type="text"
-            placeholder="Search by BMR Name"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="border p-2  h-10 rounded pl-4 pr-10 w-full focus:p-3 focus:outline-none" // Padding for icon space
-            style={{ border: "1px solid black" }}
-          />
-          <AiOutlineSearch
-            className="absolute right-3 text-gray-500"
-            size={20}
-          />{" "}
+      {/* Container for search bar and tabs */}
+      <div className="flex flex-col w-full mb-0">
+        <div className="flex flex-col w-full mb-3">
+          <div className="flex items-center w-full mb-2">
+            <div className="relative flex items-center w-[500px] rounded">
+              {/* Conditionally render the search icon */}
+              {searchQuery.length === 0 && !isFocused && (
+                <AiOutlineSearch
+                  className="absolute left-2 text-gray-500 pointer-events-none"
+                  size={20}
+                />
+              )}
+              <input
+                type="text"
+                placeholder={
+                  !isFocused ? "Search by BMR NamefsetActiveTab" : ""
+                } // Conditional placeholder
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setIsFocused(true)} // Set focus state to true
+                onBlur={() => setIsFocused(false)} // Set focus state to false
+                className="border h-10 rounded pl-8 pr-4 w-full focus:outline-none"
+                style={{ border: "1px solid black" }}
+              />
+            </div>
+            {/* Tabs positioned next to the search input with slight gap */}
+            <div className="flex gap-1 ml-2">
+              {/* Adjusted gap and margin */}
+              {[
+                "All",
+                "Under Initiation",
+                "Under Reviewer",
+                "Under Approver",
+                "Approved",
+              ].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => handleTabClick(tab)} // Use the new handler
+                  className={`relative px-6 py-3 text-sm font-semibold focus:outline-none transition 
+        ${
+          activeTab === tab
+            ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 rounded-md border border-blue-900 opacity-95" // Active tab: Dark gradient without hover effect
+            : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 rounded-md" // Non-active: Light gray with blue hover effects
+        }
+        rounded-lg mx-2`} // Added margin-x for horizontal spacing
+                >
+                  {tab}
+                </button>
+              ))}
+              {/* Add gap before the Design BMR button */}
+              <div className="mx-32"></div> {/* Spacer div for the gap */}
+              {/* Design BMR Button */}
+              <button
+                onClick={() => handleTabClick("Design BMR")} // Use the same handler for modal
+                className={`relative px-4 py-2 text-sm font-semibold focus:outline-none transition 
+      ${
+        activeTab === "Design BMR"
+          ? "bg-[#2a323e] text-white font-semibold rounded-md hover:bg-[#123e53] transition-all" // Active tab: Dark gradient without hover effect
+          : "bg-[#2a323e] text-white font-semibold rounded-md hover:bg-[#123e53] transition-all" // Non-active: Light gray with blue hover effects
+      }
+      rounded-lg`} // Added margin-x for horizontal spacing
+              >
+                Design BMR
+              </button>
+              {/* Create Record Modal */}
+              {showCreateRecordModal && (
+                <CreateRecordModal
+                  onClose={() => setShowCreateRecordModal(false)}
+                /> // Adjust your modal component as necessary
+              )}
+            </div>
+          </div>
+
+          {/* Row for Select Filters positioned below the search bar */}
+          <div className="flex gap-4 mt-2">
+            {" "}
+            {/* Increased gap for better spacing */}
+            {/* First Dropdown - Select Filter */}
+            <select
+              name="Select Filter"
+              value={selectedFilter}
+              onChange={handleFilterChange}
+              className="custom-select text-gray-500 hover:text-black hover:bg-blue-100 text-sm font-semibold rounded border border-black px-2 focus:outline-none" // Applied custom class
+            >
+              <option value="">Select Filter</option>
+              <option value="division">Division</option>
+              <option value="department">Department</option>
+            </select>
+            {/* Second Dropdown - Options based on selected filter */}
+            <select
+              value={
+                selectedFilter === "division"
+                  ? selectedDivision
+                  : selectedDepartment
+              }
+              onChange={
+                selectedFilter === "division"
+                  ? handleDivisionChange
+                  : handleDepartmentChange
+              }
+              className="custom-select text-gray-500 hover:text-black hover:bg-blue-100 text-sm font-semibold rounded border border-black px-3 focus:outline-none" // Applied custom class
+            >
+              {getSecondDropdownOptions()}
+            </select>
+          </div>
         </div>
-        {/* Search Icon after input */}
-      </div>
-
-      <div className="tabs flex justify-stretch gap-16 border-b">
-        {[
-          "All",
-          "Under Initiation",
-          "Under Reviewer",
-          "Under Approver",
-          "Approved",
-        ].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`relative  px-3 py-2 text-sm font-semibold focus:outline-none transition
-              ${
-                activeTab === tab
-                  ? "text-black bg-blue-50 border-b-2 border-black"
-                  : "text-gray-500 hover:text-black hover:bg-blue-100"
-              } 
-              rounded-t-lg`}
-            style={{
-              borderBottom: activeTab === tab ? "2px solid blue" : "",
-              backgroundColor: activeTab === tab ? "#f3f4f6" : "",
-            }}
-          >
-            {tab}
-          </button>
-        ))}
-
-        {/* First Dropdown - Select Filter */}
-        <select
-          name="Select Filter"
-          value={selectedFilter}
-          onChange={handleFilterChange}
-          className="text-gray-500 hover:text-black hover:bg-blue-100 text-sm  hover:rounded-t-lg font-semibold"
-        >
-          <option value="">Select Filter</option>
-          <option value="division">Division</option>
-          <option value="department">Department</option>
-        </select>
-
-        {/* Second Dropdown - Options based on selected filter */}
-
-        <select
-          value={
-            selectedFilter === "division"
-              ? selectedDivision
-              : selectedDepartment
-          }
-          onChange={
-            selectedFilter === "division"
-              ? handleDivisionChange
-              : handleDepartmentChange
-          }
-          className="text-gray-500 hover:text-black hover:bg-blue-100 hover:rounded-t-lg text-sm font-semibold"
-        >
-          {getSecondDropdownOptions()}
-        </select>
       </div>
 
       <div className="table-container">

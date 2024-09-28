@@ -7,21 +7,16 @@ import {
   FaHeadset,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { FaPeopleLine, FaMessage } from "react-icons/fa6";
+import { FaPeopleLine } from "react-icons/fa6";
 import socketIOClient from "socket.io-client";
 import "./Header.css";
 import "./HeaderTop.css";
 import { BASE_URL } from "../../config.json";
-import axios from "axios";
-import { toast } from "react-toastify";
 
 function HeaderTop() {
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
-  // const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [socket, setSocket] = useState(null);
-  const [userDetails, setUserDetails] = useState(null);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     setSocket(socketIOClient(`${BASE_URL}/`));
@@ -31,24 +26,25 @@ function HeaderTop() {
   }, []);
 
   useEffect(() => {
-    const storedUserDetails = JSON.parse(localStorage.getItem("user-details"));
-    if (storedUserDetails) {
-      setUserDetails(storedUserDetails);
-    }
+    const userDetails = JSON.parse(localStorage.getItem("user-details"));
     if (socket && userDetails) {
       socket.emit("register", userDetails.userId);
       socket.on("new_notification", () => {
         setUnreadCount((prev) => prev + 1);
       });
-      // socket.on("updateUnreadCount", (count) => {
-      //   setUnreadMessageCount(count);
-      // });
       return () => {
         socket.off("new_notification");
-        // socket.off("updateUnreadCount");
       };
     }
   }, [socket]);
+
+  const [openItems, setOpenItems] = useState({});
+  const [User, setUser] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("user-token");
@@ -65,6 +61,22 @@ function HeaderTop() {
     handleLogout();
     handleCloseModal();
   };
+
+  const toggleItem = (id) => {
+    setOpenItems((prevState) => ({
+      ...prevState,
+      [id]: !prevState[id],
+    }));
+  };
+
+  const Each = ({ render, of }) => of.map((item, index) => render(item, index));
+
+  const isParentActive = (children) => {
+    // Implement logic to determine if any child link is active
+    // e.g., based on current path or some other condition
+    return children.some((child) => child.link === location.pathname);
+  };
+
   return (
     <div id="Header_Top" className="Header_Top">
       <div className="header_inner">
@@ -73,18 +85,18 @@ function HeaderTop() {
             <img
               onClick={() => navigate("/dashboard")}
               style={{ cursor: "pointer" }}
-              src="/vidyagxpwhite.png"
+              src="/vidyalogo2.png"
               alt="Logo"
             />
           </div>
         </div>
 
-        <div className="right flex items-center ">
+        <div className="right flex items-center">
           {/* Links Container */}
           <div className="links-container mr-10">
             <Link to="/user-notifications" className="link-item mt-8">
-              <FaBell className="text-white text-2xl" />
-              <span className="link-name text-white">Notifications</span>
+              <FaBell className="text-black text-2xl" />
+              <span className="link-name text-black">Notifications</span>
               {unreadCount > 0 && (
                 <span className="absolute -top-2 left-6 bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
                   {unreadCount}
@@ -92,53 +104,51 @@ function HeaderTop() {
               )}
             </Link>
 
-            <Link to="/messenger" className="link-item mt-8 ">
-              <FaMessage className="text-white text-2xl" />
-              <span className="link-name">Messenger</span>
-              {/* {unreadMessageCount > 0 && (
-                <span className="absolute -top-2 left-6 bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
-                  {unreadMessageCount}
-                </span>
-              )} */}
+            <Link
+              to="/boardOfDirectors"
+              className="link-item mt-5 flex items-center space-x-2"
+            >
+              <FaPeopleLine className="text-black text-2xl mt-3" />
+              <span className="link-name text-black">Board Members</span>
             </Link>
-            <Link to="/boardOfDirectors" className="link-item mt-8 ">
-              <FaPeopleLine className="text-white text-2xl" />
-              <span className="link-name">Board Members</span>
-            </Link>
-            <Link to="/about" className="link-item mt-8 items-center space-x-2">
-              <FaGlobe className="text-white text-2xl" />
-              <span className="link-name text-white">About</span>
+
+            <Link
+              to="/about"
+              className="link-item mt-8 flex items-center space-x-2"
+            >
+              <FaGlobe className="text-black text-2xl" />
+              <span className="link-name text-black">About</span>
             </Link>
 
             <Link
               to="/help"
               className="link-item mt-8 flex items-center space-x-2"
             >
-              <FaHandsHelping className="text-white text-2xl" />
-              <span className="link-name text-white">Help</span>
+              <FaHandsHelping className="text-black text-2xl" />
+              <span className="link-name text-black">Help</span>
             </Link>
 
             <Link
               to="/helpdesk"
               className="link-item mt-8 flex items-center space-x-2"
             >
-              <FaHeadset className="text-white text-2xl" />
-              <span className="link-name text-white">Helpdesk Personnel</span>
+              <FaHeadset className="text-black text-2xl" />
+              <span className="link-name text-black">Helpdesk Personnel</span>
             </Link>
 
             <Link
-              to="/"
+              to="#"
               className="link-item mt-8 flex items-center space-x-2"
-              onClick={handleLogout}
+              onClick={handleLogoutClick}
             >
-              <FaSignOutAlt className="text-white text-2xl" />
-              <span className="link-name text-white">Logout</span>
+              <FaSignOutAlt className="text-black text-2xl" />
+              <span className="link-name text-black">Logout</span>
             </Link>
           </div>
 
           {/* Admin Section */}
           <div className="flex items-center">
-            <div className="mr-4 mt-5 text-white"> {userDetails?.userId ? userDetails.userId : "Loading..."}</div>
+            <div className="mr-4 mt-5 text-white">User</div>
             <div className="rounded-full w-12 h-12 bg-gray-400 flex items-center justify-center overflow-hidden">
               <img
                 className="rounded-full w-full h-full object-cover"

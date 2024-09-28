@@ -14,8 +14,8 @@ const AddUser = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Capture the logged-in user's information
-  const loggedInUser = useSelector((state) => state.auth?.user); // Assuming user info is stored in auth slice
+  // Capture the logged-in user's information with a fallback
+  const loggedInUser = useSelector((state) => state.auth?.user) || {};
 
   const [formData, setFormData] = useState({
     name: "",
@@ -23,7 +23,7 @@ const AddUser = () => {
     password: "",
     profile_pic: null,
     rolesArray: [],
-    createdBy: loggedInUser ? loggedInUser.username : "", // Add the username here
+    createdBy: loggedInUser.username || "", // Safely access username
   });
 
   const [roles, setRoles] = useState([]);
@@ -123,7 +123,7 @@ const AddUser = () => {
           password: "",
           profile_pic: "",
           rolesArray: [],
-          createdBy: loggedInUser ? loggedInUser.username : "", // Reset the username
+          createdBy: loggedInUser.username || "", // Reset the username
         });
         setErrors({});
         setTimeout(() => {
