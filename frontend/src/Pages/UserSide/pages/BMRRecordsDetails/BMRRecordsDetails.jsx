@@ -94,16 +94,16 @@ const BMRRecordsDetails = () => {
 
   const formattedDateForInput = (dateString) => {
     if (dateString === "NA" || !dateString) {
-      return ""; // Return an empty string if the date is not available
+      return ""; 
     }
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
+    const month = String(date.getMonth() + 1).padStart(2, "0"); 
     const day = String(date.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
   };
-
+  
   const handleFlowTabClick = (tab) => {
     setActiveFlowTab(tab);
   };
@@ -112,13 +112,13 @@ const BMRRecordsDetails = () => {
   };
 
   useEffect(() => {
-    if (data[0]?.stage === 1) {
+    if (recordData?.stage === 1) {
       setActiveFlowTab("INITIATION");
-    } else if (data[0]?.stage === 2) {
+    } else if (recordData?.stage === 2) {
       setActiveFlowTab("UNDER REVIEW");
-    } else if (data[0]?.stage === 3) {
+    } else if (recordData?.stage === 3) {
       setActiveFlowTab("UNDER APPROVAL");
-    } else if (data[0]?.stage === 4) {
+    } else if (recordData?.stage === 4) {
       setActiveFlowTab("APPROVED");
     }
   }, [recordData]);
@@ -150,7 +150,9 @@ const BMRRecordsDetails = () => {
         )
         .then(() => {
           toast.success("BMR successfully sent for review");
-          navigate(-1);
+          navigate(
+            `/bmr-forms`,
+          );
         })
         .catch((error) => {
           toast.error(
@@ -168,7 +170,9 @@ const BMRRecordsDetails = () => {
         )
         .then(() => {
           toast.success("BMR successfully sent for approval");
-          setTimeout(() => navigate(-1), 500);
+          setTimeout(() => navigate(
+            `/bmr-forms`,
+          ), 500);
         })
         .catch((error) => {
           toast.error(
@@ -185,7 +189,9 @@ const BMRRecordsDetails = () => {
         )
         .then(() => {
           toast.success("BMR successfully opened");
-          navigate(-1);
+          navigate(
+            `/bmr-forms`,
+          );
         })
         .catch((error) => {
           toast.error(error?.response?.data?.message || "Couldn't open bmr!!");
@@ -196,7 +202,9 @@ const BMRRecordsDetails = () => {
         .put(`${BASE_URL}/bmr-record/approve-BMR`, dataObject, config)
         .then(() => {
           toast.success("BMR successfully approved");
-          navigate(-1);
+          navigate(
+            `/bmr-forms`,
+          );
         })
         .catch((error) => {
           toast.error(
@@ -213,7 +221,9 @@ const BMRRecordsDetails = () => {
         )
         .then(() => {
           toast.success(" BMR successfully opened");
-          navigate(-1);
+          navigate(
+            `/bmr-forms`,
+          );
         })
         .catch((error) => {
           toast.error(error?.response?.data?.message || "Couldn't open BMR!!");
@@ -447,8 +457,8 @@ const BMRRecordsDetails = () => {
                           {field.field_type === "date" && (
                             <input
                               type="date"
-                              value={formattedDateForInput(
-                                data[0]?.reviewers?.map(
+                               value={formattedDateForInput(
+                                recordData?.reviewers?.map(
                                   (date) => date?.date_of_review
                                 )
                               )}
@@ -519,7 +529,7 @@ const BMRRecordsDetails = () => {
                         <input
                           type="date"
                           value={formattedDateForInput(
-                            data[0]?.approvers?.map(
+                            recordData?.approvers?.map(
                               (date) => date?.date_of_approval
                             )
                           )}

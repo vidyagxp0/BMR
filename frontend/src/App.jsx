@@ -28,6 +28,8 @@ import BMRForms from "./Pages/UserSide/pages/Process/Modals/BMRForms";
 import Analytics from "./Pages/UserSide/Analytics/Analytics";
 import Logs from "./Pages/UserSide/Logs/Logs";
 import BMRRecordsDetails from "./Pages/UserSide/pages/BMRRecordsDetails/BMRRecordsDetails";
+import Messenger from "./Pages/UserSide/Messenger/Messenger";
+import ChatWindow from "./Pages/UserSide/Messenger/ChatWindow";
 
 function App() {
   return (
@@ -196,6 +198,14 @@ function RouteGuard() {
         <Route
           path="/user-notifications"
           element={<ProtectedUserRoute element={<Notifications />} />}
+        />
+        <Route
+          path="/messenger"
+          element={<ProtectedUserRoute element={<Messenger />} />}
+        />
+        <Route
+          path="/chat/:userId"
+          element={<ProtectedUserRoute element={<ChatWindow />} />}
         />
         <Route
           path="/analytics"

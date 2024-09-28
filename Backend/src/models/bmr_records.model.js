@@ -1,6 +1,7 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes, Sequelize } = require("sequelize");
 const { sequelize } = require("../config/db");
 const BMR = require("./bmr.model");
+const User = require("./user.model");
 
 const BMRRecord = sequelize.define("BMR_Record", {
   record_id: {
@@ -32,7 +33,17 @@ const BMRRecord = sequelize.define("BMR_Record", {
   },
   initiator: {
     type: DataTypes.INTEGER,
-    allowNull: true
+    defaultValue: null,
+    references: {
+      model: User,
+    },
+  },
+  initiatorComment: {
+    type: DataTypes.STRING,
+  },
+  date_of_initiation: {
+    type: DataTypes.DATE,
+    defaultValue: Sequelize.NOW,
   },
   reviewers: {
     type: DataTypes.JSON, // Store as an array of reviewers
@@ -50,5 +61,8 @@ const BMRRecord = sequelize.define("BMR_Record", {
 
 BMRRecord.belongsTo(BMR, { foreignKey: "bmr_id" });
 BMR.hasMany(BMRRecord, { foreignKey: "bmr_id" });
+
+BMRRecord.belongsTo(User, { foreignKey: "initiator", as: "InitiatorUser" });
+User.hasMany(BMRRecord, { foreignKey: "initiator", as: "InitiatedRecords" });
 
 module.exports = BMRRecord;

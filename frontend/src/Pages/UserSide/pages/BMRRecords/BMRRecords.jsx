@@ -4,7 +4,6 @@ import Select from "react-select";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import BMRForms from "../Process/Modals/BMRForms";
 import { useDispatch } from "react-redux";
 import { setFormData, setSelectedBMR } from "../../../../../src/userSlice";
 import { BASE_URL } from "../../../../config.json";
@@ -534,7 +533,6 @@ const InputField = ({
       className="w-full px-3 h-10 p-2 border-2 border-gray-500 rounded shadow-md focus:border-blue-500 transition duration-200"
       style={{ border: "1px solid gray" }}
     />
-
   </div>
 );
 

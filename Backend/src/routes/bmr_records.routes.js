@@ -18,6 +18,18 @@ router.put(
 );
 
 router.put(
+  "/delete-bmr-record/:id",
+  Auth.checkJwtToken,
+  BmrRecordsController.deleteBMRRecord
+);
+
+router.get(
+  "/get-all-bmr-records",
+  Auth.checkJwtToken,
+  BmrRecordsController.getAllBMRRecords
+);
+
+router.put(
   "/send-record-for-review",
   Auth.checkJwtToken,
   Auth.authorizeUserRole(2),
