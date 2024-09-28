@@ -51,12 +51,15 @@ io.on("connection", (socket) => {
 
   socket.on("sendMessage", async (data) => {
     try {
+      // const { updateUnreadCount } = require("./middlewares/utils");
       const newMessage = await Message.create({
         senderId: data.sender,
         receiverId: data.receiver,
         message: data.message,
+        // isRead: false,
       });
       socket.to(data.receiver.toString()).emit("receiveMessage", newMessage);
+      // updateUnreadCount(data.receiver);
     } catch (error) {
       console.error("Error sending/receiving message:", error);
     }

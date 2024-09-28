@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import socketIOClient from "socket.io-client";
 import { useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../../../config.json";
+import "./ChatWindow.css";
 
 function ChatWindow() {
   const [message, setMessage] = useState("");
@@ -27,14 +28,20 @@ function ChatWindow() {
       }
     };
     fetchMessages();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
-    setSocket(socketIOClient(`${BASE_URL}/`));
+    const newSocket = socketIOClient(`${BASE_URL}/`);
+    setSocket(newSocket);
+    newSocket.emit("register", userDetails.userId);
+    newSocket.on("receiveMessage", (message) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
     return () => {
-      if (socket) socket.disconnect();
+      newSocket.disconnect();
     };
-  }, []);
+  }, [userDetails.userId]);
 
   useEffect(() => {
     if (socket) {
@@ -55,28 +62,47 @@ function ChatWindow() {
       receiver: userId,
       message: message,
     };
-    messages.push(newMessage);
+    newMessage.updatedAt = new Date();
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
     socket.emit("sendMessage", newMessage);
     setMessage("");
   };
 
   return (
-    <div>
-      <h1>Chat with {location.state?.name}</h1>
-      <div>
-        {messages.map((msg) => (
-          <p key={msg.id}>
-            {msg.senderId || msg.sender}: {msg.message}
-          </p>
+    <div className="chat-window">
+      <h1 style={{ textAlign: "center" }}>
+        <strong>{location.state?.name || "User"}</strong>
+      </h1>
+      <div className="message-container">
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            className={`message ${
+              msg.senderId === userDetails.userId ||
+              msg.sender === userDetails.userId
+                ? "sent"
+                : "received"
+            }`}
+          >
+            <span>{msg.message}</span>
+            <div className="timestamp">
+              {new Date(msg.updatedAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </div>
+          </div>
         ))}
       </div>
-      <input
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        type="text"
-        placeholder="Type a message..."
-      />
-      <button onClick={sendMessage}>Send</button>
+      <div className="message-input">
+        <input
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          type="text"
+          placeholder="Type a message..."
+        />
+        <button onClick={sendMessage}>Send</button>
+      </div>
     </div>
   );
 }

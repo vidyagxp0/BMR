@@ -18,8 +18,11 @@ import { toast } from "react-toastify";
 function HeaderTop() {
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
+  // const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [socket, setSocket] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
   useEffect(() => {
     setSocket(socketIOClient(`${BASE_URL}/`));
     return () => {
@@ -37,12 +40,15 @@ function HeaderTop() {
       socket.on("new_notification", () => {
         setUnreadCount((prev) => prev + 1);
       });
+      // socket.on("updateUnreadCount", (count) => {
+      //   setUnreadMessageCount(count);
+      // });
       return () => {
         socket.off("new_notification");
+        // socket.off("updateUnreadCount");
       };
     }
   }, [socket]);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("user-token");
@@ -59,8 +65,6 @@ function HeaderTop() {
     handleLogout();
     handleCloseModal();
   };
-
-
   return (
     <div id="Header_Top" className="Header_Top">
       <div className="header_inner">
@@ -91,6 +95,11 @@ function HeaderTop() {
             <Link to="/messenger" className="link-item mt-8 ">
               <FaMessage className="text-white text-2xl" />
               <span className="link-name">Messenger</span>
+              {/* {unreadMessageCount > 0 && (
+                <span className="absolute -top-2 left-6 bg-red-500 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
+                  {unreadMessageCount}
+                </span>
+              )} */}
             </Link>
             <Link to="/boardOfDirectors" className="link-item mt-8 ">
               <FaPeopleLine className="text-white text-2xl" />

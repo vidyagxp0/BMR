@@ -17,6 +17,12 @@ router.put(
   BmrRecordsController.updateBMRRecord
 );
 
+router.put(
+  "/delete-bmr-record/:id",
+  Auth.checkJwtToken,
+  BmrRecordsController.deleteBMRRecord
+);
+
 router.get(
   "/get-all-bmr-records",
   Auth.checkJwtToken,

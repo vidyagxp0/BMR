@@ -1,6 +1,7 @@
 const Message = require("../models/messages.model");
 const { Op, Sequelize } = require("sequelize");
 const User = require("../models/user.model");
+const { updateUnreadCount } = require("../middlewares/utils");
 
 exports.getRecentChats = async (req, res) => {
   try {
@@ -59,5 +60,55 @@ exports.getAllMessagesBetweenTwoUsers = async (req, res) => {
     });
   } catch (error) {
     res.status(500).send(error.toString());
+  }
+};
+
+exports.readAMessage = async (req, res) => {
+  try {
+    const messageIds = req.body.message_ids;
+    const updateResult = await Message.update(
+      { isRead: true },
+      {
+        where: {
+          id: {
+            [Op.in]: messageIds,
+          },
+          isRead: false,
+        },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      updateUnreadCount(req.user.userId);
+      res.send({ message: "Message marked as read" });
+    } else {
+      res.send({ message: "No unread message found to update" });
+    }
+  } catch (error) {
+    res.status(500).send({
+      message: "Error marking message as read",
+      error: error.message,
+    });
+  }
+};
+
+exports.getUnreadMesseges = async (req, res) => {
+  try {
+    const { senderId, receiverId } = req.query;
+    const messages = await Message.findAll({
+      where: {
+        senderId: senderId,
+        receiverId: receiverId,
+        isRead: false,
+      },
+    });
+    res.json({ messages });
+  } catch (error) {
+    res
+      .status(500)
+      .send({
+        message: "Error fetching unread messages",
+        error: error.toString(),
+      });
   }
 };

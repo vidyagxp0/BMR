@@ -1,0 +1,66 @@
+.messenger {
+    width: 80%;
+    margin: 20px auto;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 2px solid #ccc;
+}
+
+.tab {
+    flex-grow: 1;
+    text-align: center;
+    padding: 12px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    border: none;
+    border-bottom: 3px solid transparent;
+    outline: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.tab.active {
+    background-color: #fff;
+    border-bottom-color: #007bff;
+    color: #007bff;
+}
+
+.content {
+    padding: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.chat-item,
+.user-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.chat-item h1,
+.user-item h1 {
+    font-size: 18px;
+    color: #333;
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+.cursor-pointer:hover {
+    text-decoration: underline;
+}
+
+.no-chats {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}

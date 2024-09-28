@@ -15,4 +15,16 @@ router.get(
   messageController.getAllMessagesBetweenTwoUsers
 );
 
+router.put(
+  "/read-message",
+  Auth.checkJwtToken,
+  messageController.readAMessage
+);
+
+router.get(
+  "/unread-messages",
+  Auth.checkJwtToken,
+  messageController.getUnreadMesseges
+);
+
 module.exports = router;
