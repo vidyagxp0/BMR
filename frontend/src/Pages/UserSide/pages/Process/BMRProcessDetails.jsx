@@ -290,7 +290,7 @@ const BMRProcessDetails = ({ fieldData }) => {
         )
         .then(() => {
           toast.success(" BMR successfully opened");
-          navigate(-1);
+          navigate(-1); 
         })
         .catch((error) => {
           toast.error(error?.response?.data?.message || "Couldn't open BMR!!");
@@ -481,7 +481,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                       label={newTab.length > 0 ? "Edit Form" : "Create Form"}
                       onClick={() => setShowForm("sendForm")}
                       className={`relative px-6 py-3 text-sm font-semibold focus:outline-none transition 
-                   bg-gradient-to-r from-black to-black text-white shadow-lg transform scale-100 transition duration-300 rounded-md border border-blue-900 opacity-95 hover:from-blue-900 hover:to-blue-1000 hover:scale-105 hover:shadow-xl`} // Gradient, shadow, and hover effects
+                   bg-gradient-to-r from-black to-black text-white shadow-lg transform scale-100 duration-300 rounded-md border border-blue-900 opacity-95 hover:from-blue-900 hover:to-blue-1000 hover:scale-105 hover:shadow-xl`} // Gradient, shadow, and hover effects
                     />
                   </>
                 )}
@@ -712,6 +712,7 @@ const BMRProcessDetails = ({ fieldData }) => {
 
                           {field.field_type === "text-area" && (
                             <textarea
+                            value={""}
                               className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400 "
                               required={
                                 activeFlowTab === "INITIATION" &&
@@ -879,110 +880,113 @@ const BMRProcessDetails = ({ fieldData }) => {
             </div>
 
             <div className="fixed bottom-36 right-[-10px] w-auto flex-col border-gray-300  flex gap-5">
-              {data[0]?.stage === 1 &&
-                data[0]?.initiator === userDetails.userId && (
+           {
+            newTab.length >0 ?   <>
+            {data[0]?.stage === 1 &&
+              data[0]?.initiator === userDetails.userId && (
+                <AtmButton
+                  label={"Send For Review"}
+                  className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
+                  onClick={() => {
+                    setIsPopupOpen(true);
+                    setPopupAction("sendFromOpenToReview"); // Set the action when opening the popup
+                  }}
+                />
+              )}
+            {data[0]?.stage === 2 &&
+              data[0]?.reviewers.some(
+                (reviewer) => reviewer.reviewerId === userDetails.userId
+              ) &&
+              (data[0]?.reviewers.find(
+                (reviewer) => reviewer.reviewerId === userDetails.userId
+              )?.status === "reviewed" ? (
+                <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded shadow-md">
+                  <p className="font-semibold text-lg flex items-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
+                      />
+                    </svg>
+                    You have already reviewed this.
+                  </p>
+                </div>
+              ) : (
+                <>
                   <AtmButton
-                    label={"Send For Review"}
+                    label={"Send For Approval"}
                     className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
                     onClick={() => {
                       setIsPopupOpen(true);
-                      setPopupAction("sendFromOpenToReview"); // Set the action when opening the popup
+                      setPopupAction("sendFromReviewToApproval"); // Set the action when opening the popup
                     }}
                   />
-                )}
-              {data[0]?.stage === 2 &&
-                data[0]?.reviewers.some(
-                  (reviewer) => reviewer.reviewerId === userDetails.userId
-                ) &&
-                (data[0]?.reviewers.find(
-                  (reviewer) => reviewer.reviewerId === userDetails.userId
-                )?.status === "reviewed" ? (
-                  <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded shadow-md">
-                    <p className="font-semibold text-lg flex items-center">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6 mr-2"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
-                        />
-                      </svg>
-                      You have already reviewed this.
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    <AtmButton
-                      label={"Send For Approval"}
-                      className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
-                      onClick={() => {
-                        setIsPopupOpen(true);
-                        setPopupAction("sendFromReviewToApproval"); // Set the action when opening the popup
-                      }}
-                    />
-                    <AtmButton
-                      label={"Open BMR"}
-                      className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
-                      onClick={() => {
-                        setIsPopupOpen(true);
-                        setPopupAction("sendFromReviewToOpen"); // Set the action when opening the popup
-                      }}
-                    />
-                  </>
-                ))}
-              {data[0]?.stage === 3 &&
-              data[0]?.approvers.some(
+                  <AtmButton
+                    label={"Open BMR"}
+                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
+                    onClick={() => {
+                      setIsPopupOpen(true);
+                      setPopupAction("sendFromReviewToOpen"); // Set the action when opening the popup
+                    }}
+                  />
+                </>
+              ))}
+            {data[0]?.stage === 3 &&
+            data[0]?.approvers.some(
+              (approver) => approver.approverId === userDetails.userId
+            ) ? (
+              data[0]?.approvers.find(
                 (approver) => approver.approverId === userDetails.userId
-              ) ? (
-                data[0]?.approvers.find(
-                  (approver) => approver.approverId === userDetails.userId
-                )?.status === "approved" ? (
-                  <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md">
-                    <p className="font-semibold text-lg flex items-center">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6 mr-2"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
-                        />
-                      </svg>
-                      You have already approved this.
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    <AtmButton
-                      label={"Approve BMR"}
-                      className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
-                      onClick={() => {
-                        setIsPopupOpen(true);
-                        setPopupAction("sendFromApprovalToApproved"); // Set the action when opening the popup
-                      }}
-                    />
-                    <AtmButton
-                      label={"Open BMR"}
-                      className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
-                      onClick={() => {
-                        setIsPopupOpen(true);
-                        setPopupAction("sendFromApprovalToOpen"); // Set the action when opening the popup
-                      }}
-                    />
-                  </>
-                )
-              ) : null}
+              )?.status === "approved" ? (
+                <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md">
+                  <p className="font-semibold text-lg flex items-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M13 16h-1v-4h-1m2 0h-1v-4h-1m1 10v1m4-6.582c.594-.34 1-.985 1-1.718V5.5a2.5 2.5 0 00-5 0v2.5c0 .733.406 1.378 1 1.718M10 9v6.034c0 1.386-.803 2.647-2.051 3.302a3.75 3.75 0 00-.95 5.27M19 13v7m0 0h-4m4 0v-3m4 3h-4m4 0v-3m4 3h-4"
+                      />
+                    </svg>
+                    You have already approved this.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <AtmButton
+                    label={"Approve BMR"}
+                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
+                    onClick={() => {
+                      setIsPopupOpen(true);
+                      setPopupAction("sendFromApprovalToApproved"); // Set the action when opening the popup
+                    }}
+                  />
+                  <AtmButton
+                    label={"Open BMR"}
+                    className="bg-[#195b7a] hover:bg-[#1f4f5f] p-2 rounded-l-full"
+                    onClick={() => {
+                      setIsPopupOpen(true);
+                      setPopupAction("sendFromApprovalToOpen"); // Set the action when opening the popup
+                    }}
+                  />
+                </>
+              )
+            ) : null}</> : ""
+           }
               <AtmButton
                 label={"Exit"}
                 onClick={() => {

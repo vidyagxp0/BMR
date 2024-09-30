@@ -14,16 +14,18 @@ const BMRRecords = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("General Information");
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [gridData, setGridData] = useState([]);
   const [dateOfInitiation, setDateOfInitiation] = useState(
     new Date().toISOString().split("T")[0]
   );
 
-  const [recordData , setRecordData]= useState({
-    bmr_id :"",
-    reviewers :[],
-    approvers :[],
-    data:[]
-  })
+  const [recordData, setRecordData] = useState({
+    bmr_id: "",
+    reviewers: [],
+    approvers: [],
+    data: [],
+  });
+
 
   const closeUserVerifiedModal = () => {
     setShowVerificationModal(false);
@@ -33,6 +35,7 @@ const BMRRecords = () => {
   const [selectedBMR, setSelectedBMRState] = useState(
     location.state?.selectedBMR || {}
   );
+  console.log(selectedBMR , "selected")
 
   const fieldTypes = [];
   selectedBMR.BMR_Tabs[0]?.BMR_sections[0]?.BMR_fields.forEach((field) => {
@@ -105,10 +108,10 @@ const BMRRecords = () => {
     axios
       .post(
         `${BASE_URL}/bmr-record/create-bmr-record`,
-       
+
         {
-          data :recordData.data,
-          bmr_id : selectedBMR.bmr_id,
+          data: recordData.data,
+          bmr_id: selectedBMR.bmr_id,
           reviewers: isSelectedReviewer.map((reviewer) => ({
             reviewerId: reviewer.value,
             status: "pending",
@@ -116,7 +119,7 @@ const BMRRecords = () => {
             date_of_review: "NA",
             comment: null,
           })),
-            approvers: isSelectedApprover.map((approver) => ({
+          approvers: isSelectedApprover.map((approver) => ({
             approverId: approver.value,
             status: "pending",
             approver: approver.label,
@@ -137,15 +140,22 @@ const BMRRecords = () => {
         }
       )
       .then((response) => {
-        toast.success(response.data.message || "BMR Records added successfully!")
-        navigate(
-          `/bmr-forms`,
-          {
-            state: { bmr: response.data.bmr },
-          }
+        toast.success(
+          response.data.message || "BMR Records added successfully!"
         );
-        setRecordData({ bmr_id: selectedBMR.bmr_id, reviewers: [], approvers: [] });
-        setFormDataState({ bmr_id: selectedBMR.bmr_id, reviewers: [], approvers: [] });
+        navigate(`/bmr-forms`, {
+          state: { bmr: response.data.bmr },
+        });
+        setRecordData({
+          bmr_id: selectedBMR.bmr_id,
+          reviewers: [],
+          approvers: [],
+        });
+        setFormDataState({
+          bmr_id: selectedBMR.bmr_id,
+          reviewers: [],
+          approvers: [],
+        });
         setIsSelectedApprover([]);
         setIsSelectedReviewer([]);
         setTimeout(() => {
@@ -306,10 +316,7 @@ const BMRRecords = () => {
   }, [isSelectedReviewer, isSelectedApprover]);
 
   const handleAddRecordsClick = () => {
-    if (
-      isSelectedReviewer.length === 0 ||
-      isSelectedApprover.length === 0
-    ) {
+    if (isSelectedReviewer.length === 0 || isSelectedApprover.length === 0) {
       toast.error("Please fill all fields to add a new Record.");
       return;
     }
@@ -317,6 +324,10 @@ const BMRRecords = () => {
     setShowVerificationModal(true);
   };
 
+  const addNewRow = () => {
+    const newRow = selectedBMR?.BMR_Tabs?.map((section)=>section?.BMR_sections)
+    setGridData([...gridData, newRow]);
+  };
 
   return (
     <div className="w-full h-full flex items-center justify-center ">
@@ -438,25 +449,102 @@ const BMRRecords = () => {
                         </div>
                       </h3>
                       <div className="grid grid-cols-2 gap-4">
-                        {section.BMR_fields.map((field, idx) => (
-                          <div key={idx} className="border border-gray-300 p-2">
-                            <InputField
-                              label={field.label || "Field Name"}
-                              type={field.field_type || "text"}
-                              placeholder={field.placeholder}
-                              value={field.value}
-                              helpText={field.helpText}
-                              onChange={(e) =>
-                                handleDynamicFieldChange(
-                                  field.id,
-                                  e.target.value,
-                                  activeTab
-                                )
-                              }
-                              className="mb-4 rounded-md p-2"
-                            />
-                          </div>
-                        ))}
+                        {section.BMR_fields.map((field, idx) => {
+                          console.log(field, "<><><>");
+                          return (
+                            <div
+                              key={idx}
+                              className="border border-gray-300 p-2"
+                            >
+                              {field.field_type !== "grid" && (
+                                <InputField
+                                  label={field.label || "Field Name"}
+                                  type={field.field_type || "text"}
+                                  placeholder={field.placeholder}
+                                  value={field.value}
+                                  helpText={field.helpText}
+                                  onChange={(e) =>
+                                    handleDynamicFieldChange(
+                                      field.id,
+                                      e.target.value,
+                                      activeTab
+                                    )
+                                  }
+                                  className="mb-4 rounded-md p-2"
+                                />
+                              )}
+                              {field.field_type === "grid" && (
+                                <div className="relative">
+                                  {JSON.parse(field?.acceptsMultiple)?.columns
+                                    ?.length > 0 && (
+                                    <table className="table-auto w-full border border-gray-600 mb-4">
+                                      <thead>
+                                        <tr>
+                                          {JSON.parse(
+                                            field?.acceptsMultiple
+                                          )?.columns?.map((column, idx) => {
+                                            return (
+                                              <th
+                                                key={idx}
+                                                className="border border-gray-600 p-2"
+                                              >
+                                                {column?.name || "No Name"}
+                                              </th>
+                                            );
+                                          })}
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {gridData.map((row, rowIndex) => {
+                                          return (
+                                            <tr key={rowIndex}>
+                                              {JSON.parse(
+                                                field?.acceptsMultiple
+                                              )?.columns?.map(
+                                                (column, colIdx) => (
+                                                  <td
+                                                    key={colIdx}
+                                                    className="border border-gray-600 p-2"
+                                                  >
+                                                    <input
+                                                      type="text"
+                                                      placeholder={
+                                                        column.placeholder
+                                                      }
+                                                      value={
+                                                        row[column.name] || ""
+                                                      }
+                                                      onChange={(e) =>
+                                                        handleGridChange(
+                                                          activeDefaultTab,
+                                                          rowIndex,
+                                                          column.name,
+                                                          e.target.value
+                                                        )
+                                                      }
+                                                      className="border border-gray-600 p-2 w-full rounded"
+                                                    />
+                                                  </td>
+                                                )
+                                              )}
+                                            </tr>
+                                          );
+                                        })}
+                                      </tbody>
+                                    </table>
+                                  )}
+                                    <button
+            onClick={addNewRow}
+            className="bg-blue-500 text-white p-2 rounded"
+          >
+            Add Row
+          </button>
+                                </div>
+                                
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   ))}
@@ -524,7 +612,7 @@ const InputField = ({
         </Tooltip>
       )}
     </label>
-    
+
     <input
       type={type}
       placeholder={placeholder}

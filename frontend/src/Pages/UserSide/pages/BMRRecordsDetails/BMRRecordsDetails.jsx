@@ -5,13 +5,13 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import AtmButton from "../../../../AtmComponents/AtmButton";
 import { toast } from "react-toastify";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
+import { useDispatch } from "react-redux";
+import { setFormData } from "../../../../userSlice";
 
 const BMRRecordsDetails = () => {
   const userDetails = JSON.parse(localStorage.getItem("user-details"));
   const location = useLocation();
-  const [data, setData] = useState([]);
   const [recordData, setRecordData] = useState(location?.state?.original || {});
-  console.log(recordData, "recordData");
   const [tabs, setTabs] = useState([
     "Initiator Remarks",
     "Reviewer Remarks",
@@ -89,21 +89,28 @@ const BMRRecordsDetails = () => {
   const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   dispatch(setFormData(recordData));
+  //   dispatch(setRecordData(recordData));
+  // }, [dispatch, recordData ]);
+  // dispatch(setFormData(recordData));
+
 
   const formattedDateForInput = (dateString) => {
     if (dateString === "NA" || !dateString) {
-      return ""; 
+      return "";
     }
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); 
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
   };
-  
+
   const handleFlowTabClick = (tab) => {
     setActiveFlowTab(tab);
   };
@@ -149,10 +156,8 @@ const BMRRecordsDetails = () => {
           config
         )
         .then(() => {
-          toast.success("BMR successfully sent for review");
-          navigate(
-            `/bmr-forms`,
-          );
+          toast.success("BMR Record successfully sent for review");
+          navigate(`/bmr-forms`);
         })
         .catch((error) => {
           toast.error(
@@ -169,10 +174,8 @@ const BMRRecordsDetails = () => {
           config
         )
         .then(() => {
-          toast.success("BMR successfully sent for approval");
-          setTimeout(() => navigate(
-            `/bmr-forms`,
-          ), 500);
+          toast.success("BMR Record successfully sent for approval");
+          setTimeout(() => navigate(`/bmr-forms`), 500);
         })
         .catch((error) => {
           toast.error(
@@ -188,10 +191,8 @@ const BMRRecordsDetails = () => {
           config
         )
         .then(() => {
-          toast.success("BMR successfully opened");
-          navigate(
-            `/bmr-forms`,
-          );
+          toast.success("BMR Record successfully opened");
+          navigate(`/bmr-forms`);
         })
         .catch((error) => {
           toast.error(error?.response?.data?.message || "Couldn't open bmr!!");
@@ -201,10 +202,8 @@ const BMRRecordsDetails = () => {
       axios
         .put(`${BASE_URL}/bmr-record/approve-BMR`, dataObject, config)
         .then(() => {
-          toast.success("BMR successfully approved");
-          navigate(
-            `/bmr-forms`,
-          );
+          toast.success("BMR Record successfully approved");
+          navigate(`/bmr-forms`);
         })
         .catch((error) => {
           toast.error(
@@ -220,10 +219,8 @@ const BMRRecordsDetails = () => {
           config
         )
         .then(() => {
-          toast.success(" BMR successfully opened");
-          navigate(
-            `/bmr-forms`,
-          );
+          toast.success(" BMR Record successfully opened");
+          navigate(`/bmr-forms`);
         })
         .catch((error) => {
           toast.error(error?.response?.data?.message || "Couldn't open BMR!!");
@@ -457,7 +454,7 @@ const BMRRecordsDetails = () => {
                           {field.field_type === "date" && (
                             <input
                               type="date"
-                               value={formattedDateForInput(
+                              value={formattedDateForInput(
                                 recordData?.reviewers?.map(
                                   (date) => date?.date_of_review
                                 )
