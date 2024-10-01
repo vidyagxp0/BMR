@@ -78,10 +78,10 @@ const BMRProcess = () => {
             {row.original.division_id === 1
               ? "India"
               : row.original.division_id === 2
-                ? "Malaysia "
-                : row.original.division_id === 3
-                  ? "EU"
-                  : "EMEA"}
+              ? "Malaysia "
+              : row.original.division_id === 3
+              ? "EU"
+              : "EMEA"}
           </>
         );
       },
@@ -107,52 +107,52 @@ const BMRProcess = () => {
             {row.original.department_id === 1
               ? "Coorporate Quality Assurance"
               : row.original.department_id === 2
-                ? "Quality Assurance Biopharma "
-                : row.original.department_id === 3
-                  ? "Central Quality Control"
-                  : row.original.department_id === 4
-                    ? "Manufacturing"
-                    : row.original.department_id === 5
-                      ? "Plasma Sourcing Group"
-                      : row.original.department_id === 6
-                        ? "Central Stores"
-                        : row.original.department_id === 7
-                          ? "Information Technology Group"
-                          : row.original.department_id === 8
-                            ? "Molecular Medicine"
-                            : row.original.department_id === 9
-                              ? "Central Laboratory"
-                              : row.original.department_id === 10
-                                ? "Tech Team"
-                                : row.original.department_id === 11
-                                  ? "Quality Assurance"
-                                  : row.original.department_id === 12
-                                    ? "Quality Management"
-                                    : row.original.department_id === 13
-                                      ? "IT Administration"
-                                      : row.original.department_id === 14
-                                        ? "Accounting"
-                                        : row.original.department_id === 15
-                                          ? "Logistics"
-                                          : row.original.department_id === 16
-                                            ? "Senior Management"
-                                            : row.original.department_id === 17
-                                              ? "Business Administration"
-                                              : row.original.department_id === 18
-                                                ? "Others"
-                                                : row.original.department_id === 19
-                                                  ? "Quality Control"
-                                                  : row.original.department_id === 20
-                                                    ? "Production"
-                                                    : row.original.department_id === 21
-                                                      ? "Accounting Manager"
-                                                      : row.original.department_id === 22
-                                                        ? "Quality Assurance Director"
-                                                        : row.original.department_id === 23
-                                                          ? "Quality Manager"
-                                                          : row.original.department_id === 24
-                                                            ? "Supervisor"
-                                                            : "Director"}
+              ? "Quality Assurance Biopharma "
+              : row.original.department_id === 3
+              ? "Central Quality Control"
+              : row.original.department_id === 4
+              ? "Manufacturing"
+              : row.original.department_id === 5
+              ? "Plasma Sourcing Group"
+              : row.original.department_id === 6
+              ? "Central Stores"
+              : row.original.department_id === 7
+              ? "Information Technology Group"
+              : row.original.department_id === 8
+              ? "Molecular Medicine"
+              : row.original.department_id === 9
+              ? "Central Laboratory"
+              : row.original.department_id === 10
+              ? "Tech Team"
+              : row.original.department_id === 11
+              ? "Quality Assurance"
+              : row.original.department_id === 12
+              ? "Quality Management"
+              : row.original.department_id === 13
+              ? "IT Administration"
+              : row.original.department_id === 14
+              ? "Accounting"
+              : row.original.department_id === 15
+              ? "Logistics"
+              : row.original.department_id === 16
+              ? "Senior Management"
+              : row.original.department_id === 17
+              ? "Business Administration"
+              : row.original.department_id === 18
+              ? "Others"
+              : row.original.department_id === 19
+              ? "Quality Control"
+              : row.original.department_id === 20
+              ? "Production"
+              : row.original.department_id === 21
+              ? "Accounting Manager"
+              : row.original.department_id === 22
+              ? "Quality Assurance Director"
+              : row.original.department_id === 23
+              ? "Quality Manager"
+              : row.original.department_id === 24
+              ? "Supervisor"
+              : "Director"}
           </>
         );
       },
@@ -192,17 +192,17 @@ const BMRProcess = () => {
                 </IconButton>
               </Tooltip>
             )) || (
-                <Tooltip
-                  title={`${diffDays} Days Remaining`}
-                  placement="top-start"
-                >
-                  <IconButton>
-                    <div className="icon-animate">
-                      <IoInformationCircleOutline />
-                    </div>
-                  </IconButton>
-                </Tooltip>
-              )}
+              <Tooltip
+                title={`${diffDays} Days Remaining`}
+                placement="top-start"
+              >
+                <IconButton>
+                  <div className="icon-animate">
+                    <IoInformationCircleOutline />
+                  </div>
+                </IconButton>
+              </Tooltip>
+            )}
 
             <div
               style={{
@@ -398,12 +398,11 @@ const BMRProcess = () => {
     <div>
       <ToastContainer />
       <HeaderBottom openModal={() => setIsModalOpen(true)} />
-      {/* Container for search bar and tabs */}
+
       <div className="flex flex-col w-full mb-0">
         <div className="flex flex-col w-full mb-3">
           <div className="flex items-center w-full mb-2">
             <div className="relative flex items-center w-[500px] rounded">
-              {/* Conditionally render the search icon */}
               {searchQuery.length === 0 && !isFocused && (
                 <AiOutlineSearch
                   className="absolute left-2 text-gray-500 pointer-events-none"
@@ -414,45 +413,40 @@ const BMRProcess = () => {
                 type="text"
                 placeholder={
                   !isFocused ? "Search by BMR NamefsetActiveTab" : ""
-                } // Conditional placeholder
+                }
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => setIsFocused(true)} // Set focus state to true
-                onBlur={() => setIsFocused(false)} // Set focus state to false
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
                 className="border h-10 rounded pl-8 pr-4 w-full focus:outline-none"
                 style={{ border: "1px solid black" }}
               />
             </div>
-            {/* Tabs positioned next to the search input with slight gap */}
+
             <div className="flex justify-between gap-1 ml-2">
-              {/* Adjusted gap and margin */}
-             <div className="flex justify-end items-end">
-             <button
-                onClick={() => handleTabClick("Design BMR")}
-                className={`relative px-4 py-2 text-sm font-semibold focus:outline-none transition 
-      ${activeTab === "Design BMR"
-                    ? "bg-[#2a323e] text-white font-semibold rounded-md hover:bg-[#123e53] transition-all" // Active tab: Dark gradient without hover effect
-                    : "bg-[#2a323e] text-white font-semibold rounded-md hover:bg-[#123e53] transition-all" // Non-active: Light gray with blue hover effects
-                  }
-      rounded-lg`} // Added margin-x for horizontal spacing
-              >
-                Design BMR
-              </button>
-             </div>
-              {/* Create Record Modal */}
+              <div className="flex justify-end items-end">
+                <button
+                  onClick={() => handleTabClick("Design BMR")}
+                  className={`relative px-4 py-2 text-sm font-semibold focus:outline-none transition 
+      ${
+        activeTab === "Design BMR"
+          ? "bg-[#2a323e] text-white font-semibold rounded-md hover:bg-[#123e53] transition-all"
+          : "bg-[#2a323e] text-white font-semibold rounded-md hover:bg-[#123e53] transition-all"
+      }
+      rounded-lg`}
+                >
+                  Design BMR
+                </button>
+              </div>
               {showCreateRecordModal && (
                 <CreateRecordModal
                   onClose={() => setShowCreateRecordModal(false)}
-                /> // Adjust your modal component as necessary
+                />
               )}
             </div>
           </div>
-
-          {/* Row for Select Filters positioned below the search bar */}
           <div className="flex gap-4 mt-2">
             {" "}
-            {/* Increased gap for better spacing */}
-            {/* First Dropdown - Select Filter */}
             <select
               name="Select Filter"
               value={selectedFilter}
@@ -463,7 +457,6 @@ const BMRProcess = () => {
               <option value="division">Division</option>
               <option value="department">Department</option>
             </select>
-            {/* Second Dropdown - Options based on selected filter */}
             <select
               value={
                 selectedFilter === "division"
@@ -483,27 +476,28 @@ const BMRProcess = () => {
         </div>
       </div>
       <div>
-            {[
-                "All",
-                "Under Initiation",
-                "Under Reviewer",
-                "Under Approver",
-                "Approved",
-              ].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => handleTabClick(tab)} // Use the new handler
-                  className={`relative px-6 py-3 text-sm font-semibold focus:outline-none transition 
-        ${activeTab === tab
-                      ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 rounded-md border border-blue-900 opacity-95" // Active tab: Dark gradient without hover effect
-                      : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 rounded-md" // Non-active: Light gray with blue hover effects
-                    }
-        rounded-lg mx-2`} // Added margin-x for horizontal spacing
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
+        {[
+          "All",
+          "Under Initiation",
+          "Under Reviewer",
+          "Under Approver",
+          "Approved",
+        ].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => handleTabClick(tab)}
+            className={`relative px-6 py-3 text-sm font-semibold focus:outline-none transition z-0
+        ${
+          activeTab === tab
+            ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 rounded-md border border-blue-900 opacity-95" // Active tab: Dark gradient without hover effect
+            : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 rounded-md" // Non-active: Light gray with blue hover effects
+        }
+        rounded-lg mx-2  `}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
       <div className="table-container">
         <AtmTable columns={columns} data={filteredData} />
       </div>

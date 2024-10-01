@@ -9,21 +9,23 @@ import { setFormData, setSelectedBMR } from "../../../../../src/userSlice";
 import { BASE_URL } from "../../../../config.json";
 import { Tooltip } from "@mui/material";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
+import { IoIosAddCircle, IoIosTrash } from "react-icons/io";
 
 const BMRRecords = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("General Information");
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [gridData, setGridData] = useState([]);
   const [dateOfInitiation, setDateOfInitiation] = useState(
     new Date().toISOString().split("T")[0]
   );
 
-  const [recordData , setRecordData]= useState({
-    bmr_id :"",
-    reviewers :[],
-    approvers :[],
-    data:[]
-  })
+  const [recordData, setRecordData] = useState({
+    bmr_id: "",
+    reviewers: [],
+    approvers: [],
+    data: [],
+  });
 
   const closeUserVerifiedModal = () => {
     setShowVerificationModal(false);
@@ -33,6 +35,7 @@ const BMRRecords = () => {
   const [selectedBMR, setSelectedBMRState] = useState(
     location.state?.selectedBMR || {}
   );
+  console.log(selectedBMR, "selected");
 
   const fieldTypes = [];
   selectedBMR.BMR_Tabs[0]?.BMR_sections[0]?.BMR_fields.forEach((field) => {
@@ -105,10 +108,10 @@ const BMRRecords = () => {
     axios
       .post(
         `${BASE_URL}/bmr-record/create-bmr-record`,
-       
+
         {
-          data :recordData.data,
-          bmr_id : selectedBMR.bmr_id,
+          data: recordData.data,
+          bmr_id: selectedBMR.bmr_id,
           reviewers: isSelectedReviewer.map((reviewer) => ({
             reviewerId: reviewer.value,
             status: "pending",
@@ -116,7 +119,7 @@ const BMRRecords = () => {
             date_of_review: "NA",
             comment: null,
           })),
-            approvers: isSelectedApprover.map((approver) => ({
+          approvers: isSelectedApprover.map((approver) => ({
             approverId: approver.value,
             status: "pending",
             approver: approver.label,
@@ -137,15 +140,22 @@ const BMRRecords = () => {
         }
       )
       .then((response) => {
-        toast.success(response.data.message || "BMR Records added successfully!")
-        navigate(
-          `/bmr-forms`,
-          {
-            state: { bmr: response.data.bmr },
-          }
+        toast.success(
+          response.data.message || "BMR Records added successfully!"
         );
-        setRecordData({ bmr_id: selectedBMR.bmr_id, reviewers: [], approvers: [] });
-        setFormDataState({ bmr_id: selectedBMR.bmr_id, reviewers: [], approvers: [] });
+        navigate(`/bmr-forms`, {
+          state: { bmr: response.data.bmr },
+        });
+        setRecordData({
+          bmr_id: selectedBMR.bmr_id,
+          reviewers: [],
+          approvers: [],
+        });
+        setFormDataState({
+          bmr_id: selectedBMR.bmr_id,
+          reviewers: [],
+          approvers: [],
+        });
         setIsSelectedApprover([]);
         setIsSelectedReviewer([]);
         setTimeout(() => {
@@ -306,10 +316,7 @@ const BMRRecords = () => {
   }, [isSelectedReviewer, isSelectedApprover]);
 
   const handleAddRecordsClick = () => {
-    if (
-      isSelectedReviewer.length === 0 ||
-      isSelectedApprover.length === 0
-    ) {
+    if (isSelectedReviewer.length === 0 || isSelectedApprover.length === 0) {
       toast.error("Please fill all fields to add a new Record.");
       return;
     }
@@ -317,6 +324,33 @@ const BMRRecords = () => {
     setShowVerificationModal(true);
   };
 
+  const addNewRow = () => {
+    const newRow = selectedBMR?.BMR_Tabs?.map(
+      (section) => section?.BMR_sections
+    );
+    setGridData([...gridData, newRow]);
+  };
+
+  const deleteRow = (rowIndex) => {
+    const updatedGridData = gridData.filter((_, index) => index !== rowIndex);
+    setGridData(updatedGridData); // Update the gridData state with the new row data
+  };
+
+  const handleGridChange = (activeTab, rowIndex, columnName, value) => {
+    setGridData((prevGridData) => {
+      // Create a copy of the previous grid data
+      const updatedGridData = [...prevGridData];
+
+      // Update the specific row and column
+      updatedGridData[rowIndex] = {
+        ...updatedGridData[rowIndex], // Copy the current row data
+        [columnName]: value, // Update the specific column with the new value
+      };
+
+      // Return the updated grid data
+      return updatedGridData;
+    });
+  };
 
   return (
     <div className="w-full h-full flex items-center justify-center ">
@@ -422,41 +456,161 @@ const BMRRecords = () => {
               activeTab === tab.tab_name && (
                 <div
                   key={tab.tab_name}
-                  className="grid grid-cols-2 w-full p-2 text-lg font-semibold text-black rounded-lg "
+                  className="text-lg flex flex-col gap-9 font-bold text-gray-500"
                 >
                   {tab.BMR_sections.map((section, index) => (
                     <div
                       key={index}
-                      className="p-4 border mb-4 border-gray-500 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95 "
+                      className="p-4 border mb-4 border-gray-500 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95"
                     >
                       <h3 className="font-semibold text-gray-600 mb-3 text-lg bg-gray-200 p-3">
                         <div className="flex items-center gap-5 ">
                           <p>Section :</p>
-                          <span className="block text-black">
+                          <div className="block text-black">
                             {section.section_name}
-                          </span>
+                          </div>
                         </div>
                       </h3>
-                      <div className="grid grid-cols-2 gap-4">
-                        {section.BMR_fields.map((field, idx) => (
-                          <div key={idx} className="border border-gray-300 p-2">
-                            <InputField
-                              label={field.label || "Field Name"}
-                              type={field.field_type || "text"}
-                              placeholder={field.placeholder}
-                              value={field.value}
-                              helpText={field.helpText}
-                              onChange={(e) =>
-                                handleDynamicFieldChange(
-                                  field.id,
-                                  e.target.value,
-                                  activeTab
-                                )
-                              }
-                              className="mb-4 rounded-md p-2"
-                            />
-                          </div>
-                        ))}
+                      <div
+                        className={
+                          // Conditionally apply `grid-cols-2` if no grid field exists
+                          section.BMR_fields.some(
+                            (field) => field.field_type === "grid"
+                          )
+                            ? ""
+                            : "grid grid-cols-2 gap-4"
+                        }
+                      >
+                        {section.BMR_fields.map((field, idx) => {
+                          return (
+                            <div
+                              key={idx}
+                              className={`${
+                                field.field_type !== "grid"
+                                  ? "grid grid-cols-2"
+                                  : " p-2"
+                              }`}
+                            >
+                              {/* Non-grid fields */}
+                              {field.field_type !== "grid" && (
+                                <InputField
+                                  label={field.label || "Field Name"}
+                                  type={field.field_type || "text"}
+                                  placeholder={field.placeholder}
+                                  value={field.value}
+                                  helpText={field.helpText}
+                                  onChange={(e) =>
+                                    handleDynamicFieldChange(
+                                      field.id,
+                                      e.target.value,
+                                      activeTab
+                                    )
+                                  }
+                                  className={` mb-4 rounded-md p-2 ${
+                                    field.label
+                                      ? "text-base font-bold text-gray-900 flex gap-1 mb-2"
+                                      : ""
+                                  } `}
+                                />
+                              )}
+                              {/* Grid field */}
+                              <div className="mt-2">
+                                {field.field_type === "grid" && (
+                                  <div className="relative ">
+                                    <div className="flex justify-between items-center">
+                                      <div> {field.label} </div>
+                                      <div className="flex justify-end">
+                                        <button
+                                          onClick={addNewRow}
+                                          className="p-2 rounded"
+                                        >
+                                          <IoIosAddCircle size={25} />
+                                        </button>
+                                      </div>
+                                    </div>
+
+                                    {(() => {
+                                      let acceptsMultiple =
+                                        field?.acceptsMultiple
+                                          ? JSON.parse(field.acceptsMultiple)
+                                          : { columns: [], rows: [] };
+                                      return (
+                                        acceptsMultiple?.columns?.length >
+                                          0 && (
+                                          <table className="table-auto w-full border border-gray-600 mb-4">
+                                            <thead>
+                                              <tr>
+                                                {acceptsMultiple.columns.map(
+                                                  (column, idx) => {
+                                                    return (
+                                                      <th
+                                                        key={idx}
+                                                        className="border border-gray-600 p-2"
+                                                      >
+                                                        {column?.name ||
+                                                          "No Name"}
+                                                      </th>
+                                                    );
+                                                  }
+                                                )}
+                                                <th className="border border-gray-600 p-2">
+                                                  Action
+                                                </th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {gridData.map((row, rowIndex) => {
+                                                return (
+                                                  <tr key={rowIndex}>
+                                                    {acceptsMultiple.columns.map(
+                                                      (column, colIdx) => (
+                                                        <td
+                                                          key={colIdx}
+                                                          className="border border-gray-600 p-2"
+                                                        >
+                                                          <input
+                                                            type={
+                                                              column.field_type ||
+                                                              "text"
+                                                            }
+                                            
+                                                            onChange={
+                                                              (e) =>
+                                                                handleGridChange(
+                                                                  rowIndex,
+                                                                  column.name,
+                                                                  e.target.value
+                                                                ) // Update the value when typing
+                                                            }
+                                                            className="border text-black border-gray-600 p-2 w-full rounded"
+                                                          />
+                                                        </td>
+                                                      )
+                                                    )}
+                                                    <td className="border border-gray-600 p-2 text-center">
+                                                      <button
+                                                        onClick={() =>
+                                                          deleteRow(rowIndex)
+                                                        }
+                                                        className="text-red-500 hover:text-red-700"
+                                                      >
+                                                        <IoIosTrash size={20} />
+                                                      </button>
+                                                    </td>
+                                                  </tr>
+                                                );
+                                              })}
+                                            </tbody>
+                                          </table>
+                                        )
+                                      );
+                                    })()}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   ))}
@@ -524,7 +678,7 @@ const InputField = ({
         </Tooltip>
       )}
     </label>
-    
+
     <input
       type={type}
       placeholder={placeholder}

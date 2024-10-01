@@ -137,6 +137,15 @@ function AuditTrail() {
                         width: "10%",
                       }}
                     >
+                      Field Name
+                    </th>
+                    <th
+                      style={{
+                        padding: "10px",
+                        borderBottom: "1px solid #ccc",
+                        width: "10%",
+                      }}
+                    >
                       Previous Value
                     </th>
                     <th
@@ -224,6 +233,17 @@ function AuditTrail() {
                         }}
                       >
                         {auditTrail.field_name}
+                      </td>
+                      <td
+                        style={{
+                          padding: "10px",
+                          borderBottom: "1px solid #ccc",
+                          width: "10%",
+                        }}
+                      >
+                        {auditTrail.field_name
+                          ? auditTrail.field_name
+                          : "null"}
                       </td>
                       <td
                         style={{
