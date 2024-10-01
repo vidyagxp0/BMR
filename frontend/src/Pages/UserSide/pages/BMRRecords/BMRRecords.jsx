@@ -9,6 +9,7 @@ import { setFormData, setSelectedBMR } from "../../../../../src/userSlice";
 import { BASE_URL } from "../../../../config.json";
 import { Tooltip } from "@mui/material";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
+import { IoIosAddCircle, IoIosTrash } from "react-icons/io";
 
 const BMRRecords = () => {
   const location = useLocation();
@@ -26,7 +27,6 @@ const BMRRecords = () => {
     data: [],
   });
 
-
   const closeUserVerifiedModal = () => {
     setShowVerificationModal(false);
   };
@@ -35,7 +35,7 @@ const BMRRecords = () => {
   const [selectedBMR, setSelectedBMRState] = useState(
     location.state?.selectedBMR || {}
   );
-  console.log(selectedBMR , "selected")
+  console.log(selectedBMR, "selected");
 
   const fieldTypes = [];
   selectedBMR.BMR_Tabs[0]?.BMR_sections[0]?.BMR_fields.forEach((field) => {
@@ -325,8 +325,31 @@ const BMRRecords = () => {
   };
 
   const addNewRow = () => {
-    const newRow = selectedBMR?.BMR_Tabs?.map((section)=>section?.BMR_sections)
+    const newRow = selectedBMR?.BMR_Tabs?.map(
+      (section) => section?.BMR_sections
+    );
     setGridData([...gridData, newRow]);
+  };
+
+  const deleteRow = (rowIndex) => {
+    const updatedGridData = gridData.filter((_, index) => index !== rowIndex);
+    setGridData(updatedGridData); // Update the gridData state with the new row data
+  };
+
+  const handleGridChange = (activeTab, rowIndex, columnName, value) => {
+    setGridData((prevGridData) => {
+      // Create a copy of the previous grid data
+      const updatedGridData = [...prevGridData];
+
+      // Update the specific row and column
+      updatedGridData[rowIndex] = {
+        ...updatedGridData[rowIndex], // Copy the current row data
+        [columnName]: value, // Update the specific column with the new value
+      };
+
+      // Return the updated grid data
+      return updatedGridData;
+    });
   };
 
   return (
@@ -433,29 +456,42 @@ const BMRRecords = () => {
               activeTab === tab.tab_name && (
                 <div
                   key={tab.tab_name}
-                  className="grid grid-cols-2 w-full p-2 text-lg font-semibold text-black rounded-lg "
+                  className="text-lg flex flex-col gap-9 font-bold text-gray-500"
                 >
                   {tab.BMR_sections.map((section, index) => (
                     <div
                       key={index}
-                      className="p-4 border mb-4 border-gray-500 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95 "
+                      className="p-4 border mb-4 border-gray-500 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95"
                     >
                       <h3 className="font-semibold text-gray-600 mb-3 text-lg bg-gray-200 p-3">
                         <div className="flex items-center gap-5 ">
                           <p>Section :</p>
-                          <span className="block text-black">
+                          <div className="block text-black">
                             {section.section_name}
-                          </span>
+                          </div>
                         </div>
                       </h3>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div
+                        className={
+                          // Conditionally apply `grid-cols-2` if no grid field exists
+                          section.BMR_fields.some(
+                            (field) => field.field_type === "grid"
+                          )
+                            ? ""
+                            : "grid grid-cols-2 gap-4"
+                        }
+                      >
                         {section.BMR_fields.map((field, idx) => {
-                          console.log(field, "<><><>");
                           return (
                             <div
                               key={idx}
-                              className="border border-gray-300 p-2"
+                              className={`${
+                                field.field_type !== "grid"
+                                  ? "grid grid-cols-2"
+                                  : " p-2"
+                              }`}
                             >
+                              {/* Non-grid fields */}
                               {field.field_type !== "grid" && (
                                 <InputField
                                   label={field.label || "Field Name"}
@@ -470,78 +506,108 @@ const BMRRecords = () => {
                                       activeTab
                                     )
                                   }
-                                  className="mb-4 rounded-md p-2"
+                                  className={` mb-4 rounded-md p-2 ${
+                                    field.label
+                                      ? "text-base font-bold text-gray-900 flex gap-1 mb-2"
+                                      : ""
+                                  } `}
                                 />
                               )}
-                              {field.field_type === "grid" && (
-                                <div className="relative">
-                                  {JSON.parse(field?.acceptsMultiple)?.columns
-                                    ?.length > 0 && (
-                                    <table className="table-auto w-full border border-gray-600 mb-4">
-                                      <thead>
-                                        <tr>
-                                          {JSON.parse(
-                                            field?.acceptsMultiple
-                                          )?.columns?.map((column, idx) => {
-                                            return (
-                                              <th
-                                                key={idx}
-                                                className="border border-gray-600 p-2"
-                                              >
-                                                {column?.name || "No Name"}
-                                              </th>
-                                            );
-                                          })}
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {gridData.map((row, rowIndex) => {
-                                          return (
-                                            <tr key={rowIndex}>
-                                              {JSON.parse(
-                                                field?.acceptsMultiple
-                                              )?.columns?.map(
-                                                (column, colIdx) => (
-                                                  <td
-                                                    key={colIdx}
-                                                    className="border border-gray-600 p-2"
-                                                  >
-                                                    <input
-                                                      type="text"
-                                                      placeholder={
-                                                        column.placeholder
-                                                      }
-                                                      value={
-                                                        row[column.name] || ""
-                                                      }
-                                                      onChange={(e) =>
-                                                        handleGridChange(
-                                                          activeDefaultTab,
-                                                          rowIndex,
-                                                          column.name,
-                                                          e.target.value
-                                                        )
-                                                      }
-                                                      className="border border-gray-600 p-2 w-full rounded"
-                                                    />
-                                                  </td>
-                                                )
-                                              )}
-                                            </tr>
-                                          );
-                                        })}
-                                      </tbody>
-                                    </table>
-                                  )}
-                                    <button
-            onClick={addNewRow}
-            className="bg-blue-500 text-white p-2 rounded"
-          >
-            Add Row
-          </button>
-                                </div>
-                                
-                              )}
+                              {/* Grid field */}
+                              <div className="mt-2">
+                                {field.field_type === "grid" && (
+                                  <div className="relative ">
+                                    <div className="flex justify-between items-center">
+                                      <div> {field.label} </div>
+                                      <div className="flex justify-end">
+                                        <button
+                                          onClick={addNewRow}
+                                          className="p-2 rounded"
+                                        >
+                                          <IoIosAddCircle size={25} />
+                                        </button>
+                                      </div>
+                                    </div>
+
+                                    {(() => {
+                                      let acceptsMultiple =
+                                        field?.acceptsMultiple
+                                          ? JSON.parse(field.acceptsMultiple)
+                                          : { columns: [], rows: [] };
+                                      return (
+                                        acceptsMultiple?.columns?.length >
+                                          0 && (
+                                          <table className="table-auto w-full border border-gray-600 mb-4">
+                                            <thead>
+                                              <tr>
+                                                {acceptsMultiple.columns.map(
+                                                  (column, idx) => {
+                                                    return (
+                                                      <th
+                                                        key={idx}
+                                                        className="border border-gray-600 p-2"
+                                                      >
+                                                        {column?.name ||
+                                                          "No Name"}
+                                                      </th>
+                                                    );
+                                                  }
+                                                )}
+                                                <th className="border border-gray-600 p-2">
+                                                  Action
+                                                </th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {gridData.map((row, rowIndex) => {
+                                                return (
+                                                  <tr key={rowIndex}>
+                                                    {acceptsMultiple.columns.map(
+                                                      (column, colIdx) => (
+                                                        <td
+                                                          key={colIdx}
+                                                          className="border border-gray-600 p-2"
+                                                        >
+                                                          <input
+                                                            type={
+                                                              column.field_type ||
+                                                              "text"
+                                                            }
+                                            
+                                                            onChange={
+                                                              (e) =>
+                                                                handleGridChange(
+                                                                  rowIndex,
+                                                                  column.name,
+                                                                  e.target.value
+                                                                ) // Update the value when typing
+                                                            }
+                                                            className="border text-black border-gray-600 p-2 w-full rounded"
+                                                          />
+                                                        </td>
+                                                      )
+                                                    )}
+                                                    <td className="border border-gray-600 p-2 text-center">
+                                                      <button
+                                                        onClick={() =>
+                                                          deleteRow(rowIndex)
+                                                        }
+                                                        className="text-red-500 hover:text-red-700"
+                                                      >
+                                                        <IoIosTrash size={20} />
+                                                      </button>
+                                                    </td>
+                                                  </tr>
+                                                );
+                                              })}
+                                            </tbody>
+                                          </table>
+                                        )
+                                      );
+                                    })()}
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           );
                         })}
