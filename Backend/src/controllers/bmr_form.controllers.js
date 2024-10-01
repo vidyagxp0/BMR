@@ -13,11 +13,31 @@ const puppeteer = require("puppeteer");
 const path = require("path");
 const fs = require("fs");
 const Notifications = require("../models/notifications.model");
+const Division = require("../models/division.model");
+const Department = require("../models/department.model");
 
 const getUserById = async (user_id) => {
-  const user = await User.findOne({ where: { user_id, isActive: true } });
+  const user = await User.findOne({
+    where: { user_id, isActive: true },
+    distinct: true,
+  });
   return user;
 };
+const getDivisionById = async (division_id) => {
+  const division = await Division.findOne({
+    where: { division_id, isActive: true },
+    distinct: true,
+  });
+  return division;
+};
+const getDepartmentById = async (department_id) => {
+  const department = await Department.findOne({
+    where: { department_id, isActive: true },
+    distinct: true,
+  });
+  return department;
+};
+const areFloatsEqual = (a, b) => Math.abs(a - b) < 0.000001;
 
 exports.postBMR = async (req, res) => {
   const {
@@ -116,20 +136,63 @@ exports.postBMR = async (req, res) => {
 
     // Log audit trail
     try {
-      await FormAuditTrail.create(
-        {
+      const auditTrailEntries = [];
+      const fields = {
+        name,
+        description,
+        due_date,
+        department: (await getDepartmentById(department_id))?.name,
+        division: (await getDivisionById(division_id))?.name,
+      };
+
+      for (const [field, value] of Object.entries(fields)) {
+        if (value !== undefined && value !== null && value !== "") {
+          auditTrailEntries.push({
+            bmr_id: bmr.bmr_id,
+            changed_by: req.user.userId,
+            field_name: field,
+            previous_value: null,
+            new_value: value,
+            previous_status: "Not Applicable",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "BMR Added",
+          });
+        }
+      }
+
+      reviewers.forEach((reviewer, index) => {
+        auditTrailEntries.push({
           bmr_id: bmr.bmr_id,
           changed_by: req.user.userId,
+          field_name: `reviewer${index + 1}`,
           previous_value: null,
-          new_value: JSON.stringify(name),
+          new_value: reviewer?.reviewer,
           previous_status: "Not Applicable",
           new_status: "Under Initiation",
           declaration: declaration,
           comments: comments,
-          action: "BMR Created",
-        },
-        { transaction }
-      );
+          action: "BMR Added",
+        });
+      });
+
+      approvers.forEach((approver, index) => {
+        auditTrailEntries.push({
+          bmr_id: bmr.bmr_id,
+          changed_by: req.user.userId,
+          field_name: `approver${index + 1}`,
+          previous_value: null,
+          new_value: approver?.approver,
+          previous_status: "Not Applicable",
+          new_status: "Under Initiation",
+          declaration: declaration,
+          comments: comments,
+          action: "BMR Added",
+        });
+      });
+
+      await FormAuditTrail.bulkCreate(auditTrailEntries, { transaction });
     } catch (auditError) {
       console.error("Failed to log audit trail:", auditError.message);
       await transaction.rollback();
@@ -280,6 +343,7 @@ exports.postBMRTab = async (req, res) => {
         {
           bmr_id: bmr_id,
           changed_by: req.user.userId,
+          field_name: "Tab name",
           previous_value: null,
           new_value: JSON.stringify(tab_name),
           previous_status: "Under Initiation",
@@ -397,18 +461,33 @@ exports.postBMRSection = async (req, res) => {
 
     // Log audit trail synchronously to ensure consistency within the transaction
     try {
-      await FormAuditTrail.create(
-        {
-          bmr_id: bmr_id,
-          changed_by: req.user.userId,
-          previous_value: null,
-          new_value: JSON.stringify(section_name),
-          previous_status: "Under Initiation",
-          new_status: "Under Initiation",
-          declaration: declaration,
-          comments: comments,
-          action: "Section Added",
-        },
+      await FormAuditTrail.bulkCreate(
+        [
+          {
+            bmr_id: bmr_id,
+            changed_by: req.user.userId,
+            field_name: "Section name",
+            previous_value: null,
+            new_value: JSON.stringify(section_name),
+            previous_status: "Under Initiation",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "Section Added",
+          },
+          {
+            bmr_id: bmr_id,
+            changed_by: req.user.userId,
+            field_name: "Section limit",
+            previous_value: null,
+            new_value: limit,
+            previous_status: "Under Initiation",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "Section Added",
+          },
+        ],
         { transaction }
       );
     } catch (auditError) {
@@ -568,20 +647,106 @@ exports.postBMRField = async (req, res) => {
 
     // Log audit trail synchronously to ensure consistency within the transaction
     try {
-      await FormAuditTrail.create(
-        {
-          bmr_id: bmr_id,
-          changed_by: req.user.userId,
-          previous_value: null,
-          new_value: JSON.stringify(label),
-          previous_status: "Under Initiation",
-          new_status: "Under Initiation",
-          declaration: declaration,
-          comments: comments,
-          action: "Field Added",
-        },
-        { transaction }
-      );
+      const auditTrailEntries = [];
+      const fields = {
+        field_type,
+        label,
+        placeholder,
+        defaultValue,
+        helpText,
+        minValue,
+        maxValue,
+        isVisible,
+        isRequired,
+        isReadOnly,
+      };
+
+      for (const [field, value] of Object.entries(fields)) {
+        if (value !== undefined && value !== null && value !== "") {
+          auditTrailEntries.push({
+            bmr_id: bmr_id,
+            changed_by: req.user.userId,
+            field_name: field,
+            previous_value: null,
+            new_value: value,
+            previous_status: "Not Applicable",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "Field Added",
+          });
+        }
+      }
+
+      if (field_type === "single_select" || field_type === "multi_select") {
+        acceptsMultiple.forEach((option, index) => {
+          auditTrailEntries.push({
+            bmr_id: bmr_id,
+            changed_by: req.user.userId,
+            field_name: `${label}-select_options[${index + 1}]`,
+            previous_value: null,
+            new_value: JSON.stringify(option),
+            previous_status: "Under Initiation",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "Field Added",
+          });
+        });
+      } else if (field_type === "grid") {
+        acceptsMultiple?.columns?.forEach((option, index) => {
+          auditTrailEntries.push({
+            bmr_id: bmr_id,
+            changed_by: req.user.userId,
+            field_name: `${label}-name[${index + 1}]`,
+            previous_value: null,
+            new_value: JSON.stringify(option.name),
+            previous_status: "Under Initiation",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "Field Added",
+          });
+          auditTrailEntries.push({
+            bmr_id: bmr_id,
+            changed_by: req.user.userId,
+            field_name: `${label}-field_type[${index + 1}]`,
+            previous_value: null,
+            new_value: JSON.stringify(option?.field_type),
+            previous_status: "Under Initiation",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "Field Added",
+          });
+          auditTrailEntries.push({
+            bmr_id: bmr_id,
+            changed_by: req.user.userId,
+            field_name: `${label}-isRequired[${index + 1}]`,
+            previous_value: null,
+            new_value: JSON.stringify(option?.isRequired),
+            previous_status: "Under Initiation",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "Field Added",
+          });
+          auditTrailEntries.push({
+            bmr_id: bmr_id,
+            changed_by: req.user.userId,
+            field_name: `${label}-helpText[${index + 1}]`,
+            previous_value: null,
+            new_value: JSON.stringify(option?.helpText),
+            previous_status: "Under Initiation",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "Field Added",
+          });
+        });
+      }
+
+      await FormAuditTrail.bulkCreate(auditTrailEntries, { transaction });
     } catch (auditError) {
       console.error("Failed to log audit trail:", auditError.message);
       await transaction.rollback();
@@ -711,20 +876,118 @@ exports.editBMR = async (req, res) => {
 
     // Log audit trail synchronously to ensure consistency within the transaction
     try {
-      await FormAuditTrail.create(
-        {
+      const currentDepartment = await getDepartmentById(
+        currentBMR.department_id
+      );
+      const newDepartment = await getDepartmentById(department_id);
+      const currentDivision = await getDivisionById(currentBMR.division_id);
+      const newDivision = await getDivisionById(currentBMR.division_id);
+
+      const auditTrailEntries = [];
+      const fields = {
+        name,
+        due_date,
+        description,
+      };
+
+      for (const [field, newValue] of Object.entries(fields)) {
+        let oldValue = currentBMR[field];
+
+        if (
+          newValue !== undefined &&
+          ((typeof newValue === "number" &&
+            !areFloatsEqual(oldValue, newValue)) ||
+            oldValue != newValue)
+        ) {
+          auditTrailEntries.push({
+            bmr_id: bmr_id,
+            changed_by: req.user.userId,
+            field_name: field,
+            previous_value: oldValue || null,
+            new_value: newValue,
+            previous_status: "Under Initiation",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "Update BMR",
+          });
+        }
+      }
+
+      if (currentBMR.department_id !== department_id) {
+        auditTrailEntries.push({
           bmr_id: bmr_id,
           changed_by: req.user.userId,
-          previous_value: JSON.stringify(currentBMR.name),
-          new_value: JSON.stringify(name),
+          field_name: "Department",
+          previous_value: currentDepartment.get("name"),
+          new_value: newDepartment.get("name"),
           previous_status: "Under Initiation",
           new_status: "Under Initiation",
           declaration: declaration,
           comments: comments,
-          action: "BMR Updated",
-        },
-        { transaction }
-      );
+          action: "Update BMR",
+        });
+      }
+      if (currentBMR.division_id !== division_id) {
+        auditTrailEntries.push({
+          bmr_id: bmr_id,
+          changed_by: req.user.userId,
+          field_name: "Division",
+          previous_value: currentDivision.get("name"),
+          new_value: newDivision.get("name"),
+          previous_status: "Under Initiation",
+          new_status: "Under Initiation",
+          declaration: declaration,
+          comments: comments,
+          action: "Update BMR",
+        });
+      }
+
+      reviewers.forEach((updatedReviewer, index) => {
+        const existingReviewer = currentBMR?.reviewers[index];
+        if (
+          !existingReviewer ||
+          updatedReviewer.reviewer !== existingReviewer.reviewer
+        ) {
+          auditTrailEntries.push({
+            bmr_id: bmr_id,
+            changed_by: req.user.userId,
+            field_name: `reviewer${index + 1}`,
+            previous_value: existingReviewer ? existingReviewer.reviewer : null,
+            new_value: updatedReviewer.reviewer,
+            previous_status: "Under Initiation",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "Update BMR",
+          });
+        }
+      });
+      approvers.forEach((updatedApprover, index) => {
+        const existingApprover = currentBMR?.approvers[index];
+
+        // Check if the reviewer has been updated
+        if (
+          !existingApprover ||
+          updatedApprover.approver !== existingApprover.approver
+        ) {
+          // Perform insert of audit trail entry here
+          auditTrailEntries.push({
+            bmr_id: bmr_id,
+            changed_by: req.user.userId,
+            field_name: `approver${index + 1}`,
+            previous_value: existingApprover ? existingApprover.approver : null,
+            new_value: updatedApprover.approver,
+            previous_status: "Under Initiation",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "Update BMR",
+          });
+        }
+      });
+
+      await FormAuditTrail.bulkCreate(auditTrailEntries, { transaction });
     } catch (auditError) {
       console.error("Failed to log audit trail:", auditError.message);
       await transaction.rollback();
@@ -835,6 +1098,7 @@ exports.editBMRTab = async (req, res) => {
         {
           bmr_id: bmr_id,
           changed_by: req.user.userId,
+          field_name: "Tab name",
           previous_value: JSON.stringify(currentTab.tab_name),
           new_value: JSON.stringify(tab_name),
           previous_status: "Under Initiation",
@@ -973,20 +1237,36 @@ exports.editBMRSection = async (req, res) => {
 
     // Log audit trail synchronously to ensure consistency within the transaction
     try {
-      await FormAuditTrail.create(
-        {
-          bmr_id: bmr_id,
-          changed_by: req.user.userId,
-          previous_value: JSON.stringify(currentSection.section_name),
-          new_value: JSON.stringify(section_name),
-          previous_status: "Initiation",
-          new_status: "Under Initiation",
-          declaration: declaration,
-          comments: comments,
-          action: "Section Updated",
-        },
-        { transaction }
-      );
+      const auditTrailEntries = [];
+      const fields = {
+        section_name,
+        limit,
+      };
+
+      for (const [field, newValue] of Object.entries(fields)) {
+        const oldValue = currentSection[field];
+        if (
+          newValue !== undefined &&
+          ((typeof newValue === "number" &&
+            !areFloatsEqual(oldValue, newValue)) ||
+            oldValue != newValue)
+        ) {
+          auditTrailEntries.push({
+            bmr_id: bmr_id,
+            changed_by: req.user.userId,
+            field_name: field,
+            previous_value: oldValue || null,
+            new_value: newValue,
+            previous_status: "Under Initiation",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "Section Updated",
+          });
+        }
+      }
+
+      await FormAuditTrail.bulkCreate(auditTrailEntries, { transaction });
     } catch (auditError) {
       console.error("Failed to log audit trail:", auditError.message);
       await transaction.rollback();
@@ -1092,6 +1372,16 @@ exports.editBMRField = async (req, res) => {
       },
       transaction,
     });
+    const oldField = await BMR_field.findOne({
+      where: {
+        bmr_id: bmr_id,
+        bmr_tab_id: bmr_tab_id,
+        bmr_section_id: bmr_section_id,
+        bmr_field_id: { [Op.ne]: bmr_field_id }, // Exclude the current field from the check
+        isActive: true,
+      },
+      transaction,
+    });
 
     if (existingField) {
       await transaction.rollback();
@@ -1152,31 +1442,44 @@ exports.editBMRField = async (req, res) => {
 
     // Log audit trail synchronously to ensure consistency within the transaction
     try {
-      const previousField = await BMR_field.findOne({
-        where: {
-          bmr_id: bmr_id,
-          bmr_tab_id: bmr_tab_id,
-          bmr_section_id: bmr_section_id,
-          bmr_field_id: bmr_field_id,
-          isActive: true,
-        },
-        transaction,
-      });
+      const auditTrailEntries = [];
+      const fields = {
+        field_type,
+        label,
+        placeholder,
+        defaultValue,
+        helpText,
+        minValue,
+        maxValue,
+        isVisible,
+        isRequired,
+        isReadOnly,
+      };
 
-      await FormAuditTrail.create(
-        {
-          bmr_id: bmr_id,
-          changed_by: req.user.userId,
-          previous_value: JSON.stringify(previousField?.label),
-          new_value: JSON.stringify(label),
-          previous_status: "Under Initiation",
-          new_status: "Under Initiation",
-          declaration: declaration,
-          comments: comments,
-          action: "Field Updated",
-        },
-        { transaction }
-      );
+      for (const [field, newValue] of Object.entries(fields)) {
+        const oldValue = oldField[field];
+        if (
+          newValue !== undefined &&
+          ((typeof newValue === "number" &&
+            !areFloatsEqual(oldValue, newValue)) ||
+            oldValue != newValue)
+        ) {
+          auditTrailEntries.push({
+            bmr_id: bmr_id,
+            changed_by: req.user.userId,
+            field_name: field,
+            previous_value: oldValue || null,
+            new_value: newValue,
+            previous_status: "Under Initiation",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "Field Updated",
+          });
+        }
+      }
+
+      await FormAuditTrail.bulkCreate(auditTrailEntries, { transaction });
     } catch (auditError) {
       console.error("Failed to log audit trail:", auditError.message);
       await transaction.rollback();
@@ -1264,6 +1567,7 @@ exports.deleteBMR = async (req, res) => {
         {
           bmr_id: bmrId,
           changed_by: req.user.userId,
+          field_name: Bmr.name,
           previous_value: "Active",
           new_value: "Inactive",
           previous_status: "Under Initiation",
@@ -1361,6 +1665,7 @@ exports.deleteBMRTab = async (req, res) => {
         {
           bmr_id: tab.bmr_id,
           changed_by: req.user.userId,
+          field_name: tab.tab_name,
           previous_value: "Active",
           new_value: "Inactive",
           previous_status: "Under Initiation",
@@ -1458,6 +1763,7 @@ exports.deleteBMRSection = async (req, res) => {
         {
           bmr_id: section.bmr_id,
           changed_by: req.user.userId,
+          field_name: section.section_name,
           previous_value: "Active",
           new_value: "Inactive",
           previous_status: "Under Initiation",
@@ -1555,6 +1861,7 @@ exports.deleteBMRField = async (req, res) => {
         {
           bmr_id: field.bmr_id,
           changed_by: req.user.userId,
+          field_name: field.label,
           previous_value: "Active",
           new_value: "Inactive",
           previous_status: "Under Initiation",
@@ -1788,6 +2095,7 @@ exports.SendBMRForReview = async (req, res) => {
       {
         bmr_id: bmr_id,
         changed_by: req.user.userId,
+        field_name: "Stage Change",
         previous_value: "Not Applicable",
         new_value: "Not Applicable",
         previous_status: "Under Initiation",
@@ -1914,6 +2222,7 @@ exports.SendBMRfromReviewToOpen = async (req, res) => {
       {
         bmr_id: bmr_id,
         changed_by: req.user.userId,
+        field_name: "Stage Change",
         previous_value: "Not Applicable",
         new_value: "Not Applicable",
         previous_status: "Under Review",
@@ -2078,6 +2387,7 @@ exports.SendBMRReviewToApproval = async (req, res) => {
         {
           bmr_id: bmr_id,
           changed_by: req.user.userId,
+          field_name: "Stage Change",
           previous_value: "Not Applicable",
           new_value: "Not Applicable",
           previous_status: "Under Review",
@@ -2125,6 +2435,7 @@ exports.SendBMRReviewToApproval = async (req, res) => {
         {
           bmr_id: bmr_id,
           changed_by: req.user.userId,
+          field_name: "Stage Change",
           previous_value: "Not Applicable",
           new_value: "Not Applicable",
           previous_status: "Under Review",
@@ -2238,6 +2549,7 @@ exports.SendBMRfromApprovalToOpen = async (req, res) => {
       {
         bmr_id: bmr_id,
         changed_by: req.user.userId,
+        field_name: "Stage Change",
         previous_value: "Not Applicable",
         new_value: "Not Applicable",
         previous_status: "Under Approval",
@@ -2394,6 +2706,7 @@ exports.ApproveBMR = async (req, res) => {
       {
         bmr_id: bmr_id,
         changed_by: req.user.userId,
+        field_name: "Stage Change",
         previous_value: "Not Applicable",
         new_value: "Not Applicable",
         previous_status: "Under Approval",

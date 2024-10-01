@@ -191,7 +191,7 @@ exports.createBmrRecord = async (req, res) => {
     });
   } catch (e) {
     await transaction.rollback();
-    
+
     res.status(500).json({
       error: true,
       message: `Error creating record: ${e.message}`,
@@ -596,6 +596,7 @@ exports.sendFromReviewToOpen = async (req, res) => {
       ...reviewer,
       status: "pending",
       comment: null, // Optionally reset the comment
+      date_of_review: "NA",
     }));
 
     await record.update(
@@ -717,7 +718,12 @@ exports.sendFromReviewToApproval = async (req, res) => {
           alreadyReviewed = true;
           return reviewer;
         } else {
-          return { ...reviewer, status: "reviewed", comment: reviewComment };
+          return {
+            ...reviewer,
+            status: "reviewed",
+            comment: reviewComment,
+            date_of_review: new Date(),
+          };
         }
       }
       return reviewer;
@@ -861,6 +867,7 @@ exports.sendFromApprovalToOpen = async (req, res) => {
       ...reviewer,
       status: "pending",
       comment: null, // Optionally reset the comment
+      date_of_approval: "NA",
     }));
 
     const updatedApprovers = record.approvers.map((approver) => ({
@@ -984,7 +991,12 @@ exports.approveBMR = async (req, res) => {
           alreadyApproved = true;
           return approver;
         } else {
-          return { ...approver, status: "approved", comment: approvalComment };
+          return {
+            ...approver,
+            status: "approved",
+            comment: approvalComment,
+            date_of_approval: new Date(),
+          };
         }
       }
       return approver;
