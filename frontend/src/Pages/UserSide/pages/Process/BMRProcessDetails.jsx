@@ -18,6 +18,7 @@ import PDF from "./PDF";
 
 const BMRProcessDetails = ({ fieldData }) => {
   const [data, setData] = useState([]);
+  console.log(data, "<data>")
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
