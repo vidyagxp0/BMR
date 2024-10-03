@@ -25,6 +25,9 @@ const FormAuditTrail = sequelize.define("FormAuditTrail", {
       key: "user_id",
     },
   },
+  field_name: {
+    type: DataTypes.STRING,
+  },
   previous_value: {
     type: DataTypes.STRING,
     allowNull: true,
