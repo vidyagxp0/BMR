@@ -15,6 +15,7 @@ import { BASE_URL } from "../../../../config.json";
 import { IconButton, Tooltip } from "@mui/material";
 import { IoInformationCircleOutline } from "react-icons/io5";
 import "./BMRProcess.css";
+import AtmButton from "../../../../AtmComponents/AtmButton";
 //import CreateRecordModal from "../../Pages/UserSide/Modals/CreateRecordModal/CreateRecordModal";
 
 const BMRProcess = () => {
@@ -289,6 +290,8 @@ const BMRProcess = () => {
     setSelectedDepartment(parseInt(e.target.value));
   };
 
+  
+
   const getSecondDropdownOptions = () => {
     if (selectedFilter === "division") {
       return (
@@ -498,8 +501,10 @@ const BMRProcess = () => {
           </button>
         ))}
       </div>
+     
       <div className="table-container">
         <AtmTable columns={columns} data={filteredData} />
+
       </div>
       {isModalOpen && (
         <CreateRecordModal
