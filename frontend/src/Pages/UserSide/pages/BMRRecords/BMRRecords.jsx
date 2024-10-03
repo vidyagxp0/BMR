@@ -27,6 +27,14 @@ const BMRRecords = () => {
     data: [],
   });
 
+  const handleChange = (e) => {
+    setRecordData({
+      ...recordData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+
   const closeUserVerifiedModal = () => {
     setShowVerificationModal(false);
   };
@@ -35,7 +43,6 @@ const BMRRecords = () => {
   const [selectedBMR, setSelectedBMRState] = useState(
     location.state?.selectedBMR || {}
   );
-  console.log(selectedBMR, "selected");
 
   const fieldTypes = [];
   selectedBMR.BMR_Tabs[0]?.BMR_sections[0]?.BMR_fields.forEach((field) => {
@@ -147,11 +154,13 @@ const BMRRecords = () => {
           state: { bmr: response.data.bmr },
         });
         setRecordData({
+          data:[],
           bmr_id: selectedBMR.bmr_id,
           reviewers: [],
           approvers: [],
         });
         setFormDataState({
+          data:[],
           bmr_id: selectedBMR.bmr_id,
           reviewers: [],
           approvers: [],
@@ -163,8 +172,8 @@ const BMRRecords = () => {
         }, 1000);
       })
       .catch((err) => {
-        console.error(err);
-        toast.error("Records Already Registered");
+        console.error(err.message);
+        toast.error(err.message);
       });
   };
 
@@ -235,7 +244,7 @@ const BMRRecords = () => {
       .get(`${BASE_URL}/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-        },
+        }, 
       })
       .then((response) => {
         const bmrData = response.data.message[0];
@@ -499,14 +508,8 @@ const BMRRecords = () => {
                                   placeholder={field.placeholder}
                                   value={field.value}
                                   helpText={field.helpText}
-                                  onChange={(e) =>
-                                    handleDynamicFieldChange(
-                                      field.id,
-                                      e.target.value,
-                                      activeTab
-                                    )
-                                  }
-                                  className={` mb-4 rounded-md p-2 ${
+                                  onChange={handleChange}
+                                  className={` mb-4 rounded-md p-2 text-black ${
                                     field.label
                                       ? "text-base font-bold text-gray-900 flex gap-1 mb-2"
                                       : ""
