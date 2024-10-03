@@ -5,10 +5,15 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import AtmButton from "../../../../AtmComponents/AtmButton";
 import { toast } from "react-toastify";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
-import { useDispatch } from "react-redux";
-import { setFormData } from "../../../../userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { addTab } from "../../../../bmrTabsSlice";
 
 const BMRRecordsDetails = () => {
+  const dispatch = useDispatch();
+  const bmrTabs = useSelector((state) => state.bmrTabs.tabs);
+  const [activeTabSections, setActiveTabSections] = useState([]);
+
+  console.log(bmrTabs, "<><><>");
   const userDetails = JSON.parse(localStorage.getItem("user-details"));
   const location = useLocation();
   const [recordData, setRecordData] = useState(location?.state?.original || {});
@@ -89,7 +94,6 @@ const BMRRecordsDetails = () => {
   const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // useEffect(() => {
@@ -97,7 +101,6 @@ const BMRRecordsDetails = () => {
   //   dispatch(setRecordData(recordData));
   // }, [dispatch, recordData ]);
   // dispatch(setFormData(recordData));
-
 
   const formattedDateForInput = (dateString) => {
     if (dateString === "NA" || !dateString) {
@@ -129,6 +132,20 @@ const BMRRecordsDetails = () => {
       setActiveFlowTab("APPROVED");
     }
   }, [recordData]);
+
+  // const handleNewBMRTabClick = (bmrTab) => {
+  //   console.log("New BMR tab clicked:", bmrTab);
+
+  //   // Update the state to toggle active state of clicked tab
+  //   bmrTabs((prevTabs) =>
+  //     prevTabs.map(
+  //       (tab) =>
+  //         tab.name === bmrTab.name // Compare by a unique property, e.g., name
+  //           ? { ...tab, active: true } // Set clicked tab as active
+  //           : { ...tab, active: false } // Set all others as inactive
+  //     )
+  //   );
+  // };
 
   const handlePopupSubmit = (credentials) => {
     const dataObject = {
@@ -312,6 +329,19 @@ const BMRRecordsDetails = () => {
     populateApproverFields();
     populateReviewerFields();
   }, [recordData]);
+
+  const [activeTab, setActiveTab] = useState(null); // Track the active tab
+  const [activeSection, setActiveSection] = useState(null); // Track the active section
+
+  const handleNewBMRTabClick = (tab) => {
+    // Set the active sections based on the clicked tab
+    setActiveTabSections(tab.BMR_sections || []);
+  };
+
+  const handleSectionClick = (section) => {
+    setActiveSection(activeSection === section ? null : section); // Toggle the active section
+  };
+
   return (
     <div>
       <div className="flex gap-4 mt-4 mb-4">
@@ -333,21 +363,48 @@ const BMRRecordsDetails = () => {
           </button>
         ))}
       </div>
-      <div className="flex flex-wrap gap-4 mb-4">
-        {tabs?.map((tab, index) => (
-          <button
-            style={{ border: "1px solid gray" }}
-            key={index}
-            onClick={() => handleDefaultTabClick(tab)}
-            className={`py-2 px-4 rounded-md ${
-              activeDefaultTab === tab
-                ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 border border-blue-900 opacity-95"
-                : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 rounded-md"
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
+      <div className="flex flex-wrap gap-4 mb-4 ">
+        <div>
+          {tabs?.map((tab, index) => (
+            <button
+              style={{ border: "1px solid gray", margin: "5px" }}
+              key={index}
+              onClick={() => handleDefaultTabClick(tab)}
+              className={`py-2 px-4 rounded-md ${
+                activeDefaultTab === tab
+                  ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 border border-blue-900 opacity-95"
+                  : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+        <div className="">
+          {bmrTabs?.map((tabGroup, index) => (
+            <div className="tab-group" key={index}>
+              {tabGroup?.map((tb) => (
+                <div
+                  key={tb.id}
+                  className="tab-container"
+                  style={{ marginBottom: "10px" }}
+                >
+                  <button
+                    style={{ border: "1px solid gray", margin: "5px" }}
+                    onClick={() => handleNewBMRTabClick(tb)}
+                    className={`py-2 px-4 rounded-md ${
+                      tb.active
+                        ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 border border-blue-900 opacity-95"
+                        : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300"
+                    }`}
+                  >
+                    {tb.tab_name}
+                  </button>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="relative m-2">
@@ -416,6 +473,46 @@ const BMRRecordsDetails = () => {
                     );
                   })}
                 </div>
+
+                {activeTabSections.map((section, secIndex) => (
+                  <div
+                    key={secIndex}
+                    style={{
+                      marginLeft: "20px",
+                      padding: "10px",
+                      border: "1px solid #ccc",
+                      borderRadius: "5px",
+                      backgroundColor: "#f9f9f9",
+                    }}
+                  >
+                    <h4
+                      style={{
+                        margin: "0",
+                        padding: "5px",
+                        backgroundColor: "#e7f1ff",
+                        borderRadius: "3px",
+                      }}
+                    >
+                      {section.section_name}
+                    </h4>
+                    {section.BMR_fields?.map((field, fieldIndex) => (
+                      <div
+                        key={fieldIndex}
+                        style={{ marginLeft: "40px", marginBottom: "10px" }}
+                      >
+                        <p>
+                          <strong>Label:</strong> {field.label}
+                        </p>
+                        <p>
+                          <strong>Default Value:</strong> {field.defaultValue}
+                        </p>
+                        <p>
+                          <strong>Placeholder:</strong> {field.placeholder}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ))}
               </div>
             )}
 
