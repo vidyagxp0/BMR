@@ -336,7 +336,7 @@ const BMRRecordsDetails = () => {
 
   const handleNewBMRTabClick = (tab) => {
     // Set the active sections based on the clicked tab
-    setActiveFlowTab(tab);
+    setActiveTab(tab?.id);
     setActiveTabSections(tab.BMR_sections || []);
   };
 
@@ -383,53 +383,30 @@ const BMRRecordsDetails = () => {
           ))}
         </div>
         <div>
-        {bmrTabs?.map((tabGroup, tabIndex) => (
-  <div className="tab-group" key={tabIndex}>
-    
-    {/* Iterate through tabs */}
-    {tabGroup?.map((tb) => (
-      <div key={tb.id} className="tab-container mb-4">
-        <button
-          onClick={() => handleDefaultTabClick(tb)}
-          className={`py-2 px-4 rounded-md mb-4 ${
-            tb.id === activeTab
-              ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 border border-blue-900 opacity-95"
-              : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300"
-          }`}
-        >
-          {tb?.tab_name}
-        </button>
-        
-        {/* Map through sections in the tab */}
-        {tb.sections?.map((section, sectionIndex) => (
-          <div key={sectionIndex} className="section-container bg-white p-6 rounded-lg shadow-md">
-            {/* Section Name */}
-            <h2 className="text-lg font-bold mb-4">{section.section_name}</h2>
-
-            {/* Map through fields in the section */}
-            {section.fields?.map((field, fieldIndex) => (
-              <div key={fieldIndex} className="field-container mb-4">
-                <label
-                  htmlFor={`field-${fieldIndex}`}
-                  className="block text-sm font-medium text-gray-700 mb-2"
+          {bmrTabs?.map((tabGroup, index) => (
+            <div className="tab-group" key={index}>
+              
+              {tabGroup?.map((tb) => (
+                <div
+                  key={tb.id}
+                  className="tab-container"
+                  style={{ marginBottom: "10px" }}
                 >
-                  {field.label}
-                </label>
-                <input
-                  type="text"
-                  id={`field-${fieldIndex}`}
-                  className="p-2 border border-gray-300 rounded-md w-full"
-                  placeholder={field.placeholder}
-                />
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    ))}
-  </div>
-))}
-
+                  <button
+                    style={{ border: "1px solid gray", margin: "5px" }}
+                    onClick={() => handleNewBMRTabClick(tb)}
+                    className={`py-2 px-4 rounded-md ${
+                      tb.id === activeTab
+                        ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 border border-blue-900 opacity-95"
+                        : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300"
+                    }`}
+                  >
+                    {tb?.tab_name}
+                  </button>
+                </div>
+              ))}
+            </div>
+          ))}
 
         </div>
       </div>
@@ -437,98 +414,8 @@ const BMRRecordsDetails = () => {
       <div className="relative m-2">
         <div className="p-3">
 
-        {activeDefaultTab === bmrTabs[0] &&
-  fields[bmrTabs[0].BMR_sections[0].BMR_fields]?.length > 0 && (
-    <div className="mb-20">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
-        {/* Iterate through fields in "Initiator Remarks" */}
-        {fields["Initiator Remarks"].map((field, index) => {
-          return (
-            <div
-              key={index}
-              className="p-6 flex flex-col bg-white border border-gray-100 shadow-md rounded-lg mb-4"
-            >
-              <label className="text-lg font-semibold text-gray-800 mb-2">
-                {field.fieldName}
-                {activeFlowTab === "INITIATION" && field.fieldName === "Initiator Comments" && (
-                  <span className="text-red-500">*</span>
-                )}
-              </label>
-
-              {/* Handle Text Input */}
-              {field.field_type === "text" && (
-                <input
-                  type="text"
-                  value={recordData?.InitiatorUser?.name}
-                  className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  style={{ height: "40px" }}
-                  disabled
-                />
-              )}
-
-              {/* Handle Date Input */}
-              {field.field_type === "date" && (
-                <input
-                  type="date"
-                  value={formattedDateForInput(recordData?.date_of_initiation)}
-                  className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  required={field.isMandatory}
-                  readOnly
-                />
-              )}
-
-              {/* Handle Text Area */}
-              {field.field_type === "text-area" && (
-                <textarea
-                  value={recordData?.initiatorComment}
-                  className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  required={
-                    activeFlowTab === "INITIATION" &&
-                    field.fieldName === "Initiator Comments" &&
-                    field.isMandatory
-                  }
-                  readOnly={
-                    !(activeFlowTab === "INITIATION" && field.fieldName === "Initiator Comments")
-                  }
-                  rows={4}
-                />
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Iterate through activeTabSections */}
-      {activeTabSections.map((section, secIndex) => (
-        <div
-          key={secIndex}
-          className="ml-5 p-4 border border-gray-300 rounded-lg bg-gray-50"
-        >
-          <h4 className="m-0 p-2 bg-blue-100 rounded-md text-blue-900 font-semibold">
-            {section.section_name}
-          </h4>
-
-          {/* Iterate through BMR Fields */}
-          {section.BMR_fields?.map((field, fieldIndex) => (
-            <div key={fieldIndex} className="ml-10 mb-4">
-              <p>
-                <strong>Label:</strong> {field.label}
-              </p>
-              <p>
-                <strong>Default Value:</strong> {field.defaultValue}
-              </p>
-              <p>
-                <strong>Placeholder:</strong> {field.placeholder}
-              </p>
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
-)}
-
-        {activeDefaultTab === bmrTabs[0] &&
-            fields[bmrTabs[0].BMR_sections[0].BMR_fields]?.length > 0 && (
+           {activeDefaultTab === "Initiator Remarks" &&
+            fields["Initiator Remarks"]?.length > 0 && (
               <div className="mb-20">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
                   {fields["Initiator Remarks"].map((field, index) => {
