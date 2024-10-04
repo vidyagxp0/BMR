@@ -35,7 +35,6 @@ const BMRRecords = () => {
     });
   };
 
-
   const closeUserVerifiedModal = () => {
     setShowVerificationModal(false);
   };
@@ -43,6 +42,8 @@ const BMRRecords = () => {
   const [selectedBMR, setSelectedBMRState] = useState(
     location.state?.selectedBMR || {}
   );
+console.log(selectedBMR,"88888888888888888888888")
+
 
   // Initialize empty arrays for fieldTypes and helpText
   const fieldTypes = [];
@@ -519,6 +520,7 @@ const BMRRecords = () => {
                                   placeholder={field.placeholder}
                                   value={field.value}
                                   helpText={field.helpText}
+                                  
                                   onChange={handleChange}
                                   className={` mb-4 rounded-md p-2 text-black ${
                                     field.label
