@@ -21,9 +21,9 @@ const AddFieldModal = ({
     placeholder: "",
     defaultValue: "",
     helpText: "",
-    minValue: "",
-    maxValue: "",
-    order: "",
+    minValue: null,
+    maxValue: null,
+    order: null,
     isVisible: true,
     isRequired: false,
     isReadOnly: false,
@@ -167,6 +167,9 @@ const AddFieldModal = ({
     }));
   };
 
+  const handleVerificationClose = () => {
+    setShowVerificationModal(false);
+  };
   const handleAddOption = () => {
     setFieldData((prevData) => ({
       ...prevData,
@@ -177,11 +180,6 @@ const AddFieldModal = ({
       acceptsMultiple: [...prevData.acceptsMultiple, ""],
     }));
   };
-
-  const handleVerificationClose = () => {
-    setShowVerificationModal(false);
-  };
-
   return (
     <div className="fixed inset-0 flex items-center justify-center top-16 bg-opacity-50 backdrop-filter backdrop-blur-sm">
       <div
@@ -216,6 +214,7 @@ const AddFieldModal = ({
             <option value="date">Date</option>
             <option value="time">Time</option>
             <option value="grid">Grid</option>
+            <option value="file">File</option>
             <option value="number">Number</option>
             <option value="checkbox">Checkbox</option>
             <option value="dropdown">Dropdown</option>
@@ -237,7 +236,9 @@ const AddFieldModal = ({
                       ))}
                     </tr>
                   </thead>
-                  <tbody></tbody>
+                  <tbody>
+                    
+                  </tbody>
                 </table>
               ) : (
                 <p>No columns available.</p>
@@ -496,13 +497,7 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
                   placeholder="Column Name"
                   style={{ border: "1px solid gray" }}
                 />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveColumn(index)}
-                  className="border p-2 bg-red-500 text-white"
-                >
-                  Remove
-                </button>
+
                 <>
                   <input
                     type="text"
@@ -538,6 +533,7 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
                     <option value="password">Password</option>
                     <option value="email">Email</option>
                     <option value="date">Date</option>
+                    <option value="file">file</option>
                     <option value="time">Time</option>
                     <option value="number">Number</option>
                     <option value="checkbox">Checkbox</option>
@@ -607,17 +603,27 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
                   />
                 </>
               </div>
+              <button
+            type="button"
+            onClick={() => handleRemoveColumn(index)}
+            className="border p-2 bg-red-500 text-white mt-2"
+          >
+            Remove
+          </button>
             </div>
+            
           ))}
         </div>
-        <button
-          type="button"
-          onClick={handleAddColumn}
-          className="border p-2 bg-green-500 text-white mt-2"
-        >
-          Add Column
-        </button>
-
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={handleAddColumn}
+            className="border p-2 bg-green-500 text-white mt-2"
+          >
+            Add Column
+          </button>
+        
+        </div>
         <div className="mt-4 flex justify-end">
           <button
             type="button"
