@@ -27,7 +27,7 @@ const connectToDB = async () => {
 };
 
 sequelize
-  .sync({ alter: true })
+  .sync()
   .then(() => {
     console.log("Tables synchronized");
   })
