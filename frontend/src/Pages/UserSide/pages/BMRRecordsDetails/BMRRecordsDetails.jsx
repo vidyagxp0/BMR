@@ -7,11 +7,12 @@ import { toast } from "react-toastify";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
 import { useDispatch, useSelector } from "react-redux";
 import { addTab } from "../../../../bmrTabsSlice";
+import { IoIosAddCircle, IoIosTrash } from "react-icons/io";
+import { Tooltip } from "@mui/material";
 
 const BMRRecordsDetails = () => {
   const dispatch = useDispatch();
   const bmrTabs = useSelector((state) => state.bmrTabs.tabs);
-  console.log(bmrTabs, "<><><>fgfgdfgs<><>");
   const [activeTabSections, setActiveTabSections] = useState([]);
 
   console.log(bmrTabs, "<><><>");
@@ -22,7 +23,6 @@ const BMRRecordsDetails = () => {
     "Initiator Remarks",
     "Reviewer Remarks",
     "Approver Remarks",
-   
   ]);
 
   const allTabs = [...tabs, ...bmrTabs.flat()];
@@ -368,21 +368,24 @@ const BMRRecordsDetails = () => {
           </button>
         ))}
       </div>
-       {allTabs?.map((tab, index) => (
-      <button
-        style={{ border: "1px solid gray", margin: "5px" }}
-        key={index}
-        onClick={() => handleDefaultTabClick(tab)}
-        className={`py-2 px-4 rounded-md ${
-          activeDefaultTab === tab
-            ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 border border-blue-900 opacity-95"
-            : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300"
-        }`}
-      >
-        {/* Show tab name based on whether it's static or dynamic */}
-        {typeof tab === "string" ? tab : tab.tab_name}
-      </button>
-    ))}
+      {allTabs?.map((tab, index) => (
+        <button
+          style={{ border: "1px solid gray", margin: "5px" }}
+          key={index}
+          onClick={() => {
+            handleDefaultTabClick(tab);
+            handleNewBMRTabClick(tab);
+          }}
+          className={`py-2 px-4 rounded-md ${
+            activeDefaultTab === tab
+              ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 border border-blue-900 opacity-95"
+              : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300"
+          }`}
+        >
+          {/* Show tab name based on whether it's static or dynamic */}
+          {typeof tab === "string" ? tab : tab.tab_name}
+        </button>
+      ))}
       <div className="flex flex-wrap gap-4 mb-4 ">
         {/* <div>
           {tabs?.map((tab, index) => (
@@ -400,7 +403,7 @@ const BMRRecordsDetails = () => {
             </button>
           ))}
         </div> */}
-        <div>
+        {/* <div>
           {bmrTabs?.map((tabGroup, index) => (
             <div className="tab-group" key={index}>
               
@@ -426,14 +429,12 @@ const BMRRecordsDetails = () => {
             </div>
           ))}
 
-        </div>
+        </div> */}
       </div>
 
       <div className="relative m-2">
         <div className="p-3">
-
-         
-           {activeDefaultTab === "Initiator Remarks" &&
+          {activeDefaultTab === "Initiator Remarks" &&
             fields["Initiator Remarks"]?.length > 0 && (
               <div className="mb-20">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
@@ -497,12 +498,8 @@ const BMRRecordsDetails = () => {
                     );
                   })}
                 </div>
-
-                
               </div>
             )}
-
-         
 
           {activeDefaultTab === "Reviewer Remarks" &&
             fields[activeDefaultTab]?.map((section, secIndex) => {
@@ -645,45 +642,158 @@ const BMRRecordsDetails = () => {
               </div>
             ))}
 
-{activeTabSections.map((section, secIndex) => (
-                  <div
-                    key={secIndex}
-                    style={{
-                      marginLeft: "20px",
-                      padding: "10px",
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                      backgroundColor: "#f9f9f9",
-                    }}
-                  >
-                    <h4
-                      style={{
-                        margin: "0",
-                        padding: "5px",
-                        backgroundColor: "#e7f1ff",
-                        borderRadius: "3px",
-                      }}
-                    >
+          {activeTabSections.map((section, secIndex) => (
+            <div
+              key={secIndex}
+              className="text-lg flex flex-col gap-9 font-bold text-gray-500"
+            >
+           
+                <div
+                  className="p-4 border mb-4 border-gray-500 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95"
+                >
+                  <h3 className="font-semibold text-gray-600 mb-3 text-lg bg-gray-200 p-3">
+                    <div className="flex items-center gap-5 ">
+                      <p>Section :</p>
+                      <div className="block text-black">
                       {section.section_name}
-                    </h4>
-                    {section.BMR_fields?.map((field, fieldIndex) => (
-                      <div
-                        key={fieldIndex}
-                        style={{ marginLeft: "40px", marginBottom: "10px" }}
-                      >
-                        <p>
-                          <strong>Label:</strong> {field.label}
-                        </p>
-                        <p>
-                          <strong>Default Value:</strong> {field.defaultValue}
-                        </p>
-                        <p>
-                          <strong>Placeholder:</strong> {field.placeholder}
-                        </p>
                       </div>
-                    ))}
+                    </div>
+                  </h3>
+                  <div
+                    className={
+                      // Conditionally apply `grid-cols-2` if no grid field exists
+                      section.BMR_fields.some(
+                        (field) => field.field_type === "grid"
+                      )
+                        ? ""
+                        : "grid grid-cols-2 gap-4"
+                    }
+                  >
+                    {section.BMR_fields?.map((field, fieldIndex) => {
+                      return (
+                        <div
+                        key={fieldIndex}
+                          className={`${
+                            field.field_type !== "grid"
+                              ? "grid grid-cols-2"
+                              : " p-2"
+                          }`}
+                        >
+                          {/* Non-grid fields */}
+                          {field.field_type !== "grid" && (
+                            <InputField
+                            label={field.label}
+                              type={field.field_type || "text"}
+                              placeholder={field.placeholder}
+                              value={field.defaultValue}
+                              helpText={field.helpText}
+                              className={` mb-4 rounded-md p-2 text-black ${
+                                field.label
+                                  ? "text-base text-gray-900 flex gap-1 mb-2"
+                                  : ""
+                              } `}
+                              readOnly
+                            />
+                          )}
+                          {/* Grid field */}
+                          <div className="mt-2">
+                            {field.field_type === "grid" && (
+                              <div className="relative ">
+                                <div className="flex justify-between items-center">
+                                  <div> {field.label} </div>
+                                  <div className="flex justify-end">
+                                    <button
+                                      onClick={addNewRow}
+                                      className="p-2 rounded"
+                                    >
+                                      <IoIosAddCircle size={25} />
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {(() => {
+                                  let acceptsMultiple = field?.acceptsMultiple
+                                    ? JSON.parse(field.acceptsMultiple)
+                                    : { columns: [], rows: [] };
+                                  return (
+                                    acceptsMultiple?.columns?.length > 0 && (
+                                      <table className="table-auto w-full border border-gray-600 mb-4">
+                                        <thead>
+                                          <tr>
+                                            {acceptsMultiple.columns.map(
+                                              (column, idx) => {
+                                                return (
+                                                  <th
+                                                    key={idx}
+                                                    className="border border-gray-600 p-2"
+                                                  >
+                                                    {column?.name || "No Name"}
+                                                  </th>
+                                                );
+                                              }
+                                            )}
+                                            <th className="border border-gray-600 p-2">
+                                              Action
+                                            </th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {gridData.map((row, rowIndex) => {
+                                            return (
+                                              <tr key={rowIndex}>
+                                                {acceptsMultiple.columns.map(
+                                                  (column, colIdx) => (
+                                                    <td
+                                                      key={colIdx}
+                                                      className="border border-gray-600 p-2"
+                                                    >
+                                                      <input
+                                                        type={
+                                                          column.field_type ||
+                                                          "text"
+                                                        }
+                                                        onChange={
+                                                          (e) =>
+                                                            handleGridChange(
+                                                              rowIndex,
+                                                              column.name,
+                                                              e.target.value
+                                                            ) // Update the value when typing
+                                                        }
+                                                        className="border text-black border-gray-600 p-2 w-full rounded"
+                                                      />
+                                                    </td>
+                                                  )
+                                                )}
+                                                <td className="border border-gray-600 p-2 text-center">
+                                                  <button
+                                                    onClick={() =>
+                                                      deleteRow(rowIndex)
+                                                    }
+                                                    className="text-red-500 hover:text-red-700"
+                                                  >
+                                                    <IoIosTrash size={20} />
+                                                  </button>
+                                                </td>
+                                              </tr>
+                                            );
+                                          })}
+                                        </tbody>
+                                      </table>
+                                    )
+                                  );
+                                })()}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                ))}
+                </div>
+           
+            </div>
+          ))}
         </div>
 
         <div className="fixed bottom-36 right-[-10px] w-auto flex-col border-gray-300  flex gap-5">
@@ -809,5 +919,37 @@ const BMRRecordsDetails = () => {
     </div>
   );
 };
+
+const InputField = ({
+  label,
+  type = "text",
+  placeholder,
+  value,
+  onChange,
+  helpText,
+}) => (
+  <div>
+    <label className=" text-gray-700 font-bold p-2 mb-2 flex items-center">
+      {label}
+      {type === "text" && <span className="text-red-600">*</span>}
+      {helpText && (
+        <Tooltip title={helpText} placement="right-start">
+          <div className="text-gray-950 cursor-pointer ml-2">
+            <span className="text-black">ⓘ</span>
+          </div>
+        </Tooltip>
+      )}
+    </label>
+
+    <input
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      readOnly
+      className="w-full px-3 h-10 p-2 border-2 font-sm text-black border-gray-500 rounded shadow-md focus:border-blue-500 transition duration-200"
+      style={{ border: "1px solid gray" }}
+    />
+  </div>)
 
 export default BMRRecordsDetails;
