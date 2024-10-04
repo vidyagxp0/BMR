@@ -11,7 +11,7 @@ import { addTab } from "../../../../bmrTabsSlice";
 const BMRRecordsDetails = () => {
   const dispatch = useDispatch();
   const bmrTabs = useSelector((state) => state.bmrTabs.tabs);
-  console.log(bmrTabs.tab_name, "<><><><><>");
+  console.log(bmrTabs, "<><><>fgfgdfgs<><>");
   const [activeTabSections, setActiveTabSections] = useState([]);
 
   console.log(bmrTabs, "<><><>");
@@ -22,7 +22,10 @@ const BMRRecordsDetails = () => {
     "Initiator Remarks",
     "Reviewer Remarks",
     "Approver Remarks",
+   
   ]);
+
+  const allTabs = [...tabs, ...bmrTabs.flat()];
   const [flowoTabs, setFlowoTabs] = useState([
     "INITIATION",
     "UNDER REVIEW",
@@ -92,7 +95,7 @@ const BMRRecordsDetails = () => {
     ],
   });
   const [activeFlowTab, setActiveFlowTab] = useState(flowoTabs[0]);
-  const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
+  const [activeDefaultTab, setActiveDefaultTab] = useState(allTabs[0]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
   const navigate = useNavigate();
@@ -365,13 +368,28 @@ const BMRRecordsDetails = () => {
           </button>
         ))}
       </div>
+       {allTabs?.map((tab, index) => (
+      <button
+        style={{ border: "1px solid gray", margin: "5px" }}
+        key={index}
+        onClick={() => handleDefaultTabClick(tab)}
+        className={`py-2 px-4 rounded-md ${
+          activeDefaultTab === tab
+            ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 border border-blue-900 opacity-95"
+            : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300"
+        }`}
+      >
+        {/* Show tab name based on whether it's static or dynamic */}
+        {typeof tab === "string" ? tab : tab.tab_name}
+      </button>
+    ))}
       <div className="flex flex-wrap gap-4 mb-4 ">
-        <div>
+        {/* <div>
           {tabs?.map((tab, index) => (
             <button
               style={{ border: "1px solid gray", margin: "5px" }}
               key={index}
-              onClick={() => handleFlowTabClick(tab)}
+              onClick={() => handleDefaultTabClick(tab)}
               className={`py-2 px-4 rounded-md ${
                 activeDefaultTab === tab
                   ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 border border-blue-900 opacity-95"
@@ -381,7 +399,7 @@ const BMRRecordsDetails = () => {
               {tab}
             </button>
           ))}
-        </div>
+        </div> */}
         <div>
           {bmrTabs?.map((tabGroup, index) => (
             <div className="tab-group" key={index}>
@@ -479,154 +497,11 @@ const BMRRecordsDetails = () => {
                   })}
                 </div>
 
-                {activeTabSections.map((section, secIndex) => (
-                  <div
-                    key={secIndex}
-                    style={{
-                      marginLeft: "20px",
-                      padding: "10px",
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                      backgroundColor: "#f9f9f9",
-                    }}
-                  >
-                    <h4
-                      style={{
-                        margin: "0",
-                        padding: "5px",
-                        backgroundColor: "#e7f1ff",
-                        borderRadius: "3px",
-                      }}
-                    >
-                      {section.section_name}
-                    </h4>
-                    {section.BMR_fields?.map((field, fieldIndex) => (
-                      <div
-                        key={fieldIndex}
-                        style={{ marginLeft: "40px", marginBottom: "10px" }}
-                      >
-                        <p>
-                          <strong>Label:</strong> {field.label}
-                        </p>
-                        <p>
-                          <strong>Default Value:</strong> {field.defaultValue}
-                        </p>
-                        <p>
-                          <strong>Placeholder:</strong> {field.placeholder}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ))}
+                
               </div>
             )}
 
-          {activeDefaultTab === "Initiator Remarks" &&
-            fields["Initiator Remarks"]?.length > 0 && (
-              <div className="mb-20">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
-                  {fields["Initiator Remarks"].map((field, index) => {
-                    return (
-                      <div
-                        key={index}
-                        className="p-6 flex flex-col bg-white border border-gray-100 shadow-md rounded-lg  mb-4"
-                      >
-                        <label className="text-lg font-semibold text-gray-800 mb-2">
-                          {field.fieldName}
-                          {activeFlowTab === "INITIATION" &&
-                            field.fieldName === "Initiator Comments" && (
-                              <span className="text-red-500">*</span>
-                            )}
-                        </label>
-
-                        {field.field_type === "text" && (
-                          <input
-                            type="text"
-                            value={recordData?.InitiatorUser?.name}
-                            className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 "
-                            style={{
-                              height: "40px",
-                            }}
-                            disabled
-                          />
-                        )}
-
-                        {field.field_type === "date" && (
-                          <input
-                            type="date"
-                            value={formattedDateForInput(
-                              recordData?.date_of_initiation
-                            )}
-                            className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400 "
-                            required={field.isMandatory}
-                            readOnly
-                          />
-                        )}
-
-                        {field.field_type === "text-area" && (
-                          <textarea
-                            value={recordData?.initiatorComment}
-                            className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400 "
-                            required={
-                              activeFlowTab === "INITIATION" &&
-                              field.fieldName === "Initiator Comments" &&
-                              field.isMandatory
-                            }
-                            readOnly={
-                              !(
-                                activeFlowTab === "INITIATION" &&
-                                field.fieldName === "Initiator Comments"
-                              )
-                            }
-                            rows={4}
-                          />
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {activeTabSections.map((section, secIndex) => (
-                  <div
-                    key={secIndex}
-                    style={{
-                      marginLeft: "20px",
-                      padding: "10px",
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                      backgroundColor: "#f9f9f9",
-                    }}
-                  >
-                    <h4
-                      style={{
-                        margin: "0",
-                        padding: "5px",
-                        backgroundColor: "#e7f1ff",
-                        borderRadius: "3px",
-                      }}
-                    >
-                      {section.section_name}
-                    </h4>
-                    {section.BMR_fields?.map((field, fieldIndex) => (
-                      <div
-                        key={fieldIndex}
-                        style={{ marginLeft: "40px", marginBottom: "10px" }}
-                      >
-                        <p>
-                          <strong>Label:</strong> {field.label}
-                        </p>
-                        <p>
-                          <strong>Default Value:</strong> {field.defaultValue}
-                        </p>
-                        <p>
-                          <strong>Placeholder:</strong> {field.placeholder}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            )}
+         
 
           {activeDefaultTab === "Reviewer Remarks" &&
             fields[activeDefaultTab]?.map((section, secIndex) => {
@@ -768,6 +643,46 @@ const BMRRecordsDetails = () => {
                 </div>
               </div>
             ))}
+
+{activeTabSections.map((section, secIndex) => (
+                  <div
+                    key={secIndex}
+                    style={{
+                      marginLeft: "20px",
+                      padding: "10px",
+                      border: "1px solid #ccc",
+                      borderRadius: "5px",
+                      backgroundColor: "#f9f9f9",
+                    }}
+                  >
+                    <h4
+                      style={{
+                        margin: "0",
+                        padding: "5px",
+                        backgroundColor: "#e7f1ff",
+                        borderRadius: "3px",
+                      }}
+                    >
+                      {section.section_name}
+                    </h4>
+                    {section.BMR_fields?.map((field, fieldIndex) => (
+                      <div
+                        key={fieldIndex}
+                        style={{ marginLeft: "40px", marginBottom: "10px" }}
+                      >
+                        <p>
+                          <strong>Label:</strong> {field.label}
+                        </p>
+                        <p>
+                          <strong>Default Value:</strong> {field.defaultValue}
+                        </p>
+                        <p>
+                          <strong>Placeholder:</strong> {field.placeholder}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ))}
         </div>
 
         <div className="fixed bottom-36 right-[-10px] w-auto flex-col border-gray-300  flex gap-5">
