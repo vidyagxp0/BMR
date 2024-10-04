@@ -640,7 +640,7 @@ const BMRRecordsDetails = () => {
                   ))}
                 </div>
               </div>
-            ))}
+            ))} 
 
           {activeTabSections.map((section, secIndex) => (
             <div
@@ -661,7 +661,6 @@ const BMRRecordsDetails = () => {
                   </h3>
                   <div
                     className={
-                      // Conditionally apply `grid-cols-2` if no grid field exists
                       section.BMR_fields.some(
                         (field) => field.field_type === "grid"
                       )
@@ -679,7 +678,6 @@ const BMRRecordsDetails = () => {
                               : " p-2"
                           }`}
                         >
-                          {/* Non-grid fields */}
                           {field.field_type !== "grid" && (
                             <InputField
                             label={field.label}
