@@ -72,17 +72,7 @@ const Help = () => {
             </div>
           ))}
         </div>
-        <div className="flex justify-end py-8 mr-5 fixed bottom-[65%] z-100">
-          <div className="flex justify-center py-8">
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="flex items-center px-6 py-3 bg-blue-800 text-gray-100 font-semibold rounded-md shadow-xl border-2 border-blue-700 hover:bg-blue-700 hover:border-blue-600 hover:text-white transition duration-300"
-            >
-              <FaArrowLeft className="mr-2 text-lg" /> {/* Back arrow icon */}
-              Back to Main Dashboard
-            </button>
-          </div>
-        </div>
+
       </main>
     </div>
   );

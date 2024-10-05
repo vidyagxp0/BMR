@@ -14,10 +14,8 @@ const BMRForms = () => {
   const [approvedBMR, setApprovedBMR] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [bmrRecordsData, setBmrRecordsData] = useState([]);
-  console.log("<*><*><*>",bmrRecordsData)
   const [showDeleteRecord, setShowDeleteRecord] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  console.log(selectedRecord,"selectedRecords")
   const navigate = useNavigate();
 
   useEffect(() => {

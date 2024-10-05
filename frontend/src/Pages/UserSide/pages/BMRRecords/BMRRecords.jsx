@@ -9,6 +9,7 @@ import { setFormData, setSelectedBMR } from "../../../../../src/userSlice";
 import { BASE_URL } from "../../../../config.json";
 import { Tooltip } from "@mui/material";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
+import { addTab } from "../../../../bmrTabsSlice";
 import { IoIosAddCircle, IoIosTrash } from "react-icons/io";
 
 const BMRRecords = () => {
@@ -27,36 +28,35 @@ const BMRRecords = () => {
     data: [],
   });
 
+  const handleChange = (e) => {
+    setRecordData({
+      ...recordData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const closeUserVerifiedModal = () => {
     setShowVerificationModal(false);
   };
-
   const dispatch = useDispatch();
   const [selectedBMR, setSelectedBMRState] = useState(
     location.state?.selectedBMR || {}
   );
-  console.log(selectedBMR, "selected");
+console.log(selectedBMR,"88888888888888888888888")
 
+
+  // Initialize empty arrays for fieldTypes and helpText
   const fieldTypes = [];
-  selectedBMR.BMR_Tabs[0]?.BMR_sections[0]?.BMR_fields.forEach((field) => {
-    fieldTypes.push(field.field_type);
-  });
-
   const helpText = [];
-  selectedBMR?.BMR_Tabs[0]?.BMR_sections[0]?.BMR_fields.forEach((field) => {
-    helpText.push(field.helpText);
-  });
 
-  // Check if BMR_Tabs and its first element exists
-  if (selectedBMR?.BMR_Tabs && selectedBMR.BMR_Tabs.length > 0) {
+  // Check if selectedBMR, BMR_Tabs, and BMR_sections exist before iterating
+  if (selectedBMR?.BMR_Tabs?.length > 0) {
     const firstTab = selectedBMR.BMR_Tabs[0];
 
-    // Check if BMR_sections and its first element exists
-    if (firstTab?.BMR_sections && firstTab.BMR_sections.length > 0) {
+    if (firstTab?.BMR_sections?.length > 0) {
       const firstSection = firstTab.BMR_sections[0];
 
-      // Check if BMR_fields exists
-      if (firstSection?.BMR_fields && firstSection.BMR_fields.length > 0) {
+      if (firstSection?.BMR_fields?.length > 0) {
         firstSection.BMR_fields.forEach((field) => {
           fieldTypes.push(field.field_type);
           helpText.push(field.helpText);
@@ -70,6 +70,8 @@ const BMRRecords = () => {
   } else {
     console.log("Tabs are not present here.");
   }
+
+  // Initialize formData with safety checks around BMR_Tabs
   const [formData, setFormDataState] = useState({
     initiatorName: null,
     dateOfInitiation: new Date().toISOString().split("T")[0],
@@ -77,25 +79,35 @@ const BMRRecords = () => {
     selectedApprovers: [],
     dynamicFields: {
       "General Information": {},
-      ...selectedBMR.BMR_Tabs.reduce((acc, tab) => {
-        acc[tab.tab_name] = {};
-        return acc;
-      }, {}),
+      ...(selectedBMR?.BMR_Tabs?.length > 0
+        ? selectedBMR.BMR_Tabs.reduce((acc, tab) => {
+            acc[tab.tab_name] = {};
+            return acc;
+          }, {})
+        : {}),
     },
   });
+
+  // Dispatch formData and selectedBMR
   useEffect(() => {
     dispatch(setFormData(formData));
     dispatch(setSelectedBMR(selectedBMR));
   }, [dispatch, formData, selectedBMR]);
-  dispatch(setFormData(formData));
+
+  // No need to dispatch again outside useEffect
+  // dispatch(setFormData(formData));
 
   const [dynamicFields, setDynamicFields] = useState({
     "General Information": {},
-    ...selectedBMR.BMR_Tabs.reduce((acc, tab) => {
+    ...selectedBMR?.BMR_Tabs?.reduce((acc, tab) => {
       acc[tab.tab_name] = {};
       return acc;
     }, {}),
   });
+
+  const Tabs = selectedBMR.BMR_Tabs;
+  console.log(Tabs, "01201201202");
+
   const [reviewers, setReviewers] = useState([]);
   const [approvers, setApprovers] = useState([]);
   const [isSelectedReviewer, setIsSelectedReviewer] = useState([]);
@@ -147,11 +159,13 @@ const BMRRecords = () => {
           state: { bmr: response.data.bmr },
         });
         setRecordData({
+          data:[],
           bmr_id: selectedBMR.bmr_id,
           reviewers: [],
           approvers: [],
         });
         setFormDataState({
+          data:[],
           bmr_id: selectedBMR.bmr_id,
           reviewers: [],
           approvers: [],
@@ -163,8 +177,8 @@ const BMRRecords = () => {
         }, 1000);
       })
       .catch((err) => {
-        console.error(err);
-        toast.error("Records Already Registered");
+        console.error(err.message);
+        toast.error(err.message);
       });
   };
 
@@ -235,7 +249,7 @@ const BMRRecords = () => {
       .get(`${BASE_URL}/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-        },
+        }, 
       })
       .then((response) => {
         const bmrData = response.data.message[0];
@@ -316,12 +330,19 @@ const BMRRecords = () => {
   }, [isSelectedReviewer, isSelectedApprover]);
 
   const handleAddRecordsClick = () => {
-    if (isSelectedReviewer.length === 0 || isSelectedApprover.length === 0) {
+    const Tabs = selectedBMR?.BMR_Tabs;
+    console.log(Tabs, "01201201202");
+    if (
+      Tabs &&
+      Tabs.length > 0 &&
+      isSelectedReviewer.length > 0 &&
+      isSelectedApprover.length > 0
+    ) {
+      dispatch(addTab(Tabs));
+      setShowVerificationModal(true);
+    } else {
       toast.error("Please fill all fields to add a new Record.");
-      return;
     }
-
-    setShowVerificationModal(true);
   };
 
   const addNewRow = () => {
@@ -356,25 +377,25 @@ const BMRRecords = () => {
     <div className="w-full h-full flex items-center justify-center ">
       <div className="w-full h-full bg-white shadow-lg rounded-lg  ">
         <div className="flex justify-around items-center  bg-gradient-to-r bg-gray-50 mt-3 p-4 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold text-black ">
+          <h2 className="text-2xl font-bold text-black">
             Initiate BMR Records
           </h2>
         </div>
         <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-[#4f839b] to-[#0c384d] mt-2 p-4 rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold text-white ">
-            BMR Name :{" "}
-            <span className="text-gray-200"> {selectedBMR.name}</span>
+            BMR Name : ;
+            <span className="text-gray-200"> {selectedBMR?.name}</span>
           </h2>
 
           <h2 className="text-lg font-semibold text-white ">
             Status :{" "}
-            <span className="text-gray-200 ">{selectedBMR.status}</span>
+            <span className="text-gray-200 ">{selectedBMR?.status}</span>
           </h2>
         </div>
         <div className="flex justify-start space-x-2 px-4 pb-4 ">
           {[
             "General Information",
-            ...selectedBMR.BMR_Tabs.map((tab) => tab.tab_name),
+            ...selectedBMR?.BMR_Tabs?.map((tab) => tab.tab_name),
           ].map((tab) => (
             <Button1
               key={tab}
@@ -499,14 +520,9 @@ const BMRRecords = () => {
                                   placeholder={field.placeholder}
                                   value={field.value}
                                   helpText={field.helpText}
-                                  onChange={(e) =>
-                                    handleDynamicFieldChange(
-                                      field.id,
-                                      e.target.value,
-                                      activeTab
-                                    )
-                                  }
-                                  className={` mb-4 rounded-md p-2 ${
+                                  
+                                  onChange={handleChange}
+                                  className={` mb-4 rounded-md p-2 text-black ${
                                     field.label
                                       ? "text-base font-bold text-gray-900 flex gap-1 mb-2"
                                       : ""
