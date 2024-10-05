@@ -1468,7 +1468,7 @@ exports.editBMRField = async (req, res) => {
             bmr_id: bmr_id,
             changed_by: req.user.userId,
             field_name: field,
-            previous_value: oldValue || null,
+            previous_value: oldValue || "",
             new_value: newValue,
             previous_status: "Under Initiation",
             new_status: "Under Initiation",
@@ -2771,7 +2771,6 @@ exports.generateReport = async (req, res) => {
     let reportData = req.body.reportData;
     let initiator_name = await getUserById(reportData?.initiator);
     reportData.initiator_name = initiator_name?.name;
-
     const getCurrentDateTime = () => {
       const now = new Date();
       return now.toLocaleString("en-GB", {
@@ -2806,7 +2805,6 @@ exports.generateReport = async (req, res) => {
     const user = await getUserById(req.user.userId);
 
     await page.setContent(html, { waitUntil: "networkidle0" });
-
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
@@ -2830,7 +2828,7 @@ exports.generateReport = async (req, res) => {
         <style>
           .header-container {
             width: 100%;
-            padding: 0 50px;
+            padding: 0 30px;
             box-sizing: border-box;
           }
           .header-table {
@@ -2842,7 +2840,7 @@ exports.generateReport = async (req, res) => {
           }
           .header-table th, .header-table td {
             border: 1px solid #000;
-            padding: 8px;
+            padding: 10px;
           }
           .header-title {
             text-align: center;
@@ -2896,11 +2894,16 @@ exports.generateReport = async (req, res) => {
         left: "30px",
       },
     });
-
     await browser.close();
 
-    res.set("Content-Type", "application/pdf");
-    res.send(pdf);
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": 'attachment; filename="report.pdf"',
+      "Cache-Control": "no-store",
+      Pragma: "no-cache",
+    });
+    res.set("Content-Length", Buffer.byteLength(pdf));
+    res.send(Buffer.from(pdf));
   } catch (error) {
     console.error("Error generating PDF:", error);
     res.status(500).send("Error generating PDF");
