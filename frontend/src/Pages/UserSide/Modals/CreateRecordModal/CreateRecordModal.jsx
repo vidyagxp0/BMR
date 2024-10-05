@@ -285,7 +285,7 @@ function CreateRecordModal({ open, onClose }) {
 
   return (
     <>
-      <div className="h-[40%]">
+      <div className="h-[40%] z-50">
         <Box open={true} onClose={onClose} sx={{ zIndex: 10 }}>
           <Box sx={modalStyle}>
             <button

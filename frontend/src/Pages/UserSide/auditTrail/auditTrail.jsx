@@ -125,6 +125,15 @@ function AuditTrail() {
                       style={{
                         padding: "10px",
                         borderBottom: "1px solid #ccc",
+                        width: "15%",
+                      }}
+                    >
+                      Field Name
+                    </th>
+                    <th
+                      style={{
+                        padding: "10px",
+                        borderBottom: "1px solid #ccc",
                         width: "10%",
                       }}
                     >
@@ -173,6 +182,15 @@ function AuditTrail() {
                         width: "15%",
                       }}
                     >
+                      Comments
+                    </th>
+                    <th
+                      style={{
+                        padding: "10px",
+                        borderBottom: "1px solid #ccc",
+                        width: "15%",
+                      }}
+                    >
                       Date & Time
                     </th>
                     <th
@@ -198,6 +216,16 @@ function AuditTrail() {
                       >
                         {auditTrail.User.name}
                       </td>
+                      <td
+                        style={{
+                          padding: "10px",
+                          borderBottom: "1px solid #ccc",
+                          width: "15%",
+                        }}
+                      >
+                        {auditTrail.field_name}
+                      </td>
+                      
                       <td
                         style={{
                           padding: "10px",
@@ -253,6 +281,15 @@ function AuditTrail() {
                         }}
                       >
                         {auditTrail.declaration}
+                      </td>
+                      <td
+                        style={{
+                          padding: "10px",
+                          borderBottom: "1px solid #ccc",
+                          width: "15%",
+                        }}
+                      >
+                        {auditTrail.comments}
                       </td>
                       <td
                         style={{

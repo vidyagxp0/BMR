@@ -5,18 +5,27 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import AtmButton from "../../../../AtmComponents/AtmButton";
 import { toast } from "react-toastify";
 import UserVerificationPopUp from "../../../../Components/UserVerificationPopUp/UserVerificationPopUp";
+import { useDispatch, useSelector } from "react-redux";
+import { addTab } from "../../../../bmrTabsSlice";
+import { IoIosAddCircle, IoIosTrash } from "react-icons/io";
+import { Tooltip } from "@mui/material";
 
 const BMRRecordsDetails = () => {
+  const dispatch = useDispatch();
+  const bmrTabs = useSelector((state) => state.bmrTabs.tabs);
+  const [activeTabSections, setActiveTabSections] = useState([]);
+
+  console.log(bmrTabs, "<><><>");
   const userDetails = JSON.parse(localStorage.getItem("user-details"));
   const location = useLocation();
-  const [data, setData] = useState([]);
   const [recordData, setRecordData] = useState(location?.state?.original || {});
-  console.log(recordData, "recordData");
   const [tabs, setTabs] = useState([
     "Initiator Remarks",
     "Reviewer Remarks",
     "Approver Remarks",
   ]);
+
+  const allTabs = [...tabs, ...bmrTabs.flat()];
   const [flowoTabs, setFlowoTabs] = useState([
     "INITIATION",
     "UNDER REVIEW",
@@ -86,24 +95,29 @@ const BMRRecordsDetails = () => {
     ],
   });
   const [activeFlowTab, setActiveFlowTab] = useState(flowoTabs[0]);
-  const [activeDefaultTab, setActiveDefaultTab] = useState(tabs[0]);
+  const [activeDefaultTab, setActiveDefaultTab] = useState(allTabs[0]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
-
   const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   dispatch(setFormData(recordData));
+  //   dispatch(setRecordData(recordData));
+  // }, [dispatch, recordData ]);
+  // dispatch(setFormData(recordData));
 
   const formattedDateForInput = (dateString) => {
     if (dateString === "NA" || !dateString) {
-      return ""; 
+      return "";
     }
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); 
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
   };
-  
+
   const handleFlowTabClick = (tab) => {
     setActiveFlowTab(tab);
   };
@@ -122,6 +136,20 @@ const BMRRecordsDetails = () => {
       setActiveFlowTab("APPROVED");
     }
   }, [recordData]);
+
+  // const handleNewBMRTabClick = (bmrTab) => {
+  //   console.log("New BMR tab clicked:", bmrTab);
+
+  //   // Update the state to toggle active state of clicked tab
+  //   bmrTabs((prevTabs) =>
+  //     prevTabs.map(
+  //       (tab) =>
+  //         tab.name === bmrTab.name // Compare by a unique property, e.g., name
+  //           ? { ...tab, active: true } // Set clicked tab as active
+  //           : { ...tab, active: false } // Set all others as inactive
+  //     )
+  //   );
+  // };
 
   const handlePopupSubmit = (credentials) => {
     const dataObject = {
@@ -149,10 +177,8 @@ const BMRRecordsDetails = () => {
           config
         )
         .then(() => {
-          toast.success("BMR successfully sent for review");
-          navigate(
-            `/bmr-forms`,
-          );
+          toast.success("BMR Record successfully sent for review");
+          navigate(`/bmr-forms`);
         })
         .catch((error) => {
           toast.error(
@@ -169,10 +195,8 @@ const BMRRecordsDetails = () => {
           config
         )
         .then(() => {
-          toast.success("BMR successfully sent for approval");
-          setTimeout(() => navigate(
-            `/bmr-forms`,
-          ), 500);
+          toast.success("BMR Record successfully sent for approval");
+          setTimeout(() => navigate(`/bmr-forms`), 500);
         })
         .catch((error) => {
           toast.error(
@@ -188,10 +212,8 @@ const BMRRecordsDetails = () => {
           config
         )
         .then(() => {
-          toast.success("BMR successfully opened");
-          navigate(
-            `/bmr-forms`,
-          );
+          toast.success("BMR Record successfully opened");
+          navigate(`/bmr-forms`);
         })
         .catch((error) => {
           toast.error(error?.response?.data?.message || "Couldn't open bmr!!");
@@ -201,10 +223,8 @@ const BMRRecordsDetails = () => {
       axios
         .put(`${BASE_URL}/bmr-record/approve-BMR`, dataObject, config)
         .then(() => {
-          toast.success("BMR successfully approved");
-          navigate(
-            `/bmr-forms`,
-          );
+          toast.success("BMR Record successfully approved");
+          navigate(`/bmr-forms`);
         })
         .catch((error) => {
           toast.error(
@@ -220,10 +240,8 @@ const BMRRecordsDetails = () => {
           config
         )
         .then(() => {
-          toast.success(" BMR successfully opened");
-          navigate(
-            `/bmr-forms`,
-          );
+          toast.success(" BMR Record successfully opened");
+          navigate(`/bmr-forms`);
         })
         .catch((error) => {
           toast.error(error?.response?.data?.message || "Couldn't open BMR!!");
@@ -315,6 +333,20 @@ const BMRRecordsDetails = () => {
     populateApproverFields();
     populateReviewerFields();
   }, [recordData]);
+
+  const [activeTab, setActiveTab] = useState(null); // Track the active tab
+  const [activeSection, setActiveSection] = useState(null); // Track the active section
+
+  const handleNewBMRTabClick = (tab) => {
+    // Set the active sections based on the clicked tab
+    setActiveTab(tab?.id);
+    setActiveTabSections(tab.BMR_sections || []);
+  };
+
+  const handleSectionClick = (section) => {
+    setActiveSection(activeSection === section ? null : section); // Toggle the active section
+  };
+
   return (
     <div>
       <div className="flex gap-4 mt-4 mb-4">
@@ -336,21 +368,68 @@ const BMRRecordsDetails = () => {
           </button>
         ))}
       </div>
-      <div className="flex flex-wrap gap-4 mb-4">
-        {tabs?.map((tab, index) => (
-          <button
-            style={{ border: "1px solid gray" }}
-            key={index}
-            onClick={() => handleDefaultTabClick(tab)}
-            className={`py-2 px-4 rounded-md ${
-              activeDefaultTab === tab
-                ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 border border-blue-900 opacity-95"
-                : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 rounded-md"
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
+      {allTabs?.map((tab, index) => (
+        <button
+          style={{ border: "1px solid gray", margin: "5px" }}
+          key={index}
+          onClick={() => {
+            handleDefaultTabClick(tab);
+            handleNewBMRTabClick(tab);
+          }}
+          className={`py-2 px-4 rounded-md ${
+            activeDefaultTab === tab
+              ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 border border-blue-900 opacity-95"
+              : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300"
+          }`}
+        >
+          {/* Show tab name based on whether it's static or dynamic */}
+          {typeof tab === "string" ? tab : tab.tab_name}
+        </button>
+      ))}
+      <div className="flex flex-wrap gap-4 mb-4 ">
+        {/* <div>
+          {tabs?.map((tab, index) => (
+            <button
+              style={{ border: "1px solid gray", margin: "5px" }}
+              key={index}
+              onClick={() => handleDefaultTabClick(tab)}
+              className={`py-2 px-4 rounded-md ${
+                activeDefaultTab === tab
+                  ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 border border-blue-900 opacity-95"
+                  : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div> */}
+        {/* <div>
+          {bmrTabs?.map((tabGroup, index) => (
+            <div className="tab-group" key={index}>
+              
+              {tabGroup?.map((tb) => (
+                <div
+                  key={tb.id}
+                  className="tab-container"
+                  style={{ marginBottom: "10px" }}
+                >
+                  <button
+                    style={{ border: "1px solid gray", margin: "5px" }}
+                    onClick={() => handleNewBMRTabClick(tb)}
+                    className={`py-2 px-4 rounded-md ${
+                      tb.id === activeTab
+                        ? "text-white bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg transform scale-100 transition duration-300 border border-blue-900 opacity-95"
+                        : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-400 hover:text-blue-600 shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300"
+                    }`}
+                  >
+                    {tb?.tab_name}
+                  </button>
+                </div>
+              ))}
+            </div>
+          ))}
+
+        </div> */}
       </div>
 
       <div className="relative m-2">
@@ -457,7 +536,7 @@ const BMRRecordsDetails = () => {
                           {field.field_type === "date" && (
                             <input
                               type="date"
-                               value={formattedDateForInput(
+                              value={formattedDateForInput(
                                 recordData?.reviewers?.map(
                                   (date) => date?.date_of_review
                                 )
@@ -562,6 +641,159 @@ const BMRRecordsDetails = () => {
                 </div>
               </div>
             ))}
+
+          {activeTabSections.map((section, secIndex) => (
+            <div
+              key={secIndex}
+              className="text-lg flex flex-col gap-9 font-bold text-gray-500"
+            >
+           
+                <div
+                  className="p-4 border mb-4 border-gray-500 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95"
+                >
+                  <h3 className="font-semibold text-gray-600 mb-3 text-lg bg-gray-200 p-3">
+                    <div className="flex items-center gap-5 ">
+                      <p>Section :</p>
+                      <div className="block text-black">
+                      {section.section_name}
+                      </div>
+                    </div>
+                  </h3>
+                  <div
+                    className={
+                      // Conditionally apply `grid-cols-2` if no grid field exists
+                      section.BMR_fields.some(
+                        (field) => field.field_type === "grid"
+                      )
+                        ? ""
+                        : "grid grid-cols-2 gap-4"
+                    }
+                  >
+                    {section.BMR_fields?.map((field, fieldIndex) => {
+                      return (
+                        <div
+                        key={fieldIndex}
+                          className={`${
+                            field.field_type !== "grid"
+                              ? "grid grid-cols-2"
+                              : " p-2"
+                          }`}
+                        >
+                          {/* Non-grid fields */}
+                          {field.field_type !== "grid" && (
+                            <InputField
+                            label={field.label}
+                              type={field.field_type || "text"}
+                              placeholder={field.placeholder}
+                              value={field.defaultValue}
+                              helpText={field.helpText}
+                              className={` mb-4 rounded-md p-2 text-black ${
+                                field.label
+                                  ? "text-base text-gray-900 flex gap-1 mb-2"
+                                  : ""
+                              } `}
+                              readOnly
+                            />
+                          )}
+                          {/* Grid field */}
+                          <div className="mt-2">
+                            {field.field_type === "grid" && (
+                              <div className="relative ">
+                                <div className="flex justify-between items-center">
+                                  <div> {field.label} </div>
+                                  <div className="flex justify-end">
+                                    <button
+                                      onClick={addNewRow}
+                                      className="p-2 rounded"
+                                    >
+                                      <IoIosAddCircle size={25} />
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {(() => {
+                                  let acceptsMultiple = field?.acceptsMultiple
+                                    ? JSON.parse(field.acceptsMultiple)
+                                    : { columns: [], rows: [] };
+                                  return (
+                                    acceptsMultiple?.columns?.length > 0 && (
+                                      <table className="table-auto w-full border border-gray-600 mb-4">
+                                        <thead>
+                                          <tr>
+                                            {acceptsMultiple.columns.map(
+                                              (column, idx) => {
+                                                return (
+                                                  <th
+                                                    key={idx}
+                                                    className="border border-gray-600 p-2"
+                                                  >
+                                                    {column?.name || "No Name"}
+                                                  </th>
+                                                );
+                                              }
+                                            )}
+                                            <th className="border border-gray-600 p-2">
+                                              Action
+                                            </th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {gridData.map((row, rowIndex) => {
+                                            return (
+                                              <tr key={rowIndex}>
+                                                {acceptsMultiple.columns.map(
+                                                  (column, colIdx) => (
+                                                    <td
+                                                      key={colIdx}
+                                                      className="border border-gray-600 p-2"
+                                                    >
+                                                      <input
+                                                        type={
+                                                          column.field_type ||
+                                                          "text"
+                                                        }
+                                                        onChange={
+                                                          (e) =>
+                                                            handleGridChange(
+                                                              rowIndex,
+                                                              column.name,
+                                                              e.target.value
+                                                            ) // Update the value when typing
+                                                        }
+                                                        className="border text-black border-gray-600 p-2 w-full rounded"
+                                                      />
+                                                    </td>
+                                                  )
+                                                )}
+                                                <td className="border border-gray-600 p-2 text-center">
+                                                  <button
+                                                    onClick={() =>
+                                                      deleteRow(rowIndex)
+                                                    }
+                                                    className="text-red-500 hover:text-red-700"
+                                                  >
+                                                    <IoIosTrash size={20} />
+                                                  </button>
+                                                </td>
+                                              </tr>
+                                            );
+                                          })}
+                                        </tbody>
+                                      </table>
+                                    )
+                                  );
+                                })()}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+           
+            </div>
+          ))}
         </div>
 
         <div className="fixed bottom-36 right-[-10px] w-auto flex-col border-gray-300  flex gap-5">
@@ -687,5 +919,37 @@ const BMRRecordsDetails = () => {
     </div>
   );
 };
+
+const InputField = ({
+  label,
+  type = "text",
+  placeholder,
+  value,
+  onChange,
+  helpText,
+}) => (
+  <div>
+    <label className=" text-gray-700 font-bold p-2 mb-2 flex items-center">
+      {label}
+      {type === "text" && <span className="text-red-600">*</span>}
+      {helpText && (
+        <Tooltip title={helpText} placement="right-start">
+          <div className="text-gray-950 cursor-pointer ml-2">
+            <span className="text-black">ⓘ</span>
+          </div>
+        </Tooltip>
+      )}
+    </label>
+
+    <input
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      readOnly
+      className="w-full px-3 h-10 p-2 border-2 font-sm text-black border-gray-500 rounded shadow-md focus:border-blue-500 transition duration-200"
+      style={{ border: "1px solid gray" }}
+    />
+  </div>)
 
 export default BMRRecordsDetails;

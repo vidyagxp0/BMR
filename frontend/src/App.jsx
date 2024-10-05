@@ -223,8 +223,7 @@ function RouteGuard() {
           path="/bmr-details/:bmr_id" // Route to handle BMR details
           element={<ProtectedUserRoute element={<BMRDetails />} />} // Render the BMRDetails component
         />
-      </Route>
-      <Route
+         <Route
         path="/audit-trail"
         element={<ProtectedUserRoute element={<AuditTrail />} />}
       />
@@ -242,6 +241,8 @@ function RouteGuard() {
         path="/helpdesk"
         element={<ProtectedUserRoute element={<HelpdeskPersonnel />} />}
       />
+      </Route>
+     
 
       <Route path="/admin-login" element={<AdminLogin />} />
       <Route path="" element={<Wrapper />}>
