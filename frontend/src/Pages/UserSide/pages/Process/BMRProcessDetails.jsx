@@ -477,7 +477,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                 </Tooltip>
                 <PDF data={data} />
 
-                {/* {activeFlowTab === "INITIATION" && ( */}
+            
                   <>
                     <AtmButton
                       label={newTab.length > 0 ? "Edit Form" : "Create Form"}
