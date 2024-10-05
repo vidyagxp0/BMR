@@ -25,7 +25,13 @@ function checkJwtToken(req, res, next) {
 
 const getFileUrl = (file) => {
   if (file?.filename) {
-    return `https://bmrapi.mydemosoftware.com/profile_pics/${file?.filename}`;
+    return `http://localhost:7000/profile_pics/${file?.filename}`;
+  }
+};
+
+const getDocsUrl = (file) => {
+  if (file?.filename) {
+    return `http://localhost:7000/elog_docs/${file?.filename}`;
   }
 };
 
@@ -61,4 +67,5 @@ function hasAccess(userRoles, roleId) {
 
 module.exports.checkJwtToken = checkJwtToken;
 module.exports.getFileUrl = getFileUrl;
+module.exports.getDocsUrl = getDocsUrl;
 module.exports.authorizeUserRole = authorizeUserRole;

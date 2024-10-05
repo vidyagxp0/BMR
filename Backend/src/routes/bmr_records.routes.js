@@ -2,11 +2,33 @@ const express = require("express");
 const router = express.Router();
 const BmrRecordsController = require("../controllers/bmr_records.controller");
 const Auth = require("../middlewares/authentication");
+const multer = require("multer");
+const path = require("path");
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.resolve(__dirname, "../documents/profile_pics/"));
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now();
+    const originalName = path.basename(
+      file.originalname,
+      path.extname(file.originalname)
+    );
+    const sanitizedOriginalName = originalName.replace(/[^a-zA-Z0-9]/g, "_"); // Sanitize the original name if necessary
+    const newFilename = `${uniqueSuffix}-${sanitizedOriginalName}${path.extname(
+      file.originalname
+    )}`;
+    cb(null, newFilename);
+  },
+});
+const upload = multer({ storage: storage });
 
 router.post(
   "/create-bmr-record",
   Auth.checkJwtToken,
   Auth.authorizeUserRole(2),
+  upload.any(),
   BmrRecordsController.createBmrRecord
 );
 
@@ -67,7 +89,7 @@ router.put(
 router.post(
   "/generate-bmr-record",
   Auth.checkJwtToken,
-  BmrRecordsController.genrateBMRrecord
+  BmrRecordsController.genrateBMRrecordReport
 );
 
 module.exports = router;

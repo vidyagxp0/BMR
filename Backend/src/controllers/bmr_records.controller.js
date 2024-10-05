@@ -8,6 +8,7 @@ const { sequelize } = require("../config/db");
 const Mailer = require("../middlewares/mailer");
 const bcrypt = require("bcrypt");
 const RecordAuditTrail = require("../models/records_auditTrail.model");
+const { getDocsUrl } = require("../middlewares/authentication");
 
 const getUserById = async (user_id) => {
   const user = await User.findOne({ where: { user_id, isActive: true } });
@@ -71,7 +72,8 @@ const getAllFieldsForBMR = async (bmr_id) => {
 };
 
 exports.createBmrRecord = async (req, res) => {
-  const { bmr_id, data, reviewers, approvers } = req.body;
+  const { bmr_id, data, reviewers, approvers, declaration, comments } =
+    req.body;
 
   if (!bmr_id || !data || !reviewers || !approvers) {
     return res.status(400).json({
@@ -85,34 +87,80 @@ exports.createBmrRecord = async (req, res) => {
 
   try {
     const fields = await getAllFieldsForBMR(bmr_id);
-
     const validData = {};
+    const auditTrailEntries = [];
+
     fields.forEach((field) => {
       const value = data[field.label];
       if (field.isRequired && (value === undefined || value === null)) {
         throw new Error(`Missing required field: ${field.label}`);
       }
 
-      // Validate field types
-      if (
-        (field.field_type === "single_select" ||
-          field.field_type === "multi_select") &&
-        !field.acceptsMultiple.includes(value)
-      ) {
-        throw new Error(`Invalid value for field ${field.label}`);
-      }
-      if (field.field_type === "grid") {
-        if (typeof value !== "object" || !Array.isArray(value)) {
-          throw new Error(
-            `Expected array of objects for grid field ${field.label}`
-          );
-        }
-        // Further validation to ensure each object in the array matches the structure expected by the grid
-      }
+      // Handling different field types and values
+      if (field.field_type === "file" && value) {
+        const fileUrl = getDocsUrl(value);
+        validData[field.label] = fileUrl;
+        auditTrailEntries.push({
+          record_id: bmr_id,
+          changed_by: req.user.userId,
+          field_name: field.label,
+          previous_value: "Not Applicable",
+          new_value: fileUrl,
+          previous_status: "Not Applicable",
+          new_status: "Under Initiation",
+          declaration: declaration,
+          comments: comments,
+          action: "Create Record",
+        });
+      } else {
+        validData[field.label] = value;
 
-      validData[field.label] = value;
+        auditTrailEntries.push({
+          record_id: bmr_id,
+          changed_by: req.user.userId,
+          field_name: field.label,
+          previous_value: "Not Applicable",
+          new_value: value || "value",
+          previous_status: "Not Applicable",
+          new_status: "Under Initiation",
+          declaration: declaration,
+          comments: comments,
+          action: "Create Record",
+        });
+      }
     });
 
+    reviewers.forEach((reviewer, index) => {
+      auditTrailEntries.push({
+        bmr_id: bmr_id,
+        changed_by: req.user.userId,
+        field_name: `reviewer${index + 1}`,
+        previous_value: "Not Applicable",
+        new_value: reviewer?.reviewer,
+        previous_status: "Not Applicable",
+        new_status: "Under Initiation",
+        declaration: declaration,
+        comments: comments,
+        action: "Create Record",
+      });
+    });
+
+    approvers.forEach((approver, index) => {
+      auditTrailEntries.push({
+        bmr_id: bmr_id,
+        changed_by: req.user.userId,
+        field_name: `approver${index + 1}`,
+        previous_value: "Not Applicable",
+        new_value: approver?.approver,
+        previous_status: "Not Applicable",
+        new_status: "Under Initiation",
+        declaration: declaration,
+        comments: comments,
+        action: "Create Record",
+      });
+    });
+
+    // Create the new BMR Record
     const newRecord = await BMRRecord.create(
       {
         bmr_id,
@@ -125,6 +173,11 @@ exports.createBmrRecord = async (req, res) => {
       },
       { transaction }
     );
+
+    auditTrailEntries.forEach(
+      (entry) => (entry.record_id = newRecord?.record_id)
+    );
+    await RecordAuditTrail.bulkCreate(auditTrailEntries, { transaction });
 
     const bmr = await BMR.findOne({
       where: {
@@ -200,7 +253,7 @@ exports.createBmrRecord = async (req, res) => {
 };
 
 exports.updateBMRRecord = async (req, res) => {
-  const { record_id, updatedData } = req.body;
+  const { record_id, updatedData, declaration, comments } = req.body;
 
   if (!record_id || !updatedData) {
     return res.status(400).json({
@@ -225,41 +278,54 @@ exports.updateBMRRecord = async (req, res) => {
       });
     }
 
-    const fields = await getAllFieldsForBMR(record.bmr_id); // Assuming this function returns fields with parsed 'acceptsMultiple'
+    const fields = await getAllFieldsForBMR(record.bmr_id);
     const validData = {};
+    const auditTrailEntries = [];
     const errors = [];
 
     fields.forEach((field) => {
-      const value = updatedData[field.label];
-      if (field.isRequired && (value === undefined || value === null)) {
-        errors.push(`Missing required field: ${field.label}`);
+      const oldValue = record?.data[field?.label];
+      const newValue = updatedData[field?.label];
+
+      if (field.isRequired && (newValue === undefined || newValue === null)) {
+        errors.push(`Missing required field: ${field?.label}`);
       }
 
-      // Validate based on field type
-      if (
-        field.field_type === "single_select" ||
-        field.field_type === "multi_select"
-      ) {
-        if (
-          field.field_type === "single_select" &&
-          !field.acceptsMultiple.includes(value)
-        ) {
-          errors.push(`Invalid value for field ${field.label}`);
+      // Handling file uploads
+      if (field?.field_type === "file" && newValue) {
+        const fileUrl = getDocsUrl(newValue); // Manage the file upload and get the URL
+        validData[field?.label] = fileUrl;
+        if (oldValue !== fileUrl) {
+          auditTrailEntries.push({
+            record_id,
+            changed_by: req.user.userId,
+            field_name: field.label,
+            previous_value: oldValue,
+            new_value: fileUrl,
+            previous_status: "Under Initiation",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "Update Record",
+          });
         }
-        if (
-          field.field_type === "multi_select" &&
-          !value.every((val) => field.acceptsMultiple.includes(val))
-        ) {
-          errors.push(`Invalid values for field ${field.label}`);
-        }
-      } else if (field.field_type === "grid") {
-        // Assuming value is an array of objects for grids
-        if (!Array.isArray(value)) {
-          errors.push(`Expected array for grid field ${field.label}`);
+      } else {
+        validData[field.label] = newValue;
+        if (oldValue !== newValue) {
+          auditTrailEntries.push({
+            record_id,
+            changed_by: req.user.userId,
+            field_name: field.label,
+            previous_value: oldValue,
+            new_value: newValue,
+            previous_status: "Under Initiation",
+            new_status: "Under Initiation",
+            declaration: declaration,
+            comments: comments,
+            action: "Update Record",
+          });
         }
       }
-
-      validData[field.label] = value;
     });
 
     if (errors.length > 0) {
@@ -270,11 +336,16 @@ exports.updateBMRRecord = async (req, res) => {
       });
     }
 
-    // Apply updates, merging with existing data
+    // Apply updates
     await record.update(
       { data: { ...record.data, ...validData } },
       { transaction }
     );
+
+    // Create audit trail records
+    if (auditTrailEntries.length > 0) {
+      await RecordAuditTrail.bulkCreate(auditTrailEntries, { transaction });
+    }
 
     await transaction.commit();
 
@@ -1038,12 +1109,11 @@ exports.approveBMR = async (req, res) => {
   }
 };
 
-exports.genrateBMRrecord = async (req, res) => {
+exports.genrateBMRrecordReport = async (req, res) => {
   try {
     let reportData = req.body.reportData;
     let initiator_name = await getUserById(reportData?.initiator);
     reportData.initiator_name = initiator_name?.name;
-
     const getCurrentDateTime = () => {
       const now = new Date();
       return now.toLocaleString("en-GB", {
@@ -1074,7 +1144,6 @@ exports.genrateBMRrecord = async (req, res) => {
     const logoPath = path.join(__dirname, "../public/vidyalogo.png.png");
     const logoBase64 = fs.readFileSync(logoPath).toString("base64");
     const logoDataUri = `data:image/png;base64,${logoBase64}`;
-
     const user = await getUserById(req.user.userId);
 
     await page.setContent(html, { waitUntil: "networkidle0" });
@@ -1168,17 +1237,15 @@ exports.genrateBMRrecord = async (req, res) => {
         left: "30px",
       },
     });
-    //   fs.writeFileSync("report.pdf", pdf);
     await browser.close();
-
     res.set({
       "Content-Type": "application/pdf",
       "Content-Disposition": 'attachment; filename="report.pdf"',
       "Cache-Control": "no-store",
       Pragma: "no-cache",
     });
-    res.set("Content-Length", Buffer.byteLength(pdf));
 
+    res.set("Content-Length", Buffer.byteLength(pdf));
     res.send(Buffer.from(pdf));
   } catch (error) {
     console.error("Error generating PDF:", error);
