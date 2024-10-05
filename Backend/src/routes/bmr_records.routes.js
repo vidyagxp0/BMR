@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const BmrRecordsController = require('../controllers/bmr_records.controller');
-const Auth = require('../middlewares/authentication');
+const BmrRecordsController = require("../controllers/bmr_records.controller");
+const Auth = require("../middlewares/authentication");
 
 router.post(
   "/create-bmr-record",
@@ -64,6 +64,10 @@ router.put(
   BmrRecordsController.approveBMR
 );
 
-
+router.post(
+  "/generate-bmr-record",
+  Auth.checkJwtToken,
+  BmrRecordsController.genrateBMRrecord
+);
 
 module.exports = router;

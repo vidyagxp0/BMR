@@ -84,7 +84,7 @@ exports.createBmrRecord = async (req, res) => {
   const transaction = await sequelize.transaction();
 
   try {
-    const fields = await getAllFieldsForBMR(bmr_id); // Use the previously defined function
+    const fields = await getAllFieldsForBMR(bmr_id);
 
     const validData = {};
     fields.forEach((field) => {
@@ -133,55 +133,55 @@ exports.createBmrRecord = async (req, res) => {
       },
     });
 
-    // const date = new Date();
-    // const day = String(date.getDate()).padStart(2, "0");
-    // const month = String(date.getMonth() + 1).padStart(2, "0");
-    // const year = date.getFullYear();
-    // const dateOfInitiation = `${day}-${month}-${year}`;
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    const dateOfInitiation = `${day}-${month}-${year}`;
 
-    // const taggedReviewers = reviewers.map((person) => ({
-    //   ...person,
-    //   role: "reviewer",
-    // }));
-    // const taggedApprovers = approvers.map((person) => ({
-    //   ...person,
-    //   role: "approver",
-    // }));
+    const taggedReviewers = reviewers.map((person) => ({
+      ...person,
+      role: "reviewer",
+    }));
+    const taggedApprovers = approvers.map((person) => ({
+      ...person,
+      role: "approver",
+    }));
 
-    // const emailPromises = taggedReviewers
-    //   .concat(taggedApprovers)
-    //   .map(async (person) => {
-    //     const userId =
-    //       person.role === "reviewer" ? person.reviewerId : person.approverId;
-    //     try {
-    //       const userData = await getUserById(userId);
-    //       const initiatorData = await getUserById(bmr.initiator);
+    const emailPromises = taggedReviewers
+      .concat(taggedApprovers)
+      .map(async (person) => {
+        const userId =
+          person.role === "reviewer" ? person.reviewerId : person.approverId;
+        try {
+          const userData = await getUserById(userId);
+          const initiatorData = await getUserById(bmr.initiator);
 
-    //       const mailData = {
-    //         bmrName: bmr.name,
-    //         initiator: initiatorData.get("name"),
-    //         dateOfInitiation: dateOfInitiation,
-    //         status: "Initiation",
-    //         userName: userData.get("name"),
-    //         userEmail: userData.get("email"),
-    //         recipients: userData.get("email"),
-    //         ...(person.role === "reviewer"
-    //           ? { reviewerName: userData.get("name") }
-    //           : { approverName: userData.get("name") }),
-    //       };
+          const mailData = {
+            bmrName: bmr.name,
+            initiator: initiatorData.get("name"),
+            dateOfInitiation: dateOfInitiation,
+            status: "Initiation",
+            userName: userData.get("name"),
+            userEmail: userData.get("email"),
+            recipients: userData.get("email"),
+            ...(person.role === "reviewer"
+              ? { reviewerName: userData.get("name") }
+              : { approverName: userData.get("name") }),
+          };
 
-    //       await Mailer.sendEmail(
-    //         person.role === "reviewer" ? "assignReviewer" : "assignApprover",
-    //         mailData
-    //       );
-    //     } catch (emailError) {
-    //       // Log the error and proceed with other emails
-    //       console.error("Failed to send email:", emailError.message);
-    //       throw new Error("Failed to send emails");
-    //     }
-    //   });
+          await Mailer.sendEmail(
+            person.role === "reviewer" ? "assignReviewer" : "assignApprover",
+            mailData
+          );
+        } catch (emailError) {
+          // Log the error and proceed with other emails
+          console.error("Failed to send email:", emailError.message);
+          throw new Error("Failed to send emails");
+        }
+      });
 
-    // await Promise.all(emailPromises);
+    await Promise.all(emailPromises);
     await transaction.commit();
 
     res.status(200).json({
@@ -191,7 +191,7 @@ exports.createBmrRecord = async (req, res) => {
     });
   } catch (e) {
     await transaction.rollback();
-    
+
     res.status(500).json({
       error: true,
       message: `Error creating record: ${e.message}`,
@@ -480,7 +480,6 @@ exports.sendRecordForReview = async (req, res) => {
       { transaction }
     );
 
-    // Log the audit trail synchronously to ensure consistency within the transaction
     await RecordAuditTrail.create(
       {
         record_id: record_id,
@@ -497,34 +496,34 @@ exports.sendRecordForReview = async (req, res) => {
       { transaction }
     );
 
-    // const date = new Date();
-    // const day = String(date.getDate()).padStart(2, "0");
-    // const month = String(date.getMonth() + 1).padStart(2, "0");
-    // const year = date.getFullYear();
-    // const dateOfInitiation = `${day}-${month}-${year}`;
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    const dateOfInitiation = `${day}-${month}-${year}`;
 
-    // const emailPromises = record?.reviewers.map(async (person) => {
-    //   const userData = await getUserById(person.reviewerId);
-    //   const initiatorData = await getUserById(record.initiator);
+    const emailPromises = record?.reviewers.map(async (person) => {
+      const userData = await getUserById(person.reviewerId);
+      const initiatorData = await getUserById(record.initiator);
 
-    //   const mailData = {
-    //     bmrName: form.name,
-    //     initiator: initiatorData.get("name"), // Use .get() to safely extract properties
-    //     dateOfInitiation: dateOfInitiation,
-    //     status: "Under Review",
-    //     recipients: userData.get("email"),
-    //     reviewerName: userData.get("name"),
-    //   };
+      const mailData = {
+        bmrName: form.name,
+        initiator: initiatorData.get("name"),
+        dateOfInitiation: dateOfInitiation,
+        status: "Under Review",
+        recipients: userData.get("email"),
+        reviewerName: userData.get("name"),
+      };
 
-    //   try {
-    //     Mailer.sendEmail("reminderReviewer", mailData);
-    //   } catch (emailError) {
-    //     throw new Error("Failed to send emails: " + emailError.message); // Throw to catch in outer try-catch
-    //   }
-    // });
+      try {
+        Mailer.sendEmail("reminderReviewer", mailData);
+      } catch (emailError) {
+        throw new Error("Failed to send emails: " + emailError.message);
+      }
+    });
 
-    // await Promise.all(emailPromises);
-    await transaction.commit(); // Commit the transaction
+    await Promise.all(emailPromises);
+    await transaction.commit();
 
     res.status(200).json({ error: false, message: "Record sent for review." });
   } catch (e) {
@@ -549,7 +548,6 @@ exports.sendFromReviewToOpen = async (req, res) => {
   const transaction = await sequelize.transaction();
 
   try {
-    // Verify user credentials
     const user = await User.findOne({
       where: { email, isActive: true },
       transaction,
@@ -570,7 +568,6 @@ exports.sendFromReviewToOpen = async (req, res) => {
         .json({ error: true, message: "Invalid email or password." });
     }
 
-    // Find the record
     const record = await BMRRecord.findOne({
       where: { record_id: record_id, isActive: true },
       transaction,
@@ -591,11 +588,11 @@ exports.sendFromReviewToOpen = async (req, res) => {
       });
     }
 
-    // Reset reviewers' status and return the record to "Initiation"
     const updatedReviewers = record.reviewers.map((reviewer) => ({
       ...reviewer,
       status: "pending",
-      comment: null, // Optionally reset the comment
+      comment: null,
+      date_of_review: "NA",
     }));
 
     await record.update(
@@ -607,7 +604,6 @@ exports.sendFromReviewToOpen = async (req, res) => {
       { transaction }
     );
 
-    // Log the audit trail synchronously to ensure consistency within the transaction
     await RecordAuditTrail.create(
       {
         record_id: record_id,
@@ -624,40 +620,38 @@ exports.sendFromReviewToOpen = async (req, res) => {
       { transaction }
     );
 
-    // const date = new Date();
-    // const day = String(date.getDate()).padStart(2, "0");
-    // const month = String(date.getMonth() + 1).padStart(2, "0");
-    // const year = date.getFullYear();
-    // const dateOfInitiation = `${day}-${month}-${year}`;
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    const dateOfInitiation = `${day}-${month}-${year}`;
 
-    // const initiator = await getUserById(record.initiator, { transaction });
-    // if (!initiator) {
-    //   await transaction.rollback();
-    //   return res
-    //     .status(404)
-    //     .json({ error: true, message: "Initiator not found." });
-    // }
+    const initiator = await getUserById(record.initiator, { transaction });
+    if (!initiator) {
+      await transaction.rollback();
+      return res
+        .status(404)
+        .json({ error: true, message: "Initiator not found." });
+    }
 
-    // // Prepare mail data for the initiator
-    // const mailData = {
-    //   bmrName: form.name,
-    //   initiator: initiator.get("name"),
-    //   dateOfInitiation: dateOfInitiation,
-    //   status: "Under Initiation",
-    //   initiatorName: initiator.get("name"),
-    //   recipients: initiator.get("email"),
-    // };
+    // Prepare mail data for the initiator
+    const mailData = {
+      bmrName: form.name,
+      initiator: initiator.get("name"),
+      dateOfInitiation: dateOfInitiation,
+      status: "Under Initiation",
+      initiatorName: initiator.get("name"),
+      recipients: initiator.get("email"),
+    };
 
-    // // Send email to the initiator
-    // try {
-    //   Mailer.sendEmail("reminderInitiator", mailData);
-    // } catch (emailError) {
-    //   throw new Error(
-    //     "Failed to send email to initiator: " + emailError.message
-    //   );
-    // }
+    try {
+      Mailer.sendEmail("reminderInitiator", mailData);
+    } catch (emailError) {
+      throw new Error(
+        "Failed to send email to initiator: " + emailError.message
+      );
+    }
 
-    // Commit the transaction
     await transaction.commit();
     res.status(200).json({
       error: false,
@@ -717,7 +711,12 @@ exports.sendFromReviewToApproval = async (req, res) => {
           alreadyReviewed = true;
           return reviewer;
         } else {
-          return { ...reviewer, status: "reviewed", comment: reviewComment };
+          return {
+            ...reviewer,
+            status: "reviewed",
+            comment: reviewComment,
+            date_of_review: new Date(),
+          };
         }
       }
       return reviewer;
@@ -743,7 +742,6 @@ exports.sendFromReviewToApproval = async (req, res) => {
       { transaction }
     );
 
-    // Log the audit trail synchronously to ensure consistency within the transaction
     await RecordAuditTrail.create(
       {
         record_id: record_id,
@@ -761,32 +759,31 @@ exports.sendFromReviewToApproval = async (req, res) => {
     );
 
     if (allReviewed) {
-      // const date = new Date();
-      // const day = String(date.getDate()).padStart(2, "0");
-      // const month = String(date.getMonth() + 1).padStart(2, "0");
-      // const year = date.getFullYear();
-      // const dateOfInitiation = `${day}-${month}-${year}`;
-      // // If all reviewers have reviewed, send emails to approvers
-      // const emailPromises = record.approvers.map(async (approver) => {
-      //   const approverData = await getUserById(approver.approverId);
-      //   const initiatorData = await getUserById(record.initiator);
-      //   const mailData = {
-      //     bmrName: form.name,
-      //     dateOfInitiation: dateOfInitiation,
-      //     status: "Under Approval",
-      //     initiator: initiatorData.get("name"),
-      //     approverName: approverData.get("name"),
-      //     recipients: approverData.get("email"),
-      //   };
-      //   try {
-      //     Mailer.sendEmail("reminderApprover", mailData);
-      //   } catch (emailError) {
-      //     throw new Error(
-      //       "Failed to send email to approver: " + emailError.message
-      //     );
-      //   }
-      // });
-      // await Promise.all(emailPromises);
+      const date = new Date();
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      const dateOfInitiation = `${day}-${month}-${year}`;
+      const emailPromises = record.approvers.map(async (approver) => {
+        const approverData = await getUserById(approver.approverId);
+        const initiatorData = await getUserById(record.initiator);
+        const mailData = {
+          bmrName: form.name,
+          dateOfInitiation: dateOfInitiation,
+          status: "Under Approval",
+          initiator: initiatorData.get("name"),
+          approverName: approverData.get("name"),
+          recipients: approverData.get("email"),
+        };
+        try {
+          Mailer.sendEmail("reminderApprover", mailData);
+        } catch (emailError) {
+          throw new Error(
+            "Failed to send email to approver: " + emailError.message
+          );
+        }
+      });
+      await Promise.all(emailPromises);
     }
 
     await transaction.commit();
@@ -814,7 +811,6 @@ exports.sendFromApprovalToOpen = async (req, res) => {
   const transaction = await sequelize.transaction();
 
   try {
-    // Verify user credentials
     const user = await User.findOne({
       where: { email, isActive: true },
       transaction,
@@ -835,7 +831,6 @@ exports.sendFromApprovalToOpen = async (req, res) => {
         .json({ error: true, message: "Invalid email or password." });
     }
 
-    // Find the record
     const record = await BMRRecord.findOne({
       where: { record_id: record_id, isActive: true },
       transaction,
@@ -856,17 +851,18 @@ exports.sendFromApprovalToOpen = async (req, res) => {
       });
     }
 
-    // Reset reviewers' and approvers' status and return the record to "Initiation"
     const updatedReviewers = record.reviewers.map((reviewer) => ({
       ...reviewer,
       status: "pending",
-      comment: null, // Optionally reset the comment
+      comment: null,
+      date_of_review: "NA",
     }));
 
     const updatedApprovers = record.approvers.map((approver) => ({
       ...approver,
       status: "pending",
-      comment: null, // Optionally reset the comment
+      comment: null,
+      date_of_approval: "NA",
     }));
 
     await record.update(
@@ -879,7 +875,6 @@ exports.sendFromApprovalToOpen = async (req, res) => {
       { transaction }
     );
 
-    // Log the audit trail synchronously to ensure consistency within the transaction
     await RecordAuditTrail.create(
       {
         record_id: record_id,
@@ -896,40 +891,40 @@ exports.sendFromApprovalToOpen = async (req, res) => {
       { transaction }
     );
 
-    // const date = new Date();
-    // const day = String(date.getDate()).padStart(2, "0");
-    // const month = String(date.getMonth() + 1).padStart(2, "0");
-    // const year = date.getFullYear();
-    // const dateOfInitiation = `${day}-${month}-${year}`;
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    const dateOfInitiation = `${day}-${month}-${year}`;
 
-    // const initiator = await getUserById(form.initiator, { transaction });
-    // if (!initiator) {
-    //   await transaction.rollback();
-    //   return res
-    //     .status(404)
-    //     .json({ error: true, message: "Initiator not found." });
-    // }
+    const initiator = await getUserById(form.initiator, { transaction });
+    if (!initiator) {
+      await transaction.rollback();
+      return res
+        .status(404)
+        .json({ error: true, message: "Initiator not found." });
+    }
 
-    // // Prepare mail data for the initiator
-    // const mailData = {
-    //   bmrName: form.name,
-    //   initiator: initiator.get("name"),
-    //   dateOfInitiation: dateOfInitiation,
-    //   status: "Under Initiation",
-    //   initiatorName: initiator.get("name"),
-    //   recipients: initiator.get("email"),
-    // };
+    // Prepare mail data for the initiator
+    const mailData = {
+      bmrName: form.name,
+      initiator: initiator.get("name"),
+      dateOfInitiation: dateOfInitiation,
+      status: "Under Initiation",
+      initiatorName: initiator.get("name"),
+      recipients: initiator.get("email"),
+    };
 
-    // // Send email to the initiator
-    // try {
-    //   Mailer.sendEmail("reminderInitiator", mailData);
-    // } catch (emailError) {
-    //   throw new Error(
-    //     "Failed to send email to initiator: " + emailError.message
-    //   );
-    // }
+    // Send email to the initiator
+    try {
+      Mailer.sendEmail("reminderInitiator", mailData);
+    } catch (emailError) {
+      throw new Error(
+        "Failed to send email to initiator: " + emailError.message
+      );
+    }
 
-    // await transaction.commit();
+    await transaction.commit();
     res.status(200).json({
       error: false,
       message: "Record status successfully reset from approval to initiation.",
@@ -984,7 +979,12 @@ exports.approveBMR = async (req, res) => {
           alreadyApproved = true;
           return approver;
         } else {
-          return { ...approver, status: "approved", comment: approvalComment };
+          return {
+            ...approver,
+            status: "approved",
+            comment: approvalComment,
+            date_of_approval: new Date(),
+          };
         }
       }
       return approver;
@@ -1010,7 +1010,6 @@ exports.approveBMR = async (req, res) => {
       { transaction }
     );
 
-    // Log the audit trail synchronously to ensure consistency within the transaction
     await RecordAuditTrail.create(
       {
         record_id: record_id,
@@ -1036,5 +1035,153 @@ exports.approveBMR = async (req, res) => {
     res
       .status(500)
       .json({ error: true, message: `Error during approval: ${e.message}` });
+  }
+};
+
+exports.genrateBMRrecord = async (req, res) => {
+  try {
+    let reportData = req.body.reportData;
+    let initiator_name = await getUserById(reportData?.initiator);
+    reportData.initiator_name = initiator_name?.name;
+
+    const getCurrentDateTime = () => {
+      const now = new Date();
+      return now.toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+    };
+
+    const html = await new Promise((resolve, reject) => {
+      res.render("bmr_record_report", { reportData }, (err, html) => {
+        if (err) return reject(err);
+        resolve(html);
+      });
+    });
+
+    const browser = await puppeteer.launch({
+      headless: true,
+      timeout: 120000,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+
+    const page = await browser.newPage();
+    const logoPath = path.join(__dirname, "../public/vidyalogo.png.png");
+    const logoBase64 = fs.readFileSync(logoPath).toString("base64");
+    const logoDataUri = `data:image/png;base64,${logoBase64}`;
+
+    const user = await getUserById(req.user.userId);
+
+    await page.setContent(html, { waitUntil: "networkidle0" });
+
+    const pdf = await page.pdf({
+      format: "A4",
+      printBackground: true,
+      displayHeaderFooter: true,
+      headerTemplate: `
+        <div class="header-container">
+          <table class="header-table">
+            <tr>
+              <th colspan="2" class="header-title">BMR Form Report</th>
+              <th rowspan="1" class="header-logo">
+                <img src="${logoDataUri}" alt="Logo" style="height: 60px; width: auto;" />
+              </th>
+            </tr>
+            <tr>
+              <td class="header-info">BMR ID: ${reportData.bmr_id}</td>
+              <td class="header-info">BMR Name: ${reportData?.name}</td>
+              <td class="header-info">Status: ${reportData?.status}</td>
+            </tr>
+          </table>
+        </div>
+        <style>
+          .header-container {
+            width: 100%;
+            padding: 0 50px;
+            box-sizing: border-box;
+          }
+          .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+            table-layout: fixed;
+          }
+          .header-table th, .header-table td {
+            border: 1px solid #000;
+            padding: 8px;
+          }
+          .header-title {
+            text-align: center;
+            font-size: 18px;
+            margin: 10px 0;
+          }
+          .header-info {
+            font-size: 12px;
+            text-align: center;
+          }
+        </style>
+      `,
+      footerTemplate: `
+        <style>
+          .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            font-size: 10px;
+            padding: 5px 0;
+          }
+          .leftContent, .centerContent, .rightContent {
+            display: inline-block;
+          }
+          .centerContent {
+            flex-grow: 1;
+            text-align: center;
+          }
+          .leftContent {
+            flex-grow: 0;
+            padding-left: 20px;
+          }
+          .rightContent {
+            flex-grow: 0;
+            padding-right: 20px;
+          }
+        </style>
+        <div class="footer">
+          <span class="leftContent">Printed on: ${getCurrentDateTime()}</span>
+          <span class="centerContent">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
+          <span class="rightContent">Printed by: ${
+            user ? user.name : "Unknown"
+          }</span>
+        </div>
+      `,
+      margin: {
+        top: "120px",
+        bottom: "60px",
+        right: "30px",
+        left: "30px",
+      },
+    });
+    //   fs.writeFileSync("report.pdf", pdf);
+    await browser.close();
+
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": 'attachment; filename="report.pdf"',
+      "Cache-Control": "no-store",
+      Pragma: "no-cache",
+    });
+    res.set("Content-Length", Buffer.byteLength(pdf));
+
+    res.send(Buffer.from(pdf));
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    res.status(500).send("Error generating PDF");
   }
 };

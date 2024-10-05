@@ -5,8 +5,8 @@ const { getIo } = require("../socket");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "info@vidyagxp.com",
-    pass: "rigi cdgu mwuf wnmh",
+    user: "farhank.555khan@gmail.com",
+    pass: "qxyj hljh tqgw lfob",
   },
 });
 
