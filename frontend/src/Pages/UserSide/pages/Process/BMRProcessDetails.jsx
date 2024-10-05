@@ -486,7 +486,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                    bg-gradient-to-r from-black to-black text-white shadow-lg transform scale-100 duration-300 rounded-md border border-blue-900 opacity-95 hover:from-blue-900 hover:to-blue-1000 hover:scale-105 hover:shadow-xl`} // Gradient, shadow, and hover effects
                     />
                   </>
-          
+                
               </>
             ) : showForm === "sendForm" ? (
               <>
