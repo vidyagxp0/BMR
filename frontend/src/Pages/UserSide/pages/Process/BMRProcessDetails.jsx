@@ -15,10 +15,11 @@ import Tooltip from "@mui/material/Tooltip";
 import { AiOutlineAudit } from "react-icons/ai";
 import { BASE_URL } from "../../../../config.json";
 import PDF from "./PDF";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const BMRProcessDetails = ({ fieldData }) => {
   const [data, setData] = useState([]);
-  console.log(data[0], "<data>");
+  console.log(data, "data");
   const [isAddTabModalOpen, setIsAddTabModalOpen] = useState(false);
   const [isAddFieldModalOpen, setIsAddFieldModalOpen] = useState(false);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
@@ -122,6 +123,11 @@ const BMRProcessDetails = ({ fieldData }) => {
   const navigate = useNavigate();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
+  const [showSection, setShowSection] = useState(true);
+
+  const handleToggleSection = () => {
+    setShowSection((prevShowSection) => !prevShowSection); // Toggle section visibility
+  };
 
   const handleGridChange = (tabName, rowIndex, columnName, value) => {
     setFields((prevFields) => {
@@ -140,7 +146,6 @@ const BMRProcessDetails = ({ fieldData }) => {
   };
 
   const userDetails = JSON.parse(localStorage.getItem("user-details"));
-  console.log(userDetails,"userDetails")
   const handlePopupClose = () => {
     setIsPopupOpen(false);
     setPopupAction(null);
@@ -389,7 +394,7 @@ const BMRProcessDetails = ({ fieldData }) => {
             },
             {
               fieldName: "Approver Comment",
-              field_type: "text",
+              field_type: "text-area",
               value: "",
               isMandatory: true,
             },
@@ -423,8 +428,8 @@ const BMRProcessDetails = ({ fieldData }) => {
               isMandatory: false,
             },
             {
-              fieldName: "Reviewer Comment",
-              field_type: "text",
+              fieldName: "Reviewer Comments",
+              field_type: "text-area",
               value: "",
               isMandatory: true,
             },
@@ -477,16 +482,14 @@ const BMRProcessDetails = ({ fieldData }) => {
                 </Tooltip>
                 <PDF data={data} />
 
-            
-                  <>
-                    <AtmButton
-                      label={newTab.length > 0 ? "Edit Form" : "Create Form"}
-                      onClick={() => setShowForm("sendForm")}
-                      className={`relative px-6 py-3 text-sm font-semibold focus:outline-none transition 
+                <>
+                  <AtmButton
+                    label={newTab.length > 0 ? "Edit Form" : "Create Form"}
+                    onClick={() => setShowForm("sendForm")}
+                    className={`relative px-6 py-3 text-sm font-semibold focus:outline-none transition 
                    bg-gradient-to-r from-black to-black text-white shadow-lg transform scale-100 duration-300 rounded-md border border-blue-900 opacity-95 hover:from-blue-900 hover:to-blue-1000 hover:scale-105 hover:shadow-xl`} // Gradient, shadow, and hover effects
-                    />
-                  </>
-          
+                  />
+                </>
               </>
             ) : showForm === "sendForm" ? (
               <>
@@ -714,15 +717,19 @@ const BMRProcessDetails = ({ fieldData }) => {
 
                           {field.field_type === "text-area" && (
                             <textarea
-                              value={(e)=>e.target.valu}
-                              className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400 "
+                              className="border border-gray-300 p-2 w-full rounded mt-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                              style={{ border: "1px solid #D1D5DB" }}
                               required={
                                 activeFlowTab === "INITIATION" &&
                                 field.fieldName === "Initiator Comments" &&
                                 field.isMandatory
                               }
-                              readOnly={data[0]?.stage !== 1 &&
-                                data[0]?.initiator !== userDetails.userId   }
+                              readOnly={
+                                !(
+                                  activeFlowTab === "INITIATION" &&
+                                  field.fieldName === "Initiator Comments"
+                                )
+                              }
                               rows={4}
                             />
                           )}
@@ -749,7 +756,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                               <label className="text-lg font-semibold text-gray-800 mb-2">
                                 {field.fieldName}
                                 {activeFlowTab === "UNDER REVIEW" &&
-                                  field.fieldName === "Reviewer Comment" && (
+                                  field.fieldName === "Reviewer Comments" && (
                                     <span className="text-red-500"> *</span>
                                   )}
                               </label>
@@ -787,13 +794,13 @@ const BMRProcessDetails = ({ fieldData }) => {
                                   style={{ border: "1px solid #D1D5DB" }}
                                   required={
                                     activeFlowTab === "UNDER REVIEW" &&
-                                    field.fieldName === "Reviewer Comment" &&
+                                    field.fieldName === "Reviewer Comments" &&
                                     field.isMandatory
                                   }
                                   readOnly={
                                     !(
                                       activeFlowTab === "UNDER REVIEW" &&
-                                      field.fieldName === "Reviewer Comment"
+                                      field.fieldName === "Reviewer Comments"
                                     )
                                   }
                                 />
@@ -857,6 +864,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                           {field.field_type === "text-area" && (
                             <textarea
                               className="border border-gray-300 p-2 w-full rounded mt-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                              style={{ border: "1px solid #D1D5DB" }}
                               required={
                                 activeFlowTab === "UNDER APPROVAL" &&
                                 field.fieldName === "Approver Comment" &&
@@ -1017,7 +1025,15 @@ const BMRProcessDetails = ({ fieldData }) => {
                             : "bg-blue-200 text-gray-400"
                         }`}
                       >
-                        {section.section_name}
+                        <div className="flex gap-2 items-center">
+                          <span
+                            onClick={handleToggleSection}
+                            className="cursor-pointer ml-2"
+                          >
+                            {showSection ? <FaEyeSlash /> : <FaEye />}
+                          </span>
+                          {showSection && <span>{section.section_name}</span>}
+                        </div>
                       </div>
                     </div>
                     <div className="grid grid-cols-4 gap-4 px-5 py-[64px]">
@@ -1246,11 +1262,37 @@ const BMRProcessDetails = ({ fieldData }) => {
                                   }}
                                   required={field.isMandatory}
                                 >
-                                  {/* {field?.acceptsMultiple?.map((option, idx) => (
-                            <option key={idx} value={option}>
-                              {option}
-                            </option>
-                          ))} */}
+                                  {field?.acceptsMultiple?.rows?.map(
+                                    (option, idx) => (
+                                      <option key={idx} value={option}>
+                                        {option}
+                                      </option>
+                                    )
+                                  )}
+                                </select>
+                              </div>
+                            )}
+
+                            
+
+                            {field.field_type === "multi-select" && (
+                              <div className="relative">
+                                <select
+                                  className="border border-gray-600 p-2 w-full rounded"
+                                  style={{
+                                    border: "2.8px solid gray",
+                                    height: "48px",
+                                  }}
+                                  required={field.isMandatory}
+                                  
+                                >
+                                  {field?.acceptsMultiple?.rows?.map(
+                                    (option, idx) => (
+                                      <option key={idx} value={option}>
+                                        {option}
+                                      </option>
+                                    )
+                                  )}
                                 </select>
                               </div>
                             )}

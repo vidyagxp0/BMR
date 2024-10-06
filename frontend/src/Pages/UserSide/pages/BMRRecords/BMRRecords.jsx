@@ -513,7 +513,7 @@ console.log(selectedBMR,"88888888888888888888888")
                               }`}
                             >
                               {/* Non-grid fields */}
-                              {field.field_type !== "grid" && (
+                              {field.field_type !== "grid" && field.field_type !=="dropdown" && field.field_type !=="multi-select" && (
                                 <InputField
                                   label={field.label || "Field Name"}
                                   type={field.field_type || "text"}
@@ -529,6 +529,24 @@ console.log(selectedBMR,"88888888888888888888888")
                                   } `}
                                 />
                               )}
+
+{ field.field_type ==="dropdown"  && (
+                                <select
+                                  label={field.label || "Field Name"}
+                                  type={field.field_type || "text"}
+                                  placeholder={field.placeholder}
+                                  value={field.value}
+                                  helpText={field.helpText}
+                                  
+                                  onChange={handleChange}
+                                  className={` mb-4 rounded-md p-2 text-black ${
+                                    field.label
+                                      ? "text-base font-bold text-gray-900 flex gap-1 mb-2"
+                                      : ""
+                                  } `}
+                                />
+                              )}
+
                               {/* Grid field */}
                               <div className="mt-2">
                                 {field.field_type === "grid" && (
