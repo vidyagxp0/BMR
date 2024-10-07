@@ -1,63 +1,67 @@
-
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import { UserManagement } from "../../../Components/Icons/Icon";
-
+import { UserManagement, RoleIcon } from "../../../Components/Icons/Icon";
 
 export const asideLinks = [
   {
     id: 1,
     icon: UserManagement(24, "#000000"),
-    title: "Dashboard",
+    title: "User Management",
     // hasChild: true,
-    link: '/admin-dashboard',
-   
+    link: "/admin-dashboard",
   },
-//   {
-//     id: 2,
-//     icon: (
-//       <div className="pr-2">
-//         {" "}
-//         <AssignmentIndIcon size={21} sx={{ color: "#00000" }} />
-//       </div>
-//     ),
-//     title: "Site Management",
-//     hasChild: true,
-//     child: [
-//       {
-//         icon: (
-//           <div className="pr-2">
-//             {" "}
-//             <AssignmentIndIcon size={21} sx={{ color: "#00000" }} />
-//           </div>
-//         ),
-//         title: "Sites",
-//         link: "/admin-sites",
-//       },
-//     ],
-//   },
-//   {
-//     id: 3,
-//     icon: (
-//       <div className="pr-2">
-//         {" "}
-//         <ConnectedTvIcon size={21} sx={{ color: "#00000" }} />
-//       </div>
-//     ),
-//     title: "Process Management",
-//     hasChild: true,
-//     child: [
-//       {
-//         icon: (
-//           <div className="pr-2">
-//             {" "}
-//             <ConnectedTvIcon size={21} sx={{ color: "#00000" }} />
-//           </div>
-//         ),
-//         title: "Processes",
-//         link: "/admin-processes",
-//       },
-//     ],
-//   },
+  {
+    id: 1,
+    icon: RoleIcon(24, "#000000"),
+    title: "Print Control",
+    // hasChild: true,
+    link: "/admin-print-control",
+  },
+  //   {
+  //     id: 2,
+  //     icon: (
+  //       <div className="pr-2">
+  //         {" "}
+  //         <AssignmentIndIcon size={21} sx={{ color: "#00000" }} />
+  //       </div>
+  //     ),
+  //     title: "Site Management",
+  //     hasChild: true,
+  //     child: [
+  //       {
+  //         icon: (
+  //           <div className="pr-2">
+  //             {" "}
+  //             <AssignmentIndIcon size={21} sx={{ color: "#00000" }} />
+  //           </div>
+  //         ),
+  //         title: "Sites",
+  //         link: "/admin-sites",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     id: 3,
+  //     icon: (
+  //       <div className="pr-2">
+  //         {" "}
+  //         <ConnectedTvIcon size={21} sx={{ color: "#00000" }} />
+  //       </div>
+  //     ),
+  //     title: "Process Management",
+  //     hasChild: true,
+  //     child: [
+  //       {
+  //         icon: (
+  //           <div className="pr-2">
+  //             {" "}
+  //             <ConnectedTvIcon size={21} sx={{ color: "#00000" }} />
+  //           </div>
+  //         ),
+  //         title: "Processes",
+  //         link: "/admin-processes",
+  //       },
+  //     ],
+  //   },
 
   // {
   //     id: 2,
