@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import Select from "react-select";
@@ -24,19 +23,20 @@ const modalStyle = {
 
 const EditUserModal = ({ user, onClose, setAllUsers }) => {
   const [roles, setRoles] = useState([]);
-  const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     rolesArray: [],
-    profile_pic: null,
+    profile_pic: null, // Will store the uploaded file
   });
 
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   const dispatch = useDispatch();
 
+  // Fetch roles from backend
   useEffect(() => {
     axios
       .get(`${BASE_URL}/user/get-all-roles`, {
@@ -53,10 +53,12 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
         setRoles(roleOptions);
       })
       .catch((error) => {
-        console.error(error);
+        console.error("Error fetching roles:", error);
+        toast.error("Failed to fetch roles");
       });
   }, []);
 
+  // Set the user data into form when user is selected
   useEffect(() => {
     if (user && roles.length > 0) {
       const userRoles = user.UserRoles.map((role) => ({
@@ -68,21 +70,23 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
         name: user.name || "",
         email: user.email || "",
         rolesArray: userRoles,
-        profile_pic: user.profile_pic,
+        profile_pic: user.profile_pic, // If there is a profile picture URL
       });
     }
   }, [user, roles]);
 
+  // Enable the update button only when data changes
   useEffect(() => {
     const isDataChanged =
       user.name !== formData.name ||
       user.email !== formData.email ||
       !areRolesSame(user.UserRoles, formData.rolesArray) ||
-      (formData.profile_pic && formData.profile_pic !== user.profile_pic);
+      formData.profile_pic !== user.profile_pic;
 
     setIsButtonEnabled(isDataChanged);
   }, [formData, user]);
 
+  // Compare user roles for changes
   const areRolesSame = (userRoles, formRoles) => {
     if (userRoles.length !== formRoles.length) return false;
     const userRoleIds = userRoles.map((role) => role.role_id);
@@ -90,42 +94,75 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
     return userRoleIds.every((id, index) => id === formRoleIds[index]);
   };
 
+  // Handle form submit for verification
   const handleSubmit = (e) => {
     e.preventDefault();
     setShowVerificationModal(true);
   };
 
-  const updateUser = () => {
-    const updatedFormData = {
-      ...formData,
-      rolesArray: formData.rolesArray.map((option) => option.value),
-      id: user.user_id,
-    };
+  // API call to update the user
+  const updateUser = async () => {
+    try {
+      const updatedFormData = new FormData(); // Using FormData for file upload
+      updatedFormData.append("name", formData.name);
+      updatedFormData.append("email", formData.email);
+      updatedFormData.append("profile_pic", formData.profile_pic); // Append file
 
-    axios
-      .put(`${BASE_URL}/user/edit-user/${user.user_id}`, updatedFormData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
-        },
-      })
-      .then((response) => {
-        console.log("API Response: ", response.data);
-        toast.success("User Details Updated Successfully");
-        setAllUsers((prevUsers) =>
-          prevUsers.map((u) =>
-            u.user_id === user.user_id ? { ...u, ...updatedFormData } : u
-          )
-        );
-        setTimeout(() => {
-          dispatch(fetchUsers());
-          onClose();
-        }, 500);
-      })
-      .catch((error) => {
-        console.error("API Error: ", error.response.data);
-        toast.error(error.response.data.message);
+      formData.rolesArray.forEach((role) => {
+        updatedFormData.append("rolesArray", role.value);
       });
+
+      const response = await axios.put(
+        `${BASE_URL}/user/edit-user/${user.user_id}`,
+        updatedFormData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // Important for file uploads
+            Authorization: `Bearer ${localStorage.getItem("admin-token")}`,
+          },
+        }
+      );
+
+      console.log("API Response: ", response.data);
+      toast.success("User details updated successfully!");
+
+      // Update users in the frontend state
+      setAllUsers((prevUsers) =>
+        prevUsers.map((u) =>
+          u.user_id === user.user_id ? { ...u, ...formData } : u
+        )
+      );
+
+      dispatch(fetchUsers());
+      onClose();
+    } catch (error) {
+      console.error("API Error: ", error.response.data);
+      toast.error("Failed to update user.");
+    }
+  };
+
+  // Handle file input change
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFormData({ ...formData, profile_pic: file });
+  };
+
+  // Handle input changes for form fields
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  // Handle role selection changes
+  const handleSelectChange = (selectedOptions) => {
+    setSelectedOptions(selectedOptions);
+    setFormData({
+      ...formData,
+      rolesArray: selectedOptions || [],
+    });
   };
 
   const closeUserVerifiedModal = () => {
@@ -137,27 +174,9 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
     closeUserVerifiedModal();
   };
 
-  const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "file" ? files[0] : value,
-    });
-  };
-
-  const handleSelectChange = (selectedOptions) => {
-    setSelectedOptions(selectedOptions);
-    setFormData({
-      ...formData,
-      rolesArray: selectedOptions || [],
-    });
-  };
-
   const handleCancel = () => {
     onClose();
   };
-
-  if (!user) return null;
 
   return (
     <>
@@ -187,19 +206,20 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
             <TextField
               type="file"
               name="profile_pic"
-              onChange={handleChange}
+              onChange={handleFileChange}
               fullWidth
               margin="normal"
             />
-            {formData.profile_pic && (
-              <a
-                href={formData.profile_pic}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View Current Profile Picture
-              </a>
-            )}
+            {formData.profile_pic &&
+              typeof formData.profile_pic === "string" && (
+                <a
+                  href={formData.profile_pic}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View Current Profile Picture
+                </a>
+              )}
             <Select
               name="roles"
               options={roles}
@@ -207,7 +227,6 @@ const EditUserModal = ({ user, onClose, setAllUsers }) => {
               isMulti
               onChange={handleSelectChange}
               placeholder="Select roles"
-              fullWidth
               className="mt-2"
             />
             <Box

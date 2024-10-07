@@ -107,6 +107,11 @@ const AddUser = () => {
       formDataToSend.append("rolesArray", role);
     });
 
+    // Append the profile picture if available
+    if (formData.profile_pic) {
+      formDataToSend.append("profile_pic", formData.profile_pic);
+    }
+
     axios
       .post(`${BASE_URL}/user/add-user`, formDataToSend, {
         headers: {
@@ -121,7 +126,7 @@ const AddUser = () => {
           name: "",
           email: "",
           password: "",
-          profile_pic: "",
+          profile_pic: null,
           rolesArray: [],
           createdBy: loggedInUser.username || "", // Reset the username
         });
@@ -139,7 +144,6 @@ const AddUser = () => {
   const handleFileChange = (e) => {
     setFormData({ ...formData, profile_pic: e.target.files[0] });
   };
-
   return (
     <div>
       <div id="main-form-container">
@@ -188,8 +192,7 @@ const AddUser = () => {
                 type="file"
                 name="profile_pic"
                 id="profile_pic"
-                value={formData.profile_pic}
-                onChange={handleFileChange}
+                onChange={handleFileChange} // No value prop for file input
                 labelClassName="text-blue-500"
               />
             </div>

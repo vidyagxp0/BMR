@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import { FaPeopleLine, FaMessage } from "react-icons/fa6";
 import socketIOClient from "socket.io-client";
+import axios from "axios";
 import "./Header.css";
 import "./HeaderTop.css";
 import { BASE_URL } from "../../config.json";
@@ -16,14 +17,41 @@ import { BASE_URL } from "../../config.json";
 function HeaderTop() {
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
-  // const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [socket, setSocket] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [user, setUser] = useState(null);
+
+  // Fetch user details from API
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const userDetails = JSON.parse(localStorage.getItem("user-details"));
+        if (userDetails?.userId) {
+          const response = await axios.get(
+            `${BASE_URL}/user/get-a-user/${userDetails.userId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("user-token")}`,
+              },
+            }
+          );
+          const userData = response.data.response[0];
+          setUser(userData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user details", error);
+      }
+    };
+
+    fetchUserDetails();
+  }, []);
 
   useEffect(() => {
-    setSocket(socketIOClient(`${BASE_URL}/`));
+    const socketInstance = socketIOClient(`${BASE_URL}/`);
+    setSocket(socketInstance);
     return () => {
-      if (socket) socket.disconnect();
+      socketInstance.disconnect();
     };
   }, []);
 
@@ -34,12 +62,8 @@ function HeaderTop() {
       socket.on("new_notification", () => {
         setUnreadCount((prev) => prev + 1);
       });
-      // socket.on("updateUnreadCount", (count) => {
-      //   setUnreadMessageCount(count);
-      // });
       return () => {
         socket.off("new_notification");
-        // socket.off("updateUnreadCount");
       };
     }
   }, [socket]);
@@ -60,6 +84,14 @@ function HeaderTop() {
     handleCloseModal();
   };
 
+  const handleProfileHover = () => {
+    setShowProfileModal(true);
+  };
+
+  const handleProfileLeave = () => {
+    setShowProfileModal(false);
+  };
+
   return (
     <div id="Header_Top" className="Header_Top">
       <div className="header_inner">
@@ -74,8 +106,7 @@ function HeaderTop() {
           </div>
         </div>
 
-        <div className="right flex items-center ">
-          {/* Links Container */}
+        <div className="right flex items-center">
           <div className="links-container mr-10">
             <Link to="/user-notifications" className="link-item mt-8">
               <FaBell className="text-black text-2xl" />
@@ -87,16 +118,11 @@ function HeaderTop() {
               )}
             </Link>
 
-            <Link to="/messenger" className="link-item mt-8 ">
+            <Link to="/messenger" className="link-item mt-8">
               <FaMessage className="text-black text-2xl" />
               <span className="link-name">Messenger</span>
-              {/* {unreadMessageCount > 0 && (
-                <span className="absolute -top-2 left-6 bg-red-500 text-black text-xs font-semibold px-1.5 py-0.5 rounded-full">
-                  {unreadMessageCount}
-                </span>
-              )} */}
             </Link>
-            <Link to="/boardOfDirectors" className="link-item mt-8 ">
+            <Link to="/boardOfDirectors" className="link-item mt-8">
               <FaPeopleLine className="text-black text-2xl" />
               <span className="link-name">Board Members</span>
             </Link>
@@ -131,16 +157,50 @@ function HeaderTop() {
             </Link>
           </div>
 
-          {/* Admin Section */}
-          <div className="flex items-center">
-            <div className="mr-4 mt-5 text-black">User</div>
-            <div className="rounded-full w-12 h-12 bg-gray-400 flex items-center justify-center overflow-hidden">
-              <img
-                className="rounded-full w-full h-full object-cover"
-                src="amit_guru.jpg"
-                alt="Profile"
-              />
+          <div
+            className="flex items-center relative"
+            onMouseEnter={handleProfileHover}
+            onMouseLeave={handleProfileLeave}
+          >
+            <div className="rounded-full w-12 h-12 bg-gray-400 flex items-center justify-center overflow-hidden cursor-pointer">
+              {user && user.profile_pic ? (
+                <img
+                  className="w-full h-full object-cover"
+                  src={user.profile_pic}
+                  alt={`${user.name}'s Profile Picture`}
+                />
+              ) : (
+                <img
+                  className="w-full h-full object-cover"
+                  src="amit_guru.jpg" // Default image if profile picture not available
+                  alt="Default Profile Picture"
+                />
+              )}
             </div>
+
+            {/* Profile Modal on Hover */}
+            {showProfileModal && (
+              <div className="absolute top-14 right-0 bg-white shadow-lg p-3 rounded-lg transition-transform transform hover:scale-105 duration-300 w-55">
+                <div className="text-center">
+                  <div className="w-36 h-36 rounded-full mx-auto border-4 border-gray-300 overflow-hidden">
+                    {user && user.profile_pic ? (
+                      <img
+                        className="w-full h-full object-cover"
+                        src={user.profile_pic}
+                        alt={`${user.name}'s Profile Picture`}
+                      />
+                    ) : (
+                      <img
+                        className="w-full h-full object-cover"
+                        src="amit_guru.jpg" // Default image if profile picture not available
+                        alt="Default Profile Picture"
+                      />
+                    )}
+                  </div>
+                  <p className="mt-4 text-lg font-semibold">{user?.name}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

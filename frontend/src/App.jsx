@@ -30,7 +30,8 @@ import Logs from "./Pages/UserSide/Logs/Logs";
 import BMRRecordsDetails from "./Pages/UserSide/pages/BMRRecordsDetails/BMRRecordsDetails";
 import Messenger from "./Pages/UserSide/Messenger/Messenger";
 import ChatWindow from "./Pages/UserSide/Messenger/ChatWindow";
-
+import NotFoundPage from "./Pages/CustomError/NotFoundPage";
+import ServerErrorPage from "./Pages/CustomError/ServerErrorPage";
 function App() {
   return (
     <BrowserRouter>
@@ -169,6 +170,8 @@ function RouteGuard() {
   }, [location.pathname]);
   return (
     <Routes>
+      {/*For a server error*/}
+      <Route path="/500" component={ServerErrorPage} />
       <Route path="/" element={<Login />} />
       <Route path="" element={<WrapperUser />}>
         <Route
@@ -223,26 +226,28 @@ function RouteGuard() {
           path="/bmr-details/:bmr_id" // Route to handle BMR details
           element={<ProtectedUserRoute element={<BMRDetails />} />} // Render the BMRDetails component
         />
-         <Route
-        path="/audit-trail"
-        element={<ProtectedUserRoute element={<AuditTrail />} />}
-      />
-      <Route
-        path="/boardOfDirectors"
-        element={<ProtectedUserRoute element={<BoardOfDirectors />} />}
-      />
-      <Route path="/help" element={<ProtectedUserRoute element={<Help />} />} />
-      <Route
-        path="/about"
-        element={<ProtectedUserRoute element={<About />} />}
-      />
+        <Route
+          path="/audit-trail"
+          element={<ProtectedUserRoute element={<AuditTrail />} />}
+        />
+        <Route
+          path="/boardOfDirectors"
+          element={<ProtectedUserRoute element={<BoardOfDirectors />} />}
+        />
+        <Route
+          path="/help"
+          element={<ProtectedUserRoute element={<Help />} />}
+        />
+        <Route
+          path="/about"
+          element={<ProtectedUserRoute element={<About />} />}
+        />
 
-      <Route
-        path="/helpdesk"
-        element={<ProtectedUserRoute element={<HelpdeskPersonnel />} />}
-      />
+        <Route
+          path="/helpdesk"
+          element={<ProtectedUserRoute element={<HelpdeskPersonnel />} />}
+        />
       </Route>
-     
 
       <Route path="/admin-login" element={<AdminLogin />} />
       <Route path="" element={<Wrapper />}>
@@ -259,6 +264,12 @@ function RouteGuard() {
           element={<ProtectedAdminRoute element={<UpdateUser />} />}
         />
       </Route>
+
+      {/* Catch-all route for 404 Not Found */}
+      <Route path="*" element={<NotFoundPage />} />
+
+      {/*for a server error*/}
+      <Route path="/server-error" element={<ServerErrorPage />} />
     </Routes>
   );
 }
