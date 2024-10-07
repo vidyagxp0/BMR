@@ -1034,7 +1034,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                           >
                             <label className="text-base font-bold text-gray-900 flex gap-1 mb-2">
                               {field.label}
-                              {field.isMandatory && (
+                              {field.isRequired && (
                                 <div className="text-red-500"> *</div>
                               )}
                               {field.helpText && (

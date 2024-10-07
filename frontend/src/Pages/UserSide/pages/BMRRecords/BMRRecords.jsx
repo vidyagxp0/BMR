@@ -42,7 +42,6 @@ const BMRRecords = () => {
   const [selectedBMR, setSelectedBMRState] = useState(
     location.state?.selectedBMR || {}
   );
-console.log(selectedBMR,"88888888888888888888888")
 
 
   // Initialize empty arrays for fieldTypes and helpText
@@ -159,13 +158,13 @@ console.log(selectedBMR,"88888888888888888888888")
           state: { bmr: response.data.bmr },
         });
         setRecordData({
-          data:[],
+          data: [],
           bmr_id: selectedBMR.bmr_id,
           reviewers: [],
           approvers: [],
         });
         setFormDataState({
-          data:[],
+          data: [],
           bmr_id: selectedBMR.bmr_id,
           reviewers: [],
           approvers: [],
@@ -249,7 +248,7 @@ console.log(selectedBMR,"88888888888888888888888")
       .get(`${BASE_URL}/bmr-form/get-a-bmr/${bmr_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("user-token")}`,
-        }, 
+        },
       })
       .then((response) => {
         const bmrData = response.data.message[0];
@@ -331,18 +330,43 @@ console.log(selectedBMR,"88888888888888888888888")
 
   const handleAddRecordsClick = () => {
     const Tabs = selectedBMR?.BMR_Tabs;
-    console.log(Tabs, "01201201202");
-    if (
-      Tabs &&
-      Tabs.length > 0 &&
-      isSelectedReviewer.length > 0 &&
-      isSelectedApprover.length > 0
-    ) {
-      dispatch(addTab(Tabs));
-      setShowVerificationModal(true);
-    } else {
-      toast.error("Please fill all fields to add a new Record.");
+
+    if (!Tabs || Tabs.length === 0) {
+      toast.error("No tabs available.");
+      return;
     }
+
+    if (isSelectedReviewer.length === 0 || isSelectedApprover.length === 0) {
+      toast.error("Please select both reviewers and approvers.");
+      return;
+    }
+
+    let allRequiredFieldsFilled = true;
+
+    Tabs.forEach((tab) => {
+      tab.BMR_sections.forEach((section) => {
+        section.BMR_fields.forEach((field) => {
+          
+          if (field.isRequired) {
+            const value = formData[field.label]; // Adjust according to how you track form inputs
+            if (value === undefined || value === null || value === "") {
+              allRequiredFieldsFilled = false;
+              // Log each missing field or you can break early if one missing field is enough to halt the process
+              console.log(`Missing required field: ${field.label}`);
+            }
+          }
+        });
+      });
+    });    
+    
+    setTimeout(() => {
+      if (allRequiredFieldsFilled === false) {
+        toast.error("Please fill all required fields to add a new Record.");
+        return;
+      }
+    }, 100);
+    dispatch(addTab(Tabs));
+    setShowVerificationModal(true);
   };
 
   const addNewRow = () => {
@@ -383,7 +407,7 @@ console.log(selectedBMR,"88888888888888888888888")
         </div>
         <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-[#4f839b] to-[#0c384d] mt-2 p-4 rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold text-white ">
-            BMR Name : 
+            BMR Name :
             <span className="text-gray-200"> {selectedBMR?.name}</span>
           </h2>
 
@@ -520,7 +544,7 @@ console.log(selectedBMR,"88888888888888888888888")
                                   placeholder={field.placeholder}
                                   value={field.value}
                                   helpText={field.helpText}
-                                  
+                                  isRequired={field.isRequired}
                                   onChange={handleChange}
                                   className={` mb-4 rounded-md p-2 text-black ${
                                     field.label
@@ -589,7 +613,6 @@ console.log(selectedBMR,"88888888888888888888888")
                                                               column.field_type ||
                                                               "text"
                                                             }
-                                            
                                                             onChange={
                                                               (e) =>
                                                                 handleGridChange(
@@ -681,11 +704,12 @@ const InputField = ({
   value,
   onChange,
   helpText,
+  isRequired,
 }) => (
   <div>
     <label className=" text-gray-700 font-bold p-2 mb-2 flex items-center">
       {label}
-      {type === "text" && <span className="text-red-600">*</span>}
+      {isRequired && <span className="text-red-600">*</span>}
       {helpText && (
         <Tooltip title={helpText} placement="right-start">
           <div className="text-gray-950 cursor-pointer ml-2">
@@ -702,6 +726,7 @@ const InputField = ({
       onChange={onChange}
       className="w-full px-3 h-10 p-2 border-2 border-gray-500 rounded shadow-md focus:border-blue-500 transition duration-200"
       style={{ border: "1px solid gray" }}
+      isRequired={isRequired}
     />
   </div>
 );

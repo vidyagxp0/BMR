@@ -45,7 +45,6 @@ const AddFieldModal = ({
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [showGridColumnConfigModal, setShowGridColumnConfigModal] =
     useState(false);
-  // console.log(fieldData.acceptsMultiple.columns, "<><><><><>");
 
   useEffect(() => {
     if (updateField === "edit-field" && existingFieldData) {
