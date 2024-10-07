@@ -347,6 +347,26 @@ exports.deleteUser = async (req, res) => {
     });
   }
 };
+exports.getAUser = async (req, res) => {
+  User.findAll({
+    where: {
+      user_id: req.params.id,
+      isActive: true,
+    },
+  })
+    .then((result) => {
+      res.status(200).json({
+        error: false,
+        response: result,
+      });
+    })
+    .catch((e) => {
+      res.status(400).json({
+        error: true,
+        response: e.message,
+      });
+    });
+};
 exports.getAllUsers = async (req, res) => {
   User.findAll({
     where: {
