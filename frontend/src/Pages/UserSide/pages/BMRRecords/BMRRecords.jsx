@@ -20,35 +20,55 @@ const BMRRecords = () => {
   const [dateOfInitiation, setDateOfInitiation] = useState(
     new Date().toISOString().split("T")[0]
   );
-
+  const dispatch = useDispatch();
+  const [selectedBMR, setSelectedBMRState] = useState(
+    location.state?.selectedBMR || {}
+  );
+  console.log(selectedBMR, "88888888888888888888888");
   const [recordData, setRecordData] = useState({
-    bmr_id: "",
+    bmr_id: selectedBMR?.bmr_id || "",
     reviewers: [],
     approvers: [],
-    data: [],
+    data:
+      selectedBMR?.BMR_Tabs?.map((tab) => ({
+        tab_name: tab.tab_name,
+        sections: tab.BMR_sections?.map((section) => ({
+          section_name: section.section_name,
+          fields: section.BMR_fields?.map((field) => ({
+            field_name: field.label,
+            field_type: field.field_type,
+            field_value: field.field_type === "grid" ? [] : "", // Initialize as array for grid
+          })),
+        })),
+      })) || [],
   });
 
-  const handleChange = (e) => {
-    setRecordData({
-      ...recordData,
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (tabIndex, sectionIndex, fieldIndex, value) => {
+    const updatedData = [...recordData.data];
+
+    // Ensure tab and section exist
+    if (!updatedData[tabIndex]) {
+      updatedData[tabIndex] = { sections: [] };
+    }
+    if (!updatedData[tabIndex].sections[sectionIndex]) {
+      updatedData[tabIndex].sections[sectionIndex] = { fields: [] };
+    }
+
+    // Update the field value
+    updatedData[tabIndex].sections[sectionIndex].fields[
+      fieldIndex
+    ].field_value = value;
+
+    setRecordData({ ...recordData, data: updatedData });
   };
 
   const closeUserVerifiedModal = () => {
     setShowVerificationModal(false);
   };
-  const dispatch = useDispatch();
-  const [selectedBMR, setSelectedBMRState] = useState(
-    location.state?.selectedBMR || {}
-  );
 
-
-  // Initialize empty arrays for fieldTypes and helpText
   const fieldTypes = [];
   const helpText = [];
 
-  // Check if selectedBMR, BMR_Tabs, and BMR_sections exist before iterating
   if (selectedBMR?.BMR_Tabs?.length > 0) {
     const firstTab = selectedBMR.BMR_Tabs[0];
 
@@ -369,32 +389,46 @@ const BMRRecords = () => {
     setShowVerificationModal(true);
   };
 
-  const addNewRow = () => {
-    const newRow = selectedBMR?.BMR_Tabs?.map(
-      (section) => section?.BMR_sections
-    );
-    setGridData([...gridData, newRow]);
+  const addNewRow = (tabIndex, sectionIndex, fieldIndex) => {
+    const updatedData = [...recordData.data];
+    const fieldData =
+      updatedData[tabIndex].sections[sectionIndex].fields[fieldIndex]
+        .field_value;
+
+    fieldData.push({}); // Add an empty row
+    setRecordData({ ...recordData, data: updatedData });
   };
 
-  const deleteRow = (rowIndex) => {
-    const updatedGridData = gridData.filter((_, index) => index !== rowIndex);
-    setGridData(updatedGridData); // Update the gridData state with the new row data
+  // Delete row from grid
+  const deleteRow = (tabIndex, sectionIndex, fieldIndex, rowIndex) => {
+    const updatedData = [...recordData.data];
+    const fieldData =
+      updatedData[tabIndex].sections[sectionIndex].fields[fieldIndex]
+        .field_value;
+
+    fieldData.splice(rowIndex, 1); // Remove the row at rowIndex
+    setRecordData({ ...recordData, data: updatedData });
   };
+  const handleGridChange = (
+    tabIndex,
+    sectionIndex,
+    fieldIndex,
+    rowIndex,
+    columnName,
+    value
+  ) => {
+    const updatedData = [...recordData.data];
+    const fieldData =
+      updatedData[tabIndex].sections[sectionIndex].fields[fieldIndex]
+        .field_value;
 
-  const handleGridChange = (activeTab, rowIndex, columnName, value) => {
-    setGridData((prevGridData) => {
-      // Create a copy of the previous grid data
-      const updatedGridData = [...prevGridData];
+    // Ensure rows exist in the grid
+    if (!fieldData[rowIndex]) {
+      fieldData[rowIndex] = {};
+    }
 
-      // Update the specific row and column
-      updatedGridData[rowIndex] = {
-        ...updatedGridData[rowIndex], // Copy the current row data
-        [columnName]: value, // Update the specific column with the new value
-      };
-
-      // Return the updated grid data
-      return updatedGridData;
-    });
+    fieldData[rowIndex][columnName] = value;
+    setRecordData({ ...recordData, data: updatedData });
   };
 
   return (
@@ -407,7 +441,7 @@ const BMRRecords = () => {
         </div>
         <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-[#4f839b] to-[#0c384d] mt-2 p-4 rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold text-white ">
-            BMR Name :
+            BMR Name : 
             <span className="text-gray-200"> {selectedBMR?.name}</span>
           </h2>
 
@@ -497,15 +531,15 @@ const BMRRecords = () => {
             </div>
           )}
           {selectedBMR.BMR_Tabs.map(
-            (tab) =>
+            (tab, tabIndex) =>
               activeTab === tab.tab_name && (
                 <div
                   key={tab.tab_name}
                   className="text-lg flex flex-col gap-9 font-bold text-gray-500"
                 >
-                  {tab.BMR_sections.map((section, index) => (
+                  {tab.BMR_sections.map((section, sectionIndex) => (
                     <div
-                      key={index}
+                      key={sectionIndex}
                       className="p-4 border mb-4 border-gray-500 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 opacity-95"
                     >
                       <h3 className="font-semibold text-gray-600 mb-3 text-lg bg-gray-200 p-3">
@@ -516,9 +550,9 @@ const BMRRecords = () => {
                           </div>
                         </div>
                       </h3>
+
                       <div
                         className={
-                          // Conditionally apply `grid-cols-2` if no grid field exists
                           section.BMR_fields.some(
                             (field) => field.field_type === "grid"
                           )
@@ -526,130 +560,152 @@ const BMRRecords = () => {
                             : "grid grid-cols-2 gap-4"
                         }
                       >
-                        {section.BMR_fields.map((field, idx) => {
-                          return (
-                            <div
-                              key={idx}
-                              className={`${
-                                field.field_type !== "grid"
-                                  ? "grid grid-cols-2"
-                                  : " p-2"
-                              }`}
-                            >
-                              {/* Non-grid fields */}
-                              {field.field_type !== "grid" && (
-                                <InputField
-                                  label={field.label || "Field Name"}
-                                  type={field.field_type || "text"}
-                                  placeholder={field.placeholder}
-                                  value={field.value}
-                                  helpText={field.helpText}
-                                  isRequired={field.isRequired}
-                                  onChange={handleChange}
-                                  className={` mb-4 rounded-md p-2 text-black ${
-                                    field.label
-                                      ? "text-base font-bold text-gray-900 flex gap-1 mb-2"
-                                      : ""
-                                  } `}
-                                />
-                              )}
-                              {/* Grid field */}
-                              <div className="mt-2">
-                                {field.field_type === "grid" && (
-                                  <div className="relative ">
-                                    <div className="flex justify-between items-center">
-                                      <div> {field.label} </div>
-                                      <div className="flex justify-end">
-                                        <button
-                                          onClick={addNewRow}
-                                          className="p-2 rounded"
-                                        >
-                                          <IoIosAddCircle size={25} />
-                                        </button>
-                                      </div>
-                                    </div>
+                        {section.BMR_fields.map((field, fieldIndex) => (
+                          <div
+                            key={fieldIndex}
+                            className={
+                              field.field_type !== "grid"
+                                ? "grid grid-cols-2"
+                                : "p-2"
+                            }
+                          >
+                            {/* Non-grid fields */}
+                            {field.field_type !== "grid" && (
+                              <InputField
+                                label={field.label || "Field Name"}
+                                type={field.field_type || "text"}
+                                placeholder={field.placeholder}
+                                helpText={field.helpText}
+                                value={
+                                  recordData.data[tabIndex]?.sections[
+                                    sectionIndex
+                                  ]?.fields[fieldIndex]?.field_value || ""
+                                }
+                                onChange={(e) =>
+                                  handleChange(
+                                    tabIndex,
+                                    sectionIndex,
+                                    fieldIndex,
+                                    e.target.value
+                                  )
+                                }
+                                className={`mb-4 rounded-md p-2 text-black ${
+                                  field.label
+                                    ? "text-base font-bold text-gray-900 flex gap-1 mb-2"
+                                    : ""
+                                }`}
+                              />
+                            )}
 
-                                    {(() => {
-                                      let acceptsMultiple =
-                                        field?.acceptsMultiple
-                                          ? JSON.parse(field.acceptsMultiple)
-                                          : { columns: [], rows: [] };
-                                      return (
-                                        acceptsMultiple?.columns?.length >
-                                          0 && (
-                                          <table className="table-auto w-full border border-gray-600 mb-4">
-                                            <thead>
-                                              <tr>
-                                                {acceptsMultiple.columns.map(
-                                                  (column, idx) => {
-                                                    return (
-                                                      <th
-                                                        key={idx}
-                                                        className="border border-gray-600 p-2"
-                                                      >
-                                                        {column?.name ||
-                                                          "No Name"}
-                                                      </th>
-                                                    );
-                                                  }
-                                                )}
-                                                <th className="border border-gray-600 p-2">
-                                                  Action
-                                                </th>
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                              {gridData.map((row, rowIndex) => {
-                                                return (
-                                                  <tr key={rowIndex}>
-                                                    {acceptsMultiple.columns.map(
-                                                      (column, colIdx) => (
-                                                        <td
-                                                          key={colIdx}
-                                                          className="border border-gray-600 p-2"
-                                                        >
-                                                          <input
-                                                            type={
-                                                              column.field_type ||
-                                                              "text"
-                                                            }
-                                                            onChange={
-                                                              (e) =>
-                                                                handleGridChange(
-                                                                  rowIndex,
-                                                                  column.name,
-                                                                  e.target.value
-                                                                ) // Update the value when typing
-                                                            }
-                                                            className="border text-black border-gray-600 p-2 w-full rounded"
-                                                          />
-                                                        </td>
-                                                      )
-                                                    )}
-                                                    <td className="border border-gray-600 p-2 text-center">
-                                                      <button
-                                                        onClick={() =>
-                                                          deleteRow(rowIndex)
-                                                        }
-                                                        className="text-red-500 hover:text-red-700"
-                                                      >
-                                                        <IoIosTrash size={20} />
-                                                      </button>
-                                                    </td>
-                                                  </tr>
-                                                );
-                                              })}
-                                            </tbody>
-                                          </table>
+                            {/* Grid field */}
+                            {field.field_type === "grid" && (
+                              <div className="mt-2">
+                                <div className="flex justify-between items-center">
+                                  <div> {field.label} </div>
+                                  <div className="flex justify-end">
+                                    <button
+                                      onClick={() =>
+                                        addNewRow(
+                                          tabIndex,
+                                          sectionIndex,
+                                          fieldIndex
                                         )
-                                      );
-                                    })()}
+                                      }
+                                      className="p-2 rounded"
+                                    >
+                                      <IoIosAddCircle size={25} />
+                                    </button>
                                   </div>
-                                )}
+                                </div>
+
+                                {/* Grid structure */}
+                                {(() => {
+                                  const fieldData =
+                                    recordData.data[tabIndex]?.sections[
+                                      sectionIndex
+                                    ]?.fields[fieldIndex].field_value;
+                                  const acceptsMultiple = field?.acceptsMultiple
+                                    ? JSON.parse(field.acceptsMultiple)
+                                    : { columns: [] };
+
+                                  return (
+                                    acceptsMultiple?.columns?.length > 0 && (
+                                      <table className="table-auto w-full border border-gray-600 mb-4">
+                                        <thead>
+                                          <tr>
+                                            {acceptsMultiple.columns.map(
+                                              (column, idx) => (
+                                                <th
+                                                  key={idx}
+                                                  className="border border-gray-600 p-2"
+                                                >
+                                                  {column?.name || "No Name"}
+                                                </th>
+                                              )
+                                            )}
+                                            <th className="border border-gray-600 p-2">
+                                              Action
+                                            </th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {fieldData.map((row, rowIndex) => (
+                                            <tr key={rowIndex}>
+                                              {acceptsMultiple.columns.map(
+                                                (column, colIdx) => (
+                                                  <td
+                                                    key={colIdx}
+                                                    className="border border-gray-600 p-2"
+                                                  >
+                                                    <input
+                                                      type={
+                                                        column.field_type ||
+                                                        "text"
+                                                      }
+                                                      value={
+                                                        row[column.name] || ""
+                                                      }
+                                                      onChange={(e) =>
+                                                        handleGridChange(
+                                                          tabIndex,
+                                                          sectionIndex,
+                                                          fieldIndex,
+                                                          rowIndex,
+                                                          column.name,
+                                                          e.target.value
+                                                        )
+                                                      }
+                                                      className="border text-black border-gray-600 p-2 w-full rounded"
+                                                    />
+                                                  </td>
+                                                )
+                                              )}
+                                              <td className="border border-gray-600 p-2 text-center">
+                                                <button
+                                                  onClick={() =>
+                                                    deleteRow(
+                                                      tabIndex,
+                                                      sectionIndex,
+                                                      fieldIndex,
+                                                      rowIndex
+                                                    )
+                                                  }
+                                                  className="text-red-500 hover:text-red-700"
+                                                >
+                                                  <IoIosTrash size={20} />
+                                                </button>
+                                              </td>
+                                            </tr>
+                                          ))}
+                                        </tbody>
+                                      </table>
+                                    )
+                                  );
+                                })()}
                               </div>
-                            </div>
-                          );
-                        })}
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   ))}
