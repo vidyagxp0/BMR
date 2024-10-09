@@ -366,7 +366,6 @@ const BMRRecords = () => {
     Tabs.forEach((tab) => {
       tab.BMR_sections.forEach((section) => {
         section.BMR_fields.forEach((field) => {
-          
           if (field.isRequired) {
             const value = formData[field.label]; // Adjust according to how you track form inputs
             if (value === undefined || value === null || value === "") {
@@ -377,8 +376,8 @@ const BMRRecords = () => {
           }
         });
       });
-    });    
-    
+    });
+
     setTimeout(() => {
       if (allRequiredFieldsFilled === false) {
         toast.error("Please fill all required fields to add a new Record.");
@@ -441,7 +440,7 @@ const BMRRecords = () => {
         </div>
         <div className="flex justify-start gap-20 items-center bg-gradient-to-r from-[#4f839b] to-[#0c384d] mt-2 p-4 rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold text-white ">
-            BMR Name : 
+            BMR Name :
             <span className="text-gray-200"> {selectedBMR?.name}</span>
           </h2>
 
