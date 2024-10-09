@@ -51,6 +51,12 @@ router.get(
   BmrRecordsController.getAllBMRRecords
 );
 
+router.get(
+  "/get-a-bmr-record/:id",
+  Auth.checkJwtToken,
+  BmrRecordsController.getABMRRecord
+);
+
 router.put(
   "/send-record-for-review",
   Auth.checkJwtToken,

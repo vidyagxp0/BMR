@@ -491,6 +491,37 @@ exports.getAllBMRRecords = async (req, res) => {
     });
 };
 
+exports.getABMRRecord = async (req, res) => {
+  BMRRecord.findOne({
+    where: {
+      record_id: req.params.id,
+      isActive: true,
+    },
+    include: [
+      {
+        model: BMR,
+        attributes: ["name", "division_id"],
+      },
+      {
+        model: User,
+        as: "InitiatorUser", // Use the alias defined in the association
+      },
+    ],
+  })
+    .then((result) => {
+      res.status(200).json({
+        error: false,
+        message: result,
+      });
+    })
+    .catch((e) => {
+      res.status(500).json({
+        error: true,
+        message: `Error getting records: ${e.message}`,
+      });
+    });
+};
+
 exports.sendRecordForReview = async (req, res) => {
   const {
     record_id,
