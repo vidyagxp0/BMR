@@ -1,9 +1,7 @@
 import React from "react";
-import { Search, Wrench, Users, Ticket, Mail, HelpCircle } from "lucide-react";
+import { Search, Wrench, Users, Ticket, Mail, HelpCircle, BriefcaseMedical } from "lucide-react";
 import HeaderTop from "../../Components/Header/HeaderTop";
-import { useNavigate } from "react-router-dom";
-
-import { FaArrowLeft } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 
 const Help = () => {
   const navigate = useNavigate();
@@ -57,9 +55,16 @@ const Help = () => {
               title: "FAQs",
               description: "Frequently asked questions for quick answers.",
             },
+            {
+              icon: <BriefcaseMedical size={40} />,
+              title: "Vidyagxp",
+              description: "More pharma products.",
+              link: "www.google.com"
+            },
           ].map((item, index) => (
             <div
               key={index}
+              onClick={() => {item?.link}}
               className="bg-white text-purple-700 p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105"
             >
               <div className="flex justify-center mb-4">

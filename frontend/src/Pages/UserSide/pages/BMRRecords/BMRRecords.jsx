@@ -14,6 +14,12 @@ import { IoIosAddCircle, IoIosTrash } from "react-icons/io";
 
 const BMRRecords = () => {
   const location = useLocation();
+  const [selectedBMR, setSelectedBMRState] = useState(
+    location.state?.selectedBMR || []
+  );
+
+  console.log(selectedBMR);
+  
   const [activeTab, setActiveTab] = useState("General Information");
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [gridData, setGridData] = useState([]);
@@ -39,9 +45,6 @@ const BMRRecords = () => {
     setShowVerificationModal(false);
   };
   const dispatch = useDispatch();
-  const [selectedBMR, setSelectedBMRState] = useState(
-    location.state?.selectedBMR || {}
-  );
 
 
   // Initialize empty arrays for fieldTypes and helpText
@@ -265,7 +268,7 @@ const BMRRecords = () => {
   };
   useEffect(() => {
     fetchBMRData();
-  }, [bmr_id]);
+  }, []);
 
   useEffect(() => {
     const initialFields = {};
@@ -580,7 +583,7 @@ const BMRRecords = () => {
                                           <table className="table-auto w-full border border-gray-600 mb-4">
                                             <thead>
                                               <tr>
-                                                {acceptsMultiple.columns.map(
+                                                {acceptsMultiple?.columns?.map(
                                                   (column, idx) => {
                                                     return (
                                                       <th

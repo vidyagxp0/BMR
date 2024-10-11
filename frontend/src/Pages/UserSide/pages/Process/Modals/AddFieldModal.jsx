@@ -28,7 +28,7 @@ const AddFieldModal = ({
     isRequired: false,
     isReadOnly: false,
     acceptsMultiple: { columns: [], rows: [] },
-    selectedValues: [], // Manage selected values here
+    selectedValues: [],
     bmr_tab_id: bmr_tab_id,
     bmr_section_id: bmr_section_id,
   });
@@ -153,30 +153,50 @@ const AddFieldModal = ({
     }
   };
 
-  const handleOptionChange = (index, value) => {
-    const newOptions = [...fieldData.acceptsMultiple];
-    newOptions[index] = value;
-    setFieldData((prevData) => ({
-      ...prevData,
-      acceptsMultiple: newOptions,
-    }));
-    setGridData((prevData) => ({
-      ...prevData,
-      acceptsMultiple: newOptions,
-    }));
-  };
-
   const handleVerificationClose = () => {
     setShowVerificationModal(false);
   };
   const handleAddOption = () => {
+    setFieldData((prevData) => {
+      const updatedRows = [...(prevData.acceptsMultiple?.rows || []), ""]; // Spread existing rows and add a new option
+      return {
+        ...prevData,
+        acceptsMultiple: {
+          ...prevData.acceptsMultiple, // Keep columns intact
+          rows: updatedRows, // Update only the rows
+        },
+      };
+    });
+
+    setGridData((prevData) => {
+      const acceptsMultipleArray = Array.isArray(prevData.acceptsMultiple)
+        ? prevData.acceptsMultiple
+        : [];
+      // Initialize acceptsMultiple as an array if it's undefined
+
+      console.log("Previous Grid Data:", prevData); // Log previous grid data
+
+      return {
+        ...prevData,
+        acceptsMultiple: [...acceptsMultipleArray, ""], // Spread the existing array and add a new option
+      };
+    });
+  };
+
+  const handleOptionChange = (index, value) => {
+    const newOptions = [...(fieldData.acceptsMultiple?.rows || [])];
+    newOptions[index] = value; // Update the specific option at the given index
+
     setFieldData((prevData) => ({
       ...prevData,
-      acceptsMultiple: [...prevData.acceptsMultiple, ""],
+      acceptsMultiple: {
+        ...prevData.acceptsMultiple, // Spread the acceptsMultiple object to retain columns
+        rows: newOptions, // Only update rows with new options
+      },
     }));
     setGridData((prevData) => ({
       ...prevData,
-      acceptsMultiple: [...prevData.acceptsMultiple, ""],
+      acceptsMultiple: newOptions,
     }));
   };
   return (
@@ -235,9 +255,7 @@ const AddFieldModal = ({
                       ))}
                     </tr>
                   </thead>
-                  <tbody>
-                    
-                  </tbody>
+                  <tbody></tbody>
                 </table>
               ) : (
                 <p>No columns available.</p>
@@ -403,7 +421,7 @@ const AddFieldModal = ({
                     onChange={handleSelectChange}
                     value={fieldData.selectedValues}
                   >
-                    {fieldData.acceptsMultiple?.map((option, idx) => (
+                    {fieldData?.acceptsMultiple?.rows?.map((option, idx) => (
                       <option key={idx} value={option}>
                         {option}
                       </option>
@@ -603,14 +621,13 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
                 </>
               </div>
               <button
-            type="button"
-            onClick={() => handleRemoveColumn(index)}
-            className="border p-2 bg-red-500 text-white mt-2"
-          >
-            Remove
-          </button>
+                type="button"
+                onClick={() => handleRemoveColumn(index)}
+                className="border p-2 bg-red-500 text-white mt-2"
+              >
+                Remove
+              </button>
             </div>
-            
           ))}
         </div>
         <div className="flex gap-2">
@@ -621,7 +638,6 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
           >
             Add Column
           </button>
-        
         </div>
         <div className="mt-4 flex justify-end">
           <button

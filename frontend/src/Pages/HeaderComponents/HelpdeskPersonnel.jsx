@@ -6,6 +6,15 @@ import HeaderTop from "../../Components/Header/HeaderTop";
 
 const personnelData = [
   {
+    name: "Mohammed Farhan Khan",
+    position: "Senior Helpdesk Specialist",
+    phone: "+91  987-987-6543",
+    email: "farhan.khan@example.com",
+    location: "Indore",
+    photo:
+      "https://media.istockphoto.com/id/653832634/photo/portrait-of-male-doctor-standing-with-arms-crossed.jpg?s=612x612&w=0&k=20&c=YKusn_UfkRfMdBWJR1thZOaJtMlZsNNf-cA2jlRbtGQ=",
+  },
+  {
     name: "Mayank Rathore",
     position: "Senior Helpdesk Specialist",
     phone: "+91 956-123-4567",
@@ -24,23 +33,14 @@ const personnelData = [
       "https://media.istockphoto.com/id/653832634/photo/portrait-of-male-doctor-standing-with-arms-crossed.jpg?s=612x612&w=0&k=20&c=YKusn_UfkRfMdBWJR1thZOaJtMlZsNNf-cA2jlRbtGQ=",
   },
   {
-    name: "Anshul Thakur",
+    name: "Nickshay Chouhan",
     position: "Helpdesk Coordinator",
     phone: "+91  987-987-6543",
-    email: "anshul.thakur@example.com",
+    email: "nickshay.chouhan@example.com",
     location: "Indore",
     photo:
       "https://media.istockphoto.com/id/653832634/photo/portrait-of-male-doctor-standing-with-arms-crossed.jpg?s=612x612&w=0&k=20&c=YKusn_UfkRfMdBWJR1thZOaJtMlZsNNf-cA2jlRbtGQ=",
-  },
-  {
-    name: "Anshul Thakur",
-    position: "Helpdesk Coordinator",
-    phone: "+91  987-987-6543",
-    email: "anshul.thakur@example.com",
-    location: "Indore",
-    photo:
-      "https://media.istockphoto.com/id/653832634/photo/portrait-of-male-doctor-standing-with-arms-crossed.jpg?s=612x612&w=0&k=20&c=YKusn_UfkRfMdBWJR1thZOaJtMlZsNNf-cA2jlRbtGQ=",
-  },
+  }
 ];
 
 const HelpdeskPersonnel = () => {
