@@ -155,5 +155,10 @@ router.put(
   Auth.checkJwtToken,
   BmrController.readAUserNotification
 );
+router.get(
+  "/get-all-logs",
+  Auth.checkJwtToken,
+  BmrController.getAllLogs
+);
 
 module.exports = router;

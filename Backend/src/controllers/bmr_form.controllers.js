@@ -2993,3 +2993,35 @@ exports.readAUserNotification = async (req, res) => {
     });
   }
 };
+
+exports.getAllLogs = async (req, res) => {
+  try {
+    const results = await sequelize.query(
+      `
+      (SELECT FormAuditTrails.*, Users.name AS checked_by FROM FormAuditTrails
+        JOIN Users ON FormAuditTrails.changed_by = Users.user_id)
+      UNION ALL
+      (SELECT RecordAuditTrails.*, Users.name AS checked_by FROM RecordAuditTrails
+        JOIN Users ON RecordAuditTrails.changed_by = Users.user_id)
+      `,
+      {
+        type: sequelize.QueryTypes.SELECT,
+        raw: true, // Use raw results to efficiently handle the data
+      }
+    );
+
+    // Sorting the results by createdAt in descending order to display the most recent changes first
+    results.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    res.status(200).json({
+      error: false,
+      message: results,
+    });
+  } catch (error) {
+    console.error("Error fetching audit trail records:", error);
+    res.status(500).json({
+      error: true,
+      message: "Failed to fetch audit logs due to an internal error.",
+    });
+  }
+};
