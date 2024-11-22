@@ -46,7 +46,6 @@ const AddFieldModal = ({
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [showGridColumnConfigModal, setShowGridColumnConfigModal] =
     useState(false);
-  // console.log(fieldData.acceptsMultiple.columns, "<><><><><>");
 
   useEffect(() => {
     if (updateField === "edit-field" && existingFieldData) {
@@ -257,9 +256,7 @@ const AddFieldModal = ({
                       ))}
                     </tr>
                   </thead>
-                  <tbody>
-                    
-                  </tbody>
+                  <tbody></tbody>
                 </table>
               ) : (
                 <p>No columns available.</p>
@@ -625,14 +622,13 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
                 </>
               </div>
               <button
-            type="button"
-            onClick={() => handleRemoveColumn(index)}
-            className="border p-2 bg-red-500 text-white mt-2"
-          >
-            Remove
-          </button>
+                type="button"
+                onClick={() => handleRemoveColumn(index)}
+                className="border p-2 bg-red-500 text-white mt-2"
+              >
+                Remove
+              </button>
             </div>
-            
           ))}
         </div>
         <div className="flex gap-2">
@@ -643,7 +639,6 @@ const GridColumnConfigModal = ({ columns = [], onClose, onSave }) => {
           >
             Add Column
           </button>
-        
         </div>
         <div className="mt-4 flex justify-end">
           <button

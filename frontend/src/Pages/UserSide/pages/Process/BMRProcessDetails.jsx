@@ -45,19 +45,19 @@ const BMRProcessDetails = ({ fieldData }) => {
         fieldName: "Initiator Name",
         field_type: "text",
         options: [],
-        isMandatory: false,
+        isRequired: false,
       },
       {
         fieldName: "Date of Initiation",
         field_type: "date",
         options: [],
-        isMandatory: false,
+        isRequired: false,
       },
       {
         fieldName: "Initiator Comments",
         field_type: "text-area",
         options: [],
-        isMandatory: true,
+        isRequired: true,
       },
     ],
     "Reviewer Remarks": [
@@ -65,19 +65,19 @@ const BMRProcessDetails = ({ fieldData }) => {
         fieldName: "Reviewer Name",
         field_type: "text",
         options: [],
-        isMandatory: false,
+        isRequired: false,
       },
       {
         fieldName: "Date of Review",
         field_type: "date",
         options: [],
-        isMandatory: false,
+        isRequired: false,
       },
       {
         fieldName: "Reviewer Comments",
         field_type: "text-area",
         options: [],
-        isMandatory: true,
+        isRequired: true,
       },
     ],
     "Approver Remarks": [
@@ -85,19 +85,19 @@ const BMRProcessDetails = ({ fieldData }) => {
         fieldName: "Approver Name",
         field_type: "text",
         options: [],
-        isMandatory: false,
+        isRequired: false,
       },
       {
         fieldName: "Date of Approve",
         field_type: "date",
         options: [],
-        isMandatory: false,
+        isRequired: false,
       },
       {
         fieldName: "Approver Comments",
         field_type: "text-area",
         options: [],
-        isMandatory: true,
+        isRequired: true,
       },
     ],
   });
@@ -384,19 +384,19 @@ const BMRProcessDetails = ({ fieldData }) => {
               fieldName: "Approver",
               field_type: "text",
               value: approver.approver,
-              isMandatory: false,
+              isRequired: false,
             },
             {
               fieldName: "Date of Approval",
               field_type: "date",
               value: "",
-              isMandatory: false,
+              isRequired: false,
             },
             {
               fieldName: "Approver Comment",
               field_type: "text-area",
               value: "",
-              isMandatory: true,
+              isRequired: true,
             },
           ],
         },
@@ -419,19 +419,19 @@ const BMRProcessDetails = ({ fieldData }) => {
               fieldName: "Reviewer",
               field_type: "text",
               value: reviewer.reviewer,
-              isMandatory: false,
+              isRequired: false,
             },
             {
               fieldName: "Date of Review",
               field_type: "date",
               value: "",
-              isMandatory: false,
+              isRequired: false,
             },
             {
               fieldName: "Reviewer Comments",
               field_type: "text-area",
               value: "",
-              isMandatory: true,
+              isRequired: true,
             },
           ],
         },
@@ -710,7 +710,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                                 data[0]?.date_of_initiation
                               )}
                               className="border border-gray-300 p-3 w-full bg-gray-100 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400 "
-                              required={field.isMandatory}
+                              required={field.isRequired}
                               readOnly
                             />
                           )}
@@ -722,7 +722,13 @@ const BMRProcessDetails = ({ fieldData }) => {
                               required={
                                 activeFlowTab === "INITIATION" &&
                                 field.fieldName === "Initiator Comments" &&
-                                field.isMandatory
+                                field.isRequired
+                              }
+                              readOnly={
+                                !(
+                                  activeFlowTab === "INITIATION" &&
+                                  field.fieldName === "Initiator Comments"
+                                )
                               }
                               readOnly={
                                 !(
@@ -796,6 +802,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                                     activeFlowTab === "UNDER REVIEW" &&
                                     field.fieldName === "Reviewer Comments" &&
                                     field.isMandatory
+                                    // field.isRequired
                                   }
                                   readOnly={
                                     !(
@@ -868,7 +875,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                               required={
                                 activeFlowTab === "UNDER APPROVAL" &&
                                 field.fieldName === "Approver Comment" &&
-                                field.isMandatory
+                                field.isRequired
                               }
                               readOnly={
                                 !(
@@ -1050,7 +1057,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                           >
                             <label className="text-base font-bold text-gray-900 flex gap-1 mb-2">
                               {field.label}
-                              {field.isMandatory && (
+                              {field.isRequired && (
                                 <div className="text-red-500"> *</div>
                               )}
                               {field.helpText && (
@@ -1075,7 +1082,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                                   }}
                                   type="text"
                                   className="border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 p-3 w-full"
-                                  required={field.isMandatory}
+                                  required={field.isRequired}
                                   readOnly={field.isReadonly}
                                 />
                               </div>
@@ -1152,7 +1159,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                                   }}
                                   type="password"
                                   className="border border-gray-600 text-gray-600 p-2 w-full rounded"
-                                  required={field.isMandatory}
+                                  required={field.isRequired}
                                   readOnly={field.isReadonly}
                                 />
                               </div>
@@ -1168,7 +1175,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                                   }}
                                   type="date"
                                   className="border border-gray-600 p-2 w-full rounded"
-                                  required={field.isMandatory}
+                                  required={field.isRequired}
                                   readOnly={field.isReadonly}
                                 />
                               </div>
@@ -1183,7 +1190,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                                   }}
                                   type="file"
                                   className="border border-gray-600 p-2 w-full rounded"
-                                  required={field.isMandatory}
+                                  required={field.isRequired}
                                   readOnly={field.isReadonly}
                                 />
                               </div>
@@ -1198,7 +1205,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                                   }}
                                   type="time"
                                   className="border border-gray-600 p-2 w-full rounded"
-                                  required={field.isMandatory}
+                                  required={field.isRequired}
                                   readOnly={field.isReadonly}
                                 />
                               </div>
@@ -1214,7 +1221,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                                   }}
                                   type="email"
                                   className="border border-gray-600 p-2 w-full rounded"
-                                  required={field.isMandatory}
+                                  required={field.isRequired}
                                   readOnly={field.isReadonly}
                                 />
                               </div>
@@ -1230,7 +1237,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                                   }}
                                   type="number"
                                   className="border border-gray-600 p-2 w-full rounded"
-                                  required={field.isMandatory}
+                                  required={field.isRequired}
                                   readOnly={field.isReadonly}
                                 />
                               </div>
@@ -1246,7 +1253,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                                   }}
                                   type="checkbox"
                                   className="border border-gray-600 p-2 rounded"
-                                  required={field.isMandatory}
+                                  required={field.isRequired}
                                   readOnly={field.isReadonly}
                                 />
                               </div>
@@ -1260,7 +1267,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                                     border: "2.8px solid gray",
                                     height: "48px",
                                   }}
-                                  required={field.isMandatory}
+                                  required={field.isRequired}
                                 >
                                   {field?.acceptsMultiple?.rows?.map(
                                     (option, idx) => (
@@ -1285,6 +1292,7 @@ const BMRProcessDetails = ({ fieldData }) => {
                                   }}
                                   required={field.isMandatory}
                                   
+                                  // required={field.isRequired}
                                 >
                                   {field?.acceptsMultiple?.rows?.map(
                                     (option, idx) => (
